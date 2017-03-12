@@ -1,0 +1,203 @@
+fileFormatVersion: 2
+guid: 8cdb71ada6c39dd4d840ec2abda60311
+timeCreated: 1489293154
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Arm_High_R
+    100002: Arm_Low_R
+    100004: Body_High
+    100006: Body_Low
+    100008: Bone021
+    100010: Bone022
+    100012: Bone023
+    100014: Bone024
+    100016: Bone025
+    100018: Bone026
+    100020: Bone027
+    100022: Bone028
+    100024: Bone029
+    100026: Bone030
+    100028: Bone031
+    100030: Bone032
+    100032: Bone033
+    100034: Bone034
+    100036: Bone035
+    100038: Bone036
+    100040: Bone037
+    100042: Bone038
+    100044: Bone039
+    100046: Bone040
+    100048: Bone041
+    100050: Bone042
+    100052: Bone043
+    100054: Bone044
+    100056: Bone045
+    100058: Bone046
+    100060: Bone047
+    100062: Bone048
+    100064: Bone049
+    100066: Bone050
+    100068: Bone051
+    100070: Bone052
+    100072: Bone053
+    100074: Character_1
+    100076: //RootNode
+    100078: Finger_1
+    100080: Finger_1_2
+    100082: Finger_2
+    100084: Finger_2_2
+    100086: Finger_2_3
+    100088: Finger_3
+    100090: Finger_3_2
+    100092: Finger_3_3
+    100094: Finger_4
+    100096: Finger_4_2
+    100098: Finger_4_3
+    100100: Finger_5
+    100102: Finger_5_2_R
+    100104: Finger_5_3_R
+    100106: Gum
+    100108: Gun
+    100110: Hand_R
+    100112: Head
+    100114: IK Chain001
+    100116: IK Chain002
+    100118: Point001
+    100120: Point002
+    400000: Arm_High_R
+    400002: Arm_Low_R
+    400004: Body_High
+    400006: Body_Low
+    400008: Bone021
+    400010: Bone022
+    400012: Bone023
+    400014: Bone024
+    400016: Bone025
+    400018: Bone026
+    400020: Bone027
+    400022: Bone028
+    400024: Bone029
+    400026: Bone030
+    400028: Bone031
+    400030: Bone032
+    400032: Bone033
+    400034: Bone034
+    400036: Bone035
+    400038: Bone036
+    400040: Bone037
+    400042: Bone038
+    400044: Bone039
+    400046: Bone040
+    400048: Bone041
+    400050: Bone042
+    400052: Bone043
+    400054: Bone044
+    400056: Bone045
+    400058: Bone046
+    400060: Bone047
+    400062: Bone048
+    400064: Bone049
+    400066: Bone050
+    400068: Bone051
+    400070: Bone052
+    400072: Bone053
+    400074: Character_1
+    400076: //RootNode
+    400078: Finger_1
+    400080: Finger_1_2
+    400082: Finger_2
+    400084: Finger_2_2
+    400086: Finger_2_3
+    400088: Finger_3
+    400090: Finger_3_2
+    400092: Finger_3_3
+    400094: Finger_4
+    400096: Finger_4_2
+    400098: Finger_4_3
+    400100: Finger_5
+    400102: Finger_5_2_R
+    400104: Finger_5_3_R
+    400106: Gum
+    400108: Gun
+    400110: Hand_R
+    400112: Head
+    400114: IK Chain001
+    400116: IK Chain002
+    400118: Point001
+    400120: Point002
+    4300000: Character_1
+    4300002: Gum
+    7400000: Take 001
+    9500000: //RootNode
+    13700000: Character_1
+    13700002: Gum
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
