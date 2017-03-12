@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         TestInt = 999;
-
+        TestInt = 998;
     }
 	
 	// Update is called once per frame
