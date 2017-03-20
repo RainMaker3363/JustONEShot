@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace LSD
 {
@@ -29,7 +30,8 @@ public class CharMove : MonoBehaviour {
 
     public Animator anim;
 
-    public Transform m_CharPos;
+    //이동 속도?
+    public Image m_FirstTouch;
 
     public Camera cam;
     private Vector3 CamPos;
@@ -41,14 +43,21 @@ public class CharMove : MonoBehaviour {
     //private Vector3 PlayerDeadEyePosBack;
     private Vector3 m_PlayerPosBack;
     public Transform m_GroundCheck;
+    private CharacterController m_CharCtr;
 
     LSD.PlayerState m_PlayerState;
+
+    //캐릭터 stat
+    int Stamina = 1000;
+
 
     //스테미나가 전부 소모된 상태
     bool m_Exhausted = false;
 
     // Use this for initialization
     void Start () {
+
+        m_CharCtr = GetComponent<CharacterController>();
 
         //카메라 기본위치 설정
         CamPos = cam.transform.position;
@@ -83,18 +92,21 @@ public class CharMove : MonoBehaviour {
             case LSD.PlayerState.DASH_SLOW:
                 {
                     anim.SetInteger("DashLevel", 1);
+                    m_FirstTouch.color = Color.red;
                     Update_DASH_SLOW();
                     break;
                 }
             case LSD.PlayerState.DASH_SOFT:
                 {
                     anim.SetInteger("DashLevel", 2);
+                    m_FirstTouch.color = Color.green;
                     Update_DASH_SOFT();
                     break;
                 }
             case LSD.PlayerState.DASH_HARD:
                 {
                     anim.SetInteger("DashLevel", 3);
+                    m_FirstTouch.color = Color.blue;
                     Update_DASH_HARD();
                     break;
                 }
@@ -326,19 +338,36 @@ public class CharMove : MonoBehaviour {
 
     void FixedUpdate_IDLE()
     {
-
+        if (m_Exhausted)
+        {
+            Stamina += 7;
+        }
+        else
+        {
+            Stamina += 10;
+        }
+        StaminaCheck();
     }
-    void FixedUpdate_DASH_SLOW()
+    void FixedUpdate_DASH_SLOW()    //탈진 달리기
     {
+        m_MoveSpeed = 2;
+        Stamina += 7;
         PlayerMove();
+        StaminaCheck();
     }
-    void FixedUpdate_DASH_SOFT()
+    void FixedUpdate_DASH_SOFT()    // 천천히 달리기
     {
+        m_MoveSpeed = 4;
+        Stamina += 10;
         PlayerMove();
+        StaminaCheck();
     }
     void FixedUpdate_DASH_HARD()
     {
+        m_MoveSpeed = 8;
+        Stamina -= 4;
         PlayerMove();
+        StaminaCheck();
     }
     void FixedUpdate_SHOT_READY()
     {
@@ -364,14 +393,15 @@ public class CharMove : MonoBehaviour {
     {
 
         transform.rotation = m_MoveJoyStickControl.GetRotateVector();
-        transform.Translate(Vector3.forward * m_MoveSpeed * (float)m_PlayerState * Time.deltaTime);
-
-        RaycastHit Ground;
-        if (Physics.Raycast(m_GroundCheck.position, Vector3.down, out Ground,1.5f))
-        {
-            Debug.Log("HitPosition : "+Ground.transform.position);
-            transform.position = new Vector3(transform.position.x, Ground.transform.position.y, transform.position.z);
-        }
+        //transform.Translate(Vector3.forward * m_MoveSpeed * Time.deltaTime);
+        m_CharCtr.Move((transform.forward +Physics.gravity) * m_MoveSpeed * Time.deltaTime);
+        //RaycastHit Ground;
+        //if (Physics.Raycast(m_GroundCheck.position, Vector3.down, out Ground, 5f))
+        //{
+        //    //Debug.Log("HitPosition : " + Ground.point);
+        //    //Debug.Log("Hitname : " + Ground.transform.name);
+        //    transform.position = new Vector3(transform.position.x, Ground.point.y, transform.position.z);
+        //}
 
         cam.transform.position = CamPos + transform.position;
     }
@@ -379,5 +409,39 @@ public class CharMove : MonoBehaviour {
     void PlayerAiming()
     {
         transform.rotation = m_ShotJoyStickControl.GetRotateVector();
+    }
+
+    void StaminaCheck()
+    {
+        if (Stamina < 0)
+        {
+            Stamina = 0;
+            m_Exhausted = true;
+        }
+
+        if (Stamina > 1000)
+        {
+            Stamina = 1000;
+            if (m_Exhausted)
+            {
+                m_Exhausted = false;
+            }           
+        }
+    }
+
+    void OnGUI()
+    {
+        int w = Screen.width, h = Screen.height;
+
+        GUIStyle style = new GUIStyle();
+
+        Rect rect = new Rect(w / 2, 0, 100, 100);
+        style.alignment = TextAnchor.UpperLeft;
+        style.fontSize = 10;
+        style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
+
+        string text = string.Format("Stamina : {0}", Stamina);
+
+        GUI.Label(rect, text, style);
     }
 }
