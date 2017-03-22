@@ -27,7 +27,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(this);
-        //instance = FindObjectOfType(typeof(T)) as T;
+        instance = FindObjectOfType(typeof(T)) as T;
     }
 
     private void OnApplicationQuit()

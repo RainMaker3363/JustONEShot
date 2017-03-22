@@ -15,7 +15,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private byte _protocolVersion = 1;
 
     // Byte + Byte + 2 floats for position + 2 floats for velcocity + 1 float for rotZ
-    private int _updateMessageLength = 18;
+    private int _updateMessageLength = 22;
     private List<byte> _updateMessage;
     private bool IsConnectedOn = false;
     private bool showingWaitingRoom = false;
@@ -39,6 +39,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
         PlayGamesPlatform.DebugLogEnabled = true;
         PlayGamesPlatform.Activate();
+
+        if (_updateMessage == null)
+        {
+            _updateMessage = new List<byte>(_updateMessageLength);
+        }
         
     }
 
@@ -48,7 +53,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         // 최소 수용 인원
         // 최대 수용 인원
         PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
-        PlayGamesPlatform.Instance.RealTime.ShowWaitingRoomUI();
+        //PlayGamesPlatform.Instance.RealTime.ShowWaitingRoomUI();
     }
 
     public void ShowRoomUI()
@@ -230,7 +235,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         }
     }
 
-    public void SendMyUpdate(float posX, float posY, float posZ, float rotY)
+    public void SendMyUpdate(float posX, float posY, Vector2 velocity, float rotZ)
     {
 
 
@@ -239,9 +244,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         _updateMessage.Add((byte)'U');
         _updateMessage.AddRange(System.BitConverter.GetBytes(posX));
         _updateMessage.AddRange(System.BitConverter.GetBytes(posY));
-        _updateMessage.AddRange(System.BitConverter.GetBytes(posZ));
-        //_updateMessage.AddRange(System.BitConverter.GetBytes(velocity.y));
-        _updateMessage.AddRange(System.BitConverter.GetBytes(rotY));
+        _updateMessage.AddRange(System.BitConverter.GetBytes(velocity.x));
+        _updateMessage.AddRange(System.BitConverter.GetBytes(velocity.y));
+        _updateMessage.AddRange(System.BitConverter.GetBytes(rotZ));
         byte[] messageToSend = _updateMessage.ToArray();
 
         Debug.Log("Sending my update message  " + messageToSend + " to all players in the room");
@@ -250,16 +255,16 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         //PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, messageToSend);
     }
 
-    public void SendMyUpdate(string senderId, float posX, float posY, float posZ, float rotY)
+    public void SendMyUpdate(string senderId, float posX, float posY, Vector2 velocity, float rotZ)
     {
         _updateMessage.Clear();
         _updateMessage.Add(_protocolVersion);
         _updateMessage.Add((byte)'U');
         _updateMessage.AddRange(System.BitConverter.GetBytes(posX));
         _updateMessage.AddRange(System.BitConverter.GetBytes(posY));
-        _updateMessage.AddRange(System.BitConverter.GetBytes(posZ));
-        //_updateMessage.AddRange(System.BitConverter.GetBytes(velocity.y));
-        _updateMessage.AddRange(System.BitConverter.GetBytes(rotY));
+        _updateMessage.AddRange(System.BitConverter.GetBytes(velocity.x));
+        _updateMessage.AddRange(System.BitConverter.GetBytes(velocity.y));
+        _updateMessage.AddRange(System.BitConverter.GetBytes(rotZ));
         byte[] messageToSend = _updateMessage.ToArray();
 
         SendMessage = ByteToString(messageToSend);
@@ -280,42 +285,22 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         char messageType = (char)data[1];
 
         //if (messageType == 'U' && data.Length == _updateMessageLength)
-        //if (messageType == 'U')
-        //{
-        //    float posX = System.BitConverter.ToSingle(data, 2);
-        //    float posY = System.BitConverter.ToSingle(data, 6);
-        //    float velX = System.BitConverter.ToSingle(data, 10);
-        //    float velY = System.BitConverter.ToSingle(data, 14);
-        //    float rotZ = System.BitConverter.ToSingle(data, 18);
-        //    Debug.Log("Player " + senderId + " is at (" + posX + ", " + posY + ") traveling (" + velX + ", " + velY + ") rotation " + rotZ);
-
-        //    ReceiveMessage = ByteToString(data);
-        //    // We'd better tell our GameController about this.
-        //    //updateListener.UpdateReceived(senderId, posX, posY, velX, velY, rotZ);
-
-        //    if (updateListener != null)
-        //    {
-        //        updateListener.UpdateReceived(senderId, posX, posY, velX, velY, rotZ);
-        //    }
-
-        //}
         if (messageType == 'U')
         {
             float posX = System.BitConverter.ToSingle(data, 2);
             float posY = System.BitConverter.ToSingle(data, 6);
-            float posZ = System.BitConverter.ToSingle(data, 10);
-            float rotY = System.BitConverter.ToSingle(data, 14);
-            //float rotZ = System.BitConverter.ToSingle(data, 18);
-            //Debug.Log("Player " + senderId + " is at (" + posX + ", " + posY + ", " + posZ + " )" traveling (" + velX + ", " + velY + ") rotation " + rotZ);
+            float velX = System.BitConverter.ToSingle(data, 10);
+            float velY = System.BitConverter.ToSingle(data, 14);
+            float rotZ = System.BitConverter.ToSingle(data, 18);
+            Debug.Log("Player " + senderId + " is at (" + posX + ", " + posY + ") traveling (" + velX + ", " + velY + ") rotation " + rotZ);
 
-            Debug.Log("Player : " + senderId + " Pos : " + posX + ", " + posY + ", " + posZ + ", RotationY : " + rotY);
             ReceiveMessage = ByteToString(data);
             // We'd better tell our GameController about this.
             //updateListener.UpdateReceived(senderId, posX, posY, velX, velY, rotZ);
 
             if (updateListener != null)
             {
-                updateListener.UpdateTransReceived(senderId, posX, posY, posZ, rotY);
+                updateListener.UpdateReceived(senderId, posX, posY, velX, velY, rotZ);
             }
 
         }

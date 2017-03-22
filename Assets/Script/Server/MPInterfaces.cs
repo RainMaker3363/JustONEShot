@@ -1,5 +1,4 @@
 ﻿public interface MPUpdateListener
 {
-    //void UpdateReceived(string participantId, float posX, float posY, float velX, float velY, float rotZ);
-    void UpdateTransReceived(string participantId, float posX, float posY, float posZ, float rotY);
+    void UpdateReceived(string participantId, float posX, float posY, float velX, float velY, float rotZ);
 }

@@ -54,9 +54,11 @@ public class CharMove : MonoBehaviour {
     //스테미나가 전부 소모된 상태
     bool m_Exhausted = false;
 
+    //총 쐈는지 여부
+    bool GunFire = false;
+
     // Use this for initialization
     void Start () {
-
         m_CharCtr = GetComponent<CharacterController>();
 
         //카메라 기본위치 설정
@@ -257,7 +259,14 @@ public class CharMove : MonoBehaviour {
 
     void Update_SHOT_FIRE()
     {
-        m_PlayerState = LSD.PlayerState.IDLE;
+        if (!GunFire)
+        {
+            m_PlayerState = LSD.PlayerState.IDLE;
+        }
+        else
+        {
+
+        }
     }
 
     //void Update_DAMAGE()
@@ -350,14 +359,14 @@ public class CharMove : MonoBehaviour {
     }
     void FixedUpdate_DASH_SLOW()    //탈진 달리기
     {
-        m_MoveSpeed = 2;
+        m_MoveSpeed = 1;
         Stamina += 7;
         PlayerMove();
         StaminaCheck();
     }
     void FixedUpdate_DASH_SOFT()    // 천천히 달리기
     {
-        m_MoveSpeed = 4;
+        m_MoveSpeed = 5;
         Stamina += 10;
         PlayerMove();
         StaminaCheck();
@@ -375,7 +384,7 @@ public class CharMove : MonoBehaviour {
     }
     void FixedUpdate_SHOT_FIRE()
     {
-
+      
     }
     void FixedUpdate_DAMAGE()
     {
@@ -437,11 +446,13 @@ public class CharMove : MonoBehaviour {
 
         Rect rect = new Rect(w / 2, 0, 100, 100);
         style.alignment = TextAnchor.UpperLeft;
-        style.fontSize = 10;
+        style.fontSize = 30;
         style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
 
         string text = string.Format("Stamina : {0}", Stamina);
 
         GUI.Label(rect, text, style);
     }
+
+  
 }
