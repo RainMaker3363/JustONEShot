@@ -19,12 +19,20 @@ namespace LSD
         REROAD
 
     }
+
+    //총 상태(추후 추가)
+    enum GunState
+    {
+        Revolver=0,
+        ShotGun
+
+    }
 }
 
 
 public class CharMove : MonoBehaviour {
 
-   
+
     public MoveJoyStick m_MoveJoyStickControl;  //움직임 전용 조이스틱
     public JoyStickCtrl m_ShotJoyStickControl;  //샷 전용 조이스틱
 
@@ -46,6 +54,10 @@ public class CharMove : MonoBehaviour {
     private CharacterController m_CharCtr;
 
     LSD.PlayerState m_PlayerState;
+    LSD.GunState m_GunState;
+
+    //캐릭터 총
+    public static UseGun m_UseGun;
 
     //캐릭터 stat
     int Stamina = 1000;
@@ -55,14 +67,35 @@ public class CharMove : MonoBehaviour {
     bool m_Exhausted = false;
 
     //총 쐈는지 여부
-    bool GunFire = false;
+    //bool GunFire = false;
+
+    void Awake()
+    {
+        m_GunState = LSD.GunState.Revolver; //현재는 고정 추후 받아오게함
+    }
 
     // Use this for initialization
-    void Start () {
+    void Start() {
         m_CharCtr = GetComponent<CharacterController>();
 
         //카메라 기본위치 설정
         CamPos = cam.transform.position;
+
+        //플레이어 선택 총
+        switch (m_GunState)
+        {
+            case LSD.GunState.Revolver:
+                {
+                    m_UseGun = new Gun_Revolver();
+                    break;
+                }
+            case LSD.GunState.ShotGun:
+                {
+                    break;
+                }
+            default:
+                break;
+        }
 
         // 플레이어 이동 방향 초기화
         m_MoveVector = Vector3.zero;
@@ -70,16 +103,16 @@ public class CharMove : MonoBehaviour {
         m_PlayerDir = Vector3.zero;
         m_PlayerPosBack = Vector3.zero;
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update() {
 
         // Debug.Log("VectorForce: " + m_MoveJoyStickControl.GetVectorForce());
         Debug.Log("PlayerState: " + m_PlayerState);
-        
-        if(m_ShotJoyStickControl.GetTouch())
+
+        if (m_PlayerState != LSD.PlayerState.REROAD && m_ShotJoyStickControl.GetTouch())
         {
-            //    if(m_PlayerState != LSD.PlayerState.SHOT_FIRE)
+            //    if(m_PlayerState != LSD.PlayerState.SHOT_FIRE)        
             m_PlayerState = LSD.PlayerState.SHOT_READY;
         }
 
@@ -116,6 +149,7 @@ public class CharMove : MonoBehaviour {
                 {
                     anim.Play("Shot_Ready");
                     anim.SetBool("ShotReady", true);
+                    
                     Update_SHOT_READY();
                     break;
                 }
@@ -135,11 +169,13 @@ public class CharMove : MonoBehaviour {
             //        Update_DEADEYE();
             //        break;
             //    }
-            //case LSD.PlayerState.REROAD:
-            //    {
-            //        Update_REROAD();
-            //        break;
-            //    }
+            case LSD.PlayerState.REROAD:
+                {
+                   // anim.Play("Reloading");
+                    anim.SetBool("Reloading", true);
+                    Update_REROAD();
+                    break;
+                }
 
             default:
                 {
@@ -170,7 +206,7 @@ public class CharMove : MonoBehaviour {
                 m_PlayerState = LSD.PlayerState.DASH_SLOW;
             }
         }
-       
+
 
     }
 
@@ -183,7 +219,7 @@ public class CharMove : MonoBehaviour {
             {
                 m_PlayerState++;    //Player상태를 DASH_SOFT로 변경
                                     //m_PlayerState = LSD.PlayerState.DASH_SOFT;
-            }          
+            }
         }
         else //조작을 멈출경우
         {
@@ -196,7 +232,7 @@ public class CharMove : MonoBehaviour {
     {
         if (!m_Exhausted)//탈진상태가 아니라면
         {
-           
+
             if (m_MoveJoyStickControl.GetVectorForce() > 0.5f)
             {
                 m_PlayerState = LSD.PlayerState.DASH_HARD;
@@ -224,12 +260,12 @@ public class CharMove : MonoBehaviour {
     {
         if (!m_Exhausted)//탈진상태가 아니라면
         {
-            
+
             if (m_MoveJoyStickControl.GetVectorForce() > 0.5f)
             {
                 m_PlayerState = LSD.PlayerState.DASH_HARD;
             }
-            else if(m_MoveJoyStickControl.GetVectorForce() > 0)
+            else if (m_MoveJoyStickControl.GetVectorForce() > 0)
             {
                 m_PlayerState = LSD.PlayerState.DASH_SOFT;
             }
@@ -250,17 +286,23 @@ public class CharMove : MonoBehaviour {
     void Update_SHOT_READY()
     {
         //조준중에 손을 땠다면
-        if(!m_ShotJoyStickControl.GetTouch())
+        if (!m_ShotJoyStickControl.GetTouch())
         {
-            m_PlayerState = LSD.PlayerState.SHOT_FIRE;
-            
+            //if (m_UseGun.Bullet_Gun > 0)
+            //{
+                anim.SetBool("GunFire", true);
+                
+                m_PlayerState = LSD.PlayerState.SHOT_FIRE;
+           // }
+
         }
+
     }
 
     void Update_SHOT_FIRE()
     {
-        if (!GunFire)
-        {
+        if (!anim.GetBool("GunFire"))
+        {           
             m_PlayerState = LSD.PlayerState.IDLE;
         }
         else
@@ -279,11 +321,32 @@ public class CharMove : MonoBehaviour {
 
     //}
 
-    //void Update_REROAD()
-    //{
+    void Update_REROAD()
+    {
+        if (m_MoveJoyStickControl.GetVectorForce() > 0)
+        {
+            anim.SetBool("Reloading", false);
+            m_PlayerState = LSD.PlayerState.IDLE;
+        }
 
-    //}
+        if(m_UseGun.Bullet_Hand>0&&m_UseGun.MaxBullet_Gun>m_UseGun.Bullet_Gun)//탄알이 있고 탄창이 안찼을때
+        {
 
+        }
+        else
+        {
+            anim.SetBool("Reloading", false);
+            m_PlayerState = LSD.PlayerState.IDLE;
+        }
+    }
+
+    public void OnReroadButton()
+    {
+        if(m_PlayerState == LSD.PlayerState.IDLE)
+        {
+            m_PlayerState = LSD.PlayerState.REROAD;
+        }
+    }
 
 
 
@@ -452,6 +515,13 @@ public class CharMove : MonoBehaviour {
         string text = string.Format("Stamina : {0}", Stamina);
 
         GUI.Label(rect, text, style);
+
+        Rect Bulletrect = new Rect(w -300, 0, 100, 100);       
+
+        string Bullettext = string.Format("탄창 : {0}/{1}\n탄알 : {2}/{3}", m_UseGun.Bullet_Gun, m_UseGun.MaxBullet_Gun, m_UseGun.Bullet_Hand, m_UseGun.MaxBullet_Hand);
+
+
+        GUI.Label(Bulletrect, Bullettext, style);
     }
 
   

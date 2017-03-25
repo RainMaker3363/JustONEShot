@@ -1,0 +1,50 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class B_RespawnManager : MonoBehaviour {
+
+    [SerializeField]
+    GameObject[] Item_Bullets;
+
+    static B_RespawnManager Manager;
+
+    B_RespawnManager()
+    {
+        if(Manager==null)
+        {
+            Manager = this;
+        }
+    }
+
+    public static B_RespawnManager GetInstance()
+    {
+        if (Manager == null)
+        {
+            Manager = new B_RespawnManager();
+        }
+        return Manager;
+    }
+
+    public int CreateItemBullet(Transform RespawnPoint)
+    {
+        int BulletIndex = 0;
+        for(int i = 0; i<Item_Bullets.Length;i++)
+        {
+            if(!Item_Bullets[i].activeSelf)
+            {
+                Item_Bullets[i].transform.position = RespawnPoint.transform.position;
+                Item_Bullets[i].SetActive(true);
+                BulletIndex = i;
+                break;
+            }
+        }
+        return BulletIndex;
+    }
+
+    public void DeleteItemBullet(int BulletIndex)
+    {
+        Item_Bullets[BulletIndex].SetActive(false);
+    }
+
+}
