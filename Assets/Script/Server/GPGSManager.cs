@@ -16,9 +16,14 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
     // Byte + Byte + 2 floats for position + 2 floats for velcocity + 1 float for rotZ
     private int _updateMessageLength = 22;
+    // Byte + Byte + 1 boolen for finish Game
+    private int _finishMessageLength = 3;
     private List<byte> _updateMessage;
+    private List<byte> _endMessage;
+    
     private bool IsConnectedOn = false;
     private bool showingWaitingRoom = false;
+
     private string ReceiveMessage = " ";
     private string SendMessage = " ";
     private string NetMessage = " ";
@@ -43,6 +48,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if (_updateMessage == null)
         {
             _updateMessage = new List<byte>(_updateMessageLength);
+        }
+
+        if(_endMessage == null)
+        {
+            _endMessage = new List<byte>(_finishMessageLength);
         }
         
     }
@@ -274,6 +284,20 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         PlayGamesPlatform.Instance.RealTime.SendMessage(false, senderId, messageToSend);
     }
 
+    // 게임이 끝났을때 보내지는 메시지
+    public void SendFinishMessage(bool GameEnd)
+    {
+        List<byte> bytes = new List<byte>(_finishMessageLength);
+        bytes.Add(_protocolVersion);
+        bytes.Add((byte)'F');
+        bytes.AddRange(System.BitConverter.GetBytes(GameEnd));
+        byte[] messageToSend = bytes.ToArray();
+
+        Debug.Log("Sending my update message  " + messageToSend + " to all players in the room");
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, messageToSend);
+    }
+
     // 상대 ID로부터 메시지를 받았을때 호출되는 리스너 함수
     public void OnRealTimeMessageReceived(bool isReliable, string senderId, byte[] data)
     {
@@ -303,6 +327,19 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                 updateListener.UpdateReceived(senderId, posX, posY, velX, velY, rotZ);
             }
 
+        }
+        else if(messageType == 'F')
+        {
+            bool GameOver = System.BitConverter.ToBoolean(data, 1);
+
+            Debug.Log("This Game Is End");
+
+            ReceiveMessage = ByteToString(data);
+
+            if(updateListener != null)
+            {
+                updateListener.FinishedReceived(senderId, GameOver);
+            }
         }
     }
 
