@@ -1,5 +1,7 @@
 ﻿public interface MPUpdateListener
 {
-    void UpdateReceived(string participantId, float posX, float posY, float velX, float velY, float rotZ);
+    void UpdatePositionReceived(string participantId, float posX, float posY, float posZ, float rotY);
     void FinishedReceived(string participantId, bool GameOver);
+    void LeftRoomConfirmed();
+    void PlayerLeftRoom(string participantId);
 }

@@ -4,12 +4,18 @@ using UnityEngine;
 
 public class MulChar : MonoBehaviour {
 
+    public Camera cam;
+    private Vector3 CamPos;
+
     public MoveJoyStick m_MoveJoyStickControl;  //움직임 전용 조이스틱
     private float m_MoveSpeed = 4.5f;
     private float MoveDir;
 
     // Use this for initialization
     void Start () {
+        //카메라 기본위치 설정
+        CamPos = cam.transform.position;
+
         MoveDir = 0.0f;
     }
 	
@@ -37,6 +43,6 @@ public class MulChar : MonoBehaviour {
         //    transform.position = new Vector3(transform.position.x, Ground.point.y, transform.position.z);
         //}
 
-        //cam.transform.position = CamPos + transform.position;
+        cam.transform.position = CamPos + transform.position;
     }
 }

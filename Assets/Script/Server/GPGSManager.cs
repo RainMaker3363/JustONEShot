@@ -14,8 +14,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private uint gameVariation = 0;
     private byte _protocolVersion = 1;
 
-    // Byte + Byte + 2 floats for position + 2 floats for velcocity + 1 float for rotZ
-    private int _updateMessageLength = 22;
+    // Byte + Byte + 3 floats for position  + 1 float for rotY
+    private int _updateMessageLength = 18;
     // Byte + Byte + 1 boolen for finish Game
     private int _finishMessageLength = 3;
     private List<byte> _updateMessage;
@@ -99,6 +99,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     public void InitMessager()
     {
         _updateMessage = new List<byte>(_updateMessageLength);
+        _endMessage = new List<byte>(_finishMessageLength);
     }
 
     public List<byte> GetUpdateMessage()
@@ -146,10 +147,23 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         }
     }
 
+    //// 멀티플레이어가 나갔을때 호출되는 리스너 함수
+    //public void OnLeftRoom()
+    //{
+    //    ShowMPStatus("We have left the room. We should probably perform some clean-up tasks.");
+
+    //    showingWaitingRoom = false;
+    //}
+
     // 멀티플레이어가 나갔을때 호출되는 리스너 함수
     public void OnLeftRoom()
     {
-        ShowMPStatus("We have left the room. We should probably perform some clean-up tasks.");
+        ShowMPStatus("We have left the room.");
+
+        if (updateListener != null)
+        {
+            updateListener.LeftRoomConfirmed();
+        }
 
         showingWaitingRoom = false;
     }
@@ -166,9 +180,19 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // 해당 플레이어의 아이디가 연결을 끊었을 경우 호출되는 리스너 함수
     public void OnPeersDisconnected(string[] participantIds)
     {
+        //foreach (string participantID in participantIds)
+        //{
+        //    ShowMPStatus("Player " + participantID + " has left.");
+        //}
+
         foreach (string participantID in participantIds)
         {
             ShowMPStatus("Player " + participantID + " has left.");
+
+            if (updateListener != null)
+            {
+                updateListener.PlayerLeftRoom(participantID);
+            }
         }
     }
 
@@ -245,7 +269,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         }
     }
 
-    public void SendMyUpdate(float posX, float posY, Vector2 velocity, float rotZ)
+    // 다른 플레이어들에게 자신의 좌표 값을 보내준다.
+    // X, Y, Z, Rotation Y 값..
+    public void SendMyPositionUpdate(float posX, float posY, float posZ, float rotY)
     {
 
 
@@ -254,9 +280,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         _updateMessage.Add((byte)'U');
         _updateMessage.AddRange(System.BitConverter.GetBytes(posX));
         _updateMessage.AddRange(System.BitConverter.GetBytes(posY));
-        _updateMessage.AddRange(System.BitConverter.GetBytes(velocity.x));
-        _updateMessage.AddRange(System.BitConverter.GetBytes(velocity.y));
-        _updateMessage.AddRange(System.BitConverter.GetBytes(rotZ));
+        _updateMessage.AddRange(System.BitConverter.GetBytes(posZ));
+        _updateMessage.AddRange(System.BitConverter.GetBytes(rotY));
+        
         byte[] messageToSend = _updateMessage.ToArray();
 
         Debug.Log("Sending my update message  " + messageToSend + " to all players in the room");
@@ -265,24 +291,24 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         //PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, messageToSend);
     }
 
-    public void SendMyUpdate(string senderId, float posX, float posY, Vector2 velocity, float rotZ)
-    {
-        _updateMessage.Clear();
-        _updateMessage.Add(_protocolVersion);
-        _updateMessage.Add((byte)'U');
-        _updateMessage.AddRange(System.BitConverter.GetBytes(posX));
-        _updateMessage.AddRange(System.BitConverter.GetBytes(posY));
-        _updateMessage.AddRange(System.BitConverter.GetBytes(velocity.x));
-        _updateMessage.AddRange(System.BitConverter.GetBytes(velocity.y));
-        _updateMessage.AddRange(System.BitConverter.GetBytes(rotZ));
-        byte[] messageToSend = _updateMessage.ToArray();
+    //public void SendMyUpdate(string senderId, float posX, float posY, Vector2 velocity, float rotZ)
+    //{
+    //    _updateMessage.Clear();
+    //    _updateMessage.Add(_protocolVersion);
+    //    _updateMessage.Add((byte)'U');
+    //    _updateMessage.AddRange(System.BitConverter.GetBytes(posX));
+    //    _updateMessage.AddRange(System.BitConverter.GetBytes(posY));
+    //    _updateMessage.AddRange(System.BitConverter.GetBytes(velocity.x));
+    //    _updateMessage.AddRange(System.BitConverter.GetBytes(velocity.y));
+    //    _updateMessage.AddRange(System.BitConverter.GetBytes(rotZ));
+    //    byte[] messageToSend = _updateMessage.ToArray();
 
-        SendMessage = ByteToString(messageToSend);
+    //    SendMessage = ByteToString(messageToSend);
 
-        Debug.Log("Sending my update message  " + messageToSend + " to all players in the room");
+    //    Debug.Log("Sending my update message  " + messageToSend + " to all players in the room");
 
-        PlayGamesPlatform.Instance.RealTime.SendMessage(false, senderId, messageToSend);
-    }
+    //    PlayGamesPlatform.Instance.RealTime.SendMessage(false, senderId, messageToSend);
+    //}
 
     // 게임이 끝났을때 보내지는 메시지
     public void SendFinishMessage(bool GameEnd)
@@ -291,11 +317,12 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         bytes.Add(_protocolVersion);
         bytes.Add((byte)'F');
         bytes.AddRange(System.BitConverter.GetBytes(GameEnd));
-        byte[] messageToSend = bytes.ToArray();
 
-        Debug.Log("Sending my update message  " + messageToSend + " to all players in the room");
+        byte[] EndMessageToSend = bytes.ToArray();
 
-        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, messageToSend);
+        Debug.Log("Sending my update message  " + EndMessageToSend + " to all players in the room");
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, EndMessageToSend);
     }
 
     // 상대 ID로부터 메시지를 받았을때 호출되는 리스너 함수
@@ -313,10 +340,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             float posX = System.BitConverter.ToSingle(data, 2);
             float posY = System.BitConverter.ToSingle(data, 6);
-            float velX = System.BitConverter.ToSingle(data, 10);
-            float velY = System.BitConverter.ToSingle(data, 14);
-            float rotZ = System.BitConverter.ToSingle(data, 18);
-            Debug.Log("Player " + senderId + " is at (" + posX + ", " + posY + ") traveling (" + velX + ", " + velY + ") rotation " + rotZ);
+            float posZ = System.BitConverter.ToSingle(data, 10);
+            float rotY = System.BitConverter.ToSingle(data, 14);
+            //float rotZ = System.BitConverter.ToSingle(data, 18);
+            Debug.Log("Player " + senderId + " is at (" + posX + ", " + posY + ") rotation " + rotY);
 
             ReceiveMessage = ByteToString(data);
             // We'd better tell our GameController about this.
@@ -324,7 +351,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
             if (updateListener != null)
             {
-                updateListener.UpdateReceived(senderId, posX, posY, velX, velY, rotZ);
+                updateListener.UpdatePositionReceived(senderId, posX, posY, posZ, rotY);
             }
 
         }
@@ -358,6 +385,12 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     {
         return PlayGamesPlatform.Instance.RealTime.GetSelf().ParticipantId;
     }
+
+    public void LeaveGame()
+    {
+        PlayGamesPlatform.Instance.RealTime.LeaveRoom();
+    }
+
 
     public List<Participant> GetAllPlayers()
     {

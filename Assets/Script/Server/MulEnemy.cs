@@ -15,8 +15,16 @@ public class MulEnemy : MonoBehaviour {
     private float _timePerUpdate = 0.16f;
     private float pctDone;
 
+    // 게임 끝의 여부
+    public bool GameEndOn;
+
     // Use this for initialization
     void Start () {
+
+        GameEndOn = false;
+
+        _lastUpdateTime = Time.time;
+
         // 0.16초마다 적의 위치를 갱신시켜 준다.
         _timePerUpdate = 0.16f;
 
@@ -39,6 +47,16 @@ public class MulEnemy : MonoBehaviour {
         }
 	}
 
+    // 적의 타임아웃(Time-Out)의 여부를 확인할때 쓴다.
+    // 네트워크 상태가 안좋거나 기타 여부로 체크가 안되면 종료되게 해준다.
+    public float lastUpdateTime
+    {
+        get
+        {
+            return _lastUpdateTime;
+        }
+    }
+
     // 적의 위치값을 갱신시켜 준다.
     public void SetTransformInformation(float posX, float posY, float posZ, float rotY)
     {
@@ -49,5 +67,18 @@ public class MulEnemy : MonoBehaviour {
         _destinationRot = Quaternion.Euler(0, rotY, 0);
 
         _lastUpdateTime = Time.time;
+    }
+
+    public void SetEndGameInformation(bool GameEnd)
+    {
+        GameEndOn = GameEnd;
+    }
+
+    // 게임을 나가면 해당 플레이어의 모습을 감춘다.
+    public void GameOutInformation()
+    {
+        this.gameObject.SetActive(false);
+
+        GameEndOn = true;
     }
 }
