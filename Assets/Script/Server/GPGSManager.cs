@@ -18,9 +18,12 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private int _updateMessageLength = 18;
     // Byte + Byte + 1 boolen for finish Game
     private int _finishMessageLength = 3;
+    // Byte + Byte + 1 boolen for Item State + 1 Interger
+    private int _itemStateMessageLength = 7;
     private List<byte> _updateMessage;
     private List<byte> _endMessage;
-    
+    private List<byte> _itemstateMessage;
+
     private bool IsConnectedOn = false;
     private bool showingWaitingRoom = false;
 
@@ -53,6 +56,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if(_endMessage == null)
         {
             _endMessage = new List<byte>(_finishMessageLength);
+        }
+
+        if(_itemstateMessage == null)
+        {
+            _itemstateMessage  = new List<byte>(_itemStateMessageLength);
         }
         
     }
@@ -311,18 +319,38 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     //}
 
     // 게임이 끝났을때 보내지는 메시지
+
     public void SendFinishMessage(bool GameEnd)
     {
-        List<byte> bytes = new List<byte>(_finishMessageLength);
-        bytes.Add(_protocolVersion);
-        bytes.Add((byte)'F');
-        bytes.AddRange(System.BitConverter.GetBytes(GameEnd));
+        //List<byte> bytes = new List<byte>(_finishMessageLength);
+        _endMessage.Clear();
+        _endMessage.Add(_protocolVersion);
+        _endMessage.Add((byte)'F');
+        _endMessage.AddRange(System.BitConverter.GetBytes(GameEnd));
 
-        byte[] EndMessageToSend = bytes.ToArray();
+        byte[] EndMessageToSend = _endMessage.ToArray();
 
         Debug.Log("Sending my update message  " + EndMessageToSend + " to all players in the room");
 
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, EndMessageToSend);
+    }
+
+    // 아이템을 먹었을때 보내지는 메시지
+    // 아이템의 인덱스 번호 (메모리 풀을 만들었다면 총알의 3개 중 하나...)
+    // 아이템을 먹었는지의 여부 TRUE면 먹었다고 인식
+    public void SendItemStateMessage(int Index, bool GetItem)
+    {
+        _itemstateMessage.Clear();
+        _itemstateMessage.Add(_protocolVersion);
+        _itemstateMessage.Add((byte)'I');
+        _itemstateMessage.AddRange(System.BitConverter.GetBytes(GetItem));
+        _itemstateMessage.AddRange(System.BitConverter.GetBytes(Index));
+
+        byte[] ItemStateMessageToSend = _itemstateMessage.ToArray();
+
+        Debug.Log("Sending my update message  " + ItemStateMessageToSend + " to all players in the room");
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, ItemStateMessageToSend);
     }
 
     // 상대 ID로부터 메시지를 받았을때 호출되는 리스너 함수
@@ -357,7 +385,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         }
         else if(messageType == 'F')
         {
-            bool GameOver = System.BitConverter.ToBoolean(data, 1);
+            bool GameOver = System.BitConverter.ToBoolean(data, 2);
 
             Debug.Log("This Game Is End");
 
@@ -366,6 +394,21 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             if(updateListener != null)
             {
                 updateListener.FinishedReceived(senderId, GameOver);
+            }
+        }
+        else if(messageType == 'I')
+        {
+            bool ItemGet = System.BitConverter.ToBoolean(data, 2);
+            int Index = System.BitConverter.ToInt32(data, 3);
+
+            Debug.Log("Item Get");
+
+            ReceiveMessage = ByteToString(data);
+
+            if (updateListener != null)
+            {
+                //updateListener.ItemStateReceived(Index, ItemGet);
+                updateListener.ItemStateReceived(0, ItemGet);
             }
         }
     }

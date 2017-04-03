@@ -63,6 +63,10 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public Text PlayerName;
     public Text EnemyName;
 
+    // 테스트해볼 아이템 적용 여부
+    public Text ItemGetCount;
+    private int ItemCount;
+
     // 플레이어의 정보
     public GameObject MyCharacter;
     public GameObject MyCharacterPos;
@@ -98,6 +102,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         PlayerState = HY.MultiPlayerState.LIVE;
 
         ThisGameIsEnd = false;
+        ItemCount = 0;
 
         // 네트워크 트래픽 최적화 변수 초기화
         _nextBroadcastTime = 0;
@@ -205,6 +210,61 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         AutoFade.LoadLevel("MultiPlayScene", 0.2f, 0.2f, Color.black);
     }
 
+    // GPGSManager(서버)에서 받은 메시지를 매니저에게 줄때 사용한다.
+    // [서버]->[클라이언트]
+    #region GPGS_CallBack_Interface
+    // 끝내기 메시지를 보내주는 녀석이다.
+    public void FinishedReceived(string participantId, bool GameOver)
+    {
+        if (_multiplayerReady)
+        {
+            MulEnemy opponent = _opponentScripts[participantId];
+
+            if (opponent != null)
+            {
+                opponent.SetEndGameInformation(GameOver);
+            }
+
+            ThisGameIsEnd = GameOver;
+        }
+
+        
+    }
+
+    // 업데이트를 해줄 정보들...
+    public void UpdatePositionReceived(string participantId, float posX, float posY, float posZ, float rotY)
+    {
+        if (_multiplayerReady)
+        {
+            MulEnemy opponent = _opponentScripts[participantId];
+
+            if (opponent != null)
+            {
+                opponent.SetTransformInformation(posX, posY, posZ, rotY);
+            }
+        }
+
+    }
+
+    // 아이템들의 정보들을 업데이트 해준다.
+    public void ItemStateReceived(int Index, bool GetItem)
+    {
+        if (_multiplayerReady)
+        {
+            ItemCount++;
+            
+        }
+    }
+
+    // 게임이 끝날시 호출되는 리스너 함수.
+    public void LeftRoomConfirmed()
+    {
+        GPGSManager.GetInstance.updateListener = null;
+
+        //AutoFade.LoadLevel("MainTitle", 0.2f, 0.2f, Color.black);
+        ThisGameIsEnd = true;
+    }
+
     // 타임 아웃 체크
     void CheckForTimeOuts()
     {
@@ -232,6 +292,36 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 PlayerLeftRoom(participantId);
             }
         }
+    }
+
+    // 게임을 임의적으로 종료됬을때 호출되는 리스너 함수
+    // 주로 강제 종료될때 호출된다.
+    public void PlayerLeftRoom(string participantId)
+    {
+        if (_multiplayerReady)
+        {
+            MulEnemy opponent = _opponentScripts[participantId];
+
+            if (opponent != null)
+            {
+                opponent.GameOutInformation();
+            }
+
+            ThisGameIsEnd = true;
+        }
+    }
+
+
+
+    #endregion GPGS_CallBack_Interface
+
+    // 다른 스크립트에서 서버로 보낼 메시지를 호출하고 싶을때 보낼 콜 함수들...
+    #region Call_Function
+
+    // 아이템을 먹을시 이것을 GPGSManager의 아이템 메시지 함수를 호출해준다.
+    public void CallSendItemStateMessage()
+    {
+        GPGSManager.GetInstance.SendItemStateMessage(0, true);
     }
 
     // 자신의 위치를 서버에 전송한다.
@@ -267,73 +357,10 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         GPGSManager.GetInstance.SendFinishMessage(ThisGameIsEnd);
 
-        
-    }
-
-    // 끝내기 메시지를 보내주는 녀석이다.
-    public void FinishedReceived(string participantId, bool GameOver)
-    {
-        if (_multiplayerReady)
-        {
-            MulEnemy opponent = _opponentScripts[participantId];
-
-            if (opponent != null)
-            {
-                opponent.SetEndGameInformation(GameOver);
-            }
-
-            ThisGameIsEnd = GameOver;
-        }
-
-        
-    }
-
-    // 업데이트를 해줄 정보들...
-    public void UpdatePositionReceived(string participantId, float posX, float posY, float posZ, float rotY)
-    {
-        if (_multiplayerReady)
-        {
-            MulEnemy opponent = _opponentScripts[participantId];
-
-            if (opponent != null)
-            {
-                opponent.SetTransformInformation(posX, posY, posZ, rotY);
-            }
-        }
 
     }
 
-    // 게임이 끝날시 호출되는 리스너 함수.
-    public void LeftRoomConfirmed()
-    {
-        GPGSManager.GetInstance.updateListener = null;
-
-        //AutoFade.LoadLevel("MainTitle", 0.2f, 0.2f, Color.black);
-        ThisGameIsEnd = true;
-    }
-
-    // 게임을 임의적으로 종료됬을때 호출되는 리스너 함수
-    // 주로 강제 종료될때 호출된다.
-    public void PlayerLeftRoom(string participantId)
-    {
-        if (_multiplayerReady)
-        {
-            MulEnemy opponent = _opponentScripts[participantId];
-
-            if (opponent != null)
-            {
-                opponent.GameOutInformation();
-            }
-
-            ThisGameIsEnd = true;
-        }
-    }
-
-    //public void LeaveGame()
-    //{
-    //    GPGSManager.GetInstance.LeaveGame();
-    //}
-
+    #endregion Call_Function
 
     // Update is called once per frame
     void Update ()
@@ -360,7 +387,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             MyInfoText.text = "Player Info : " + MyCharacterPos;
             EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos;
             NetText.text = "Enemy Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
-
+            ItemGetCount.text = "ItemCount : " + ItemCount;
 
         }
         else
@@ -377,7 +404,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             MyInfoText.text = "Player Info : " + MyCharacterPos;
             EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos;
             NetText.text = "Enemy Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
-
+            ItemGetCount.text = "ItemCount : " + ItemCount;
         }
 
         // 적의 타임아웃 체크
