@@ -89,9 +89,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     // 타임 아웃 정보
     [HideInInspector]
-    public float timeOutThreshold = 5.0f;
-    private float _timeOutCheckInterval = 1.0f;
-    private float _nextTimeoutCheck = 0.0f;
+    public float timeOutThreshold;
+    private float _timeOutCheckInterval;
+    private float _nextTimeoutCheck;
 
 
     // Use this for initialization
@@ -108,7 +108,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         _nextBroadcastTime = 0;
 
         // 타임 아웃 정보 초기화
-        timeOutThreshold = 10.0f;
+        timeOutThreshold = 20.0f;
         _timeOutCheckInterval = 1.0f;
         _nextTimeoutCheck = 0.0f;
 
@@ -213,6 +213,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // GPGSManager(서버)에서 받은 메시지를 매니저에게 줄때 사용한다.
     // [서버]->[클라이언트]
     #region GPGS_CallBack_Interface
+
     // 끝내기 메시지를 보내주는 녀석이다.
     public void FinishedReceived(string participantId, bool GameOver)
     {
@@ -232,7 +233,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     }
 
     // 업데이트를 해줄 정보들...
-    public void UpdatePositionReceived(string participantId, float posX, float posY, float posZ, float rotY)
+    public void UpdatePositionReceived(string participantId, int messageNum, float posX, float posY, float posZ, float rotY)
     {
         if (_multiplayerReady)
         {
@@ -240,7 +241,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             if (opponent != null)
             {
-                opponent.SetTransformInformation(posX, posY, posZ, rotY);
+                opponent.SetTransformInformation(messageNum, posX, posY, posZ, rotY);
             }
         }
 
@@ -319,9 +320,18 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     #region Call_Function
 
     // 아이템을 먹을시 이것을 GPGSManager의 아이템 메시지 함수를 호출해준다.
+    // 사실상 이건 테스트 용이니 다른걸...
     public void CallSendItemStateMessage()
     {
         GPGSManager.GetInstance.SendItemStateMessage(0, true);
+    }
+
+    // 아이템을 먹을시 이것을 GPGSManager의 아이템 메시지 함수를 호출해준다.
+    // Index = 메모리 풀을 만들었을때 호출될 아이템 인덱스 값
+    // ItemGetOn = true일시 아이템을 먹었다고 판단하고 메시지를 전부 보내준다.
+    public void CallSendItemStateMessage(int index, bool ItemGetOn)
+    {
+        GPGSManager.GetInstance.SendItemStateMessage(index, ItemGetOn);
     }
 
     // 자신의 위치를 서버에 전송한다.

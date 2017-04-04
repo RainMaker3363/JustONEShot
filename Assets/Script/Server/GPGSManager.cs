@@ -14,12 +14,18 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private uint gameVariation = 0;
     private byte _protocolVersion = 1;
 
-    // Byte + Byte + 3 floats for position  + 1 float for rotY
-    private int _updateMessageLength = 18;
+    // Byte + Byte + 3 floats for position  + 1 float for rotY + 1 Interget for MessageNumber
+    private int _updateMessageLength = 22;
     // Byte + Byte + 1 boolen for finish Game
     private int _finishMessageLength = 3;
     // Byte + Byte + 1 boolen for Item State + 1 Interger
     private int _itemStateMessageLength = 7;
+
+    // 메시지 도착 순서를 제어할 변수
+    // 네트워크 도착 순서가 무작위로 된다면 동기화가 이상하게 될 가능성이 있기에
+    // 이것을 보정해줄 변수이다.
+    private int _myMessageNum;
+
     private List<byte> _updateMessage;
     private List<byte> _endMessage;
     private List<byte> _itemstateMessage;
@@ -62,7 +68,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             _itemstateMessage  = new List<byte>(_itemStateMessageLength);
         }
-        
+
+        _myMessageNum = 0;
     }
 
     // P2P 방식으로 상대방을 검색하기 시작한다.
@@ -147,6 +154,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             ShowMPStatus("We are connected to the room! I would probably start our game now.");
             IsConnectedOn = true;
+            _myMessageNum = 0;
         }
         else
         {
@@ -281,11 +289,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // X, Y, Z, Rotation Y 값..
     public void SendMyPositionUpdate(float posX, float posY, float posZ, float rotY)
     {
-
-
         _updateMessage.Clear();
         _updateMessage.Add(_protocolVersion);
         _updateMessage.Add((byte)'U');
+        _updateMessage.AddRange(System.BitConverter.GetBytes(++_myMessageNum));
         _updateMessage.AddRange(System.BitConverter.GetBytes(posX));
         _updateMessage.AddRange(System.BitConverter.GetBytes(posY));
         _updateMessage.AddRange(System.BitConverter.GetBytes(posZ));
@@ -366,10 +373,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         //if (messageType == 'U' && data.Length == _updateMessageLength)
         if (messageType == 'U')
         {
-            float posX = System.BitConverter.ToSingle(data, 2);
-            float posY = System.BitConverter.ToSingle(data, 6);
-            float posZ = System.BitConverter.ToSingle(data, 10);
-            float rotY = System.BitConverter.ToSingle(data, 14);
+            int messageNum = System.BitConverter.ToInt32(data, 2);
+            float posX = System.BitConverter.ToSingle(data, 6);
+            float posY = System.BitConverter.ToSingle(data, 10);
+            float posZ = System.BitConverter.ToSingle(data, 14);
+            float rotY = System.BitConverter.ToSingle(data, 18);
             //float rotZ = System.BitConverter.ToSingle(data, 18);
             Debug.Log("Player " + senderId + " is at (" + posX + ", " + posY + ") rotation " + rotY);
 
@@ -379,7 +387,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
             if (updateListener != null)
             {
-                updateListener.UpdatePositionReceived(senderId, posX, posY, posZ, rotY);
+                updateListener.UpdatePositionReceived(senderId, messageNum, posX, posY, posZ, rotY);
             }
 
         }

@@ -15,6 +15,9 @@ public class MulEnemy : MonoBehaviour {
     private float _timePerUpdate = 0.16f;
     private float pctDone;
 
+    // 메시지 순서를 알아낼 변수
+    private int _lastMessageNum;
+
     // 게임 끝의 여부
     public bool GameEndOn;
 
@@ -24,6 +27,8 @@ public class MulEnemy : MonoBehaviour {
         GameEndOn = false;
 
         _lastUpdateTime = Time.time;
+
+        _lastMessageNum = 0;
 
         // 0.16초마다 적의 위치를 갱신시켜 준다.
         _timePerUpdate = 0.16f;
@@ -58,8 +63,16 @@ public class MulEnemy : MonoBehaviour {
     }
 
     // 적의 위치값을 갱신시켜 준다.
-    public void SetTransformInformation(float posX, float posY, float posZ, float rotY)
+    public void SetTransformInformation(int messageNum, float posX, float posY, float posZ, float rotY)
     {
+        if (messageNum <= _lastMessageNum)
+        {
+            // Discard any out of order messages
+            return;
+        }
+        
+        _lastMessageNum = messageNum;
+
         _startPos = this.transform.position;
         _startRot = this.transform.rotation;
 
