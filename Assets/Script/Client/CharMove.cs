@@ -43,6 +43,8 @@ public class CharMove : MonoBehaviour {
 
     public Camera cam;
     private Vector3 CamPos;
+    public Transform CamLook;
+    public GameObject DeadEyeUI;
 
     // 플레이어의 움직임
     private float m_MoveSpeed;
@@ -61,13 +63,18 @@ public class CharMove : MonoBehaviour {
 
     //캐릭터 stat
     int Stamina = 1000;
+    [SerializeField]
+    int HP = 100;
 
 
     //스테미나가 전부 소모된 상태
     bool m_Exhausted = false;
 
-    //총 쐈는지 여부
-    //bool GunFire = false;
+   static bool DeadEyeStart = false;
+   public static bool DeadEyeEnd = false;
+ 
+    
+    public Transform EnemyPos;  //  적 캐릭터 위치 추후변경예상
 
     void Awake()
     {
@@ -96,7 +103,7 @@ public class CharMove : MonoBehaviour {
             default:
                 break;
         }
-
+        
         // 플레이어 이동 방향 초기화
         m_MoveVector = Vector3.zero;
         m_MoveSpeed = 2.0f;
@@ -110,7 +117,9 @@ public class CharMove : MonoBehaviour {
         // Debug.Log("VectorForce: " + m_MoveJoyStickControl.GetVectorForce());
         Debug.Log("PlayerState: " + m_PlayerState);
 
-        if (m_PlayerState != LSD.PlayerState.REROAD && m_ShotJoyStickControl.GetTouch())
+        DeadEyeCheck();
+
+        if (m_PlayerState != LSD.PlayerState.REROAD && m_PlayerState != LSD.PlayerState.DAMAGE && m_ShotJoyStickControl.GetTouch())
         {
             //    if(m_PlayerState != LSD.PlayerState.SHOT_FIRE)        
             m_PlayerState = LSD.PlayerState.SHOT_READY;
@@ -159,16 +168,16 @@ public class CharMove : MonoBehaviour {
                     Update_SHOT_FIRE();
                     break;
                 }
-            //case LSD.PlayerState.DAMAGE:
-            //    {
-            //        Update_DAMAGE();
-            //        break;
-            //    }
-            //case LSD.PlayerState.DEADEYE:
-            //    {
-            //        Update_DEADEYE();
-            //        break;
-            //    }
+            case LSD.PlayerState.DAMAGE:
+                {
+                    Update_DAMAGE();
+                    break;
+                }
+            case LSD.PlayerState.DEADEYE:
+                {
+                    Update_DEADEYE();
+                    break;
+                }
             case LSD.PlayerState.REROAD:
                 {
                    // anim.Play("Reloading");
@@ -311,15 +320,22 @@ public class CharMove : MonoBehaviour {
         }
     }
 
-    //void Update_DAMAGE()
-    //{
+    void Update_DAMAGE()
+    {
+       if(!anim.GetBool("Damaged"))
+        {
+            m_PlayerState = LSD.PlayerState.IDLE;
+        }
+    }
 
-    //}
-
-    //void Update_DEADEYE()
-    //{
-
-    //}
+    void Update_DEADEYE()
+    {
+        if(DeadEyeEnd)
+        {
+            DeadEyeEnd = false;
+            m_PlayerState = LSD.PlayerState.IDLE;
+        }
+    }
 
     void Update_REROAD()
     {
@@ -348,7 +364,41 @@ public class CharMove : MonoBehaviour {
         }
     }
 
+    public void Damaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
+    {
+        
+        anim.SetTrigger("Damage");
+        anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+        HP -= Damage;
+        Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
+        DamageVec.y = 0; //위아래로는 움직이지 않게합니다
+        transform.rotation = Quaternion.LookRotation(DamageVec);
+        m_PlayerState = LSD.PlayerState.DAMAGE;
+    }
 
+    public static void DeadEye()    //데드아이 총알을 먹었을경우
+    {
+        DeadEyeStart = true;
+        
+    }
+
+    public void DeadEyeCheck()
+    {
+        if(DeadEyeStart)
+        {
+            transform.LookAt(EnemyPos.position);
+            anim.SetInteger("DashLevel", 0);
+            m_PlayerState = LSD.PlayerState.DEADEYE;
+            anim.SetTrigger("DeadEye");
+
+            DeadEyeStart = false;
+        }
+    }
+
+    //public void DeadEyeUIOn()
+    //{
+    //   DeadEyeUI.SetActive(true);
+    //}
 
     void FixedUpdate()
     {
@@ -454,7 +504,7 @@ public class CharMove : MonoBehaviour {
     }
     void FixedUpdate_DEADEYE()
     {
-
+        cam.transform.position = CamPos + CamLook.transform.position;
     }
     void FixedUpdate_REROAD()
     {
