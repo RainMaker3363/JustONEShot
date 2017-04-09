@@ -76,6 +76,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public GameObject EnemyCharacterPos;
     private Dictionary<string, MulEnemy> _opponentScripts;
 
+    // 상대방이 갖고 있을 애니메이션 값
+    private LSD.PlayerState m_state;
+
     private bool _multiplayerReady = false;
     private string _MyParticipantId;
     private string _EnemyParticipantId;
@@ -257,6 +260,123 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         }
     }
 
+    // 사격 상태를 업데이트 해준다.
+    // x,y,z는 총알의 방향벡터를 의미
+    public void ShootStateReceived(float x, float y, float z)
+    {
+        if (_multiplayerReady)
+        {
+
+        }
+    }
+
+    // 현재 데드아이 상태를 업데이트 해준다.
+    // true면 데드 아이 발동을 의미
+    public void DeadEyeStateReceived(bool DeadEyeOn)
+    {
+        if (_multiplayerReady)
+        {
+
+        }
+    }
+
+    // 현재 애니메이션 상태 값을 갱신 시켜준다.
+    // AniState의 값을 다시 변환 시켜서 넘겨준다.
+    public void AniStateReceived(int AniState)
+    {
+        //플레이어 상태
+        //enum PlayerState
+        //{
+        //    IDLE,
+        //    DASH_SLOW,
+        //    DASH_SOFT,
+        //    DASH_HARD,
+        //    SHOT_READY,
+        //    SHOT_FIRE,
+        //    DAMAGE,
+        //    DEADEYE,
+        //    REROAD
+        //}
+
+        ////총 상태(추후 추가)
+        //enum GunState
+        //{
+        //    Revolver=0,
+        //    ShotGun
+        //}
+
+        switch(AniState)
+        {
+            // IDLE
+            case 0:
+                {
+                    m_state = LSD.PlayerState.IDLE;
+                }
+                break;
+
+            // DASH_SLOW
+            case 1:
+                {
+                    m_state = LSD.PlayerState.DASH_SLOW;
+                }
+                break;
+            
+            // DASH_SOFT
+            case 2:
+                {
+                    m_state = LSD.PlayerState.DASH_SOFT;
+                }
+                break;
+
+                // DASH_HARD
+            case 3:
+                {
+                    m_state = LSD.PlayerState.DASH_HARD;
+                }
+                break;
+
+            // SHOT_READY
+            case 4:
+                {
+                    m_state = LSD.PlayerState.SHOT_READY;
+                }
+                break;
+
+                // SHOOT_FIRE
+            case 5:
+                {
+                    m_state = LSD.PlayerState.SHOT_FIRE;
+                }
+                break;
+
+                // DAMEGE
+            case 6:
+                {
+                    m_state = LSD.PlayerState.DAMAGE;
+                }
+                break;
+
+                // DEADEYE
+            case 7:
+                {
+                    m_state = LSD.PlayerState.DEADEYE;
+                }
+                break;
+
+                // REROAD
+            case 8:
+                {
+                    m_state = LSD.PlayerState.REROAD;
+                }
+                break;
+        }
+
+        if (_multiplayerReady)
+        {
+
+        }
+    }
+
     // 게임이 끝날시 호출되는 리스너 함수.
     public void LeftRoomConfirmed()
     {
@@ -394,9 +514,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             //PlayerName.gameObject.transform.position = new Vector3(MyCharacter.transform.position.x, MyCharacter.transform.position.y + 0.4f, MyCharacter.transform.position.z);
             //EnemyName.gameObject.transform.position = new Vector3(EnemyCharacter.transform.position.x, EnemyCharacter.transform.position.y + 0.4f, EnemyCharacter.transform.position.z);
 
-            MyInfoText.text = "Player Info : " + MyCharacterPos;
-            EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos;
-            NetText.text = "Enemy Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
+            MyInfoText.text = "Player Info : " + MyCharacterPos.transform.position;
+            EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.transform.position;
+            NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
             ItemGetCount.text = "ItemCount : " + ItemCount;
 
         }
@@ -413,7 +533,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             MyInfoText.text = "Player Info : " + MyCharacterPos;
             EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos;
-            NetText.text = "Enemy Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
+            NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
             ItemGetCount.text = "ItemCount : " + ItemCount;
         }
 

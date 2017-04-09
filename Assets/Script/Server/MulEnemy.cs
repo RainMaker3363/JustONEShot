@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class MulEnemy : MonoBehaviour {
 
-    // 적의 위치와 회전값을 보간해주기 위한 정보들..
+    // 상대방의 위치와 회전값을 보간해주기 위한 정보들..
     private Vector3 _startPos;
     private Vector3 _destinationPos;
     private Quaternion _startRot;
     private Quaternion _destinationRot;
 
-    // 적의 정보를 보간시켜주기 위해 필요한 정보들..
+
+
+    // 상대방의 정보를 보간시켜주기 위해 필요한 정보들..
     private float _lastUpdateTime;
     private float _timePerUpdate = 0.16f;
     private float pctDone;

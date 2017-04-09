@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class MulChar : MonoBehaviour {
 
     public Camera cam;
@@ -11,6 +12,8 @@ public class MulChar : MonoBehaviour {
     public MoveJoyStick m_MoveJoyStickControl;  //움직임 전용 조이스틱
     private float m_MoveSpeed = 4.5f;
     private float MoveDir;
+
+    private int ps;
 
     // Use this for initialization
     void Start () {
@@ -23,6 +26,7 @@ public class MulChar : MonoBehaviour {
         {
             m_CharCtr = GetComponent<CharacterController>();
         }
+
     }
 	
 	// Update is called once per frame

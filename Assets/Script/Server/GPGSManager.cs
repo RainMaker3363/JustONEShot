@@ -20,6 +20,12 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private int _finishMessageLength = 3;
     // Byte + Byte + 1 boolen for Item State + 1 Interger
     private int _itemStateMessageLength = 7;
+    // Byte + Byte + 1 Vector
+    private int _shootMessageLength = 14;
+    // Byte + Byte + 1 Boolean
+    private int _deadeyeMessageLength = 3;
+    // Byte + Byte + 1 Interger
+    private int _animMessageLength = 6;
 
     // 메시지 도착 순서를 제어할 변수
     // 네트워크 도착 순서가 무작위로 된다면 동기화가 이상하게 될 가능성이 있기에
@@ -29,6 +35,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private List<byte> _updateMessage;
     private List<byte> _endMessage;
     private List<byte> _itemstateMessage;
+    private List<byte> _ShootMessage;
+    private List<byte> _DeadEyeMessage;
+    private List<byte> _AnimMessage;
 
     private bool IsConnectedOn = false;
     private bool showingWaitingRoom = false;
@@ -67,6 +76,21 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if(_itemstateMessage == null)
         {
             _itemstateMessage  = new List<byte>(_itemStateMessageLength);
+        }
+
+        if (_ShootMessage == null)
+        {
+            _ShootMessage = new List<byte>(_shootMessageLength);
+        }
+
+        if (_DeadEyeMessage == null)
+        {
+            _DeadEyeMessage = new List<byte>(_deadeyeMessageLength);
+        }
+
+        if (_AnimMessage == null)
+        {
+            _AnimMessage = new List<byte>(_animMessageLength);
         }
 
         _myMessageNum = 0;
@@ -113,8 +137,35 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
     public void InitMessager()
     {
-        _updateMessage = new List<byte>(_updateMessageLength);
-        _endMessage = new List<byte>(_finishMessageLength);
+        if (_updateMessage == null)
+        {
+            _updateMessage = new List<byte>(_updateMessageLength);
+        }
+
+        if (_endMessage == null)
+        {
+            _endMessage = new List<byte>(_finishMessageLength);
+        }
+
+        if (_itemstateMessage == null)
+        {
+            _itemstateMessage = new List<byte>(_itemStateMessageLength);
+        }
+
+        if (_ShootMessage == null)
+        {
+            _ShootMessage = new List<byte>(_shootMessageLength);
+        }
+
+        if (_DeadEyeMessage == null)
+        {
+            _DeadEyeMessage = new List<byte>(_deadeyeMessageLength);
+        }
+
+        if (_AnimMessage == null)
+        {
+            _AnimMessage = new List<byte>(_animMessageLength);
+        }
     }
 
     public List<byte> GetUpdateMessage()
@@ -306,25 +357,6 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         //PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, messageToSend);
     }
 
-    //public void SendMyUpdate(string senderId, float posX, float posY, Vector2 velocity, float rotZ)
-    //{
-    //    _updateMessage.Clear();
-    //    _updateMessage.Add(_protocolVersion);
-    //    _updateMessage.Add((byte)'U');
-    //    _updateMessage.AddRange(System.BitConverter.GetBytes(posX));
-    //    _updateMessage.AddRange(System.BitConverter.GetBytes(posY));
-    //    _updateMessage.AddRange(System.BitConverter.GetBytes(velocity.x));
-    //    _updateMessage.AddRange(System.BitConverter.GetBytes(velocity.y));
-    //    _updateMessage.AddRange(System.BitConverter.GetBytes(rotZ));
-    //    byte[] messageToSend = _updateMessage.ToArray();
-
-    //    SendMessage = ByteToString(messageToSend);
-
-    //    Debug.Log("Sending my update message  " + messageToSend + " to all players in the room");
-
-    //    PlayGamesPlatform.Instance.RealTime.SendMessage(false, senderId, messageToSend);
-    //}
-
     // 게임이 끝났을때 보내지는 메시지
 
     public void SendFinishMessage(bool GameEnd)
@@ -358,6 +390,63 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         Debug.Log("Sending my update message  " + ItemStateMessageToSend + " to all players in the room");
 
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, ItemStateMessageToSend);
+    }
+
+    // 상대방 애니메이션 상태값을 보내는 메시지
+    public void SendAniStateMessage(int State)
+    {
+        _AnimMessage.Clear();
+        _AnimMessage.Add(_protocolVersion);
+        _AnimMessage.Add((byte)'A');
+        _AnimMessage.AddRange(System.BitConverter.GetBytes(State));
+
+        byte[] AniStateMessageToSend = _AnimMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, AniStateMessageToSend);
+    }
+
+    // 상대방 총알의 궤도를 보내는 메시지
+    public void SendShootMessage(float x, float y, float z)
+    {
+        _ShootMessage.Clear();
+        _ShootMessage.Add(_protocolVersion);
+        _ShootMessage.Add((byte)'S');
+        _ShootMessage.AddRange(System.BitConverter.GetBytes(x));
+        _ShootMessage.AddRange(System.BitConverter.GetBytes(y));
+        _ShootMessage.AddRange(System.BitConverter.GetBytes(z));
+
+        byte[] ShotMessageToSend = _ShootMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, ShotMessageToSend);
+    }
+
+    // 상대방 총알의 궤도를 보내는 메시지
+    // 
+    public void SendShootMessage(Vector3 vec)
+    {
+        _ShootMessage.Clear();
+        _ShootMessage.Add(_protocolVersion);
+        _ShootMessage.Add((byte)'S');
+        _ShootMessage.AddRange(System.BitConverter.GetBytes(vec.x));
+        _ShootMessage.AddRange(System.BitConverter.GetBytes(vec.y));
+        _ShootMessage.AddRange(System.BitConverter.GetBytes(vec.z));
+
+        byte[] ShotMessageToSend = _ShootMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, ShotMessageToSend);
+    }
+
+    // 데드아이 상태값을 보내는 메시지
+    public void SendDeadEyeMessage(bool DeadEyeOn)
+    {
+        _DeadEyeMessage.Clear();
+        _DeadEyeMessage.Add(_protocolVersion);
+        _DeadEyeMessage.Add((byte)'D');
+        _DeadEyeMessage.AddRange(System.BitConverter.GetBytes(DeadEyeOn));
+
+        byte[] DeadEyeMessageToSend = _DeadEyeMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, DeadEyeMessageToSend);
     }
 
     // 상대 ID로부터 메시지를 받았을때 호출되는 리스너 함수
@@ -419,6 +508,50 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                 updateListener.ItemStateReceived(0, ItemGet);
             }
         }
+        else if(messageType == 'S')
+        {
+            float shoot_x = System.BitConverter.ToSingle(data, 2);
+            float shoot_y = System.BitConverter.ToSingle(data, 6);
+            float shoot_z = System.BitConverter.ToSingle(data, 10);
+
+            Debug.Log("Item Get");
+
+            ReceiveMessage = ByteToString(data);
+
+            if (updateListener != null)
+            {
+                //updateListener.ItemStateReceived(Index, ItemGet);
+                updateListener.ShootStateReceived(shoot_x, shoot_y, shoot_z);
+            }
+        }
+        else if(messageType == 'D')
+        {
+            bool DeadEyeActive = System.BitConverter.ToBoolean(data, 2);
+
+            Debug.Log("Item Get");
+
+            ReceiveMessage = ByteToString(data);
+
+            if (updateListener != null)
+            {
+                //updateListener.ItemStateReceived(Index, ItemGet);
+                updateListener.DeadEyeStateReceived(DeadEyeActive);
+            }
+        }
+        else if(messageType == 'A')
+        {
+            int AniStateNumber = System.BitConverter.ToInt32(data, 2);
+
+            Debug.Log("Item Get");
+
+            ReceiveMessage = ByteToString(data);
+
+            if (updateListener != null)
+            {
+                //updateListener.ItemStateReceived(Index, ItemGet);
+                updateListener.AniStateReceived(AniStateNumber);
+            }
+        }
     }
 
     // GPGS를 로그인 합니다.
@@ -437,6 +570,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         return PlayGamesPlatform.Instance.RealTime.GetSelf().ParticipantId;
     }
 
+    // 방을 나갈때 호출해주면
+    // 현재 멀티 플레이가 되고 있는 게임이 끝나게 된다.
     public void LeaveGame()
     {
         PlayGamesPlatform.Instance.RealTime.LeaveRoom();
