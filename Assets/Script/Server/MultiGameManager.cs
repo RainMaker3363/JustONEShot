@@ -74,7 +74,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 적의 정보
     public GameObject EnemyCharacter;
     public GameObject EnemyCharacterPos;
-    private Dictionary<string, MulEnemy> _opponentScripts;
+    private Dictionary<string, EnemyMove> _opponentScripts;
 
     // 상대방이 갖고 있을 애니메이션 값
     private LSD.PlayerState m_state;
@@ -128,7 +128,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         // 2
         List<Participant> allPlayers = GPGSManager.GetInstance.GetAllPlayers();
-        _opponentScripts = new Dictionary<string, MulEnemy>(allPlayers.Count - 1);
+        _opponentScripts = new Dictionary<string, EnemyMove>(allPlayers.Count - 1);
 
         for (int i = 0; i < allPlayers.Count; i++)
         {
@@ -157,7 +157,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     EnemyCharacter = GameObject.Find("Enemy");
                     EnemyCharacter.transform.position = EnemyCharacterPos.transform.position;
 
-                    MulEnemy opponentScript = EnemyCharacter.GetComponent<MulEnemy>();
+                    EnemyMove opponentScript = EnemyCharacter.GetComponent<EnemyMove>();
                     _EnemyParticipantId = nextParticipantId;
                     _opponentScripts[nextParticipantId] = opponentScript;
 
@@ -166,7 +166,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 {
                     EnemyCharacter.transform.position = EnemyCharacterPos.transform.position;
 
-                    MulEnemy opponentScript = EnemyCharacter.GetComponent<MulEnemy>();
+                    EnemyMove opponentScript = EnemyCharacter.GetComponent<EnemyMove>();
                     _EnemyParticipantId = nextParticipantId;
                     _opponentScripts[nextParticipantId] = opponentScript;
                 }
@@ -222,7 +222,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         if (_multiplayerReady)
         {
-            MulEnemy opponent = _opponentScripts[participantId];
+            EnemyMove opponent = _opponentScripts[participantId];
 
             if (opponent != null)
             {
@@ -240,7 +240,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         if (_multiplayerReady)
         {
-            MulEnemy opponent = _opponentScripts[participantId];
+            EnemyMove opponent = _opponentScripts[participantId];
 
             if (opponent != null)
             {
@@ -272,6 +272,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     // 현재 데드아이 상태를 업데이트 해준다.
     // true면 데드 아이 발동을 의미
+    // false면 데드 아이 발동이 끝남 혹은 안됨..
     public void DeadEyeStateReceived(bool DeadEyeOn)
     {
         if (_multiplayerReady)
@@ -488,6 +489,129 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         GPGSManager.GetInstance.SendFinishMessage(ThisGameIsEnd);
 
 
+    }
+
+    // 총알 발사 방향 벡터를 보내줘야 한다
+    // x, y, z를 보낸 함수..
+    public void SendShootMessage(float x, float y, float z)
+    {
+        GPGSManager.GetInstance.SendShootMessage(x, y, z);
+    }
+
+    // 총알 발사 방향 벡터를 보내줘야 한다
+    // Vector3를 보낸 함수..
+    public void SendShootMessage(Vector3 BulletDirVec)
+    {
+        GPGSManager.GetInstance.SendShootMessage(BulletDirVec);
+    }
+
+    // 데드 아이 메시지를 보낸다.
+    // true일 경우 DeadEye 시작
+    public void SendDeadEyeMessage(bool DeadEyeOn)
+    {
+        GPGSManager.GetInstance.SendDeadEyeMessage(DeadEyeOn);
+    }
+
+    // 애니메이션 값을 넣어준다.
+    // int값으로 바꿔줘야 한다
+    public void SendAniStateMessage(int AniStateNumber)
+    {
+        if (AniStateNumber <= 0)
+        {
+            //AniStateNumber = 0;
+            GPGSManager.GetInstance.SendAniStateMessage(0);
+        }
+        else if(AniStateNumber >= 8)
+        {
+            GPGSManager.GetInstance.SendAniStateMessage(8);
+        }
+        else
+        {
+            GPGSManager.GetInstance.SendAniStateMessage(AniStateNumber);
+        }
+        
+    }
+
+    // 애니메이션 값을 넣어준다.
+    // int값으로 바꿔줘야 한다
+    public void SendAniStateMessage(LSD.PlayerState AniState)
+    {
+        switch (AniState)
+        {
+            // IDLE
+            case LSD.PlayerState.IDLE:
+                {
+                    //m_state = LSD.PlayerState.IDLE;
+                    GPGSManager.GetInstance.SendAniStateMessage(0);
+                }
+                break;
+
+            // DASH_SLOW
+            case LSD.PlayerState.DASH_SLOW:
+                {
+                    //m_state = LSD.PlayerState.DASH_SLOW;
+                    GPGSManager.GetInstance.SendAniStateMessage(1);
+                }
+                break;
+
+            // DASH_SOFT
+            case LSD.PlayerState.DASH_SOFT:
+                {
+                    //m_state = LSD.PlayerState.DASH_SOFT;
+                    GPGSManager.GetInstance.SendAniStateMessage(2);
+                }
+                break;
+
+            // DASH_HARD
+            case LSD.PlayerState.DASH_HARD:
+                {
+                    //m_state = LSD.PlayerState.DASH_HARD;
+                    GPGSManager.GetInstance.SendAniStateMessage(3);
+                }
+                break;
+
+            // SHOT_READY
+            case LSD.PlayerState.SHOT_READY:
+                {
+                    //m_state = LSD.PlayerState.SHOT_READY;
+                    GPGSManager.GetInstance.SendAniStateMessage(4);
+                }
+                break;
+
+            // SHOOT_FIRE
+            case LSD.PlayerState.SHOT_FIRE:
+                {
+                    //m_state = LSD.PlayerState.SHOT_FIRE;
+                    GPGSManager.GetInstance.SendAniStateMessage(5);
+                }
+                break;
+
+            // DAMEGE
+            case LSD.PlayerState.DAMAGE:
+                {
+                    //m_state = LSD.PlayerState.DAMAGE;
+                    GPGSManager.GetInstance.SendAniStateMessage(6);
+                }
+                break;
+
+            // DEADEYE
+            case LSD.PlayerState.DEADEYE:
+                {
+                    //m_state = LSD.PlayerState.DEADEYE;
+                    GPGSManager.GetInstance.SendAniStateMessage(7);
+                }
+                break;
+
+            // REROAD
+            case LSD.PlayerState.REROAD:
+                {
+                    //m_state = LSD.PlayerState.REROAD;
+                    GPGSManager.GetInstance.SendAniStateMessage(8);
+                }
+                break;
+        }
+
+        
     }
 
     #endregion Call_Function
