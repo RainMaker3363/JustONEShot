@@ -58,6 +58,8 @@ public class CharMove : MonoBehaviour {
     LSD.PlayerState m_PlayerState;
     LSD.GunState m_GunState;
 
+    public int m_DebugPlayerState;
+
     //캐릭터 총
     public static UseGun m_UseGun;
 
@@ -75,6 +77,8 @@ public class CharMove : MonoBehaviour {
  
     
     public Transform EnemyPos;  //  적 캐릭터 위치 추후변경예상
+
+    public MultiGameManager Mul_Manager;
 
     void Awake()
     {
@@ -109,11 +113,12 @@ public class CharMove : MonoBehaviour {
         m_MoveSpeed = 2.0f;
         m_PlayerDir = Vector3.zero;
         m_PlayerPosBack = Vector3.zero;
+        StartCoroutine(ServerUpdate());
     }
 
     // Update is called once per frame
     void Update() {
-
+        m_DebugPlayerState = (int)m_PlayerState;
         // Debug.Log("VectorForce: " + m_MoveJoyStickControl.GetVectorForce());
         Debug.Log("PlayerState: " + m_PlayerState);
 
@@ -573,6 +578,17 @@ public class CharMove : MonoBehaviour {
 
         GUI.Label(Bulletrect, Bullettext, style);
     }
-
+    
+    IEnumerator ServerUpdate()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(0.16f);
+            if (Mul_Manager == true)
+            {
+                Mul_Manager.SendAniStateMessage((int)m_PlayerState);
+            }
+        }
+    }
   
 }

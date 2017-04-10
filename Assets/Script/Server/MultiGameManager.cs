@@ -142,7 +142,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 // 4
                 if (MyCharacter == null)
                 {
-                    MyCharacter = GameObject.Find("Player");
+                    MyCharacter = GameObject.Find("Character");
                     MyCharacter.transform.position = MyCharacterPos.transform.position;
                 }
                 else
@@ -154,7 +154,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             {
                 if (EnemyCharacter == null)
                 {
-                    EnemyCharacter = GameObject.Find("Enemy");
+                    EnemyCharacter = GameObject.Find("Enemy_Character");
                     EnemyCharacter.transform.position = EnemyCharacterPos.transform.position;
 
                     EnemyMove opponentScript = EnemyCharacter.GetComponent<EnemyMove>();
@@ -255,8 +255,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         if (_multiplayerReady)
         {
-            ItemCount++;
-            
+            // 아이템 처리를 해주세요...
         }
     }
 
@@ -266,7 +265,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         if (_multiplayerReady)
         {
+            EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
 
+            if (opponent != null)
+            {
+                //opponent.SetShootStateReceived(x, y, z);
+            }
         }
     }
 
@@ -277,7 +281,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         if (_multiplayerReady)
         {
+            EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
 
+            if (opponent != null)
+            {
+                //opponent.SetDeadEyeStateReceived(DeadEyeOn);
+            }
         }
     }
 
@@ -374,7 +383,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         if (_multiplayerReady)
         {
+            EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
 
+            if (opponent != null)
+            {
+                opponent.SetAniStateReceived(AniState);
+            }
         }
     }
 
@@ -422,7 +436,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         if (_multiplayerReady)
         {
-            MulEnemy opponent = _opponentScripts[participantId];
+            EnemyMove opponent = _opponentScripts[participantId];
 
             if (opponent != null)
             {
@@ -532,87 +546,87 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         
     }
 
-    // 애니메이션 값을 넣어준다.
-    // int값으로 바꿔줘야 한다
-    public void SendAniStateMessage(LSD.PlayerState AniState)
-    {
-        switch (AniState)
-        {
-            // IDLE
-            case LSD.PlayerState.IDLE:
-                {
-                    //m_state = LSD.PlayerState.IDLE;
-                    GPGSManager.GetInstance.SendAniStateMessage(0);
-                }
-                break;
+    //// 애니메이션 값을 넣어준다.
+    //// int값으로 바꿔줘야 한다
+    //public void SendAniStateMessage(LSD.PlayerState AniState)
+    //{
+    //    switch (AniState)
+    //    {
+    //        // IDLE
+    //        case LSD.PlayerState.IDLE:
+    //            {
+    //                //m_state = LSD.PlayerState.IDLE;
+    //                GPGSManager.GetInstance.SendAniStateMessage(0);
+    //            }
+    //            break;
 
-            // DASH_SLOW
-            case LSD.PlayerState.DASH_SLOW:
-                {
-                    //m_state = LSD.PlayerState.DASH_SLOW;
-                    GPGSManager.GetInstance.SendAniStateMessage(1);
-                }
-                break;
+    //        // DASH_SLOW
+    //        case LSD.PlayerState.DASH_SLOW:
+    //            {
+    //                //m_state = LSD.PlayerState.DASH_SLOW;
+    //                GPGSManager.GetInstance.SendAniStateMessage(1);
+    //            }
+    //            break;
 
-            // DASH_SOFT
-            case LSD.PlayerState.DASH_SOFT:
-                {
-                    //m_state = LSD.PlayerState.DASH_SOFT;
-                    GPGSManager.GetInstance.SendAniStateMessage(2);
-                }
-                break;
+    //        // DASH_SOFT
+    //        case LSD.PlayerState.DASH_SOFT:
+    //            {
+    //                //m_state = LSD.PlayerState.DASH_SOFT;
+    //                GPGSManager.GetInstance.SendAniStateMessage(2);
+    //            }
+    //            break;
 
-            // DASH_HARD
-            case LSD.PlayerState.DASH_HARD:
-                {
-                    //m_state = LSD.PlayerState.DASH_HARD;
-                    GPGSManager.GetInstance.SendAniStateMessage(3);
-                }
-                break;
+    //        // DASH_HARD
+    //        case LSD.PlayerState.DASH_HARD:
+    //            {
+    //                //m_state = LSD.PlayerState.DASH_HARD;
+    //                GPGSManager.GetInstance.SendAniStateMessage(3);
+    //            }
+    //            break;
 
-            // SHOT_READY
-            case LSD.PlayerState.SHOT_READY:
-                {
-                    //m_state = LSD.PlayerState.SHOT_READY;
-                    GPGSManager.GetInstance.SendAniStateMessage(4);
-                }
-                break;
+    //        // SHOT_READY
+    //        case LSD.PlayerState.SHOT_READY:
+    //            {
+    //                //m_state = LSD.PlayerState.SHOT_READY;
+    //                GPGSManager.GetInstance.SendAniStateMessage(4);
+    //            }
+    //            break;
 
-            // SHOOT_FIRE
-            case LSD.PlayerState.SHOT_FIRE:
-                {
-                    //m_state = LSD.PlayerState.SHOT_FIRE;
-                    GPGSManager.GetInstance.SendAniStateMessage(5);
-                }
-                break;
+    //        // SHOOT_FIRE
+    //        case LSD.PlayerState.SHOT_FIRE:
+    //            {
+    //                //m_state = LSD.PlayerState.SHOT_FIRE;
+    //                GPGSManager.GetInstance.SendAniStateMessage(5);
+    //            }
+    //            break;
 
-            // DAMEGE
-            case LSD.PlayerState.DAMAGE:
-                {
-                    //m_state = LSD.PlayerState.DAMAGE;
-                    GPGSManager.GetInstance.SendAniStateMessage(6);
-                }
-                break;
+    //        // DAMEGE
+    //        case LSD.PlayerState.DAMAGE:
+    //            {
+    //                //m_state = LSD.PlayerState.DAMAGE;
+    //                GPGSManager.GetInstance.SendAniStateMessage(6);
+    //            }
+    //            break;
 
-            // DEADEYE
-            case LSD.PlayerState.DEADEYE:
-                {
-                    //m_state = LSD.PlayerState.DEADEYE;
-                    GPGSManager.GetInstance.SendAniStateMessage(7);
-                }
-                break;
+    //        // DEADEYE
+    //        case LSD.PlayerState.DEADEYE:
+    //            {
+    //                //m_state = LSD.PlayerState.DEADEYE;
+    //                GPGSManager.GetInstance.SendAniStateMessage(7);
+    //            }
+    //            break;
 
-            // REROAD
-            case LSD.PlayerState.REROAD:
-                {
-                    //m_state = LSD.PlayerState.REROAD;
-                    GPGSManager.GetInstance.SendAniStateMessage(8);
-                }
-                break;
-        }
+    //        // REROAD
+    //        case LSD.PlayerState.REROAD:
+    //            {
+    //                //m_state = LSD.PlayerState.REROAD;
+    //                GPGSManager.GetInstance.SendAniStateMessage(8);
+    //            }
+    //            break;
+    //    }
 
         
-    }
+    //}
 
     #endregion Call_Function
 
@@ -638,8 +652,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             //PlayerName.gameObject.transform.position = new Vector3(MyCharacter.transform.position.x, MyCharacter.transform.position.y + 0.4f, MyCharacter.transform.position.z);
             //EnemyName.gameObject.transform.position = new Vector3(EnemyCharacter.transform.position.x, EnemyCharacter.transform.position.y + 0.4f, EnemyCharacter.transform.position.z);
 
-            MyInfoText.text = "Player Info : " + MyCharacterPos.transform.position;
-            EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.transform.position;
+            MyInfoText.text = "Player Info : " + MyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//MyCharacterPos.transform.position;
+            EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
             NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
             ItemGetCount.text = "ItemCount : " + ItemCount;
 
@@ -655,8 +669,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             //EnemyInfoText.text = "Player Info : " + MyCharacter.transform.position.ToString();//("Player Info : " + _opponentScripts[_MyParticipantId].transform.position).ToString();//GPGSManager.GetInstance.GetAllPlayers()[0].ParticipantId;
             //NetText.text = "Enemy Info : " + EnemyCharacter.transform.position.ToString();//("Enemy Info : " + _opponentScripts[_EnemyParticipantId].transform.position).ToString();
 
-            MyInfoText.text = "Player Info : " + MyCharacterPos;
-            EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos;
+            MyInfoText.text = "Player Info : " + MyCharacterPos.transform.position;
+            EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.transform.position;
             NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
             ItemGetCount.text = "ItemCount : " + ItemCount;
         }

@@ -25,7 +25,7 @@ public class MultiTitleGameStartButton : MonoBehaviour, IDragHandler, IPointerUp
     {
         yield return new WaitForSeconds(1.0f);
 
-        AutoFade.LoadLevel("TestMultiScene", 0.2f, 0.2f, Color.black);
+        AutoFade.LoadLevel("GameScene", 0.2f, 0.2f, Color.black);
     }
 
     // Update is called once per frame

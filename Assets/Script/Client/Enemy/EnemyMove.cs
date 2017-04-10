@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyMove : MonoBehaviour {
 
     //public MoveJoyStick m_MoveJoyStickControl;  //움직임 전용 조이스틱
-    public JoyStickCtrl m_ShotJoyStickControl;  //샷 전용 조이스틱
+    //public JoyStickCtrl m_ShotJoyStickControl;  //샷 전용 조이스틱
 
     public Animator anim;
 
@@ -27,6 +27,8 @@ public class EnemyMove : MonoBehaviour {
     LSD.PlayerState m_PlayerState;
     LSD.GunState m_GunState;
 
+    public int m_DebugPlayerState;
+
     //캐릭터 총
     public static UseGun m_EnemyUseGun;
 
@@ -44,6 +46,28 @@ public class EnemyMove : MonoBehaviour {
 
     ////데미지모션 여부
     //bool m_Damaged = false;
+    /// //////////////////////////////////////////////////////////////////////////////////<summary>
+    /// 서버
+    /// ///////////////////////////////////////////////////////////////////////////////</summary>
+    /// 
+
+    // 적의 위치와 회전값을 보간해주기 위한 정보들..
+    private Vector3 _startPos;
+    private Vector3 _destinationPos;
+    private Quaternion _startRot;
+    private Quaternion _destinationRot;
+
+    // 적의 정보를 보간시켜주기 위해 필요한 정보들..
+    private float _lastUpdateTime;
+    private float _timePerUpdate = 0.16f;
+    private float pctDone;
+
+    // 메시지 순서를 알아낼 변수
+    private int _lastMessageNum;
+
+    // 게임 끝의 여부
+    public bool GameEndOn;
+
 
     void Awake()
     {
@@ -79,20 +103,47 @@ public class EnemyMove : MonoBehaviour {
         m_MoveSpeed = 2.0f;
         m_PlayerDir = Vector3.zero;
         m_PlayerPosBack = Vector3.zero;
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        ///서버
+        //////////////////////////////////////////////////////////////
+
+
+        GameEndOn = false;
+
+        _lastUpdateTime = Time.time;
+
+        _lastMessageNum = 0;
+
+        // 0.16초마다 적의 위치를 갱신시켜 준다.
+        _timePerUpdate = 0.16f;
+
+        // 초기 위치값 갱신
+        _startPos = this.transform.position;
+        _startRot = this.transform.rotation;
+
+        _destinationPos = this.transform.position;
+        _destinationRot = Quaternion.identity;
+
     }
 
     // Update is called once per frame
     void Update()
     {
 
+
+        //////////////////////////////////////////////////////////////////////////////////////
+        //클라
+        m_DebugPlayerState = (int)m_PlayerState;
         // Debug.Log("VectorForce: " + m_MoveJoyStickControl.GetVectorForce());
         Debug.Log("PlayerState: " + m_PlayerState);
 
-        if (m_PlayerState != LSD.PlayerState.REROAD && m_PlayerState != LSD.PlayerState.DAMAGE && m_ShotJoyStickControl.GetTouch())
-        {
-            //    if(m_PlayerState != LSD.PlayerState.SHOT_FIRE)        
-            m_PlayerState = LSD.PlayerState.SHOT_READY;
-        }
+        //if (m_PlayerState != LSD.PlayerState.REROAD && m_PlayerState != LSD.PlayerState.DAMAGE && m_ShotJoyStickControl.GetTouch())
+        //{
+        //    //    if(m_PlayerState != LSD.PlayerState.SHOT_FIRE)        
+        //    m_PlayerState = LSD.PlayerState.SHOT_READY;
+        //}
 
         switch (m_PlayerState)
         {
@@ -102,27 +153,27 @@ public class EnemyMove : MonoBehaviour {
                     Update_IDLE();
                     break;
                 }
-            //case LSD.PlayerState.DASH_SLOW:
-            //    {
-            //        anim.SetInteger("DashLevel", 1);
-            //       // m_FirstTouch.color = Color.red;
-            //        Update_DASH_SLOW();
-            //        break;
-            //    }
-            //case LSD.PlayerState.DASH_SOFT:
-            //    {
-            //        anim.SetInteger("DashLevel", 2);
-            //        //m_FirstTouch.color = Color.green;
-            //        Update_DASH_SOFT();
-            //        break;
-            //    }
-            //case LSD.PlayerState.DASH_HARD:
-            //    {
-            //        anim.SetInteger("DashLevel", 3);
-            //        //m_FirstTouch.color = Color.blue;
-            //        Update_DASH_HARD();
-            //        break;
-            //    }
+            case LSD.PlayerState.DASH_SLOW:
+                {
+                    anim.SetInteger("DashLevel", 1);
+                    // m_FirstTouch.color = Color.red;
+                    //Update_DASH_SLOW();
+                    break;
+                }
+            case LSD.PlayerState.DASH_SOFT:
+                {
+                    anim.SetInteger("DashLevel", 2);
+                    //m_FirstTouch.color = Color.green;
+                    //Update_DASH_SOFT();
+                    break;
+                }
+            case LSD.PlayerState.DASH_HARD:
+                {
+                    anim.SetInteger("DashLevel", 3);
+                    //m_FirstTouch.color = Color.blue;
+                    //Update_DASH_HARD();
+                    break;
+                }
             case LSD.PlayerState.SHOT_READY:
                 {
                     anim.Play("Shot_Ready");
@@ -162,6 +213,48 @@ public class EnemyMove : MonoBehaviour {
         }
     }
 
+    // 적의 타임아웃(Time-Out)의 여부를 확인할때 쓴다.
+    // 네트워크 상태가 안좋거나 기타 여부로 체크가 안되면 종료되게 해준다.
+    public float lastUpdateTime
+    {
+        get
+        {
+            return _lastUpdateTime;
+        }
+    }
+
+    // 적의 위치값을 갱신시켜 준다.
+    public void SetTransformInformation(int messageNum, float posX, float posY, float posZ, float rotY)
+    {
+        if (messageNum <= _lastMessageNum)
+        {
+            // Discard any out of order messages
+            return;
+        }
+
+        _lastMessageNum = messageNum;
+
+        _startPos = this.transform.position;
+        _startRot = this.transform.rotation;
+
+        _destinationPos = new Vector3(posX, posY, posZ);
+        _destinationRot = Quaternion.Euler(0, rotY, 0);
+
+        _lastUpdateTime = Time.time;
+    }
+
+    public void SetEndGameInformation(bool GameEnd)
+    {
+        GameEndOn = GameEnd;
+    }
+
+    // 게임을 나가면 해당 플레이어의 모습을 감춘다.
+    public void GameOutInformation()
+    {
+        this.gameObject.SetActive(false);
+
+        GameEndOn = true;
+    }
 
     void Update_IDLE()
     {
@@ -264,16 +357,16 @@ public class EnemyMove : MonoBehaviour {
     void Update_SHOT_READY()
     {
         //조준중에 손을 땠다면
-        if (!m_ShotJoyStickControl.GetTouch())
-        {
-            //if (m_UseGun.Bullet_Gun > 0)
-            //{
-            anim.SetBool("GunFire", true);
+        //if (!m_ShotJoyStickControl.GetTouch())
+        //{
+        //    //if (m_UseGun.Bullet_Gun > 0)
+        //    //{
+        //    anim.SetBool("GunFire", true);
 
-            m_PlayerState = LSD.PlayerState.SHOT_FIRE;
-            // }
+        //    m_PlayerState = LSD.PlayerState.SHOT_FIRE;
+        //    // }
 
-        }
+        //}
 
     }
 
@@ -346,6 +439,20 @@ public class EnemyMove : MonoBehaviour {
 
     void FixedUpdate()
     {
+        /////////////////////////////////////////////////////////////////////////////////////
+        //서버
+        pctDone = (Time.time - _lastUpdateTime) / _timePerUpdate;
+
+        if (pctDone <= 1.0f)
+        {
+            transform.position = Vector3.Slerp(_startPos, _destinationPos, pctDone);
+            transform.rotation = Quaternion.Slerp(_startRot, _destinationRot, pctDone);
+        }
+
+
+        //////////////////////////////////////////////////////////////////////////////////////
+        //클라
+
         switch (m_PlayerState)
         {
             case LSD.PlayerState.IDLE:
@@ -353,21 +460,21 @@ public class EnemyMove : MonoBehaviour {
                     FixedUpdate_IDLE();
                     break;
                 }
-            //case LSD.PlayerState.DASH_SLOW:
-            //    {
-            //        FixedUpdate_DASH_SLOW();
-            //        break;
-            //    }
-            //case LSD.PlayerState.DASH_SOFT:
-            //    {
-            //        FixedUpdate_DASH_SOFT();
-            //        break;
-            //    }
-            //case LSD.PlayerState.DASH_HARD:
-            //    {
-            //        FixedUpdate_DASH_HARD();
-            //        break;
-            //    }
+            case LSD.PlayerState.DASH_SLOW:
+                {
+                    FixedUpdate_DASH_SLOW();
+                    break;
+                }
+            case LSD.PlayerState.DASH_SOFT:
+                {
+                    FixedUpdate_DASH_SOFT();
+                    break;
+                }
+            case LSD.PlayerState.DASH_HARD:
+                {
+                    FixedUpdate_DASH_HARD();
+                    break;
+                }
             case LSD.PlayerState.SHOT_READY:
                 {
                     FixedUpdate_SHOT_READY();
@@ -414,27 +521,27 @@ public class EnemyMove : MonoBehaviour {
         }
         StaminaCheck();
     }
-    //void FixedUpdate_DASH_SLOW()    //탈진 달리기
-    //{
-    //    m_MoveSpeed = 1;
-    //    Stamina += 7;
-    //    PlayerMove();
-    //    StaminaCheck();
-    //}
-    //void FixedUpdate_DASH_SOFT()    // 천천히 달리기
-    //{
-    //    m_MoveSpeed = 5;
-    //    Stamina += 10;
-    //    PlayerMove();
-    //    StaminaCheck();
-    //}
-    //void FixedUpdate_DASH_HARD()
-    //{
-    //    m_MoveSpeed = 8;
-    //    Stamina -= 4;
-    //    PlayerMove();
-    //    StaminaCheck();
-    //}
+    void FixedUpdate_DASH_SLOW()    //탈진 달리기
+    {
+        //m_MoveSpeed = 1;
+        //Stamina += 7;
+        //PlayerMove();
+        //StaminaCheck();
+    }
+    void FixedUpdate_DASH_SOFT()    // 천천히 달리기
+    {
+        //m_MoveSpeed = 5;
+        //Stamina += 10;
+        //PlayerMove();
+        //StaminaCheck();
+    }
+    void FixedUpdate_DASH_HARD()
+    {
+        //m_MoveSpeed = 8;
+        //Stamina -= 4;
+        //PlayerMove();
+        //StaminaCheck();
+    }
     void FixedUpdate_SHOT_READY()
     {
         PlayerAiming();
@@ -474,7 +581,7 @@ public class EnemyMove : MonoBehaviour {
 
     void PlayerAiming()
     {
-        transform.rotation = m_ShotJoyStickControl.GetRotateVector();
+        //transform.rotation = m_ShotJoyStickControl.GetRotateVector();
     }
 
     void StaminaCheck()
@@ -493,5 +600,10 @@ public class EnemyMove : MonoBehaviour {
                 m_Exhausted = false;
             }
         }
+    }
+
+    public void SetAniStateReceived(int AniState)
+    {
+        m_PlayerState = (LSD.PlayerState)AniState;
     }
 }

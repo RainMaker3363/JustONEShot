@@ -23,7 +23,7 @@ public class DeadEye : MonoBehaviour {
     public GameObject DeadEyeBulletCam;
     public GameObject DeadEyeBulletEndCam;
 
-    float DeadEyeBulletEffectTime = 2f;  //데드아이 총알나가는 연출 시간
+    float DeadEyeBulletEffectTime = 3.27f;  //데드아이 총알나가는 연출 시간
     // Use this for initialization
     void Start () {
 
@@ -37,6 +37,7 @@ public class DeadEye : MonoBehaviour {
             DeadEyeBulletEndCam.transform.rotation = DeadEyeBulletCam.transform.rotation;
             DeadEyeBulletCam.SetActive(false);
             DeadEyeBulletEndCam.SetActive(true);
+            StartCoroutine(DeadEyeEnd());
         }
 
     }
@@ -62,8 +63,9 @@ public class DeadEye : MonoBehaviour {
         //StartCoroutine(DeadEyeBulletEffectEndTime());
     }
 
-    public void DeadEyeEnd()
+    IEnumerator DeadEyeEnd()
     {
+        yield return new WaitForSeconds(2f);
         CharMove.DeadEyeEnd = true;
         MainUI.SetActive(true);
         MainCam.gameObject.SetActive(true);
