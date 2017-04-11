@@ -222,14 +222,18 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         if (_multiplayerReady)
         {
-            EnemyMove opponent = _opponentScripts[participantId];
-
-            if (opponent != null)
+            if(ThisGameIsEnd == false)
             {
-                opponent.SetEndGameInformation(GameOver);
+                EnemyMove opponent = _opponentScripts[participantId];
+
+                if (opponent != null)
+                {
+                    opponent.SetEndGameInformation(GameOver);
+                }
+
+                ThisGameIsEnd = GameOver;
             }
 
-            ThisGameIsEnd = GameOver;
         }
 
         
@@ -392,6 +396,19 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         }
     }
 
+    public void HPStateReceived(int HPState)
+    {
+        if(_multiplayerReady)
+        {
+            EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
+
+            if (opponent != null)
+            {
+                opponent.SetHPStateReceived(HPState);
+            }
+        }
+    }
+
     // 게임이 끝날시 호출되는 리스너 함수.
     public void LeftRoomConfirmed()
     {
@@ -477,17 +494,21 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         //_timePlayed += Time.deltaTime;
         //guiObject.SetTime(_timePlayed);
 
-        // 0.16초마다 보냄으로써 네트워크 트래픽 최적화를 할 수 있다.
-        if (Time.time > _nextBroadcastTime)
+        if(ThisGameIsEnd == false)
         {
-            // We will be doing more here
-            GPGSManager.GetInstance.SendMyPositionUpdate(MyCharacter.transform.position.x,
-                                                    MyCharacter.transform.position.y,
-                                                    MyCharacter.transform.position.z,
-                                                    MyCharacter.transform.rotation.eulerAngles.y);
+            // 0.16초마다 보냄으로써 네트워크 트래픽 최적화를 할 수 있다.
+            if (Time.time > _nextBroadcastTime)
+            {
+                // We will be doing more here
+                GPGSManager.GetInstance.SendMyPositionUpdate(MyCharacter.transform.position.x,
+                                                        MyCharacter.transform.position.y,
+                                                        MyCharacter.transform.position.z,
+                                                        MyCharacter.transform.rotation.eulerAngles.y);
 
-            _nextBroadcastTime = Time.time + 0.16f;
+                _nextBroadcastTime = Time.time + 0.16f;
+            }
         }
+
 
 
 
@@ -498,9 +519,13 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // true일시 게임이 끝났다고 전송된다.
     public void SendEndGameMssage(bool GameEnd)
     {
-        ThisGameIsEnd = GameEnd;
+        //ThisGameIsEnd = GameEnd;
 
-        GPGSManager.GetInstance.SendFinishMessage(ThisGameIsEnd);
+        if (ThisGameIsEnd == false)
+        {
+            GPGSManager.GetInstance.SendFinishMessage(ThisGameIsEnd);
+        }
+        
 
 
     }
@@ -635,17 +660,19 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         if (_multiplayerReady)
         {
-            if (GPGSManager.GetInstance.GetOtherNameGPGS(1) == _MyParticipantId)
-            {
-                PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);//_opponentScripts[_MyParticipantId].name;//GPGSManager.GetInstance.GetOtherNameGPGS(0);
-                EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);
-            }
-            else
-            {
-                PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);//GPGSManager.GetInstance.GetOtherNameGPGS(0);
-                EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);
-            }
+            //if (GPGSManager.GetInstance.GetOtherNameGPGS(1) == _MyParticipantId)
+            //{
+            //    PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);//_opponentScripts[_MyParticipantId].name;//GPGSManager.GetInstance.GetOtherNameGPGS(0);
+            //    EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);
+            //}
+            //else
+            //{
+            //    PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);//GPGSManager.GetInstance.GetOtherNameGPGS(0);
+            //    EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);
+            //}
 
+            PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);//GPGSManager.GetInstance.GetOtherNameGPGS(0);
+            EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);
 
             //PlayerName.gameObject.transform.position = new Vector3(_opponentScripts[_MyParticipantId].transform.position.x, _opponentScripts[_MyParticipantId].transform.position.y + 0.4f, _opponentScripts[_MyParticipantId].transform.position.z);
             //EnemyName.gameObject.transform.position = new Vector3(_opponentScripts[_EnemyParticipantId].transform.position.x, _opponentScripts[_EnemyParticipantId].transform.position.y + 0.4f, _opponentScripts[_EnemyParticipantId].transform.position.z);
@@ -654,8 +681,16 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             MyInfoText.text = "Player Info : " + MyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//MyCharacterPos.transform.position;
             EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
-            NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
             ItemGetCount.text = "ItemCount : " + ItemCount;
+
+            if(ThisGameIsEnd == false)
+            {
+                NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
+            }
+            else
+            {
+                NetText.text = "Net Info : 상대방이 연결을 해제했습니다.";
+            }
 
         }
         else
@@ -676,11 +711,16 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         }
 
         // 적의 타임아웃 체크
-        if (Time.time > _nextTimeoutCheck)
+        if(ThisGameIsEnd == false)
         {
-            CheckForTimeOuts();
-            _nextTimeoutCheck = Time.time + _timeOutCheckInterval;
+            if (Time.time > _nextTimeoutCheck)
+            {
+
+                CheckForTimeOuts();
+                _nextTimeoutCheck = Time.time + _timeOutCheckInterval;
+            }
         }
+
 
         // 플레이어의 위치 동기화
         SendMyPositionUpdate();

@@ -6,6 +6,7 @@
     void ShootStateReceived(float x, float y, float z);
     void DeadEyeStateReceived(bool DeadEyeOn);
     void AniStateReceived(int AniState);
+    void HPStateReceived(int HPState);
 
     void LeftRoomConfirmed();
     void PlayerLeftRoom(string participantId);

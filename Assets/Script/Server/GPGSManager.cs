@@ -26,6 +26,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private int _deadeyeMessageLength = 3;
     // Byte + Byte + 1 Interger
     private int _animMessageLength = 6;
+    // Byte + Byte + 1 Interget
+    private int _healthMessageLength = 6;
 
     // 메시지 도착 순서를 제어할 변수
     // 네트워크 도착 순서가 무작위로 된다면 동기화가 이상하게 될 가능성이 있기에
@@ -38,6 +40,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private List<byte> _ShootMessage;
     private List<byte> _DeadEyeMessage;
     private List<byte> _AnimMessage;
+    private List<byte> _HealthMessage;
 
     private bool IsConnectedOn = false;
     private bool showingWaitingRoom = false;
@@ -91,6 +94,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if (_AnimMessage == null)
         {
             _AnimMessage = new List<byte>(_animMessageLength);
+        }
+
+        if(_HealthMessage == null)
+        {
+            _HealthMessage = new List<byte>(_healthMessageLength);
         }
 
         _myMessageNum = 0;
@@ -165,6 +173,12 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if (_AnimMessage == null)
         {
             _AnimMessage = new List<byte>(_animMessageLength);
+        }
+
+
+        if (_HealthMessage == null)
+        {
+            _HealthMessage = new List<byte>(_healthMessageLength);
         }
     }
 
@@ -449,6 +463,19 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, DeadEyeMessageToSend);
     }
 
+    // HP 값을 보내는 메시지
+    public void SendCharacterHP(int HPState)
+    {
+        _HealthMessage.Clear();
+        _HealthMessage.Add(_protocolVersion);
+        _HealthMessage.Add((byte)'H');
+        _HealthMessage.AddRange(System.BitConverter.GetBytes(HPState));
+
+        byte[] HealthMessageToSend = _HealthMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, HealthMessageToSend);
+    }
+
     // 상대 ID로부터 메시지를 받았을때 호출되는 리스너 함수
     public void OnRealTimeMessageReceived(bool isReliable, string senderId, byte[] data)
     {
@@ -514,7 +541,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             float shoot_y = System.BitConverter.ToSingle(data, 6);
             float shoot_z = System.BitConverter.ToSingle(data, 10);
 
-            Debug.Log("Item Get");
+            Debug.Log("Shoot Get");
 
             ReceiveMessage = ByteToString(data);
 
@@ -528,7 +555,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             bool DeadEyeActive = System.BitConverter.ToBoolean(data, 2);
 
-            Debug.Log("Item Get");
+            Debug.Log("DeadEye Get");
 
             ReceiveMessage = ByteToString(data);
 
@@ -542,7 +569,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             int AniStateNumber = System.BitConverter.ToInt32(data, 2);
 
-            Debug.Log("Item Get");
+            Debug.Log("AniState Get");
 
             ReceiveMessage = ByteToString(data);
 
@@ -550,6 +577,20 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             {
                 //updateListener.ItemStateReceived(Index, ItemGet);
                 updateListener.AniStateReceived(AniStateNumber);
+            }
+        }
+        else if(messageType == 'H')
+        {
+            int HPState = System.BitConverter.ToInt32(data, 2);
+
+            Debug.Log("HPState Get");
+
+            ReceiveMessage = ByteToString(data);
+
+            if (updateListener != null)
+            {
+                //updateListener.ItemStateReceived(Index, ItemGet);
+                updateListener.HPStateReceived(HPState);
             }
         }
     }
