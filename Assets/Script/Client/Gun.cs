@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 abstract public class UseGun
 {
@@ -16,11 +17,14 @@ abstract public class UseGun
     {
         Bullet_Hand--;
         Bullet_Gun++;
+
     }
     public void GetBullet()
     {
-        if(MaxBullet_Hand> Bullet_Hand)
-             Bullet_Hand++;        
+        if (MaxBullet_Hand > Bullet_Hand)
+        {
+            Bullet_Hand++;
+        }
     }
 
 }
@@ -31,22 +35,23 @@ class Gun_Revolver : UseGun
     {
         MaxBullet_Gun = 6;
         MaxBullet_Hand = 10;
-        Bullet_Gun = 6;
-        Bullet_Hand = 10;
+        Bullet_Gun = 0;
+        Bullet_Hand = 0;
         Bullet_Use = 1;
         Damage = 10;
     }
 
     public override void UseBullet()
     {
-      Bullet_Gun -= Bullet_Use;
+        Bullet_Gun -= Bullet_Use;
     }
 
 
 }
 
 
-public class Gun : MonoBehaviour {
+public class Gun : MonoBehaviour
+{
 
     //총알
     [SerializeField]
@@ -58,6 +63,15 @@ public class Gun : MonoBehaviour {
     [SerializeField]
     GameObject[] Effects_Bullet;
 
+    [SerializeField]
+    GameObject[] UI_SillinderBullets;
+
+    [SerializeField]
+    Image[] UI_HandsBullets;
+
+    GameObject UI_Silliner;
+
+    float SillinerRotate = 0;
     Animator anim;
 
     //총 위치
@@ -67,16 +81,33 @@ public class Gun : MonoBehaviour {
 
     int m_BulletIndex = 0;
 
+    //int m_SillinderBulletIndex = 0;
+    int m_HandsBulletIndex = 0;
+
     void Start()
     {
         anim = GetComponent<Animator>();
+
+        Debug.Log(UI_HandsBullets.Length);
     }
 
+    void Update()
+    {
+        if (gameObject.tag.Equals("Player"))
+        {
+            if (CharMove.m_UseGun.Bullet_Hand > m_HandsBulletIndex)
+            {
+                UI_HandsBullets[m_HandsBulletIndex].color = Color.white;
+                m_HandsBulletIndex++;
+
+            }
+        }
+    }
     void SetBullet()
     {
-       
-        while(true)
-        { 
+
+        while (true)
+        {
             if (!Bullets[m_BulletIndex].m_Use)
             {
                 Debug.Log(gameObject.tag);
@@ -84,8 +115,11 @@ public class Gun : MonoBehaviour {
                 {
                     case "Player":
                         {
+                            
                             Bullets[m_BulletIndex].Damage = CharMove.m_UseGun.Damage;
                             CharMove.m_UseGun.UseBullet();
+                            UI_SillinderBullets[CharMove.m_UseGun.Bullet_Gun].gameObject.SetActive(false);
+
                             break;
                         }
                     case "Enemy":
@@ -98,13 +132,13 @@ public class Gun : MonoBehaviour {
                     default:
                         break;
                 }
-               
+
                 //총알
                 Bullets[m_BulletIndex].transform.position = m_GunTransform.position;
                 Bullets[m_BulletIndex].transform.rotation = this.transform.rotation;
                 //Bullets[i].DistanceInit();
-                
-               Bullets[m_BulletIndex].m_Use = true;
+
+                Bullets[m_BulletIndex].m_Use = true;
                 Bullets[m_BulletIndex].gameObject.SetActive(true);
 
                 //이펙트
@@ -121,15 +155,15 @@ public class Gun : MonoBehaviour {
                     m_BulletIndex = 0;
                 }
 
-                
-               
+
+
                 break;
             }
             else
             {
                 m_BulletIndex++;
             }
-            
+
         }
     }
 
@@ -146,18 +180,25 @@ public class Gun : MonoBehaviour {
 
     void ShotEnd()
     {
-        anim.SetBool("GunFire",false);
+        anim.SetBool("GunFire", false);
+        anim.SetBool("Shot", false);
     }
 
     void Reload()
     {
+        m_HandsBulletIndex--;
+        UI_SillinderBullets[CharMove.m_UseGun.Bullet_Gun].SetActive(true);
+        UI_HandsBullets[m_HandsBulletIndex].color = Color.black;
+       
+        Debug.Log("m_HandsBulletIndex : " + m_HandsBulletIndex);
         CharMove.m_UseGun.ReloadBullet();
+       
     }
 
     void CharDamageEnd()
     {
-        anim.SetBool("Damaged",false);
+        anim.SetBool("Damaged", false);
     }
 
-   
+
 }

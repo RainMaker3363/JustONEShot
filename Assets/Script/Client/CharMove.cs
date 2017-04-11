@@ -64,9 +64,9 @@ public class CharMove : MonoBehaviour {
     public static UseGun m_UseGun;
 
     //캐릭터 stat
-    int Stamina = 1000;
+    float Stamina = 1000;
     [SerializeField]
-    int HP = 100;
+    float HP = 100;
 
 
     //스테미나가 전부 소모된 상태
@@ -77,6 +77,9 @@ public class CharMove : MonoBehaviour {
  
     
     public Transform EnemyPos;  //  적 캐릭터 위치 추후변경예상
+
+    public Image HP_bar;
+    public Image Stamina_bar;
 
     public MultiGameManager Mul_Manager;
 
@@ -113,6 +116,11 @@ public class CharMove : MonoBehaviour {
         m_MoveSpeed = 2.0f;
         m_PlayerDir = Vector3.zero;
         m_PlayerPosBack = Vector3.zero;
+
+        //플레이어 UI초기화
+        HP_bar.fillAmount = HP;
+        Stamina_bar.fillAmount = Stamina;
+
         StartCoroutine(ServerUpdate());
     }
 
@@ -302,12 +310,18 @@ public class CharMove : MonoBehaviour {
         //조준중에 손을 땠다면
         if (!m_ShotJoyStickControl.GetTouch())
         {
-            //if (m_UseGun.Bullet_Gun > 0)
-            //{
-                anim.SetBool("GunFire", true);
-                
+            anim.SetBool("GunFire", true);
+            if (m_UseGun.Bullet_Gun > 0)
+            {
+                anim.SetBool("Shot", true);
                 m_PlayerState = LSD.PlayerState.SHOT_FIRE;
-           // }
+            }
+            else
+            {
+                anim.SetBool("Shot", false);
+                m_PlayerState = LSD.PlayerState.SHOT_FIRE;
+            }
+
 
         }
 
@@ -371,13 +385,15 @@ public class CharMove : MonoBehaviour {
 
     public void Damaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
     {
-        
-        anim.SetTrigger("Damage");
-        anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
-        HP -= Damage;
         Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
         DamageVec.y = 0; //위아래로는 움직이지 않게합니다
         transform.rotation = Quaternion.LookRotation(DamageVec);
+        anim.SetTrigger("Damage");
+        anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+        HP -= Damage;
+        HP_bar.fillAmount = HP/100;
+
+        Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
         m_PlayerState = LSD.PlayerState.DAMAGE;
     }
 
@@ -554,6 +570,8 @@ public class CharMove : MonoBehaviour {
                 m_Exhausted = false;
             }           
         }
+
+        Stamina_bar.fillAmount = Stamina / 1000;
     }
 
     void OnGUI()

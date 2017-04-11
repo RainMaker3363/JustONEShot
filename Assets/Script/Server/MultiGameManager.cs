@@ -404,7 +404,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             if (opponent != null)
             {
-                opponent.SetHPStateReceived(HPState);
+               // opponent.SetHPStateReceived(HPState);
             }
         }
     }

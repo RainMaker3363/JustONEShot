@@ -424,15 +424,17 @@ public class EnemyMove : MonoBehaviour {
 
     public void Damaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
     {
+        Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
+        DamageVec.y = 0; //위아래로는 움직이지 않게합니다
+
+        transform.rotation = Quaternion.LookRotation(DamageVec);
+
         Debug.Log(Damage);
         Debug.Log("Damaged");
         anim.SetTrigger("Damage");
         anim.SetBool("Damaged", true);
         HP -= Damage;
-        Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
-        DamageVec.y = 0; //위아래로는 움직이지 않게합니다
-
-        transform.rotation = Quaternion.LookRotation(DamageVec);
+       
         m_PlayerState = LSD.PlayerState.DAMAGE;
     }
 
