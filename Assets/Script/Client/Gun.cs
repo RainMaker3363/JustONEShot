@@ -69,7 +69,7 @@ public class Gun : MonoBehaviour
     [SerializeField]
     Image[] UI_HandsBullets;
 
-    GameObject UI_Silliner;
+    public GameObject UI_Sillinder;
 
     float SillinerRotate = 0;
     Animator anim;
@@ -83,12 +83,16 @@ public class Gun : MonoBehaviour
 
     //int m_SillinderBulletIndex = 0;
     int m_HandsBulletIndex = 0;
+    Quaternion Rotate;
+
+    public GameObject CharRollEffect;
 
     void Start()
     {
         anim = GetComponent<Animator>();
 
         Debug.Log(UI_HandsBullets.Length);
+        Rotate = Quaternion.identity;
     }
 
     void Update()
@@ -99,9 +103,13 @@ public class Gun : MonoBehaviour
             {
                 UI_HandsBullets[m_HandsBulletIndex].color = Color.white;
                 m_HandsBulletIndex++;
-
+                
             }
         }
+
+        Rotate.eulerAngles = new Vector3(0, 0, SillinerRotate);
+        UI_Sillinder.transform.rotation = Quaternion.Slerp(UI_Sillinder.transform.rotation, Rotate, Time.deltaTime * 5.0f);
+
     }
     void SetBullet()
     {
@@ -118,8 +126,11 @@ public class Gun : MonoBehaviour
                             
                             Bullets[m_BulletIndex].Damage = CharMove.m_UseGun.Damage;
                             CharMove.m_UseGun.UseBullet();
-                            UI_SillinderBullets[CharMove.m_UseGun.Bullet_Gun].gameObject.SetActive(false);
-
+                            UI_SillinderBullets[5-CharMove.m_UseGun.Bullet_Gun].gameObject.SetActive(false);
+                            SillinerRotate -= 60;
+                            
+                            
+                            //UI_Sillinder.transform.Rotate(new Vector3(0, 0, 1), 60);//Mathf.Deg2Rad*SillinerRotate);
                             break;
                         }
                     case "Enemy":
@@ -186,8 +197,10 @@ public class Gun : MonoBehaviour
 
     void Reload()
     {
+        SillinerRotate += 60;
+
         m_HandsBulletIndex--;
-        UI_SillinderBullets[CharMove.m_UseGun.Bullet_Gun].SetActive(true);
+        UI_SillinderBullets[5-CharMove.m_UseGun.Bullet_Gun].SetActive(true);//회전때문에 뒤에거부터 활성화
         UI_HandsBullets[m_HandsBulletIndex].color = Color.black;
        
         Debug.Log("m_HandsBulletIndex : " + m_HandsBulletIndex);
@@ -200,5 +213,18 @@ public class Gun : MonoBehaviour
         anim.SetBool("Damaged", false);
     }
 
+    void CharRollEnd()
+    {
+        anim.SetBool("Rolling", false);
+    }
 
+    void CharRollEffectOn()
+    {
+        CharRollEffect.SetActive(true);
+    }
+
+    void SetRollSpeed(float speed) //캐릭터 구르기 속도 조절
+    {
+        CharMove.m_RollSpeed =13*speed;      
+    }
 }

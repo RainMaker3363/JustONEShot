@@ -16,8 +16,9 @@ namespace LSD
         SHOT_FIRE,
         DAMAGE,
         DEADEYE,
-        REROAD
-
+        REROAD,
+        Roll,
+        MAX
     }
 
     //총 상태(추후 추가)
@@ -48,6 +49,7 @@ public class CharMove : MonoBehaviour {
 
     // 플레이어의 움직임
     private float m_MoveSpeed;
+    public static float m_RollSpeed;
     private Vector3 m_MoveVector;
     private Vector3 m_PlayerDir;
     //private Vector3 PlayerDeadEyePosBack;
@@ -65,6 +67,7 @@ public class CharMove : MonoBehaviour {
 
     //캐릭터 stat
     float Stamina = 1000;
+    bool StaminaRecovery = true;
     [SerializeField]
     float HP = 100;
 
@@ -198,6 +201,11 @@ public class CharMove : MonoBehaviour {
                     Update_REROAD();
                     break;
                 }
+            case LSD.PlayerState.Roll:
+                {                   
+                    Update_Roll();
+                    break;
+                }
 
             default:
                 {
@@ -285,14 +293,19 @@ public class CharMove : MonoBehaviour {
 
             if (m_MoveJoyStickControl.GetVectorForce() > 0.5f)
             {
+                StaminaRecovery = false;
                 m_PlayerState = LSD.PlayerState.DASH_HARD;
             }
             else if (m_MoveJoyStickControl.GetVectorForce() > 0)
             {
+                StopCoroutine(StaminaRecoveryDealy());
+                StartCoroutine(StaminaRecoveryDealy());
                 m_PlayerState = LSD.PlayerState.DASH_SOFT;
             }
             else //조작을 멈출경우
             {
+                StopCoroutine(StaminaRecoveryDealy());
+                StartCoroutine(StaminaRecoveryDealy());
                 m_PlayerState = LSD.PlayerState.IDLE;
             }
         }
@@ -300,6 +313,8 @@ public class CharMove : MonoBehaviour {
         {
             if (m_MoveJoyStickControl.GetVectorForce() > 0)
             {
+                StopCoroutine(StaminaRecoveryDealy());
+                StartCoroutine(StaminaRecoveryDealy());
                 m_PlayerState = LSD.PlayerState.DASH_SLOW;
             }
         }
@@ -375,11 +390,44 @@ public class CharMove : MonoBehaviour {
         }
     }
 
+    void Update_Roll()
+    {
+        
+        if (!anim.GetBool("Rolling"))
+        {
+            StopCoroutine(StaminaRecoveryDealy());
+            StartCoroutine(StaminaRecoveryDealy());
+            m_PlayerState = LSD.PlayerState.IDLE;
+        }
+        else
+        {
+            StaminaRecovery = false;
+        }
+    }
+
     public void OnReroadButton()
     {
         if(m_PlayerState == LSD.PlayerState.IDLE)
         {
+            
             m_PlayerState = LSD.PlayerState.REROAD;
+
+        }
+    }
+
+    public void OnRollButton()
+    {
+        if (m_PlayerState != LSD.PlayerState.SHOT_FIRE && m_PlayerState != LSD.PlayerState.Roll && !m_Exhausted)
+        {
+            if (Stamina > 400)
+            {
+                Stamina -= 400;
+                anim.SetTrigger("Roll");
+                anim.SetBool("Rolling", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+                m_PlayerState = LSD.PlayerState.Roll;
+                StaminaCheck();
+              
+            }
         }
     }
 
@@ -470,7 +518,11 @@ public class CharMove : MonoBehaviour {
                     FixedUpdate_REROAD();
                     break;
                 }
-
+            case LSD.PlayerState.Roll:
+                {
+                    FixedUpdate_Roll();
+                    break;
+                }
             default:
                 {
                     break;
@@ -487,21 +539,24 @@ public class CharMove : MonoBehaviour {
         }
         else
         {
-            Stamina += 10;
+            if (StaminaRecovery)
+                Stamina += 10;
         }
         StaminaCheck();
     }
     void FixedUpdate_DASH_SLOW()    //탈진 달리기
     {
         m_MoveSpeed = 1;
-        Stamina += 7;
+        if (StaminaRecovery)
+            Stamina += 7;
         PlayerMove();
         StaminaCheck();
     }
     void FixedUpdate_DASH_SOFT()    // 천천히 달리기
     {
         m_MoveSpeed = 5;
-        Stamina += 10;
+        if(StaminaRecovery)
+             Stamina += 10;
         PlayerMove();
         StaminaCheck();
     }
@@ -531,7 +586,11 @@ public class CharMove : MonoBehaviour {
     {
 
     }
-
+    void FixedUpdate_Roll()
+    {
+        m_CharCtr.Move((transform.forward + Physics.gravity) * m_RollSpeed * Time.deltaTime);
+        cam.transform.position = CamPos + transform.position;
+    }
     void PlayerMove()
     {
 
@@ -570,33 +629,33 @@ public class CharMove : MonoBehaviour {
                 m_Exhausted = false;
             }           
         }
-
+        
         Stamina_bar.fillAmount = Stamina / 1000;
     }
 
-    void OnGUI()
-    {
-        int w = Screen.width, h = Screen.height;
+    //void OnGUI()
+    //{
+    //    int w = Screen.width, h = Screen.height;
 
-        GUIStyle style = new GUIStyle();
+    //    GUIStyle style = new GUIStyle();
 
-        Rect rect = new Rect(w / 2, 0, 100, 100);
-        style.alignment = TextAnchor.UpperLeft;
-        style.fontSize = 30;
-        style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
+    //    Rect rect = new Rect(w / 2, 0, 100, 100);
+    //    style.alignment = TextAnchor.UpperLeft;
+    //    style.fontSize = 30;
+    //    style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
 
-        string text = string.Format("Stamina : {0}", Stamina);
+    //    string text = string.Format("Stamina : {0}", Stamina);
 
-        GUI.Label(rect, text, style);
+    //    GUI.Label(rect, text, style);
 
-        Rect Bulletrect = new Rect(w -300, 0, 100, 100);       
+    //    Rect Bulletrect = new Rect(w - 300, 0, 100, 100);
 
-        string Bullettext = string.Format("탄창 : {0}/{1}\n탄알 : {2}/{3}", m_UseGun.Bullet_Gun, m_UseGun.MaxBullet_Gun, m_UseGun.Bullet_Hand, m_UseGun.MaxBullet_Hand);
+    //    string Bullettext = string.Format("탄창 : {0}/{1}\n탄알 : {2}/{3}", m_UseGun.Bullet_Gun, m_UseGun.MaxBullet_Gun, m_UseGun.Bullet_Hand, m_UseGun.MaxBullet_Hand);
 
 
-        GUI.Label(Bulletrect, Bullettext, style);
-    }
-    
+    //    GUI.Label(Bulletrect, Bullettext, style);
+    //}
+
     IEnumerator ServerUpdate()
     {
         while (true)
@@ -608,5 +667,11 @@ public class CharMove : MonoBehaviour {
             }
         }
     }
-  
+
+    IEnumerator StaminaRecoveryDealy()
+    {
+        yield return new WaitForSeconds(0.5f);
+        StaminaRecovery = true;
+
+    }
 }

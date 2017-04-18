@@ -23,6 +23,8 @@ public class DeadEye : MonoBehaviour {
     public GameObject DeadEyeBulletCam;
     public GameObject DeadEyeBulletEndCam;
 
+    public GameObject DeadEyeLoadEffect;
+
     float DeadEyeBulletEffectTime = 3.27f;  //데드아이 총알나가는 연출 시간
     // Use this for initialization
     void Start () {
@@ -77,7 +79,7 @@ public class DeadEye : MonoBehaviour {
         yield return new WaitForSeconds(10);
 
         DeadEyeUI.SetActive(false);
-        
+        DeadEyeLoadEffect.SetActive(false); //Roll06 애니메이션에서 켜줍니다
 
         //MainCam.gameObject.SetActive(true);     //현재 스크린샷에서 꺼짐
 
@@ -137,4 +139,5 @@ public class DeadEye : MonoBehaviour {
 
         }
     }
+
 }
