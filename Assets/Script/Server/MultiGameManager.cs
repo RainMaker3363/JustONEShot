@@ -96,7 +96,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     private float _timeOutCheckInterval;
     private float _nextTimeoutCheck;
 
-
+    //데드아이 체크
+    private bool _DeadEyeCheck;
 
     // Use this for initialization
     void Awake () {
@@ -107,6 +108,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         ThisGameIsEnd = false;
         ItemCount = 0;
+        _DeadEyeCheck = false;
 
         // 네트워크 트래픽 최적화 변수 초기화
         _nextBroadcastTime = 0;
@@ -115,6 +117,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         timeOutThreshold = 20.0f;
         _timeOutCheckInterval = 1.0f;
         _nextTimeoutCheck = 0.0f;
+
+       
 
         SetupMultiplayerGame();
     }
@@ -267,8 +271,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     }
 
     // 사격 상태를 업데이트 해준다.
-    // x,y,z는 총알의 방향벡터를 의미
-    public void ShootStateReceived(float x, float y, float z)
+    // bool 값이 true면 발사를 성공한것입니다.
+    public void ShootStateReceived(bool ShootSuccess)
     {
         if (_multiplayerReady)
         {
@@ -276,7 +280,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             if (opponent != null)
             {
-                //opponent.SetShootStateReceived(x, y, z);
+                opponent.SetShootStateReceived(ShootSuccess);
             }
         }
     }
@@ -288,15 +292,21 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         if (_multiplayerReady)
         {
+            _DeadEyeCheck = DeadEyeOn;
+            
             EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
 
             if (opponent != null)
             {
-                //opponent.SetDeadEyeStateReceived(DeadEyeOn);
+                opponent.SetDeadEyeStateReceived(DeadEyeOn);
             }
         }
     }
 
+    public bool GetDeadEyeChecker()
+    {
+        return _DeadEyeCheck;
+    }
     // 현재 애니메이션 상태 값을 갱신 시켜준다.
     // AniState의 값을 다시 변환 시켜서 넘겨준다.
     public void AniStateReceived(int AniState)
@@ -384,6 +394,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             case 8:
                 {
                     m_state = LSD.PlayerState.REROAD;
+                }
+                break;
+
+            case 9:
+                {
+                    m_state = LSD.PlayerState.Roll;
                 }
                 break;
         }
@@ -535,18 +551,11 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     }
 
-    // 총알 발사 방향 벡터를 보내줘야 한다
-    // x, y, z를 보낸 함수..
-    public void SendShootMessage(float x, float y, float z)
+    // 총알 발사 여부를 알려준다.
+    // bool 값을 true면 발사를 성공 한 것입니다.
+    public void SendShootMessage(bool ShootSuccess)
     {
-        GPGSManager.GetInstance.SendShootMessage(x, y, z);
-    }
-
-    // 총알 발사 방향 벡터를 보내줘야 한다
-    // Vector3를 보낸 함수..
-    public void SendShootMessage(Vector3 BulletDirVec)
-    {
-        GPGSManager.GetInstance.SendShootMessage(BulletDirVec);
+        GPGSManager.GetInstance.SendShootMessage(ShootSuccess);
     }
 
     // 데드 아이 메시지를 보낸다.
@@ -565,9 +574,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             //AniStateNumber = 0;
             GPGSManager.GetInstance.SendAniStateMessage(0);
         }
-        else if(AniStateNumber >= 8)
+        else if(AniStateNumber >= (int)LSD.PlayerState.MAX)
         {
-            GPGSManager.GetInstance.SendAniStateMessage(8);
+            GPGSManager.GetInstance.SendAniStateMessage(9);
         }
         else
         {

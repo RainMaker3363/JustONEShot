@@ -20,8 +20,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private int _finishMessageLength = 3;
     // Byte + Byte + 1 boolen for Item State + 1 Interger
     private int _itemStateMessageLength = 7;
-    // Byte + Byte + 1 Vector
-    private int _shootMessageLength = 14;
+    // Byte + Byte + 1 boolen
+    private int _shootMessageLength = 3;
     // Byte + Byte + 1 Boolean
     private int _deadeyeMessageLength = 3;
     // Byte + Byte + 1 Interger
@@ -419,36 +419,34 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, AniStateMessageToSend);
     }
 
-    // 상대방 총알의 궤도를 보내는 메시지
-    public void SendShootMessage(float x, float y, float z)
+    // 상대방 총알의 발사 성공 여부를 보내는 메시지
+    public void SendShootMessage(bool ShootSuccess)
     {
         _ShootMessage.Clear();
         _ShootMessage.Add(_protocolVersion);
         _ShootMessage.Add((byte)'S');
-        _ShootMessage.AddRange(System.BitConverter.GetBytes(x));
-        _ShootMessage.AddRange(System.BitConverter.GetBytes(y));
-        _ShootMessage.AddRange(System.BitConverter.GetBytes(z));
+        _ShootMessage.AddRange(System.BitConverter.GetBytes(ShootSuccess));
 
         byte[] ShotMessageToSend = _ShootMessage.ToArray();
 
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, ShotMessageToSend);
     }
 
-    // 상대방 총알의 궤도를 보내는 메시지
-    // 
-    public void SendShootMessage(Vector3 vec)
-    {
-        _ShootMessage.Clear();
-        _ShootMessage.Add(_protocolVersion);
-        _ShootMessage.Add((byte)'S');
-        _ShootMessage.AddRange(System.BitConverter.GetBytes(vec.x));
-        _ShootMessage.AddRange(System.BitConverter.GetBytes(vec.y));
-        _ShootMessage.AddRange(System.BitConverter.GetBytes(vec.z));
+    //// 상대방 총알의 궤도를 보내는 메시지
+    //// 
+    //public void SendShootMessage(Vector3 vec)
+    //{
+    //    _ShootMessage.Clear();
+    //    _ShootMessage.Add(_protocolVersion);
+    //    _ShootMessage.Add((byte)'S');
+    //    _ShootMessage.AddRange(System.BitConverter.GetBytes(vec.x));
+    //    _ShootMessage.AddRange(System.BitConverter.GetBytes(vec.y));
+    //    _ShootMessage.AddRange(System.BitConverter.GetBytes(vec.z));
 
-        byte[] ShotMessageToSend = _ShootMessage.ToArray();
+    //    byte[] ShotMessageToSend = _ShootMessage.ToArray();
 
-        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, ShotMessageToSend);
-    }
+    //    PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, ShotMessageToSend);
+    //}
 
     // 데드아이 상태값을 보내는 메시지
     public void SendDeadEyeMessage(bool DeadEyeOn)
@@ -460,7 +458,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
         byte[] DeadEyeMessageToSend = _DeadEyeMessage.ToArray();
 
-        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, DeadEyeMessageToSend);
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, DeadEyeMessageToSend);
     }
 
     // HP 값을 보내는 메시지
@@ -537,9 +535,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         }
         else if(messageType == 'S')
         {
-            float shoot_x = System.BitConverter.ToSingle(data, 2);
-            float shoot_y = System.BitConverter.ToSingle(data, 6);
-            float shoot_z = System.BitConverter.ToSingle(data, 10);
+            bool shoot = System.BitConverter.ToBoolean(data, 2);
 
             Debug.Log("Shoot Get");
 
@@ -548,7 +544,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             if (updateListener != null)
             {
                 //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.ShootStateReceived(shoot_x, shoot_y, shoot_z);
+                updateListener.ShootStateReceived(shoot);
             }
         }
         else if(messageType == 'D')

@@ -329,11 +329,13 @@ public class CharMove : MonoBehaviour {
             if (m_UseGun.Bullet_Gun > 0)
             {
                 anim.SetBool("Shot", true);
+                Mul_Manager.SendShootMessage(true);
                 m_PlayerState = LSD.PlayerState.SHOT_FIRE;
             }
             else
             {
                 anim.SetBool("Shot", false);
+                Mul_Manager.SendShootMessage(false);
                 m_PlayerState = LSD.PlayerState.SHOT_FIRE;
             }
 
@@ -367,6 +369,7 @@ public class CharMove : MonoBehaviour {
         if(DeadEyeEnd)
         {
             DeadEyeEnd = false;
+            Mul_Manager.SendDeadEyeMessage(false);
             m_PlayerState = LSD.PlayerState.IDLE;
         }
     }
@@ -461,6 +464,12 @@ public class CharMove : MonoBehaviour {
             anim.SetTrigger("DeadEye");
 
             DeadEyeStart = false;
+            Mul_Manager.SendDeadEyeMessage(true);
+        }
+
+        if(Mul_Manager.GetDeadEyeChecker())
+        {
+            m_PlayerState = LSD.PlayerState.DEADEYE;
         }
     }
 

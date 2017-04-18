@@ -225,6 +225,6 @@ public class Gun : MonoBehaviour
 
     void SetRollSpeed(float speed) //캐릭터 구르기 속도 조절
     {
-        CharMove.m_RollSpeed =13*speed;      
+        CharMove.m_RollSpeed =10*speed;      
     }
 }

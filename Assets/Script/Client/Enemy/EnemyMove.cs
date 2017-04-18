@@ -68,6 +68,9 @@ public class EnemyMove : MonoBehaviour {
     // 게임 끝의 여부
     public bool GameEndOn;
 
+    bool m_ShootSuccess;
+
+    bool m_DeadEyePlay;
 
     void Awake()
     {
@@ -144,7 +147,7 @@ public class EnemyMove : MonoBehaviour {
         //    //    if(m_PlayerState != LSD.PlayerState.SHOT_FIRE)        
         //    m_PlayerState = LSD.PlayerState.SHOT_READY;
         //}
-
+        
         switch (m_PlayerState)
         {
             case LSD.PlayerState.IDLE:
@@ -193,19 +196,23 @@ public class EnemyMove : MonoBehaviour {
                     Update_DAMAGE();
                     break;
                 }
-            //case LSD.PlayerState.DEADEYE:
-            //    {
-            //        Update_DEADEYE();
-            //        break;
-            //    }
-            //case LSD.PlayerState.REROAD:
-            //    {
-            //        // anim.Play("Reloading");
-            //        anim.SetBool("Reloading", true);
-            //        Update_REROAD();
-            //        break;
-            //    }
-
+            case LSD.PlayerState.DEADEYE:
+                {
+                    Update_DEADEYE();
+                    break;
+                }
+            case LSD.PlayerState.REROAD:
+                {
+                    // anim.Play("Reloading");
+                    anim.SetBool("Reloading", true);
+                    Update_REROAD();
+                    break;
+                }
+            case LSD.PlayerState.Roll:
+                {
+                    Update_Roll();
+                    break;
+                }
             default:
                 {
                     break;
@@ -367,19 +374,21 @@ public class EnemyMove : MonoBehaviour {
         //    // }
 
         //}
+        
 
     }
 
     void Update_SHOT_FIRE()
     {
-        if (!anim.GetBool("GunFire"))
+        if (anim.GetBool("GunFire"))
+        {
+            anim.SetBool("Shot", m_ShootSuccess);
+        }
+        else if (!anim.GetBool("GunFire"))
         {
             m_PlayerState = LSD.PlayerState.IDLE;
         }
-        else
-        {
-
-        }
+        
     }
 
     void Update_DAMAGE()
@@ -390,30 +399,44 @@ public class EnemyMove : MonoBehaviour {
         }
     }
 
-    //void Update_DEADEYE()
-    //{
+    void Update_DEADEYE()
+    {
 
-    //}
+    }
 
-    //void Update_REROAD()
-    //{
-    //    if (m_MoveJoyStickControl.GetVectorForce() > 0)
-    //    {
-    //        anim.SetBool("Reloading", false);
-    //        m_PlayerState = LSD.PlayerState.IDLE;
-    //    }
+    void Update_REROAD()
+    {
+        //if (m_MoveJoyStickControl.GetVectorForce() > 0)
+        //{
+        //    anim.SetBool("Reloading", false);
+        //    m_PlayerState = LSD.PlayerState.IDLE;
+        //}
 
-    //    if (m_UseGun.Bullet_Hand > 0 && m_UseGun.MaxBullet_Gun > m_UseGun.Bullet_Gun)//탄알이 있고 탄창이 안찼을때
-    //    {
+        //if (m_UseGun.Bullet_Hand > 0 && m_UseGun.MaxBullet_Gun > m_UseGun.Bullet_Gun)//탄알이 있고 탄창이 안찼을때
+        //{
 
-    //    }
-    //    else
-    //    {
-    //        anim.SetBool("Reloading", false);
-    //        m_PlayerState = LSD.PlayerState.IDLE;
-    //    }
-    //}
+        //}
+        //else
+        //{
+        //    anim.SetBool("Reloading", false);
+        //    m_PlayerState = LSD.PlayerState.IDLE;
+        //}
+    }
 
+    void Update_Roll()
+    {
+
+        //if (!anim.GetBool("Rolling"))
+        //{
+        //    //StopCoroutine(StaminaRecoveryDealy());
+        //    //StartCoroutine(StaminaRecoveryDealy());
+        //    m_PlayerState = LSD.PlayerState.IDLE;
+        //}
+        //else
+        //{
+        //   // StaminaRecovery = false;
+        //}
+    }
     //public void OnReroadButton()
     //{
     //    if (m_PlayerState == LSD.PlayerState.IDLE)
@@ -607,5 +630,14 @@ public class EnemyMove : MonoBehaviour {
     public void SetAniStateReceived(int AniState)
     {
         m_PlayerState = (LSD.PlayerState)AniState;
+    }
+
+    public void SetShootStateReceived(bool ShootSuccess)
+    {
+        m_ShootSuccess = ShootSuccess;
+    }
+    public void SetDeadEyeStateReceived(bool DeadEyeOn)
+    {
+        m_DeadEyePlay = DeadEyeOn;
     }
 }
