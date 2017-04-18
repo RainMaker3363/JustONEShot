@@ -97,6 +97,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     private float _nextTimeoutCheck;
 
 
+
     // Use this for initialization
     void Awake () {
 		
@@ -248,6 +249,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             if (opponent != null)
             {
+                ItemCount++;
+
                 opponent.SetTransformInformation(messageNum, posX, posY, posZ, rotY);
             }
         }
@@ -396,6 +399,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         }
     }
 
+    // HP의 정보를 동기화 시키는 역할
+    // HPState에 넘어가는 값에 따라 상대방에게 보여지는 HP가 틀려진다.
     public void HPStateReceived(int HPState)
     {
         if(_multiplayerReady)
@@ -404,7 +409,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             if (opponent != null)
             {
-               // opponent.SetHPStateReceived(HPState);
+               //opponent.SetHPStateReceived(HPState);
             }
         }
     }
@@ -414,7 +419,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         GPGSManager.GetInstance.updateListener = null;
 
-        //AutoFade.LoadLevel("MainTitle", 0.2f, 0.2f, Color.black);
+        //AutoFade.LoadLevel("WaitingRoom", 0.2f, 0.2f, Color.black);
         ThisGameIsEnd = true;
     }
 
@@ -681,7 +686,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             MyInfoText.text = "Player Info : " + MyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//MyCharacterPos.transform.position;
             EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
-            ItemGetCount.text = "ItemCount : " + ItemCount;
+            ItemGetCount.text = "MessageCount : " + ItemCount;
 
             if(ThisGameIsEnd == false)
             {
@@ -707,7 +712,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             MyInfoText.text = "Player Info : " + MyCharacterPos.transform.position;
             EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.transform.position;
             NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
-            ItemGetCount.text = "ItemCount : " + ItemCount;
+            ItemGetCount.text = "MessageCount : " + ItemCount;
         }
 
         // 적의 타임아웃 체크
