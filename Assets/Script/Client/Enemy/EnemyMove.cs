@@ -25,6 +25,7 @@ public class EnemyMove : MonoBehaviour {
     private CharacterController m_CharCtr;
 
     LSD.PlayerState m_PlayerState;
+    LSD.PlayerState m_PlayerBeforeState;
     LSD.GunState m_GunState;
 
     public int m_DebugPlayerState;
@@ -71,6 +72,8 @@ public class EnemyMove : MonoBehaviour {
     bool m_ShootSuccess;
 
     bool m_DeadEyePlay;
+
+    bool m_AniPlay =false;
 
     void Awake()
     {
@@ -142,12 +145,17 @@ public class EnemyMove : MonoBehaviour {
         // Debug.Log("VectorForce: " + m_MoveJoyStickControl.GetVectorForce());
         Debug.Log("PlayerState: " + m_PlayerState);
 
+        if (m_PlayerBeforeState != m_PlayerState)
+        {
+            CharAniInit();
+            m_PlayerBeforeState = m_PlayerState;
+        }
         //if (m_PlayerState != LSD.PlayerState.REROAD && m_PlayerState != LSD.PlayerState.DAMAGE && m_ShotJoyStickControl.GetTouch())
         //{
         //    //    if(m_PlayerState != LSD.PlayerState.SHOT_FIRE)        
         //    m_PlayerState = LSD.PlayerState.SHOT_READY;
         //}
-        
+
         switch (m_PlayerState)
         {
             case LSD.PlayerState.IDLE:
@@ -179,14 +187,23 @@ public class EnemyMove : MonoBehaviour {
                 }
             case LSD.PlayerState.SHOT_READY:
                 {
-                    anim.Play("Shot_Ready");
+                    if (!m_AniPlay)
+                    {
+                        anim.Play("Shot_Ready");
+                        m_AniPlay = true;   //CharAniInit에서 false로 바꿔줌
+                    }
                     anim.SetBool("ShotReady", true);
+                    if (!anim.GetBool("GunFire"))
+                    {
+                        anim.SetBool("GunFire", true);
+                    }
 
                     Update_SHOT_READY();
                     break;
                 }
             case LSD.PlayerState.SHOT_FIRE:
                 {
+                    
                     anim.SetBool("ShotReady", false);
                     Update_SHOT_FIRE();
                     break;
@@ -210,6 +227,12 @@ public class EnemyMove : MonoBehaviour {
                 }
             case LSD.PlayerState.Roll:
                 {
+                    if (!m_AniPlay) 
+                    {
+                        anim.Play("Roll");
+                        m_AniPlay = true;   //CharAniInit에서 false로 바꿔줌
+                        anim.SetBool("Rolling", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+                    }
                     Update_Roll();
                     break;
                 }
@@ -263,8 +286,17 @@ public class EnemyMove : MonoBehaviour {
         GameEndOn = true;
     }
 
+    void CharAniInit()
+    {
+        m_AniPlay = false;
+        if (anim.GetBool("Reloading"))
+        {
+            anim.SetBool("Reloading", false);
+        }
+    }
     void Update_IDLE()
     {
+       
 
         if (!m_Exhausted)//탈진상태가 아니라면
         {

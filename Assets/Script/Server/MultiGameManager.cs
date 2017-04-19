@@ -694,7 +694,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             //EnemyName.gameObject.transform.position = new Vector3(EnemyCharacter.transform.position.x, EnemyCharacter.transform.position.y + 0.4f, EnemyCharacter.transform.position.z);
 
             MyInfoText.text = "Player Info : " + MyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//MyCharacterPos.transform.position;
-            EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
+            EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
             ItemGetCount.text = "MessageCount : " + ItemCount;
 
             if(ThisGameIsEnd == false)
