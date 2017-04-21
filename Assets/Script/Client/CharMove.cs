@@ -358,13 +358,19 @@ public class CharMove : MonoBehaviour {
             if (m_UseGun.Bullet_Gun > 0)
             {
                 anim.SetBool("Shot", true);
-                //Mul_Manager.SendShootMessage(true);
+                if (GPGSManager.GetInstance.IsAuthenticated())
+                {
+                    Mul_Manager.SendShootMessage(true);
+                }
                 m_PlayerState = LSD.PlayerState.SHOT_FIRE;
             }
             else
             {
                 anim.SetBool("Shot", false);
-                //Mul_Manager.SendShootMessage(false);
+                if (GPGSManager.GetInstance.IsAuthenticated())
+                {
+                    Mul_Manager.SendShootMessage(false);
+                }
                 m_PlayerState = LSD.PlayerState.SHOT_FIRE;
             }
 
@@ -398,7 +404,10 @@ public class CharMove : MonoBehaviour {
         if(DeadEyeEnd)
         {
             DeadEyeEnd = false;
-            Mul_Manager.SendDeadEyeMessage(false);
+            if (GPGSManager.GetInstance.IsAuthenticated())
+            {
+                Mul_Manager.SendDeadEyeMessage(false);
+            }
             m_PlayerState = LSD.PlayerState.IDLE;
         }
     }
@@ -457,8 +466,10 @@ public class CharMove : MonoBehaviour {
                 anim.SetBool("Rolling", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
                 m_PlayerState = LSD.PlayerState.Roll;
                 StaminaCheck();
-                Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
-
+                if (GPGSManager.GetInstance.IsAuthenticated())
+                {
+                    Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
+                }
             }
         }
     }
@@ -468,13 +479,17 @@ public class CharMove : MonoBehaviour {
         Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
         DamageVec.y = 0; //위아래로는 움직이지 않게합니다
         transform.rotation = Quaternion.LookRotation(DamageVec);
+        anim.Play("Idle");
         anim.SetTrigger("Damage");
         anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
         HP -= Damage;
         HP_bar.fillAmount = HP/100;
 
-        Mul_Manager.SendMyPositionUpdate();
-        Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
+        if (GPGSManager.GetInstance.IsAuthenticated())
+        {
+            Mul_Manager.SendMyPositionUpdate();
+            Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
+        }
         m_PlayerState = LSD.PlayerState.DAMAGE;
     }
 
@@ -494,12 +509,19 @@ public class CharMove : MonoBehaviour {
             anim.SetTrigger("DeadEye");
 
             DeadEyeStart = false;
-            Mul_Manager.SendDeadEyeMessage(true);
+            if (GPGSManager.GetInstance.IsAuthenticated())
+            {
+                Mul_Manager.SendDeadEyeMessage(true);
+            }
         }
 
-        if(Mul_Manager.GetDeadEyeChecker())
+        if (GPGSManager.GetInstance.IsAuthenticated())
         {
-            m_PlayerState = LSD.PlayerState.DEADEYE;
+            if (Mul_Manager.GetDeadEyeChecker())
+            {
+                anim.Stop();
+                m_PlayerState = LSD.PlayerState.DEADEYE;
+            }
         }
     }
 
@@ -700,9 +722,12 @@ public class CharMove : MonoBehaviour {
         while (true)
         {
             yield return new WaitForSeconds(0.16f);
-            if (Mul_Manager == true)
+            if (GPGSManager.GetInstance.IsAuthenticated())
             {
-                Mul_Manager.SendAniStateMessage((int)m_PlayerState);
+                if (Mul_Manager == true)
+                {
+                    Mul_Manager.SendAniStateMessage((int)m_PlayerState);
+                }
             }
         }
     }

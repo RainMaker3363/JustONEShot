@@ -69,6 +69,7 @@ public class DeadEye : MonoBehaviour {
     {
         yield return new WaitForSeconds(2f);
         CharMove.DeadEyeEnd = true;
+        EnemyMove.DeadEyeEnd = true;
         MainUI.SetActive(true);
         MainCam.gameObject.SetActive(true);
         DeadEyeBulletEndCam.SetActive(false);

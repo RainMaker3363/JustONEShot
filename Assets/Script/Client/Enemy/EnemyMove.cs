@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyMove : MonoBehaviour {
 
-    //public MoveJoyStick m_MoveJoyStickControl;  //움직임 전용 조이스틱
+   // public MoveJoyStick m_MoveJoyStickControl;  //움직임 전용 조이스틱
     //public JoyStickCtrl m_ShotJoyStickControl;  //샷 전용 조이스틱
 
     public Animator anim;
@@ -74,6 +74,12 @@ public class EnemyMove : MonoBehaviour {
     bool m_DeadEyePlay;
 
     bool m_AniPlay =false;
+
+    static bool PlayerDeadEyeStart = false;
+    static bool EnemyDeadEyeStart = false;
+    public static bool DeadEyeEnd = false;
+
+    public Transform PlayerPos;  //  적 캐릭터 위치 추후변경예상
 
     void Awake()
     {
@@ -150,6 +156,8 @@ public class EnemyMove : MonoBehaviour {
             CharAniInit();
             m_PlayerBeforeState = m_PlayerState;
         }
+
+        DeadEyeCheck();
         //if (m_PlayerState != LSD.PlayerState.REROAD && m_PlayerState != LSD.PlayerState.DAMAGE && m_ShotJoyStickControl.GetTouch())
         //{
         //    //    if(m_PlayerState != LSD.PlayerState.SHOT_FIRE)        
@@ -168,21 +176,21 @@ public class EnemyMove : MonoBehaviour {
                 {
                     anim.SetInteger("DashLevel", 1);
                     // m_FirstTouch.color = Color.red;
-                    //Update_DASH_SLOW();
+                   Update_DASH_SLOW();
                     break;
                 }
             case LSD.PlayerState.DASH_SOFT:
                 {
                     anim.SetInteger("DashLevel", 2);
                     //m_FirstTouch.color = Color.green;
-                    //Update_DASH_SOFT();
+                    Update_DASH_SOFT();
                     break;
                 }
             case LSD.PlayerState.DASH_HARD:
                 {
                     anim.SetInteger("DashLevel", 3);
                     //m_FirstTouch.color = Color.blue;
-                    //Update_DASH_HARD();
+                    Update_DASH_HARD();
                     break;
                 }
             case LSD.PlayerState.SHOT_READY:
@@ -298,100 +306,100 @@ public class EnemyMove : MonoBehaviour {
     {
        
 
-        if (!m_Exhausted)//탈진상태가 아니라면
-        {
-            //if (m_MoveJoyStickControl.GetVectorForce() > 0)
-            //{
-            //    m_PlayerState = LSD.PlayerState.DASH_SOFT;
-            //}
-            //else if (m_MoveJoyStickControl.GetVectorForce() > 0.5f)
-            //{
-            //    m_PlayerState = LSD.PlayerState.DASH_HARD;
-            //}
-        }
-        else //탈진상태라면
-        {
-            //if (m_MoveJoyStickControl.GetVectorForce() > 0)
-            //{
-            //    m_PlayerState = LSD.PlayerState.DASH_SLOW;
-            //}
-        }
+        //if (!m_Exhausted)//탈진상태가 아니라면
+        //{
+        //    if (m_MoveJoyStickControl.GetVectorForce() > 0)
+        //    {
+        //        m_PlayerState = LSD.PlayerState.DASH_SOFT;
+        //    }
+        //    else if (m_MoveJoyStickControl.GetVectorForce() > 0.5f)
+        //    {
+        //        m_PlayerState = LSD.PlayerState.DASH_HARD;
+        //    }
+        //}
+        //else //탈진상태라면
+        //{
+        //    if (m_MoveJoyStickControl.GetVectorForce() > 0)
+        //    {
+        //        m_PlayerState = LSD.PlayerState.DASH_SLOW;
+        //    }
+        //}
 
 
     }
 
-    //void Update_DASH_SLOW()
-    //{
-    //    if (m_MoveJoyStickControl.GetVectorForce() > 0) // 계속 조작중인경우
-    //    {
+    void Update_DASH_SLOW()
+    {
+        //if (m_MoveJoyStickControl.GetVectorForce() > 0) // 계속 조작중인경우
+        //{
 
-    //        if (!m_Exhausted) //탈진상태에서 회복됬다면
-    //        {
-    //            m_PlayerState++;    //Player상태를 DASH_SOFT로 변경
-    //                                //m_PlayerState = LSD.PlayerState.DASH_SOFT;
-    //        }
-    //    }
-    //    else //조작을 멈출경우
-    //    {
-    //        m_PlayerState--;//Player상태를 IDLE로 변경
-    //                        //m_PlayerState = LSD.PlayerState.IDLE;
-    //    }
-    //}
+        //    if (!m_Exhausted) //탈진상태에서 회복됬다면
+        //    {
+        //        m_PlayerState++;    //Player상태를 DASH_SOFT로 변경
+        //                            //m_PlayerState = LSD.PlayerState.DASH_SOFT;
+        //    }
+        //}
+        //else //조작을 멈출경우
+        //{
+        //    m_PlayerState--;//Player상태를 IDLE로 변경
+        //                    //m_PlayerState = LSD.PlayerState.IDLE;
+        //}
+    }
 
-    //void Update_DASH_SOFT()
-    //{
-    //    if (!m_Exhausted)//탈진상태가 아니라면
-    //    {
+    void Update_DASH_SOFT()
+    {
+        //if (!m_Exhausted)//탈진상태가 아니라면
+        //{
 
-    //        if (m_MoveJoyStickControl.GetVectorForce() > 0.5f)
-    //        {
-    //            m_PlayerState = LSD.PlayerState.DASH_HARD;
-    //        }
-    //        else if (m_MoveJoyStickControl.GetVectorForce() > 0)
-    //        {
-    //            m_PlayerState = LSD.PlayerState.DASH_SOFT;
-    //        }
-    //        else //조작을 멈출경우
-    //        {
-    //            m_PlayerState = LSD.PlayerState.IDLE;
-    //        }
+        //    if (m_MoveJoyStickControl.GetVectorForce() > 0.5f)
+        //    {
+        //        m_PlayerState = LSD.PlayerState.DASH_HARD;
+        //    }
+        //    else if (m_MoveJoyStickControl.GetVectorForce() > 0)
+        //    {
+        //        m_PlayerState = LSD.PlayerState.DASH_SOFT;
+        //    }
+        //    else //조작을 멈출경우
+        //    {
+        //        m_PlayerState = LSD.PlayerState.IDLE;
+        //    }
 
-    //    }
-    //    else //탈진상태라면
-    //    {
-    //        if (m_MoveJoyStickControl.GetVectorForce() > 0)
-    //        {
-    //            m_PlayerState = LSD.PlayerState.DASH_SLOW;
-    //        }
-    //    }
-    //}
+        //}
+        //else //탈진상태라면
+        //{
+        //    if (m_MoveJoyStickControl.GetVectorForce() > 0)
+        //    {
+        //        m_PlayerState = LSD.PlayerState.DASH_SLOW;
+        //    }
+        //}
+    }
 
-    //void Update_DASH_HARD()
-    //{
-    //    if (!m_Exhausted)//탈진상태가 아니라면
-    //    {
+    void Update_DASH_HARD()
+    {
+        //if (!m_Exhausted)//탈진상태가 아니라면
+        //{
 
-    //        if (m_MoveJoyStickControl.GetVectorForce() > 0.5f)
-    //        {
-    //            m_PlayerState = LSD.PlayerState.DASH_HARD;
-    //        }
-    //        else if (m_MoveJoyStickControl.GetVectorForce() > 0)
-    //        {
-    //            m_PlayerState = LSD.PlayerState.DASH_SOFT;
-    //        }
-    //        else //조작을 멈출경우
-    //        {
-    //            m_PlayerState = LSD.PlayerState.IDLE;
-    //        }
-    //    }
-    //    else //탈진상태라면
-    //    {
-    //        if (m_MoveJoyStickControl.GetVectorForce() > 0)
-    //        {
-    //            m_PlayerState = LSD.PlayerState.DASH_SLOW;
-    //        }
-    //    }
-    //}
+        //    if (m_MoveJoyStickControl.GetVectorForce() > 0.5f)
+        //    {
+        //        m_PlayerState = LSD.PlayerState.DASH_HARD;
+        //    }
+        //    else if (m_MoveJoyStickControl.GetVectorForce() > 0)
+        //    {
+        //        m_PlayerState = LSD.PlayerState.DASH_SOFT;
+        //    }
+        //    else //조작을 멈출경우
+        //    {
+        //        m_PlayerState = LSD.PlayerState.IDLE;
+        //    }
+        //}
+        //else //탈진상태라면
+        //{
+        //    if (m_MoveJoyStickControl.GetVectorForce() > 0)
+        //    {
+        //        m_PlayerState = LSD.PlayerState.DASH_SLOW;
+        //    }
+        //}
+    }
 
     void Update_SHOT_READY()
     {
@@ -433,7 +441,12 @@ public class EnemyMove : MonoBehaviour {
 
     void Update_DEADEYE()
     {
-
+        if (DeadEyeEnd)
+        {
+            DeadEyeEnd = false;
+           
+            m_PlayerState = LSD.PlayerState.IDLE;
+        }
     }
 
     void Update_REROAD()
@@ -493,6 +506,35 @@ public class EnemyMove : MonoBehaviour {
         m_PlayerState = LSD.PlayerState.DAMAGE;
     }
 
+    public static void PlayerDeadEye()    //데드아이 총알을 먹었을경우
+    {
+        PlayerDeadEyeStart = true;
+
+    }
+    public static void EnemyDeadEye()    //데드아이 총알을 먹었을경우
+    {
+        EnemyDeadEyeStart = true;
+
+    }
+
+    public void DeadEyeCheck()
+    {
+        if (EnemyDeadEyeStart)
+        {
+            transform.LookAt(PlayerPos.position);
+            anim.SetInteger("DashLevel", 0);
+            m_PlayerState = LSD.PlayerState.DEADEYE;
+            anim.SetTrigger("DeadEye");
+            EnemyDeadEyeStart = false;
+        }
+
+        if (PlayerDeadEyeStart)
+        {
+            anim.Stop();
+            m_PlayerState = LSD.PlayerState.DEADEYE;
+            PlayerDeadEyeStart = false;
+        }
+    }
 
     void FixedUpdate()
     {
@@ -580,21 +622,21 @@ public class EnemyMove : MonoBehaviour {
     }
     void FixedUpdate_DASH_SLOW()    //탈진 달리기
     {
-        //m_MoveSpeed = 1;
+        m_MoveSpeed = 1;
         //Stamina += 7;
         //PlayerMove();
         //StaminaCheck();
     }
     void FixedUpdate_DASH_SOFT()    // 천천히 달리기
     {
-        //m_MoveSpeed = 5;
+        m_MoveSpeed = 5;
         //Stamina += 10;
         //PlayerMove();
         //StaminaCheck();
     }
     void FixedUpdate_DASH_HARD()
     {
-        //m_MoveSpeed = 8;
+        m_MoveSpeed = 8;
         //Stamina -= 4;
         //PlayerMove();
         //StaminaCheck();
@@ -633,7 +675,7 @@ public class EnemyMove : MonoBehaviour {
     //    //    transform.position = new Vector3(transform.position.x, Ground.point.y, transform.position.z);
     //    //}
 
-    //    cam.transform.position = CamPos + transform.position;
+    //   // cam.transform.position = CamPos + transform.position;
     //}
 
     void PlayerAiming()

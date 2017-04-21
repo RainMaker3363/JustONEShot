@@ -31,7 +31,6 @@ public class Bullet_DeadEye : MonoBehaviour
     void OnEnable()
     {
         m_Distance = m_DistanceInit;
-
     }
 
     // Update is called once per frame
@@ -51,6 +50,7 @@ public class Bullet_DeadEye : MonoBehaviour
                 Debug.Log("Hit" + Damage);
                 HitObj.collider.gameObject.GetComponent<CharMove>().Damaged(Damage, transform.forward);
                 m_Distance = 0;
+                Debug.Log(m_Distance);
             }
 
             if (HitObj.collider.gameObject.tag == "Enemy")
@@ -61,6 +61,7 @@ public class Bullet_DeadEye : MonoBehaviour
             }
         }
         //Debug.DrawLine(transform.position, transform.position + Vector3.forward * 5, Color.blue);
+       
         if (m_Distance > 0)
         {
             Debug.DrawLine(transform.position, transform.position + transform.forward * 1, Color.blue);
