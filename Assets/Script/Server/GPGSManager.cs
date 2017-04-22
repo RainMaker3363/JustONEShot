@@ -477,7 +477,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // 상대 ID로부터 메시지를 받았을때 호출되는 리스너 함수
     public void OnRealTimeMessageReceived(bool isReliable, string senderId, byte[] data)
     {
-        ShowMPStatus("We have received some gameplay messages from participant ID:" + senderId);
+        //ShowMPStatus("We have received some gameplay messages from participant ID:" + senderId);
 
         // We'll be doing more with this later...
         byte messageVersion = (byte)data[0];

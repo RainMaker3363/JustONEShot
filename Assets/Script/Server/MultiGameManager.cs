@@ -253,7 +253,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             if (opponent != null)
             {
-                ItemCount++;
+
 
                 opponent.SetTransformInformation(messageNum, posX, posY, posZ, rotY);
             }
@@ -527,6 +527,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                                                         MyCharacter.transform.rotation.eulerAngles.y);
 
                 _nextBroadcastTime = Time.time + 0.16f;
+
+                ItemCount++;
             }
         }
 
