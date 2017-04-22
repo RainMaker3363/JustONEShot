@@ -76,7 +76,7 @@ public class EnemyMove : MonoBehaviour {
     bool m_AniPlay =false;
 
     static bool PlayerDeadEyeStart = false;
-    static bool EnemyDeadEyeStart = false;
+   // static bool EnemyDeadEyeStart = false;
     public static bool DeadEyeEnd = false;
 
     public Transform PlayerPos;  //  적 캐릭터 위치 추후변경예상
@@ -511,26 +511,27 @@ public class EnemyMove : MonoBehaviour {
         PlayerDeadEyeStart = true;
 
     }
-    public static void EnemyDeadEye()    //데드아이 총알을 먹었을경우
-    {
-        EnemyDeadEyeStart = true;
+    //public static void EnemyDeadEye()    //데드아이 총알을 먹었을경우
+    //{
+    //    EnemyDeadEyeStart = true;
 
-    }
+    //}
 
     public void DeadEyeCheck()
     {
-        if (EnemyDeadEyeStart)
+        if (m_DeadEyePlay)
         {
             transform.LookAt(PlayerPos.position);
             anim.SetInteger("DashLevel", 0);
             m_PlayerState = LSD.PlayerState.DEADEYE;
             anim.SetTrigger("DeadEye");
-            EnemyDeadEyeStart = false;
+            m_DeadEyePlay = false;
         }
 
         if (PlayerDeadEyeStart)
         {
-            
+            anim.Play("Idle");
+            anim.SetInteger("DashLevel", 0);
             m_PlayerState = LSD.PlayerState.DEADEYE;
             PlayerDeadEyeStart = false;
         }

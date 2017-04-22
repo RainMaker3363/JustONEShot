@@ -58,6 +58,7 @@ public class DeadEyeUI : MonoBehaviour {
         int RandomIndex;
         for (int i = 0; i < Bullets.Length; i++)
         {
+            Bullets[i].Active = false;
             RandomIndex = Random.Range(i, Bullets.Length);
 
             temp = BulletOrders[RandomIndex];

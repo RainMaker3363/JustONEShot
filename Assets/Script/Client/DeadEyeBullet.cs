@@ -43,6 +43,11 @@ public class DeadEyeBullet : MonoBehaviour{
         DeadEyeUI.GunRollAnim.SetTrigger("IN");
     }
 
+    void OnEnable()
+    {
+        m_MeshRenderer = GetComponent<MeshRenderer>();
+        m_MeshRenderer.material.SetColor("_RimColor", Color.black);
+    }
 
 
 }

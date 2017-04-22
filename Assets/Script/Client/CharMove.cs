@@ -72,6 +72,7 @@ public class CharMove : MonoBehaviour {
     [SerializeField]
     float HP = 100;
 
+    bool ShotAble = true;   //조준 가능여부
 
     //스테미나가 전부 소모된 상태
     bool m_Exhausted = false;
@@ -143,7 +144,7 @@ public class CharMove : MonoBehaviour {
 
         DeadEyeCheck();
 
-        if (m_PlayerState != LSD.PlayerState.REROAD && m_PlayerState != LSD.PlayerState.DAMAGE && m_ShotJoyStickControl.GetTouch())
+        if (ShotAble && m_ShotJoyStickControl.GetTouch())
         {
             //    if(m_PlayerState != LSD.PlayerState.SHOT_FIRE)        
             m_PlayerState = LSD.PlayerState.SHOT_READY;
@@ -153,12 +154,14 @@ public class CharMove : MonoBehaviour {
         {
             case LSD.PlayerState.IDLE:
                 {
+                    ShotAble = true;
                     anim.SetInteger("DashLevel", 0);
                     Update_IDLE();
                     break;
                 }
             case LSD.PlayerState.DASH_SLOW:
                 {
+                    ShotAble = true;
                     anim.SetInteger("DashLevel", 1);
                     m_FirstTouch.color = Color.red;
                     Update_DASH_SLOW();
@@ -166,6 +169,7 @@ public class CharMove : MonoBehaviour {
                 }
             case LSD.PlayerState.DASH_SOFT:
                 {
+                    ShotAble = true;
                     anim.SetInteger("DashLevel", 2);
                     m_FirstTouch.color = Color.green;
                     Update_DASH_SOFT();
@@ -173,6 +177,7 @@ public class CharMove : MonoBehaviour {
                 }
             case LSD.PlayerState.DASH_HARD:
                 {
+                    ShotAble = true;
                     anim.SetInteger("DashLevel", 3);
                     m_FirstTouch.color = Color.blue;
                     Update_DASH_HARD();
@@ -192,23 +197,27 @@ public class CharMove : MonoBehaviour {
                 }
             case LSD.PlayerState.SHOT_FIRE:
                 {
+                    ShotAble = false;
                     anim.SetBool("ShotReady", false);
                     Update_SHOT_FIRE();
                     break;
                 }
             case LSD.PlayerState.DAMAGE:
                 {
+                    ShotAble = false;
                     Update_DAMAGE();
                     break;
                 }
             case LSD.PlayerState.DEADEYE:
                 {
+                    ShotAble = false;
                     Update_DEADEYE();
                     break;
                 }
             case LSD.PlayerState.REROAD:
                 {
-                   // anim.Play("Reloading");
+                    // anim.Play("Reloading");
+                    ShotAble = false;
                     anim.SetBool("Reloading", true);
                     Update_REROAD();
                     break;
@@ -219,7 +228,8 @@ public class CharMove : MonoBehaviour {
                     {
                         anim.Play("Roll");
                         m_AniPlay = true;
-                    }     
+                    }
+                    ShotAble = false;
                     Update_Roll();
                     break;
                 }
@@ -406,9 +416,10 @@ public class CharMove : MonoBehaviour {
             m_MoveJoyStickControl.PedInit();
         }
 
-        if(DeadEyeEnd)
+        if(DeadEyeEnd||!Mul_Manager.GetDeadEyeChecker())
         {
             DeadEyeEnd = false;
+            cam.transform.position = CamPos + transform.position;
             if (GPGSManager.GetInstance.IsAuthenticated())
             {
                 Mul_Manager.SendDeadEyeMessage(false);
@@ -524,7 +535,12 @@ public class CharMove : MonoBehaviour {
         {
             if (Mul_Manager.GetDeadEyeChecker())
             {
-               
+                if (!m_AniPlay)
+                {
+                    anim.Play("Idle");
+                    anim.SetInteger("DashLevel", 0);
+                    m_AniPlay = true;
+                }
                 m_PlayerState = LSD.PlayerState.DEADEYE;
             }
         }

@@ -59,7 +59,7 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
                 }
                 else if(E_Distance < 1)
                 {
-                    EnemyMove.EnemyDeadEye();
+                    //EnemyMove.EnemyDeadEye();
                     DB_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
                     BulletIndex = -1; //인덱스 초기화
                     StartCoroutine(BulletCreateDelay());    //재생성 쿨타임 시작
