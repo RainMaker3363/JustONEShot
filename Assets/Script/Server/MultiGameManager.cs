@@ -70,10 +70,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 플레이어의 정보
     public GameObject MyCharacter;
     public GameObject MyCharacterPos;
+    private string MyPlayerNick;
 
     // 적의 정보
     public GameObject EnemyCharacter;
     public GameObject EnemyCharacterPos;
+    private string OpponentPlayerNick;
     private Dictionary<string, EnemyMove> _opponentScripts;
 
     // 상대방이 갖고 있을 애니메이션 값
@@ -118,7 +120,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         _timeOutCheckInterval = 1.0f;
         _nextTimeoutCheck = 0.0f;
 
-       
+        MyPlayerNick = "";
+        OpponentPlayerNick = "";
+
 
         SetupMultiplayerGame();
     }
@@ -208,6 +212,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         //_timePlayed = 0;
         //guiObject.SetLaps(_lapsRemaining);
         //guiObject.SetTime(_timePlayed);
+
+        MyPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(0);
+        OpponentPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(1);
 
         _multiplayerReady = true;
 
@@ -526,12 +533,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                                                         MyCharacter.transform.position.z,
                                                         MyCharacter.transform.rotation.eulerAngles.y);
 
-                _nextBroadcastTime = Time.time + 0.16f;
+                //_nextBroadcastTime = Time.time + 0.16f;
+                _nextBroadcastTime = Time.time + 0.10f;
 
                 ItemCount++;
             }
         }
-
 
 
 
@@ -687,38 +694,30 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             //    EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);
             //}
 
-            PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);//GPGSManager.GetInstance.GetOtherNameGPGS(0);
-            EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);
 
-            //PlayerName.gameObject.transform.position = new Vector3(_opponentScripts[_MyParticipantId].transform.position.x, _opponentScripts[_MyParticipantId].transform.position.y + 0.4f, _opponentScripts[_MyParticipantId].transform.position.z);
-            //EnemyName.gameObject.transform.position = new Vector3(_opponentScripts[_EnemyParticipantId].transform.position.x, _opponentScripts[_EnemyParticipantId].transform.position.y + 0.4f, _opponentScripts[_EnemyParticipantId].transform.position.z);
-            //PlayerName.gameObject.transform.position = new Vector3(MyCharacter.transform.position.x, MyCharacter.transform.position.y + 0.4f, MyCharacter.transform.position.z);
-            //EnemyName.gameObject.transform.position = new Vector3(EnemyCharacter.transform.position.x, EnemyCharacter.transform.position.y + 0.4f, EnemyCharacter.transform.position.z);
-
-            MyInfoText.text = "Player Info : " + MyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//MyCharacterPos.transform.position;
-            EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
-            ItemGetCount.text = "MessageCount : " + ItemCount;
-
-            if(ThisGameIsEnd == false)
+            if (ThisGameIsEnd == false)
             {
                 NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
+
             }
             else
             {
                 NetText.text = "Net Info : 상대방이 연결을 해제했습니다.";
             }
 
+            PlayerName.text = MyPlayerNick;
+            EnemyName.text = OpponentPlayerNick;
+
+            MyInfoText.text = "Player Info : " + MyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//MyCharacterPos.transform.position;
+            EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
+            ItemGetCount.text = "MessageCount : " + ItemCount;
+
+
         }
         else
         {
             PlayerName.text = "Player"; //GPGSManager.GetInstance.GetNameGPGS();
             EnemyName.text = "Enemy";
-
-            //PlayerName.gameObject.transform.position = new Vector3(MyCharacter.transform.position.x, MyCharacter.transform.position.y + 0.4f, MyCharacter.transform.position.z);
-            //EnemyName.gameObject.transform.position = new Vector3(EnemyCharacter.transform.position.x, EnemyCharacter.transform.position.y + 0.4f, EnemyCharacter.transform.position.z);
-
-            //EnemyInfoText.text = "Player Info : " + MyCharacter.transform.position.ToString();//("Player Info : " + _opponentScripts[_MyParticipantId].transform.position).ToString();//GPGSManager.GetInstance.GetAllPlayers()[0].ParticipantId;
-            //NetText.text = "Enemy Info : " + EnemyCharacter.transform.position.ToString();//("Enemy Info : " + _opponentScripts[_EnemyParticipantId].transform.position).ToString();
 
             MyInfoText.text = "Player Info : " + MyCharacterPos.transform.position;
             EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.transform.position;

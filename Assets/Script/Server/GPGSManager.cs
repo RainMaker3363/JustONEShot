@@ -228,6 +228,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         }
     }
 
+
     //// 멀티플레이어가 나갔을때 호출되는 리스너 함수
     //public void OnLeftRoom()
     //{
