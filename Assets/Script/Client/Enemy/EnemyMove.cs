@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyMove : MonoBehaviour {
 
-   // public MoveJoyStick m_MoveJoyStickControl;  //움직임 전용 조이스틱
+  // public MoveJoyStick m_MoveJoyStickControl;  //움직임 전용 조이스틱
     //public JoyStickCtrl m_ShotJoyStickControl;  //샷 전용 조이스틱
 
     public Animator anim;
@@ -60,7 +60,7 @@ public class EnemyMove : MonoBehaviour {
 
     // 적의 정보를 보간시켜주기 위해 필요한 정보들..
     private float _lastUpdateTime;
-    private float _timePerUpdate = 0.16f;
+    private float _timePerUpdate = 0.1f;
     private float pctDone;
 
     // 메시지 순서를 알아낼 변수
@@ -304,7 +304,7 @@ public class EnemyMove : MonoBehaviour {
     }
     void Update_IDLE()
     {
-       
+
 
         //if (!m_Exhausted)//탈진상태가 아니라면
         //{
@@ -530,7 +530,7 @@ public class EnemyMove : MonoBehaviour {
 
         if (PlayerDeadEyeStart)
         {
-            anim.Stop();
+            
             m_PlayerState = LSD.PlayerState.DEADEYE;
             PlayerDeadEyeStart = false;
         }
@@ -675,7 +675,7 @@ public class EnemyMove : MonoBehaviour {
     //    //    transform.position = new Vector3(transform.position.x, Ground.point.y, transform.position.z);
     //    //}
 
-    //   // cam.transform.position = CamPos + transform.position;
+    //    // cam.transform.position = CamPos + transform.position;
     //}
 
     void PlayerAiming()

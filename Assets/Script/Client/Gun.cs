@@ -107,8 +107,11 @@ public class Gun : MonoBehaviour
             }
         }
 
-        Rotate.eulerAngles = new Vector3(0, 0, SillinerRotate);
-        UI_Sillinder.transform.rotation = Quaternion.Slerp(UI_Sillinder.transform.rotation, Rotate, Time.deltaTime * 5.0f);
+        if (UI_Sillinder != null)
+        {
+            Rotate.eulerAngles = new Vector3(0, 0, SillinerRotate);
+            UI_Sillinder.transform.rotation = Quaternion.Slerp(UI_Sillinder.transform.rotation, Rotate, Time.deltaTime * 5.0f);
+        }
 
     }
     void SetBullet()

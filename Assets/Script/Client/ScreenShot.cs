@@ -6,8 +6,10 @@ using UnityEngine.UI;
 public class ScreenShot : MonoBehaviour
 {
 
-   // public Camera mainCam;
-    public Camera ScreenCam;
+    // public Camera mainCam;
+    public Camera EnemyCam;
+    public Camera PlayerCam;
+    private Camera ScreenCam;
     private Texture2D m_Screenshot;
     public Image m_ScreenImage;
 
@@ -16,7 +18,14 @@ public class ScreenShot : MonoBehaviour
     void OnEnable()
     {
         //m_ScreenImage = GetComponent<Image>();
-
+        if (PlayerCam.gameObject.activeSelf)
+        {
+            ScreenCam = PlayerCam;
+        }
+        else if (EnemyCam.gameObject.activeSelf)
+        {
+            ScreenCam = EnemyCam;
+        }
         StartCoroutine(SetScreenShot());
     }
 
@@ -24,7 +33,7 @@ public class ScreenShot : MonoBehaviour
     {
 
         yield return new WaitForEndOfFrame();
-        
+
         ScreenCam.Render();
 
         //2d texture객체를 만드는대.. 스크린의 넓이, 높이를 선택하고 텍스쳐 포멧은 스크린샷을 찍기 위해서는 이렇게 해야 한다더군요. 
@@ -40,7 +49,9 @@ public class ScreenShot : MonoBehaviour
 
             m_ScreenImage.material.mainTexture = m_Screenshot;
         // }
-        ScreenCam.gameObject.SetActive(false);
+        //ScreenCam.gameObject.SetActive(false);
+        PlayerCam.gameObject.SetActive(false);
+        EnemyCam.gameObject.SetActive(false);
         m_ScreenImage.gameObject.SetActive(true);
     }
 

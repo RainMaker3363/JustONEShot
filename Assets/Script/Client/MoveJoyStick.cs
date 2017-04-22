@@ -14,7 +14,7 @@ public class MoveJoyStick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
     private Vector3 inputVector;
 
     
-    bool TouchBegin = true;
+    public bool TouchBegin = true;
     private Vector3 BeginPos;
 
     // Use this for initialization
@@ -109,5 +109,15 @@ public class MoveJoyStick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
     {
         //inputVector = Vector3.zero;
         //joystick_Stick.rectTransform.anchoredPosition = Vector2.zero;
+    }
+
+    public void PedInit()
+    {
+        inputVector = Vector3.zero;
+        joystick_Stick.rectTransform.anchoredPosition = Vector3.zero;
+
+        BeginPos = Vector3.zero;
+        Joystick_Pad.gameObject.SetActive(false);
+        TouchBegin = true;
     }
 }

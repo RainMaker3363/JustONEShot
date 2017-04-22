@@ -401,6 +401,11 @@ public class CharMove : MonoBehaviour {
 
     void Update_DEADEYE()
     {
+        if(!m_MoveJoyStickControl.TouchBegin)
+        {
+            m_MoveJoyStickControl.PedInit();
+        }
+
         if(DeadEyeEnd)
         {
             DeadEyeEnd = false;
@@ -479,7 +484,7 @@ public class CharMove : MonoBehaviour {
         Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
         DamageVec.y = 0; //위아래로는 움직이지 않게합니다
         transform.rotation = Quaternion.LookRotation(DamageVec);
-        anim.Play("Idle");
+       
         anim.SetTrigger("Damage");
         anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
         HP -= Damage;
@@ -519,7 +524,7 @@ public class CharMove : MonoBehaviour {
         {
             if (Mul_Manager.GetDeadEyeChecker())
             {
-                anim.Stop();
+               
                 m_PlayerState = LSD.PlayerState.DEADEYE;
             }
         }
@@ -721,7 +726,7 @@ public class CharMove : MonoBehaviour {
     {
         while (true)
         {
-            yield return new WaitForSeconds(0.16f);
+            yield return new WaitForSeconds(0.1f);
             if (GPGSManager.GetInstance.IsAuthenticated())
             {
                 if (Mul_Manager == true)

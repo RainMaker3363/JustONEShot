@@ -48,13 +48,13 @@ public class DeadEye : MonoBehaviour {
     {
         DeadEyeCamera.SetActive(true);
         MainCam.gameObject.SetActive(false);
-        
+        MainUI.SetActive(false);
     }
 
     void DeadEyePlay()
     {
         DeadEyeUI.SetActive(true);
-        MainUI.SetActive(false);
+       
         StartCoroutine(DeadEyeTime());
     }
 
