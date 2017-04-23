@@ -93,6 +93,10 @@ public class CharMove : MonoBehaviour {
     float EnemyDeadEyeTimer;    //적 데드아이 시간
     bool DeadEyecomplete = false;
     public static bool DeadEyeSuccess;
+
+    public Transform DeathZone;
+    bool DeathZoneDealay = false;
+
     void Awake()
     {
         m_GunState = LSD.GunState.Revolver; //현재는 고정 추후 받아오게함
@@ -147,6 +151,7 @@ public class CharMove : MonoBehaviour {
         }
 
         DeadEyeCheck();
+        DeathZoneCheck();
 
         if (ShotAble && m_ShotJoyStickControl.GetTouch())
         {
@@ -208,6 +213,7 @@ public class CharMove : MonoBehaviour {
                 }
             case LSD.PlayerState.DAMAGE:
                 {
+                    m_AniPlay = true;
                     ShotAble = false;
                     Update_DAMAGE();
                     break;
@@ -606,6 +612,20 @@ public class CharMove : MonoBehaviour {
         }
     }
 
+    void DeathZoneCheck()
+    {
+        if(DeathZone.position.y+0.15f>=transform.position.y )
+        {
+            if (!DeathZoneDealay)
+            {
+                DeathZoneDealay = true;
+                HP -= DeathZone.gameObject.GetComponent<DeathZone>().Damage;
+                HP_bar.fillAmount = HP / 100;
+                StartCoroutine(DeathZoneDealyTime(DeathZone.gameObject.GetComponent<DeathZone>().DamageDealay));
+            }
+        }
+    }
+
     //public void DeadEyeUIOn()
     //{
     //   DeadEyeUI.SetActive(true);
@@ -826,5 +846,10 @@ public class CharMove : MonoBehaviour {
         yield return new WaitForSeconds(0.5f);
         StaminaRecovery = true;
 
+    }
+    IEnumerator DeathZoneDealyTime(float Time)
+    {
+        yield return new WaitForSeconds(Time);
+        DeathZoneDealay = false;
     }
 }

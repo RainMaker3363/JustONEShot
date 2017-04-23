@@ -38,7 +38,7 @@ public class Bullet : MonoBehaviour {
     void FixedUpdate()
     {
 
-        if (Physics.Raycast(transform.position, transform.forward, out HitObj, 0.5f))
+        if (Physics.Raycast(transform.position, transform.forward, out HitObj, 1.0f))
         {
             
             if (HitObj.collider.gameObject.tag == "Player")
@@ -46,15 +46,16 @@ public class Bullet : MonoBehaviour {
                 Debug.Log("Hit");
                 Debug.Log("Hit"+ Damage);
                 HitObj.collider.gameObject.GetComponent<CharMove>().Damaged(Damage, transform.forward);
-                m_Distance = 0;
+               // m_Distance = 0;
             }
 
             if (HitObj.collider.gameObject.tag == "Enemy")
             {
                 Debug.Log("Hit");
                 HitObj.collider.gameObject.GetComponent<EnemyMove>().Damaged(Damage, transform.forward);
-                m_Distance = 0;
+               // m_Distance = 0;
             }
+            m_Distance = 0;
         }
         //Debug.DrawLine(transform.position, transform.position + Vector3.forward * 5, Color.blue);
         if (m_Distance > 0)
