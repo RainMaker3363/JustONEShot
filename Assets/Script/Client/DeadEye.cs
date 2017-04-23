@@ -80,7 +80,7 @@ public class DeadEye : MonoBehaviour {
     IEnumerator DeadEyeTime()
     {
         yield return new WaitForSeconds(10);
-
+        
         DeadEyeUI.SetActive(false);
         DeadEyeLoadEffect.SetActive(false); //Roll06 애니메이션에서 켜줍니다
         DeadEyeUIBack.SetActive(false);

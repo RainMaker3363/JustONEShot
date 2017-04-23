@@ -18,6 +18,9 @@ public class DeadEyeUI : MonoBehaviour {
 
     public static Animator GunRollAnim;
 
+    float DeadEyeStartTime;
+    float DeadEyeEndTime;
+
     // Use this for initialization
     void Start () {
         GunRollAnim = transform.Find("ObjectAnimation").transform.Find("GunRoll").GetComponent<Animator>();
@@ -39,6 +42,8 @@ public class DeadEyeUI : MonoBehaviour {
                     BulletOrderIndex++;
                     if (BulletOrderIndex >= Bullets.Length)
                     {
+                        DeadEyeEndTime = Time.time - DeadEyeStartTime;
+                        CharMove.m_DeadEyeTimer = DeadEyeEndTime;
                         BulletOrderIndex = 0;
                     }
                     else
@@ -68,8 +73,9 @@ public class DeadEyeUI : MonoBehaviour {
         BulletOrderIndex = 0;
         Bullets[BulletOrders[BulletOrderIndex]].Active = true;
 
+        DeadEyeStartTime = Time.time;
      // m_ScreenShot.SetActive(true);
-       //maincam.gameObject.SetActive(false);
+     //maincam.gameObject.SetActive(false);
     }
 
     

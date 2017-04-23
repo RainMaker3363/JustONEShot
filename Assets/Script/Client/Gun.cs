@@ -38,7 +38,7 @@ class Gun_Revolver : UseGun
         Bullet_Gun = 0;
         Bullet_Hand = 0;
         Bullet_Use = 1;
-        Damage = 10;
+        Damage = 25;
     }
 
     public override void UseBullet()

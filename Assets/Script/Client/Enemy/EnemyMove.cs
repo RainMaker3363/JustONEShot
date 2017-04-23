@@ -81,6 +81,8 @@ public class EnemyMove : MonoBehaviour {
 
     public Transform PlayerPos;  //  적 캐릭터 위치 추후변경예상
 
+    public float m_DeadEyeTimer;
+
     void Awake()
     {
         m_GunState = LSD.GunState.Revolver; //현재는 고정 추후 받아오게함
@@ -435,12 +437,14 @@ public class EnemyMove : MonoBehaviour {
     {
         if (!anim.GetBool("Damaged"))
         {
+            anim.SetBool("DeadEyeDamage", false);
             m_PlayerState = LSD.PlayerState.IDLE;
         }
     }
 
     void Update_DEADEYE()
     {
+        anim.SetBool("DeadEyeDamage", CharMove.DeadEyeSuccess);
         if (DeadEyeEnd)
         {
             DeadEyeEnd = false;
@@ -505,7 +509,34 @@ public class EnemyMove : MonoBehaviour {
        
         m_PlayerState = LSD.PlayerState.DAMAGE;
     }
+    public void DeadEyeDamaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
+    {
+        Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
+        DamageVec.y = 0; //위아래로는 움직이지 않게합니다
+        transform.rotation = Quaternion.LookRotation(DamageVec);
 
+        if (!CharMove.DeadEyeSuccess) //데드아이 피격시 성공했다면
+        {
+            anim.SetTrigger("Damage");
+            anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+            HP -= Damage;
+        }
+        else
+        {
+            anim.SetTrigger("DeadEyeDamage");
+            anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+            HP -= (Damage + 45);
+        }
+
+        //HP_bar.fillAmount = HP / 100;
+
+        //if (GPGSManager.GetInstance.IsAuthenticated())
+        //{
+        //    Mul_Manager.SendMyPositionUpdate();
+        //    Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
+        //}
+        m_PlayerState = LSD.PlayerState.DAMAGE;
+    }
     public static void PlayerDeadEye()    //데드아이 총알을 먹었을경우
     {
         PlayerDeadEyeStart = true;
@@ -714,5 +745,10 @@ public class EnemyMove : MonoBehaviour {
     public void SetDeadEyeStateReceived(bool DeadEyeOn)
     {
         m_DeadEyePlay = DeadEyeOn;
+    }
+
+    public void SetDeadEyeTimerReceived(float _DeadEyeTimer)
+    {
+        m_DeadEyeTimer = _DeadEyeTimer;
     }
 }

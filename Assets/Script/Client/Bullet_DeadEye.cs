@@ -16,7 +16,7 @@ public class Bullet_DeadEye : MonoBehaviour
     //총알 사용중 여부
     public bool m_Use = false;
 
-    public int Damage;
+    public int Damage = 20;
 
 
     RaycastHit HitObj;
@@ -24,7 +24,7 @@ public class Bullet_DeadEye : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        Damage = 20;
 
     }
 
@@ -48,7 +48,7 @@ public class Bullet_DeadEye : MonoBehaviour
             {
                 Debug.Log("Hit");
                 Debug.Log("Hit" + Damage);
-                HitObj.collider.gameObject.GetComponent<CharMove>().Damaged(Damage, transform.forward);
+                HitObj.collider.gameObject.GetComponent<CharMove>().DeadEyeDamaged(Damage, transform.forward);
                 m_Distance = 0;
                 Debug.Log(m_Distance);
             }
@@ -56,7 +56,7 @@ public class Bullet_DeadEye : MonoBehaviour
             if (HitObj.collider.gameObject.tag == "Enemy")
             {
                 Debug.Log("Hit");
-                HitObj.collider.gameObject.GetComponent<EnemyMove>().Damaged(Damage, transform.forward);
+                HitObj.collider.gameObject.GetComponent<EnemyMove>().DeadEyeDamaged(Damage, transform.forward);
                 m_Distance = 0;
             }
         }

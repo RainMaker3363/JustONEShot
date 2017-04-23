@@ -89,6 +89,10 @@ public class CharMove : MonoBehaviour {
 
     public MultiGameManager Mul_Manager;
 
+    public static float m_DeadEyeTimer;   //플레이어 데드아이 시간
+    float EnemyDeadEyeTimer;    //적 데드아이 시간
+    bool DeadEyecomplete = false;
+    public static bool DeadEyeSuccess;
     void Awake()
     {
         m_GunState = LSD.GunState.Revolver; //현재는 고정 추후 받아오게함
@@ -405,6 +409,7 @@ public class CharMove : MonoBehaviour {
     {
        if(!anim.GetBool("Damaged"))
         {
+            anim.SetBool("DeadEyeDamage", false);
             m_PlayerState = LSD.PlayerState.IDLE;
         }
     }
@@ -425,6 +430,31 @@ public class CharMove : MonoBehaviour {
                 Mul_Manager.SendDeadEyeMessage(false);
             }
             m_PlayerState = LSD.PlayerState.IDLE;
+        }
+
+        if (m_DeadEyeTimer > 0 && !DeadEyecomplete)
+        {
+            Mul_Manager.SendDeadEyeTimerMessage(m_DeadEyeTimer);
+            DeadEyecomplete = true;
+        }
+
+        EnemyDeadEyeTimer = Mul_Manager.GetDeadEyeTimer();
+
+        if (EnemyDeadEyeTimer>0 && DeadEyecomplete)  //플레이어의 데드아이가 끝났고 상대데드아이가 끝났는가
+        {
+            if(EnemyDeadEyeTimer> m_DeadEyeTimer)//데드아이성공여부 판별
+            {
+                DeadEyeSuccess = true;
+            }
+            else
+            {
+                DeadEyeSuccess = false;
+            }
+            
+            //판별했으니 초기화
+            EnemyDeadEyeTimer = 0;
+            m_DeadEyeTimer = 0;
+            DeadEyecomplete = false;
         }
     }
 
@@ -495,10 +525,12 @@ public class CharMove : MonoBehaviour {
         Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
         DamageVec.y = 0; //위아래로는 움직이지 않게합니다
         transform.rotation = Quaternion.LookRotation(DamageVec);
-       
+
         anim.SetTrigger("Damage");
         anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+
         HP -= Damage;
+  
         HP_bar.fillAmount = HP/100;
 
         if (GPGSManager.GetInstance.IsAuthenticated())
@@ -509,6 +541,34 @@ public class CharMove : MonoBehaviour {
         m_PlayerState = LSD.PlayerState.DAMAGE;
     }
 
+    public void DeadEyeDamaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
+    {
+        Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
+        DamageVec.y = 0; //위아래로는 움직이지 않게합니다
+        transform.rotation = Quaternion.LookRotation(DamageVec);
+
+        if (DeadEyeSuccess) //데드아이 피격시 성공했다면
+        {
+            anim.SetTrigger("Damage");
+            anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+            HP -= Damage;
+        }
+        else
+        {
+            anim.SetTrigger("DeadEyeDamage");
+            anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+            HP -= (Damage + 45);
+        }
+
+        HP_bar.fillAmount = HP / 100;
+
+        if (GPGSManager.GetInstance.IsAuthenticated())
+        {
+            Mul_Manager.SendMyPositionUpdate();
+            Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
+        }
+        m_PlayerState = LSD.PlayerState.DAMAGE;
+    }
     public static void DeadEye()    //데드아이 총알을 먹었을경우
     {
         DeadEyeStart = true;
@@ -715,28 +775,36 @@ public class CharMove : MonoBehaviour {
         Stamina_bar.fillAmount = Stamina / 1000;
     }
 
-    //void OnGUI()
+    //public void SetDeadEyeTimer(float _DeadEyeEndTime)
     //{
-    //    int w = Screen.width, h = Screen.height;
+    //    m_DeadEyeTimer = _DeadEyeEndTime;
 
-    //    GUIStyle style = new GUIStyle();
-
-    //    Rect rect = new Rect(w / 2, 0, 100, 100);
-    //    style.alignment = TextAnchor.UpperLeft;
-    //    style.fontSize = 30;
-    //    style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
-
-    //    string text = string.Format("Stamina : {0}", Stamina);
-
-    //    GUI.Label(rect, text, style);
-
-    //    Rect Bulletrect = new Rect(w - 300, 0, 100, 100);
-
-    //    string Bullettext = string.Format("탄창 : {0}/{1}\n탄알 : {2}/{3}", m_UseGun.Bullet_Gun, m_UseGun.MaxBullet_Gun, m_UseGun.Bullet_Hand, m_UseGun.MaxBullet_Hand);
-
-
-    //    GUI.Label(Bulletrect, Bullettext, style);
+    //    Mul_Manager.SendDeadEyeTimerMessage(m_DeadEyeTimer);
     //}
+
+
+    void OnGUI()
+    {
+        int w = Screen.width, h = Screen.height;
+
+        GUIStyle style = new GUIStyle();
+
+        Rect rect = new Rect(w / 2, 0, 100, 100);
+        style.alignment = TextAnchor.UpperLeft;
+        style.fontSize = 30;
+        style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
+
+        string text = string.Format("HP : {0}", HP);
+
+        GUI.Label(rect, text, style);
+
+        //Rect Bulletrect = new Rect(w - 300, 0, 100, 100);
+
+        //string Bullettext = string.Format("탄창 : {0}/{1}\n탄알 : {2}/{3}", m_UseGun.Bullet_Gun, m_UseGun.MaxBullet_Gun, m_UseGun.Bullet_Hand, m_UseGun.MaxBullet_Hand);
+
+
+        //GUI.Label(Bulletrect, Bullettext, style);
+    }
 
     IEnumerator ServerUpdate()
     {
