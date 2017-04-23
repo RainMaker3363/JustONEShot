@@ -4,7 +4,7 @@
     void FinishedReceived(string participantId, bool GameOver);
     void ItemStateReceived(int Index, bool GetItem);
     void ShootStateReceived(bool ShootSuccess);
-    void DeadEyeStateReceived(bool DeadEyeOn);
+    void DeadEyeStateReceived(float DeadEyeTimer);
     void AniStateReceived(int AniState);
     void HPStateReceived(int HPState);
 
