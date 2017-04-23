@@ -18,13 +18,14 @@ public class ScreenShot : MonoBehaviour
     void OnEnable()
     {
         //m_ScreenImage = GetComponent<Image>();
-        if (PlayerCam.gameObject.activeSelf)
-        {
-            ScreenCam = PlayerCam;
-        }
-        else if (EnemyCam.gameObject.activeSelf)
+       
+        if (EnemyCam.gameObject.activeSelf)
         {
             ScreenCam = EnemyCam;
+        }
+        else if (PlayerCam.gameObject.activeSelf)
+        {
+            ScreenCam = PlayerCam;
         }
         StartCoroutine(SetScreenShot());
     }

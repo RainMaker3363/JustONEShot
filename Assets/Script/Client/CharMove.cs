@@ -252,10 +252,10 @@ public class CharMove : MonoBehaviour {
 
     void Update_IDLE()
     {
-        if (anim.GetBool("Reloading"))
-        {
-            anim.SetBool("Reloading", false);
-        }
+        //if (anim.GetBool("Reloading"))
+        //{
+        //    anim.SetBool("Reloading", false);
+        //}
 
         if (!m_Exhausted)//탈진상태가 아니라면
         {
@@ -411,10 +411,10 @@ public class CharMove : MonoBehaviour {
 
     void Update_DEADEYE()
     {
-        if(!m_MoveJoyStickControl.TouchBegin)
-        {
+        //if(!m_MoveJoyStickControl.TouchBegin)
+        //{
             m_MoveJoyStickControl.PedInit();
-        }
+        //}
 
         if(DeadEyeEnd||!Mul_Manager.GetDeadEyeChecker())
         {
