@@ -23,7 +23,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // Byte + Byte + 1 boolen
     private int _shootMessageLength = 3;
     // Byte + Byte + 1 Float
-    private int _deadeyeMessageLength = 6;
+    private int _deadeyeTimerMessageLength = 6;
+    // Byte + Byte + 1 Boolean
+    private int _deadeyeMessageLength = 3;
     // Byte + Byte + 1 Interger
     private int _animMessageLength = 6;
     // Byte + Byte + 1 Interget
@@ -46,6 +48,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private List<byte> _itemstateMessage;
     private List<byte> _ShootMessage;
     private List<byte> _DeadEyeMessage;
+    private List<byte> _DeadEyeTimerMessage;
     private List<byte> _AnimMessage;
     private List<byte> _HealthMessage;
 
@@ -96,6 +99,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if (_DeadEyeMessage == null)
         {
             _DeadEyeMessage = new List<byte>(_deadeyeMessageLength);
+        }
+
+        if(_DeadEyeTimerMessage == null)
+        {
+            _DeadEyeTimerMessage = new List<byte>(_deadeyeTimerMessageLength);
         }
 
         if (_AnimMessage == null)
@@ -498,7 +506,22 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     //}
 
     // 데드아이 상태값을 보내는 메시지
-    public void SendDeadEyeMessage(float DeadEyeSet)
+    // 데드아이 경과 시간을 보내준다.
+    public void SendDeadEyeTimerMessage(float DeadEyeSet)
+    {
+        _DeadEyeTimerMessage.Clear();
+        _DeadEyeTimerMessage.Add(_protocolVersion);
+        _DeadEyeTimerMessage.Add((byte)'E');
+        _DeadEyeTimerMessage.AddRange(System.BitConverter.GetBytes(DeadEyeSet));
+
+        byte[] DeadEyeMessageToSend = _DeadEyeTimerMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, DeadEyeMessageToSend);
+    }
+
+    // 데드아이 상태값을 보내는 메시지
+    // bool 값이 true라면 데드 아이가 끝난 것을 의미한다.
+    public void SendDeadEyeMessage(bool DeadEyeSet)
     {
         _DeadEyeMessage.Clear();
         _DeadEyeMessage.Add(_protocolVersion);
@@ -598,9 +621,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         }
         else if(messageType == 'D')
         {
-            float DeadEyeActive = System.BitConverter.ToSingle(data, 2);
+            bool DeadEyeActive = System.BitConverter.ToBoolean(data, 2);
 
-            Debug.Log("DeadEye Get");
+            Debug.Log("DeadEye Message!");
+            
 
             ReceiveMessage = ByteToString(data);
 
@@ -608,6 +632,20 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             {
                 //updateListener.ItemStateReceived(Index, ItemGet);
                 updateListener.DeadEyeStateReceived(DeadEyeActive);
+            }
+        }
+        else if (messageType == 'E')
+        {
+            float DeadEyeActive = System.BitConverter.ToSingle(data, 2);
+
+            Debug.Log("DeadEye Timer Get");
+
+            ReceiveMessage = ByteToString(data);
+
+            if (updateListener != null)
+            {
+                //updateListener.ItemStateReceived(Index, ItemGet);
+                updateListener.DeadEyeTimerStateReceived(DeadEyeActive);
             }
         }
         else if(messageType == 'A')

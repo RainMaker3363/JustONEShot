@@ -105,6 +105,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     //데드아이 체크
     private float _DeadEyeTimer;
+    private bool _DeadEyeChecker;
 
     // Use this for initialization
     void Awake () {
@@ -117,6 +118,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         ThisGameIsEnd = false;
         ItemCount = 0;
         _DeadEyeTimer = 0.0f;
+        _DeadEyeChecker = false;
         WaitSignal = false;
         SelectSignal = false;
 
@@ -321,25 +323,49 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 현재 데드아이 상태를 업데이트 해준다.
     // true면 데드 아이 발동을 의미
     // false면 데드 아이 발동이 끝남 혹은 안됨..
-    public void DeadEyeStateReceived(float DeadEyeTimer)
+    public void DeadEyeStateReceived(bool DeadEyeActive)
     {
         if (_multiplayerReady)
         {
-            _DeadEyeTimer = DeadEyeTimer;
+            _DeadEyeChecker = DeadEyeActive;
             
             EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
 
             if (opponent != null)
             {
-                opponent.SetDeadEyeStateReceived(_DeadEyeTimer);
+                opponent.SetDeadEyeStateReceived(_DeadEyeChecker);
             }
         }
     }
 
-    public float GetDeadEyeChecker()
+    // 현재 데드아이 상태를 업데이트 해준다.
+    // float는 데드 아이 경과 시간을 의미한다.
+    public void DeadEyeTimerStateReceived(float DeadEyeTimer)
+    {
+        if (_multiplayerReady)
+        {
+            _DeadEyeTimer = DeadEyeTimer;
+
+            EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
+
+            if (opponent != null)
+            {
+                opponent.SetDeadEyeTimerReceived(_DeadEyeTimer);
+            }
+        }
+
+    }
+
+    public float GetDeadEyeTimer()
     {
         return _DeadEyeTimer;
     }
+
+    public bool GetDeadEyeChecker()
+    {
+        return _DeadEyeChecker;
+    }
+
     // 현재 애니메이션 상태 값을 갱신 시켜준다.
     // AniState의 값을 다시 변환 시켜서 넘겨준다.
     public void AniStateReceived(int AniState)
@@ -608,10 +634,17 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     }
 
     // 데드 아이 메시지를 보낸다.
-    // float 값으로 어느정도 시간이 지났는지 알 수 있다.
-    public void SendDeadEyeMessage(float DeadEyeTimer)
+    // bool 값으로 작동 여부를 보내줄 수 있다
+    public void SendDeadEyeMessage(bool DeadEyeActive)
     {
-        GPGSManager.GetInstance.SendDeadEyeMessage(DeadEyeTimer);
+        GPGSManager.GetInstance.SendDeadEyeMessage(DeadEyeActive);
+    }
+
+    // 데드 아이 메시지를 보낸다.
+    // float 값으로 어느정도 시간이 지났는지 알 수 있다.
+    public void SendDeadEyeTimerMessage(float DeadEyeTimer)
+    {
+        GPGSManager.GetInstance.SendDeadEyeTimerMessage(DeadEyeTimer);
     }
 
     // 애니메이션 값을 넣어준다.
