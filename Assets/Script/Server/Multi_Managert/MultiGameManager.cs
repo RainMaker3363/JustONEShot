@@ -57,8 +57,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public static HY.MultiGameState MultiState;
     public static HY.MultiPlayerState PlayerState;
 
-    public bool WaitSignal;
-    public bool SelectSignal;
+    private bool WaitSignal;
+    private bool SelectSignal;
 
     // 네트워크 정보 텍스트...
     public Text MyInfoText;
@@ -132,7 +132,6 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         MyPlayerNick = "";
         OpponentPlayerNick = "";
-
 
         SetupMultiplayerGame();
     }
@@ -264,6 +263,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         {
             if(ThisGameIsEnd == false)
             {
+
+                ThisGameIsEnd = GameOver;
+
                 EnemyMove opponent = _opponentScripts[participantId];
 
                 if (opponent != null)
@@ -271,7 +273,6 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     opponent.SetEndGameInformation(GameOver);
                 }
 
-                ThisGameIsEnd = GameOver;
             }
 
         }
@@ -292,6 +293,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                 opponent.SetTransformInformation(messageNum, posX, posY, posZ, rotY);
             }
+
+            ItemCount++;
         }
 
     }
@@ -484,7 +487,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             if (opponent != null)
             {
-               //opponent.SetHPStateReceived(HPState);
+               opponent.SetHPStateReceived(HPState);
             }
         }
     }
@@ -533,6 +536,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         if (_multiplayerReady)
         {
+
+            ThisGameIsEnd = true;
+
             EnemyMove opponent = _opponentScripts[participantId];
 
             if (opponent != null)
@@ -540,7 +546,6 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 opponent.GameOutInformation();
             }
 
-            ThisGameIsEnd = true;
         }
     }
 
@@ -580,6 +585,13 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         GPGSManager.GetInstance.SendStateSelectMesssage(Select);
     }
 
+    // 자기 자신의 HP값을 보내기 위해 사용된다
+    // Int 값은 현재 자신의 HP
+    public void SendHPStateMessage(int HP)
+    {
+        GPGSManager.GetInstance.SendCharacterHP(HP);
+    }
+
     // 자신의 위치를 서버에 전송한다.
     // Position X, Y, Z, Rotation Y값
     public void SendMyPositionUpdate()
@@ -601,8 +613,6 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                 //_nextBroadcastTime = Time.time + 0.16f;
                 _nextBroadcastTime = Time.time + 0.10f;
-
-                ItemCount++;
             }
         }
 
@@ -815,7 +825,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
 
-            ItemGetCount.text = "MessageCount : " + ItemCount;
+            ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd;
 
 
         }
