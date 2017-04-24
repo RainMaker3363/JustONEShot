@@ -99,6 +99,8 @@ public class CharMove : MonoBehaviour {
     public Transform DeathZone;
     bool DeathZoneDealay = false;
 
+    bool GameEnd = false;
+
     void Awake()
     {
         m_GunState = LSD.GunState.Revolver; //현재는 고정 추후 받아오게함
@@ -149,8 +151,9 @@ public class CharMove : MonoBehaviour {
         if (m_PlayerBeforeState != m_PlayerState)
         {
     
-            if(m_PlayerBeforeState == LSD.PlayerState.DEAD || m_PlayerBeforeState == LSD.PlayerState.WIN)   //추후 GameOver로 바뀌지않을까..
+            if(GameEnd)   //이기거나 졌을경우 변경을 막음
             {
+                //ShotAble = false;
                 m_PlayerState = m_PlayerBeforeState;
             }
             else
@@ -160,9 +163,10 @@ public class CharMove : MonoBehaviour {
             }
            
         }
-
+      
         DeadEyeCheck();
         DeathZoneCheck();
+        GameEndCheck();
 
         if (ShotAble && m_ShotJoyStickControl.GetTouch())
         {
@@ -571,11 +575,13 @@ public class CharMove : MonoBehaviour {
 
         HP -= Damage;
   
-        HP_bar.fillAmount = HP/100;
+        HP_bar.fillAmount = (float)HP/100;
 
-        DeadCheck();
-        anim.SetTrigger("Damage");
-        anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+        if (!DeadCheck())
+        {
+            anim.SetTrigger("Damage");
+            anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+        }
         
 
         if (GPGSManager.GetInstance.IsAuthenticated())
@@ -583,6 +589,7 @@ public class CharMove : MonoBehaviour {
             Mul_Manager.SendMyPositionUpdate();
             Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
             Mul_Manager.SendHPStateMessage(HP);
+            Mul_Manager.SendShootVectorMessage(DamageVec);
         }
         
     }
@@ -599,20 +606,24 @@ public class CharMove : MonoBehaviour {
         {
             
             HP -= Damage;
-            DeadCheck();
-            anim.SetTrigger("Damage");
-            anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+            if (!DeadCheck())
+            {
+                anim.SetTrigger("Damage");
+                anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+            }
         }
         else
         {
             HP -= (Damage + 45);
-            DeadCheck();
-            anim.SetTrigger("DeadEyeDamage");
-            anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+            if (!DeadCheck())
+            {
+                anim.SetTrigger("DeadEyeDamage");
+                anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+            }
            
         }
 
-        HP_bar.fillAmount = HP / 100;
+        HP_bar.fillAmount = (float)HP / 100;
 
         if (GPGSManager.GetInstance.IsAuthenticated())
         {
@@ -623,16 +634,34 @@ public class CharMove : MonoBehaviour {
         
     }
 
-    public void DeadCheck()
+    public bool DeadCheck()
     {
-        if(HP<=0)
+        if(HP<=0 && !GameEnd)
         {
             HP = 0;
             m_PlayerState = LSD.PlayerState.DEAD;
-            anim.SetBool("Death", true);
-            Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
+            m_PlayerBeforeState = LSD.PlayerState.DEAD;
+            anim.SetTrigger("Death");
+            GameEnd = true;
+            // Mul_Manager.SendAniStateMessage((int)m_PlayerState); //데미지부분에서도 보내줌
+            Mul_Manager.SendEndGameMssage(true);
+            return true;
+        }
+        return false;
+    }
+
+    public void GameEndCheck()
+    {
+        if(Mul_Manager.GetEndGameState() && !GameEnd)
+        {
+            m_PlayerState = LSD.PlayerState.WIN;
+            m_PlayerBeforeState = LSD.PlayerState.WIN;
+            anim.SetTrigger("Victory");
+            Mul_Manager.SendAniStateMessage((int)m_PlayerState);
+            GameEnd = true;
         }
     }
+
     public static void DeadEye()    //데드아이 총알을 먹었을경우
     {
         DeadEyeStart = true;
@@ -678,7 +707,8 @@ public class CharMove : MonoBehaviour {
             {
                 DeathZoneDealay = true;
                 HP -= DeathZone.gameObject.GetComponent<DeathZone>().Damage;
-                HP_bar.fillAmount = HP / 100;
+                HP_bar.fillAmount = (float)HP / 100;
+                DeadCheck();
                 StartCoroutine(DeathZoneDealyTime(DeathZone.gameObject.GetComponent<DeathZone>().DamageDealay));
             }
         }

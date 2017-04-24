@@ -19,14 +19,29 @@ public class BulletRespawn : MonoBehaviour {
     float CreateCoolTime = 3;   // 먹은후 재생성 쿨타임
 
     bool CreateAble = true; //생성 가능여부
-	// Use this for initialization
-	void Start () {
-       
 
+   public MultiGameManager Mul_GameManager;
+
+    RaycastHit HitObj;
+    // Use this for initialization
+    void Start () {
+
+
+        if (Physics.Raycast(transform.position, Vector3.down, out HitObj, 5f))
+        {
+            transform.position = new Vector3(transform.position.x, HitObj.point.y+0.5f, transform.position.z);
+        }
     }
 	
 	// Update is called once per frame
 	void Update () {
+
+        if (Mul_GameManager.GetEndGameState())
+        {
+            B_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
+            BulletIndex = -1; //인덱스 초기화
+            gameObject.SetActive(false);
+        }
 
         if (CreateAble) //생성이 가능할경우
         {

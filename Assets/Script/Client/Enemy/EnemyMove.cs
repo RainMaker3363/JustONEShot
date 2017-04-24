@@ -43,6 +43,8 @@ public class EnemyMove : MonoBehaviour {
     //스테미나가 전부 소모된 상태
     bool m_Exhausted = false;
 
+    Vector3 DamageVec;
+
     //총 쐈는지 여부
     //bool GunFire = false;
 
@@ -161,6 +163,7 @@ public class EnemyMove : MonoBehaviour {
         }
 
         DeadEyeCheck();
+        DamageCheck();
         //if (m_PlayerState != LSD.PlayerState.REROAD && m_PlayerState != LSD.PlayerState.DAMAGE && m_ShotJoyStickControl.GetTouch())
         //{
         //    //    if(m_PlayerState != LSD.PlayerState.SHOT_FIRE)        
@@ -245,6 +248,24 @@ public class EnemyMove : MonoBehaviour {
                         anim.SetBool("Rolling", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
                     }
                     Update_Roll();
+                    break;
+                }
+            case LSD.PlayerState.DEAD:
+                {
+                    if (!m_AniPlay)
+                    {
+                        anim.SetTrigger("Death");
+                        m_AniPlay = true;   //CharAniInit에서 false로 바꿔줌                       
+                    }
+                    break;
+                }
+            case LSD.PlayerState.WIN:
+                {
+                    if (!m_AniPlay)
+                    {
+                        anim.SetTrigger("Victory");
+                        m_AniPlay = true;   //CharAniInit에서 false로 바꿔줌                       
+                    }
                     break;
                 }
             default:
@@ -524,9 +545,18 @@ public class EnemyMove : MonoBehaviour {
     {
         if(BeforeHP != HP)
         {
-            anim.SetTrigger("Damage");
-            anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+            if (DamageVec != Vector3.zero)
+            {
+                transform.rotation = Quaternion.LookRotation(DamageVec);
+
+                if (!DeadCheck())   //죽은경우 true반환
+                {
+                    anim.SetTrigger("Damage");
+                    anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+                }
+            }
             BeforeHP = HP;
+            DamageVec = Vector3.zero;
         }
     }
     public void DeadEyeDamaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
@@ -588,14 +618,16 @@ public class EnemyMove : MonoBehaviour {
         }
     }
 
-    public void DeadCheck()
+    public bool DeadCheck()
     {
         if (HP <= 0)
         {
             HP = 0;
             m_PlayerState = LSD.PlayerState.DEAD;
-            anim.SetBool("Death", true);            
+            anim.SetBool("Death", true);   
+            return true;         
         }
+        return false;
     }
 
     void FixedUpdate()
@@ -781,8 +813,19 @@ public class EnemyMove : MonoBehaviour {
     {
         m_DeadEyeTimer = _DeadEyeTimer;
     }
-    public void SetHPStateReceived(int HPState)
+    public void SetHPStateReceived(int _HPState)
     {
-        HP = HPState;
+        HP = _HPState;
+    }
+
+    public void SetShootVectorReceived(float x, float y, float z)
+    {
+        DamageVec.x = x;
+        DamageVec.y = y;
+        DamageVec.z = z;
+    }
+    public void SetShootVectorReceived(Vector3 _vec)
+    {
+        DamageVec = _vec;
     }
 }

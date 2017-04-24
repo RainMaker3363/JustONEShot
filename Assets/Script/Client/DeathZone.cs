@@ -17,11 +17,16 @@ public class DeathZone : MonoBehaviour {
     public int Damage;  //데스존 데미지
     public float DamageDealay;  //데스존 데미지 딜레이
 
+    public MultiGameManager Mul_GameManger;
+
     // Use this for initialization
     void Start () {
         StartCoroutine(DeathZoneMove());
 	}
-
+    void Update()
+    {
+        
+    }
     IEnumerator DeathZoneMove()
     {
        
@@ -35,6 +40,10 @@ public class DeathZone : MonoBehaviour {
             while (Level[LevelIndex] > transform.position.y)
             {
                 Debug.Log("UP");
+                if (Mul_GameManger.GetEndGameState())
+                {
+                    yield break;
+                }
                 transform.position = new Vector3(transform.position.x, transform.position.y + MoveSpeed, transform.position.z);
 
                 yield return new WaitForSeconds(0.1f);
