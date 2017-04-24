@@ -229,10 +229,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     }
 
-    void StartNewGame()
-    {
-        AutoFade.LoadLevel("MultiPlayScene", 0.2f, 0.2f, Color.black);
-    }
+
 
     // 현재 게임이 끝났는지의 여부를 리턴해 준다.
     // true면 끝, false면 끝나지 않음
@@ -241,7 +238,36 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         return ThisGameIsEnd;
     }
 
+    // 게임 종료 메시지
+    // 플레이어가 임의로 종료 하거나 게임이 끝나면 호출 해주면 된다.
+    // float 값은 최소 1.5초, 최대 5.0초로 로비 씬으로 나가기까지의 대기 시간이다.
+    // 디폴트는 2.0초로 되어있다.
+    public void EndGameAndLeaveRoom(float dTime = 2.0f)
+    {
+        GPGSManager.GetInstance.LeaveGame();
+        GPGSManager.GetInstance.updateListener = null;
 
+        ThisGameIsEnd = true;
+
+        if(dTime <= 1.5f)
+        {
+            Invoke("StartLobbyScene", 1.5f);
+        }
+        else if(dTime >= 5.0f)
+        {
+            Invoke("StartLobbyScene", 5.0f);
+        }
+        else
+        {
+            Invoke("StartLobbyScene", dTime);
+        }
+        
+    }
+
+    void StartLobbyScene()
+    {
+        AutoFade.LoadLevel("WaitingRoom", 0.2f, 0.2f, Color.black);
+    }
 
     // GPGSManager(서버)에서 받은 메시지를 매니저에게 줄때 사용한다.
     // [서버]->[클라이언트]
@@ -533,7 +559,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 게임이 끝날시 호출되는 리스너 함수.
     public void LeftRoomConfirmed()
     {
-        GPGSManager.GetInstance.updateListener = null;
+        //GPGSManager.GetInstance.updateListener = null;
 
         //AutoFade.LoadLevel("WaitingRoom", 0.2f, 0.2f, Color.black);
         ThisGameIsEnd = true;
@@ -664,7 +690,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                                                         MyCharacter.transform.rotation.eulerAngles.y);
 
                 //_nextBroadcastTime = Time.time + 0.16f;
-                _nextBroadcastTime = Time.time + 0.10f;
+                _nextBroadcastTime = Time.time + 0.08f;
             }
         }
 

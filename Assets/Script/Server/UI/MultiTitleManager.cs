@@ -10,12 +10,19 @@ public class MultiTitleManager : MonoBehaviour
 
     //private bool ButtonChecker;
     //private bool MultiStartChecker;
+    private static bool LoginGPGSOn = false;
 
     // Use this for initialization
     void Start () {
-        GPGSManager.GetInstance.InitializeGPGS(); // 초기화
+        if(LoginGPGSOn == false)
+        {
+            LoginGPGSOn = true;
 
-        GPGSManager.GetInstance.LoginGPGS();
+            GPGSManager.GetInstance.InitializeGPGS(); // 초기화
+
+            GPGSManager.GetInstance.LoginGPGS();
+        }
+
 
         //ButtonChecker = false;
         //MultiStartChecker = false;

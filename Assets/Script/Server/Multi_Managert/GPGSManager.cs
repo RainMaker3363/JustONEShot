@@ -57,6 +57,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
     private bool IsConnectedOn = false;
     private bool showingWaitingRoom = false;
+    private static bool IsInitEnd = false;
 
     private string ReceiveMessage = " ";
     private string SendMessage = " ";
@@ -75,9 +76,16 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     public void InitializeGPGS()
     {
         bLogin = false;
+        IsConnectedOn = false;
+        
+        if(IsInitEnd == false)
+        {
+            IsInitEnd = true;
 
-        PlayGamesPlatform.DebugLogEnabled = true;
-        PlayGamesPlatform.Activate();
+            PlayGamesPlatform.DebugLogEnabled = true;
+            PlayGamesPlatform.Activate();
+        }
+        
 
         if (_updateMessage == null)
         {
