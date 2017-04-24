@@ -34,6 +34,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private int _gameStateWaitMesageLength = 3;
     // Byte + Byte + 1 Boolean
     private int _gameStateSelectMesageLength = 3;
+    // Byte + Byte + 1 Vector
+    private int _shootVectorMesageLength = 14;
 
     // 메시지 도착 순서를 제어할 변수
     // 네트워크 도착 순서가 무작위로 된다면 동기화가 이상하게 될 가능성이 있기에
@@ -47,6 +49,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private List<byte> _endMessage;
     private List<byte> _itemstateMessage;
     private List<byte> _ShootMessage;
+    private List<byte> _ShootVectorMessage;
     private List<byte> _DeadEyeMessage;
     private List<byte> _DeadEyeTimerMessage;
     private List<byte> _AnimMessage;
@@ -94,6 +97,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if (_ShootMessage == null)
         {
             _ShootMessage = new List<byte>(_shootMessageLength);
+        }
+
+        if(_ShootVectorMessage == null)
+        {
+            _ShootVectorMessage = new List<byte>(_shootVectorMesageLength);
         }
 
         if (_DeadEyeMessage == null)
@@ -191,9 +199,19 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _ShootMessage = new List<byte>(_shootMessageLength);
         }
 
+        if (_ShootVectorMessage == null)
+        {
+            _ShootVectorMessage = new List<byte>(_shootVectorMesageLength);
+        }
+
         if (_DeadEyeMessage == null)
         {
             _DeadEyeMessage = new List<byte>(_deadeyeMessageLength);
+        }
+
+        if (_DeadEyeTimerMessage == null)
+        {
+            _DeadEyeTimerMessage = new List<byte>(_deadeyeTimerMessageLength);
         }
 
         if (_AnimMessage == null)
@@ -201,11 +219,23 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _AnimMessage = new List<byte>(_animMessageLength);
         }
 
-
         if (_HealthMessage == null)
         {
             _HealthMessage = new List<byte>(_healthMessageLength);
         }
+
+        if (_StateWaitMessage == null)
+        {
+            _StateWaitMessage = new List<byte>(_gameStateWaitMesageLength);
+        }
+
+        if (_StateSelectMessage == null)
+        {
+            _StateSelectMessage = new List<byte>(_gameStateSelectMesageLength);
+        }
+
+
+        _myMessageNum = 0;
     }
 
     public List<byte> GetUpdateMessage()
@@ -459,6 +489,45 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, ShotMessageToSend);
     }
 
+    // 상대방에게 총알을 맞았을때 판정하는 메시지로써,
+    // vector는 총알이 날아오는 방향값을 알려준다.
+    public void SendShootVectorMessage(float x, float y, float z)
+    {
+
+        _ShootVectorMessage.Clear();
+        _ShootVectorMessage.Add(_protocolVersion);
+        _ShootVectorMessage.Add((byte)'V');
+        _ShootVectorMessage.AddRange(System.BitConverter.GetBytes(x));
+        _ShootVectorMessage.AddRange(System.BitConverter.GetBytes(y));
+        _ShootVectorMessage.AddRange(System.BitConverter.GetBytes(z));
+        
+
+        byte[] messageToSend = _ShootVectorMessage.ToArray();
+
+        Debug.Log("Sending my update message  " + messageToSend + " to all players in the room");
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, messageToSend);
+    }
+
+    // 상대방에게 총알을 맞았을때 판정하는 메시지로써,
+    // vector는 총알이 날아오는 방향값을 알려준다.
+    public void SendShootVectorMessage(Vector3 vec)
+    {
+        _ShootVectorMessage.Clear();
+        _ShootVectorMessage.Add(_protocolVersion);
+        _ShootVectorMessage.Add((byte)'V');
+        _ShootVectorMessage.AddRange(System.BitConverter.GetBytes(vec.x));
+        _ShootVectorMessage.AddRange(System.BitConverter.GetBytes(vec.y));
+        _ShootVectorMessage.AddRange(System.BitConverter.GetBytes(vec.z));
+
+
+        byte[] messageToSend = _ShootVectorMessage.ToArray();
+
+        Debug.Log("Sending my update message  " + messageToSend + " to all players in the room");
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, messageToSend);
+    }
+
     // 맨 처음 접속을 완료했을때 보내주는 메시지
     // true로 된다면 접속을 성공했다고 알려주는 것이다.
     public void SendStateWaitMesssage(bool Wait)
@@ -703,6 +772,24 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                 //updateListener.ItemStateReceived(Index, ItemGet);
                 updateListener.MultiStateWaitReceived(WaitOut);
             }
+        }
+        else if (messageType == 'V')
+        {
+            float VecX = System.BitConverter.ToSingle(data, 2);
+            float VecY = System.BitConverter.ToSingle(data, 6);
+            float VecZ = System.BitConverter.ToSingle(data, 10);
+            
+            Debug.Log("Player " + senderId + " is at (" + VecX + ", " + VecY + ", " + VecZ + " )");
+
+            ReceiveMessage = ByteToString(data);
+            // We'd better tell our GameController about this.
+            //updateListener.UpdateReceived(senderId, posX, posY, velX, velY, rotZ);
+
+            if (updateListener != null)
+            {
+                updateListener.ShootVectorReceived(VecX, VecY, VecZ);
+            }
+
         }
     }
 

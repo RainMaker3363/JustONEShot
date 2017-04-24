@@ -108,8 +108,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     private bool _DeadEyeChecker;
 
     // Use this for initialization
-    void Awake () {
-		
+    void Awake() {
+
         // 임시로 만든 상태 값이므로 추후에 수정해주세요
         MultiState = HY.MultiGameState.WAIT;
         PlayerState = HY.MultiPlayerState.LIVE;
@@ -270,7 +270,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         if (_multiplayerReady)
         {
-            if(ThisGameIsEnd == false)
+            if (ThisGameIsEnd == false)
             {
 
                 ThisGameIsEnd = GameOver;
@@ -286,7 +286,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         }
 
-        
+
     }
 
     // 업데이트를 해줄 정보들...
@@ -328,6 +328,21 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             if (opponent != null)
             {
                 opponent.SetShootStateReceived(ShootSuccess);
+            }
+        }
+    }
+
+    // 상대방의 총알 방향을 알려주는 메시지입니다.
+    // 각각의 좌표에 총알 방향의 노말 값을 넣어주면 됩니다.
+    public void ShootVectorReceived(float x, float y, float z)
+    {
+        if (_multiplayerReady)
+        {
+            EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
+
+            if (opponent != null)
+            {
+                opponent.SetShootVectorReceived(x, y, z);
             }
         }
     }
@@ -475,6 +490,18 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     m_state = LSD.PlayerState.ROLL;
                 }
                 break;
+
+            case 10:
+                {
+                    m_state = LSD.PlayerState.DEAD;
+                }
+                break;
+
+            case 11:
+                {
+                    m_state = LSD.PlayerState.WIN;
+                }
+                break;
         }
 
         if (_multiplayerReady)
@@ -601,6 +628,20 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public void SendHPStateMessage(int HP)
     {
         GPGSManager.GetInstance.SendCharacterHP(HP);
+    }
+
+    // 상대방의 총알 방향을 보내는 메시지다.
+    // 각각의 좌표에 총알 방향 노말 벡터를 넣어주면 된다.
+    public void SendShootVectorMessage(float x, float y, float z)
+    {
+        GPGSManager.GetInstance.SendShootVectorMessage(x, y, z);
+    }
+
+    // 상대방의 총알 방향을 보내는 메시지다.
+    // 각각의 좌표에 총알 방향 노말 벡터를 넣어주면 된다.
+    public void SendShootVectorMessage(Vector3 vec)
+    {
+        GPGSManager.GetInstance.SendShootVectorMessage(vec);
     }
 
     // 자신의 위치를 서버에 전송한다.
