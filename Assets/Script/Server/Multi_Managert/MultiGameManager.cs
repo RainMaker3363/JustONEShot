@@ -95,7 +95,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     private float _nextBroadcastTime;
 
     // 게임이 끝났는지의 여부
-    public static bool ThisGameIsEnd;
+    private bool ThisGameIsEnd;
 
     // 타임 아웃 정보
     [HideInInspector]
@@ -234,6 +234,15 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         AutoFade.LoadLevel("MultiPlayScene", 0.2f, 0.2f, Color.black);
     }
 
+    // 현재 게임이 끝났는지의 여부를 리턴해 준다.
+    // true면 끝, false면 끝나지 않음
+    public bool GetEndGameState()
+    {
+        return ThisGameIsEnd;
+    }
+
+
+
     // GPGSManager(서버)에서 받은 메시지를 매니저에게 줄때 사용한다.
     // [서버]->[클라이언트]
     #region GPGS_CallBack_Interface
@@ -359,11 +368,13 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     }
 
+    // 데드아이 타이머를 반환 시켜준다.
     public float GetDeadEyeTimer()
     {
         return _DeadEyeTimer;
     }
 
+    // 데드아이가 발동 됬는지의 여부
     public bool GetDeadEyeChecker()
     {
         return _DeadEyeChecker;
@@ -487,7 +498,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             if (opponent != null)
             {
-               opponent.SetHPStateReceived(HPState);
+               //opponent.SetHPStateReceived(HPState);
             }
         }
     }
@@ -625,10 +636,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // true일시 게임이 끝났다고 전송된다.
     public void SendEndGameMssage(bool GameEnd)
     {
-        //ThisGameIsEnd = GameEnd;
+
 
         if (ThisGameIsEnd == false)
         {
+            ThisGameIsEnd = GameEnd;
+
             GPGSManager.GetInstance.SendFinishMessage(ThisGameIsEnd);
         }
         

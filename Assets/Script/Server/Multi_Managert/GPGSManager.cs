@@ -543,7 +543,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
         byte[] HealthMessageToSend = _HealthMessage.ToArray();
 
-        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, HealthMessageToSend);
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, HealthMessageToSend);
     }
 
     // 상대 ID로부터 메시지를 받았을때 호출되는 리스너 함수
