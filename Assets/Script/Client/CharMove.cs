@@ -17,7 +17,9 @@ namespace LSD
         DAMAGE,
         DEADEYE,
         REROAD,
-        Roll,
+        ROLL,
+        DEAD,
+        WIN,
         MAX
     }
 
@@ -70,7 +72,7 @@ public class CharMove : MonoBehaviour {
     float Stamina = 1000;
     bool StaminaRecovery = true;
     [SerializeField]
-    float HP = 100;
+    int HP = 100;
 
     bool ShotAble = true;   //조준 가능여부
 
@@ -146,8 +148,17 @@ public class CharMove : MonoBehaviour {
 
         if (m_PlayerBeforeState != m_PlayerState)
         {
-            CharAniInit();
-            m_PlayerBeforeState = m_PlayerState;
+    
+            if(m_PlayerBeforeState == LSD.PlayerState.DEAD || m_PlayerBeforeState == LSD.PlayerState.WIN)   //추후 GameOver로 바뀌지않을까..
+            {
+                m_PlayerState = m_PlayerBeforeState;
+            }
+            else
+            {
+                CharAniInit();
+                m_PlayerBeforeState = m_PlayerState;
+            }
+           
         }
 
         DeadEyeCheck();
@@ -232,7 +243,7 @@ public class CharMove : MonoBehaviour {
                     Update_REROAD();
                     break;
                 }
-            case LSD.PlayerState.Roll:
+            case LSD.PlayerState.ROLL:
                 {
                     if (!m_AniPlay)
                     {
@@ -241,6 +252,19 @@ public class CharMove : MonoBehaviour {
                     }
                     ShotAble = false;
                     Update_Roll();
+                    break;
+                }
+            case LSD.PlayerState.DEAD:
+                {
+                    ShotAble = false;
+
+
+                    break;
+                }
+            case LSD.PlayerState.WIN:
+                {
+                    ShotAble = false;
+
                     break;
                 }
 
@@ -260,6 +284,12 @@ public class CharMove : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// ////////////////////////////////////////////////////////////////////////////////////////
+    /// Update
+    /// 
+    /// </summary>
+    #region Update_State
     void Update_IDLE()
     {
         //if (anim.GetBool("Reloading"))
@@ -498,6 +528,11 @@ public class CharMove : MonoBehaviour {
         }
     }
 
+    #endregion Update_State
+
+    /// <summary>
+    /// //////////////////////////////////////////////////////////////////////////////////////////
+    /// </summary>
     public void OnReroadButton()
     {
         if(m_PlayerState == LSD.PlayerState.IDLE)
@@ -510,13 +545,13 @@ public class CharMove : MonoBehaviour {
 
     public void OnRollButton()
     {
-        if (m_PlayerState != LSD.PlayerState.SHOT_FIRE && m_PlayerState != LSD.PlayerState.Roll && !m_Exhausted)
+        if (m_PlayerState != LSD.PlayerState.SHOT_FIRE && m_PlayerState != LSD.PlayerState.ROLL && !m_Exhausted)
         {
             if (Stamina > 400)
             {
                 Stamina -= 400;               
                 anim.SetBool("Rolling", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
-                m_PlayerState = LSD.PlayerState.Roll;
+                m_PlayerState = LSD.PlayerState.ROLL;
                 StaminaCheck();
                 if (GPGSManager.GetInstance.IsAuthenticated())
                 {
@@ -532,19 +567,24 @@ public class CharMove : MonoBehaviour {
         DamageVec.y = 0; //위아래로는 움직이지 않게합니다
         transform.rotation = Quaternion.LookRotation(DamageVec);
 
-        anim.SetTrigger("Damage");
-        anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+        m_PlayerState = LSD.PlayerState.DAMAGE;
 
         HP -= Damage;
   
         HP_bar.fillAmount = HP/100;
 
+        DeadCheck();
+        anim.SetTrigger("Damage");
+        anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+        
+
         if (GPGSManager.GetInstance.IsAuthenticated())
         {
             Mul_Manager.SendMyPositionUpdate();
             Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
+            Mul_Manager.SendHPStateMessage(HP);
         }
-        m_PlayerState = LSD.PlayerState.DAMAGE;
+        
     }
 
     public void DeadEyeDamaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
@@ -553,17 +593,23 @@ public class CharMove : MonoBehaviour {
         DamageVec.y = 0; //위아래로는 움직이지 않게합니다
         transform.rotation = Quaternion.LookRotation(DamageVec);
 
+        m_PlayerState = LSD.PlayerState.DAMAGE;
+
         if (DeadEyeSuccess) //데드아이 피격시 성공했다면
         {
+            
+            HP -= Damage;
+            DeadCheck();
             anim.SetTrigger("Damage");
             anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
-            HP -= Damage;
         }
         else
         {
+            HP -= (Damage + 45);
+            DeadCheck();
             anim.SetTrigger("DeadEyeDamage");
             anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
-            HP -= (Damage + 45);
+           
         }
 
         HP_bar.fillAmount = HP / 100;
@@ -572,8 +618,20 @@ public class CharMove : MonoBehaviour {
         {
             Mul_Manager.SendMyPositionUpdate();
             Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
+            Mul_Manager.SendHPStateMessage(HP);
         }
-        m_PlayerState = LSD.PlayerState.DAMAGE;
+        
+    }
+
+    public void DeadCheck()
+    {
+        if(HP<=0)
+        {
+            HP = 0;
+            m_PlayerState = LSD.PlayerState.DEAD;
+            anim.SetBool("Death", true);
+            Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
+        }
     }
     public static void DeadEye()    //데드아이 총알을 먹었을경우
     {
@@ -680,7 +738,7 @@ public class CharMove : MonoBehaviour {
                     FixedUpdate_REROAD();
                     break;
                 }
-            case LSD.PlayerState.Roll:
+            case LSD.PlayerState.ROLL:
                 {
                     FixedUpdate_Roll();
                     break;

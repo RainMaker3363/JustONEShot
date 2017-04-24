@@ -472,7 +472,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             case 9:
                 {
-                    m_state = LSD.PlayerState.Roll;
+                    m_state = LSD.PlayerState.ROLL;
                 }
                 break;
         }
@@ -498,7 +498,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             if (opponent != null)
             {
-               //opponent.SetHPStateReceived(HPState);
+               opponent.SetHPStateReceived(HPState);
             }
         }
     }

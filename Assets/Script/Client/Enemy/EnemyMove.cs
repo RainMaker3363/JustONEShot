@@ -37,6 +37,7 @@ public class EnemyMove : MonoBehaviour {
     int Stamina = 1000;
     [SerializeField]
     int HP = 100;
+    int BeforeHP = 100;
 
 
     //스테미나가 전부 소모된 상태
@@ -235,7 +236,7 @@ public class EnemyMove : MonoBehaviour {
                     Update_REROAD();
                     break;
                 }
-            case LSD.PlayerState.Roll:
+            case LSD.PlayerState.ROLL:
                 {
                     if (!m_AniPlay) 
                     {
@@ -304,6 +305,10 @@ public class EnemyMove : MonoBehaviour {
             anim.SetBool("Reloading", false);
         }
     }
+    /// <summary>
+    /// //////////////////////////////////////////////////////////////////////////
+    /// </summary>
+    #region Update_State
     void Update_IDLE()
     {
 
@@ -486,6 +491,12 @@ public class EnemyMove : MonoBehaviour {
         //   // StaminaRecovery = false;
         //}
     }
+
+    #endregion Update_State
+
+    /// <summary>
+    /// /////////////////////////////////////////////////////////////////////////////
+    /// </summary>
     //public void OnReroadButton()
     //{
     //    if (m_PlayerState == LSD.PlayerState.IDLE)
@@ -494,20 +505,29 @@ public class EnemyMove : MonoBehaviour {
     //    }
     //}
 
-    public void Damaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
+    //public void Damaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
+    //{
+    //    Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
+    //    DamageVec.y = 0; //위아래로는 움직이지 않게합니다
+
+    //    transform.rotation = Quaternion.LookRotation(DamageVec);
+
+    //    Debug.Log(Damage);
+    //    Debug.Log("Damaged");
+    //    anim.SetTrigger("Damage");
+    //    anim.SetBool("Damaged", true);
+    //    HP -= Damage;
+
+    //    m_PlayerState = LSD.PlayerState.DAMAGE;
+    //}
+    public void DamageCheck()
     {
-        Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
-        DamageVec.y = 0; //위아래로는 움직이지 않게합니다
-
-        transform.rotation = Quaternion.LookRotation(DamageVec);
-
-        Debug.Log(Damage);
-        Debug.Log("Damaged");
-        anim.SetTrigger("Damage");
-        anim.SetBool("Damaged", true);
-        HP -= Damage;
-       
-        m_PlayerState = LSD.PlayerState.DAMAGE;
+        if(BeforeHP != HP)
+        {
+            anim.SetTrigger("Damage");
+            anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+            BeforeHP = HP;
+        }
     }
     public void DeadEyeDamaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
     {
@@ -565,6 +585,16 @@ public class EnemyMove : MonoBehaviour {
             anim.SetInteger("DashLevel", 0);
             m_PlayerState = LSD.PlayerState.DEADEYE;
             PlayerDeadEyeStart = false;
+        }
+    }
+
+    public void DeadCheck()
+    {
+        if (HP <= 0)
+        {
+            HP = 0;
+            m_PlayerState = LSD.PlayerState.DEAD;
+            anim.SetBool("Death", true);            
         }
     }
 
@@ -750,5 +780,9 @@ public class EnemyMove : MonoBehaviour {
     public void SetDeadEyeTimerReceived(float _DeadEyeTimer)
     {
         m_DeadEyeTimer = _DeadEyeTimer;
+    }
+    public void SetHPStateReceived(int HPState)
+    {
+        HP = HPState;
     }
 }

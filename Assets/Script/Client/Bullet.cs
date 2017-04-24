@@ -52,7 +52,7 @@ public class Bullet : MonoBehaviour {
             if (HitObj.collider.gameObject.tag == "Enemy")
             {
                 Debug.Log("Hit");
-                HitObj.collider.gameObject.GetComponent<EnemyMove>().Damaged(Damage, transform.forward);
+                //HitObj.collider.gameObject.GetComponent<EnemyMove>().Damaged(Damage, transform.forward);
                // m_Distance = 0;
             }
             m_Distance = 0;
