@@ -21,7 +21,7 @@ public class BulletRespawn : MonoBehaviour {
     bool CreateAble = true; //생성 가능여부
 
    public MultiGameManager Mul_GameManager;
-
+    public Transform DeathZone;
     RaycastHit HitObj;
     // Use this for initialization
     void Start () {
@@ -35,6 +35,13 @@ public class BulletRespawn : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        if(DeathZone.position.y+0.5f>transform.position.y)
+        {
+            gameObject.SetActive(false);
+            Debug.Log("PointPos" + transform.position.y);
+            Debug.Log("DeathZonePos" + DeathZone.position.y);
+        }
 
         if (Mul_GameManager.GetEndGameState())
         {

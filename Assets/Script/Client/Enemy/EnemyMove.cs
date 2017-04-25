@@ -63,7 +63,7 @@ public class EnemyMove : MonoBehaviour {
 
     // 적의 정보를 보간시켜주기 위해 필요한 정보들..
     private float _lastUpdateTime;
-    private float _timePerUpdate = 0.1f;
+    private float _timePerUpdate = 0.08f;
     private float pctDone;
 
     // 메시지 순서를 알아낼 변수
@@ -526,35 +526,35 @@ public class EnemyMove : MonoBehaviour {
     //    }
     //}
 
-    //public void Damaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
-    //{
-    //    Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
-    //    DamageVec.y = 0; //위아래로는 움직이지 않게합니다
+    public void Damaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
+    {
+        Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
+        DamageVec.y = 0; //위아래로는 움직이지 않게합니다
 
-    //    transform.rotation = Quaternion.LookRotation(DamageVec);
+        transform.rotation = Quaternion.LookRotation(DamageVec);
 
-    //    Debug.Log(Damage);
-    //    Debug.Log("Damaged");
-    //    anim.SetTrigger("Damage");
-    //    anim.SetBool("Damaged", true);
-    //    HP -= Damage;
+        Debug.Log(Damage);
+        Debug.Log("Damaged");
+        anim.SetTrigger("Damage");
+        anim.SetBool("Damaged", true);
+        //HP -= Damage;
 
-    //    m_PlayerState = LSD.PlayerState.DAMAGE;
-    //}
+        m_PlayerState = LSD.PlayerState.DAMAGE;
+    }
     public void DamageCheck()
     {
         if(BeforeHP != HP)
         {
-            if (DamageVec != Vector3.zero)
-            {
-                transform.rotation = Quaternion.LookRotation(DamageVec);
+            //if (DamageVec != Vector3.zero)
+            //{
+            //    transform.rotation = Quaternion.LookRotation(DamageVec);
 
                 if (!DeadCheck())   //죽은경우 true반환
                 {
-                    anim.SetTrigger("Damage");
-                    anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+                    //anim.SetTrigger("Damage");
+                    //anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
                 }
-            }
+           // }
             BeforeHP = HP;
             DamageVec = Vector3.zero;
         }

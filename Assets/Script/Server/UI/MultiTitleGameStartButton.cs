@@ -94,7 +94,7 @@ public class MultiTitleGameStartButton : MonoBehaviour, IDragHandler, IPointerUp
             {
                 ButtonChecker = true;
 
-                this.gameObject.SetActive(false);
+                //this.gameObject.SetActive(false);
                 PVP_Matching_UI.SetActive(true);
 
                 //StartCoroutine(StartMultiGame());

@@ -11,7 +11,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        Matching_Text.text = "상대방을 찾는 중입니다...";
+        Matching_Text.text = "Player Searching...";
 
         MultiStartChecker = false;
 
@@ -33,7 +33,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
         if (GPGSManager.GetInstance.IsConnected() == true)
         {
-            Matching_Text.text = "잠시 후 게임이 시작됩니다.";
+            Matching_Text.text = "Join the Session.";
 
             if (MultiStartChecker == false)
             {

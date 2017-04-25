@@ -222,6 +222,20 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         //guiObject.SetLaps(_lapsRemaining);
         //guiObject.SetTime(_timePlayed);
 
+        if (allPlayers[0].ParticipantId == _MyParticipantId)
+        {
+            MyCharacter.transform.position = MyCharacterPos.transform.position;
+            EnemyCharacter.transform.position = EnemyCharacterPos.transform.position;
+
+            //PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);//_opponentScripts[_MyParticipantId].name;//GPGSManager.GetInstance.GetOtherNameGPGS(0);
+            //EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);
+        }
+        else
+        {
+            MyCharacter.transform.position = EnemyCharacterPos.transform.position;
+            EnemyCharacter.transform.position = MyCharacterPos.transform.position;
+        }
+
         MyPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(0);
         OpponentPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(1);
 

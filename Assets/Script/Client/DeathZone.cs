@@ -35,18 +35,22 @@ public class DeathZone : MonoBehaviour {
             
             yield return new WaitForSeconds(DealyTime); //딜레이 시간동안 대기
 
-            MoveSpeed = (Level[LevelIndex] - transform.position.y) / (MoveTime*10);
+            MoveSpeed = (Level[LevelIndex] - transform.position.y) / (MoveTime*100);
             Debug.Log("MoveSpeed" + MoveSpeed);
             while (Level[LevelIndex] > transform.position.y)
             {
                 Debug.Log("UP");
-                if (Mul_GameManger.GetEndGameState())
+                if (Mul_GameManger.GetEndGameState())  //게임이 끝났을경우
                 {
                     yield break;
                 }
-                transform.position = new Vector3(transform.position.x, transform.position.y + MoveSpeed, transform.position.z);
 
-                yield return new WaitForSeconds(0.1f);
+                if(!Mul_GameManger.GetDeadEyeChecker())//데드아이 발동중엔 안올라옴
+                {
+                    transform.position = new Vector3(transform.position.x, transform.position.y + MoveSpeed, transform.position.z);
+                }
+
+                yield return new WaitForSeconds(0.01f);
             }
             LevelIndex++;
         }

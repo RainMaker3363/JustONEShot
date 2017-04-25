@@ -47,7 +47,9 @@ public class CharMove : MonoBehaviour {
     public Camera cam;
     private Vector3 CamPos;
     public Transform CamLook;
-    public GameObject DeadEyeUI;
+    public GameObject UI_Main;
+    public GameObject UI_GameOver;
+    public Text UI_GameOverText;
 
     // 플레이어의 움직임
     private float m_MoveSpeed;
@@ -101,6 +103,7 @@ public class CharMove : MonoBehaviour {
 
     bool GameEnd = false;
 
+
     void Awake()
     {
         m_GunState = LSD.GunState.Revolver; //현재는 고정 추후 받아오게함
@@ -144,6 +147,9 @@ public class CharMove : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+
+        //Mul_Manager.SendMultiSelectStateMessage
+
         m_DebugPlayerState = (int)m_PlayerState;
         // Debug.Log("VectorForce: " + m_MoveJoyStickControl.GetVectorForce());
         Debug.Log("PlayerState: " + m_PlayerState);
@@ -645,6 +651,10 @@ public class CharMove : MonoBehaviour {
             GameEnd = true;
             // Mul_Manager.SendAniStateMessage((int)m_PlayerState); //데미지부분에서도 보내줌
             Mul_Manager.SendEndGameMssage(true);
+            UI_Main.SetActive(false);
+            UI_GameOver.SetActive(true);
+            UI_GameOverText.GetComponent<Text>().text = "Defeat";
+
             return true;
         }
         return false;
@@ -659,6 +669,9 @@ public class CharMove : MonoBehaviour {
             anim.SetTrigger("Victory");
             Mul_Manager.SendAniStateMessage((int)m_PlayerState);
             GameEnd = true;
+            UI_Main.SetActive(false);
+            UI_GameOver.SetActive(true);
+            UI_GameOverText.GetComponent<Text>().text = "Victory";
         }
     }
 
@@ -701,7 +714,7 @@ public class CharMove : MonoBehaviour {
 
     void DeathZoneCheck()
     {
-        if(DeathZone.position.y+0.15f>=transform.position.y )
+        if(DeathZone.position.y+0.02>=transform.position.y )
         {
             if (!DeathZoneDealay)
             {
@@ -721,6 +734,7 @@ public class CharMove : MonoBehaviour {
 
     void FixedUpdate()
     {
+        //Mul_Manager.GetAniStateMessage
         switch (m_PlayerState)
         {
             case LSD.PlayerState.IDLE:
@@ -891,34 +905,34 @@ public class CharMove : MonoBehaviour {
     //}
 
 
-    void OnGUI()
-    {
-        int w = Screen.width, h = Screen.height;
+    //void OnGUI()
+    //{
+    //    int w = Screen.width, h = Screen.height;
 
-        GUIStyle style = new GUIStyle();
+    //    GUIStyle style = new GUIStyle();
 
-        Rect rect = new Rect(w / 2, 0, 100, 100);
-        style.alignment = TextAnchor.UpperLeft;
-        style.fontSize = 30;
-        style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
+    //    Rect rect = new Rect(w / 2, 0, 100, 100);
+    //    style.alignment = TextAnchor.UpperLeft;
+    //    style.fontSize = 30;
+    //    style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
 
-        string text = string.Format("HP : {0}", HP);
+    //    string text = string.Format("HP : {0}", HP);
 
-        GUI.Label(rect, text, style);
+    //    GUI.Label(rect, text, style);
 
-        //Rect Bulletrect = new Rect(w - 300, 0, 100, 100);
+    //    //Rect Bulletrect = new Rect(w - 300, 0, 100, 100);
 
-        //string Bullettext = string.Format("탄창 : {0}/{1}\n탄알 : {2}/{3}", m_UseGun.Bullet_Gun, m_UseGun.MaxBullet_Gun, m_UseGun.Bullet_Hand, m_UseGun.MaxBullet_Hand);
+    //    //string Bullettext = string.Format("탄창 : {0}/{1}\n탄알 : {2}/{3}", m_UseGun.Bullet_Gun, m_UseGun.MaxBullet_Gun, m_UseGun.Bullet_Hand, m_UseGun.MaxBullet_Hand);
 
 
-        //GUI.Label(Bulletrect, Bullettext, style);
-    }
+    //    //GUI.Label(Bulletrect, Bullettext, style);
+    //}
 
     IEnumerator ServerUpdate()
     {
         while (true)
         {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.08f);
             if (GPGSManager.GetInstance.IsAuthenticated())
             {
                 if (Mul_Manager == true)
@@ -939,5 +953,10 @@ public class CharMove : MonoBehaviour {
     {
         yield return new WaitForSeconds(Time);
         DeathZoneDealay = false;
+    }
+
+    public void OnExitButton()
+    {
+        Mul_Manager.EndGameAndLeaveRoom();
     }
 }
