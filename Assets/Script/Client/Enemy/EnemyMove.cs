@@ -63,7 +63,7 @@ public class EnemyMove : MonoBehaviour {
 
     // 적의 정보를 보간시켜주기 위해 필요한 정보들..
     private float _lastUpdateTime;
-    private float _timePerUpdate = 0.08f;
+    private float _timePerUpdate =  0.13f;
     private float pctDone;
 
     // 메시지 순서를 알아낼 변수
@@ -84,7 +84,7 @@ public class EnemyMove : MonoBehaviour {
 
     public Transform PlayerPos;  //  적 캐릭터 위치 추후변경예상
 
-    public float m_DeadEyeTimer;
+    public static float m_DeadEyeTimer;
 
     void Awake()
     {
@@ -463,14 +463,14 @@ public class EnemyMove : MonoBehaviour {
     {
         if (!anim.GetBool("Damaged"))
         {
-            anim.SetBool("DeadEyeDamage", false);
+           // anim.SetBool("DeadEyeDamage", false);
             m_PlayerState = LSD.PlayerState.IDLE;
         }
     }
 
     void Update_DEADEYE()
     {
-        anim.SetBool("DeadEyeDamage", CharMove.DeadEyeSuccess);
+        //anim.SetBool("DeadEyeDamage", CharMove.DeadEyeSuccess);
         if (DeadEyeEnd)
         {
             DeadEyeEnd = false;
@@ -535,8 +535,11 @@ public class EnemyMove : MonoBehaviour {
 
         Debug.Log(Damage);
         Debug.Log("Damaged");
-        anim.SetTrigger("Damage");
-        anim.SetBool("Damaged", true);
+        if (!DeadCheck())
+        {
+            anim.SetTrigger("Damage");
+            anim.SetBool("Damaged", true);
+        }
         //HP -= Damage;
 
         m_PlayerState = LSD.PlayerState.DAMAGE;
@@ -567,15 +570,21 @@ public class EnemyMove : MonoBehaviour {
 
         if (!CharMove.DeadEyeSuccess) //데드아이 피격시 성공했다면
         {
-            anim.SetTrigger("Damage");
-            anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
-            HP -= Damage;
+            if (!DeadCheck())
+            {
+                anim.SetTrigger("Damage");
+                anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+                HP -= Damage;
+            }
         }
         else
         {
-            anim.SetTrigger("DeadEyeDamage");
-            anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
-            HP -= (Damage + 45);
+            if (!DeadCheck())
+            {
+                anim.SetTrigger("DeadEyeDamage");
+                anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+                HP -= (Damage + 45);
+            }
         }
 
         //HP_bar.fillAmount = HP / 100;

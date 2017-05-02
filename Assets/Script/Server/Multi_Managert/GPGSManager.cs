@@ -27,6 +27,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // Byte + Byte + 1 Boolean
     private int _deadeyeMessageLength = 3;
     // Byte + Byte + 1 Interger
+    private int _deadeyeRespawnMessageLength = 6;
+    // Byte + Byte + 1 Interger
     private int _animMessageLength = 6;
     // Byte + Byte + 1 Interget
     private int _healthMessageLength = 6;
@@ -52,8 +54,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private List<byte> _ShootVectorMessage;
     private List<byte> _DeadEyeMessage;
     private List<byte> _DeadEyeTimerMessage;
+    private List<byte> _DeadEyeRespawnMessage;
     private List<byte> _AnimMessage;
     private List<byte> _HealthMessage;
+    
 
     private bool IsConnectedOn = false;
     private bool showingWaitingRoom = false;
@@ -121,6 +125,12 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             _DeadEyeTimerMessage = new List<byte>(_deadeyeTimerMessageLength);
         }
+
+        if(_DeadEyeRespawnMessage == null)
+        {
+            _DeadEyeRespawnMessage = new List<byte>(_deadeyeRespawnMessageLength);
+        }
+
 
         if (_AnimMessage == null)
         {
@@ -220,6 +230,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if (_DeadEyeTimerMessage == null)
         {
             _DeadEyeTimerMessage = new List<byte>(_deadeyeTimerMessageLength);
+        }
+
+        if (_DeadEyeRespawnMessage == null)
+        {
+            _DeadEyeRespawnMessage = new List<byte>(_deadeyeRespawnMessageLength);
         }
 
         if (_AnimMessage == null)
@@ -456,20 +471,20 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // 아이템을 먹었을때 보내지는 메시지
     // 아이템의 인덱스 번호 (메모리 풀을 만들었다면 총알의 3개 중 하나...)
     // 아이템을 먹었는지의 여부 TRUE면 먹었다고 인식
-    public void SendItemStateMessage(int Index, bool GetItem)
-    {
-        _itemstateMessage.Clear();
-        _itemstateMessage.Add(_protocolVersion);
-        _itemstateMessage.Add((byte)'I');
-        _itemstateMessage.AddRange(System.BitConverter.GetBytes(GetItem));
-        _itemstateMessage.AddRange(System.BitConverter.GetBytes(Index));
+    //public void SendItemStateMessage(int Index, bool GetItem)
+    //{
+    //    _itemstateMessage.Clear();
+    //    _itemstateMessage.Add(_protocolVersion);
+    //    _itemstateMessage.Add((byte)'I');
+    //    _itemstateMessage.AddRange(System.BitConverter.GetBytes(GetItem));
+    //    _itemstateMessage.AddRange(System.BitConverter.GetBytes(Index));
 
-        byte[] ItemStateMessageToSend = _itemstateMessage.ToArray();
+    //    byte[] ItemStateMessageToSend = _itemstateMessage.ToArray();
 
-        Debug.Log("Sending my update message  " + ItemStateMessageToSend + " to all players in the room");
+    //    Debug.Log("Sending my update message  " + ItemStateMessageToSend + " to all players in the room");
 
-        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, ItemStateMessageToSend);
-    }
+    //    PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, ItemStateMessageToSend);
+    //}
 
     // 상대방 애니메이션 상태값을 보내는 메시지
     public void SendAniStateMessage(int State)
@@ -596,6 +611,23 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, DeadEyeMessageToSend);
     }
 
+    // 데드아이 리스폰 위치를 보내는 메시지
+    // 데드아이의 위치를 난수를 보내준다.
+    public void SendDeadEyeIndexMessage()
+    {
+        _DeadEyeRespawnMessage.Clear();
+        _DeadEyeRespawnMessage.Add(_protocolVersion);
+        _DeadEyeRespawnMessage.Add((byte)'I');
+
+        int index = UnityEngine.Random.Range(0, 5);
+
+        _DeadEyeRespawnMessage.AddRange(System.BitConverter.GetBytes(index));
+
+        byte[] DeadEyeMessageToSend = _DeadEyeRespawnMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, DeadEyeMessageToSend);
+    }
+
     // 데드아이 상태값을 보내는 메시지
     // bool 값이 true라면 데드 아이가 끝난 것을 의미한다.
     public void SendDeadEyeMessage(bool DeadEyeSet)
@@ -669,17 +701,23 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         }
         else if(messageType == 'I')
         {
-            bool ItemGet = System.BitConverter.ToBoolean(data, 2);
-            int Index = System.BitConverter.ToInt32(data, 3);
+            //bool ItemGet = System.BitConverter.ToBoolean(data, 2);
+            //int Index = System.BitConverter.ToInt32(data, 3);
 
-            Debug.Log("Item Get");
+            //Debug.Log("Item Get");
 
-            ReceiveMessage = ByteToString(data);
+            //ReceiveMessage = ByteToString(data);
 
-            if (updateListener != null)
+            //if (updateListener != null)
+            //{
+            //    //updateListener.ItemStateReceived(Index, ItemGet);
+            //    updateListener.ItemStateReceived(0, ItemGet);
+            //}
+            int index = System.BitConverter.ToInt32(data, 2);
+
+            if(updateListener != null)
             {
-                //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.ItemStateReceived(0, ItemGet);
+                updateListener.DeadEyeRespawnIndexReceived(index);
             }
         }
         else if(messageType == 'S')

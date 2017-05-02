@@ -106,6 +106,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     //데드아이 체크
     private float _DeadEyeTimer;
     private bool _DeadEyeChecker;
+    private int _DeadEyeRespawnIndex;
 
     // Use this for initialization
     void Awake() {
@@ -119,6 +120,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         ItemCount = 0;
         _DeadEyeTimer = 0.0f;
         _DeadEyeChecker = false;
+        _DeadEyeRespawnIndex = -1;
         WaitSignal = false;
         SelectSignal = false;
 
@@ -423,6 +425,16 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     }
 
+    // 데드아이 아이템이 리스폰 되어야할 위치를 받는다.
+    // index는 위치로써, 서버 쪽에서 난수 값으로 0~4까지 만든 후 보내준다.
+    public void DeadEyeRespawnIndexReceived(int index)
+    {
+        if (_multiplayerReady)
+        {
+            _DeadEyeRespawnIndex = index;
+        }
+    }
+
     // 데드아이 타이머를 반환 시켜준다.
     public float GetDeadEyeTimer()
     {
@@ -433,6 +445,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public bool GetDeadEyeChecker()
     {
         return _DeadEyeChecker;
+    }
+
+    // 데드아이 총알 아이템의 인덱스 위치 여부
+    public int GetDeadEyeRespawnIndex()
+    {
+        return _DeadEyeRespawnIndex;
     }
 
     // 현재 애니메이션 상태 값을 갱신 시켜준다.
@@ -634,20 +652,20 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 다른 스크립트에서 서버로 보낼 메시지를 호출하고 싶을때 보낼 콜 함수들...
     #region Call_Function
 
-    // 아이템을 먹을시 이것을 GPGSManager의 아이템 메시지 함수를 호출해준다.
-    // 사실상 이건 테스트 용이니 다른걸...
-    public void CallSendItemStateMessage()
-    {
-        GPGSManager.GetInstance.SendItemStateMessage(0, true);
-    }
+    //// 아이템을 먹을시 이것을 GPGSManager의 아이템 메시지 함수를 호출해준다.
+    //// 사실상 이건 테스트 용이니 다른걸...
+    //public void CallSendItemStateMessage()
+    //{
+    //    GPGSManager.GetInstance.SendItemStateMessage(0, true);
+    //}
 
-    // 아이템을 먹을시 이것을 GPGSManager의 아이템 메시지 함수를 호출해준다.
-    // Index = 메모리 풀을 만들었을때 호출될 아이템 인덱스 값
-    // ItemGetOn = true일시 아이템을 먹었다고 판단하고 메시지를 전부 보내준다.
-    public void CallSendItemStateMessage(int index, bool ItemGetOn)
-    {
-        GPGSManager.GetInstance.SendItemStateMessage(index, ItemGetOn);
-    }
+    //// 아이템을 먹을시 이것을 GPGSManager의 아이템 메시지 함수를 호출해준다.
+    //// Index = 메모리 풀을 만들었을때 호출될 아이템 인덱스 값
+    //// ItemGetOn = true일시 아이템을 먹었다고 판단하고 메시지를 전부 보내준다.
+    //public void CallSendItemStateMessage(int index, bool ItemGetOn)
+    //{
+    //    GPGSManager.GetInstance.SendItemStateMessage(index, ItemGetOn);
+    //}
 
     // 맨 처음 접속했을때 상대방의 접속 여부를 의미한다.
     // Wait 값이 true면 접속을 완료했다는 것
@@ -704,7 +722,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                                                         MyCharacter.transform.rotation.eulerAngles.y);
 
                 //_nextBroadcastTime = Time.time + 0.16f;
-                _nextBroadcastTime = Time.time + 0.08f;
+                _nextBroadcastTime = Time.time +  0.13f;
             }
         }
 
@@ -749,6 +767,14 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public void SendDeadEyeTimerMessage(float DeadEyeTimer)
     {
         GPGSManager.GetInstance.SendDeadEyeTimerMessage(DeadEyeTimer);
+    }
+
+
+    // 데드 아이 아이템을 먹을 경우 메시지를 보낸다.
+    // 다시 리스폰 되는 위치를 서버쪽에서 난수로 지정해준다.
+    public void SendDeadEyeRespawnIndexMessage()
+    {
+        GPGSManager.GetInstance.SendDeadEyeIndexMessage();
     }
 
     // 애니메이션 값을 넣어준다.
@@ -919,7 +945,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
 
-            ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd;
+            ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
 
 
         }
@@ -931,7 +957,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             MyInfoText.text = "Player Info : " + MyCharacterPos.transform.position;
             EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.transform.position;
             NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
-            ItemGetCount.text = "MessageCount : " + ItemCount;
+            ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
         }
 
         // 적의 타임아웃 체크

@@ -7,6 +7,8 @@
     void ShootVectorReceived(float x, float y, float z);
     void DeadEyeStateReceived(bool DeadEyeActive);
     void DeadEyeTimerStateReceived(float DeadEyeTimer);
+    void DeadEyeRespawnIndexReceived(int index);
+
     void AniStateReceived(int AniState);
     void HPStateReceived(int HPState);
 

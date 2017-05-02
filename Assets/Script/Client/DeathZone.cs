@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class DeathZone : MonoBehaviour {
 
     [SerializeField]
@@ -19,6 +20,10 @@ public class DeathZone : MonoBehaviour {
 
     public MultiGameManager Mul_GameManger;
 
+    public bool DeadEyePlaying = false;
+
+    public GameObject UI_DeathZoneUp;
+
     // Use this for initialization
     void Start () {
         StartCoroutine(DeathZoneMove());
@@ -34,6 +39,7 @@ public class DeathZone : MonoBehaviour {
         {
             
             yield return new WaitForSeconds(DealyTime); //딜레이 시간동안 대기
+            UI_DeathZoneUp.SetActive(true);
 
             MoveSpeed = (Level[LevelIndex] - transform.position.y) / (MoveTime*100);
             Debug.Log("MoveSpeed" + MoveSpeed);
@@ -45,7 +51,7 @@ public class DeathZone : MonoBehaviour {
                     yield break;
                 }
 
-                if(!Mul_GameManger.GetDeadEyeChecker())//데드아이 발동중엔 안올라옴
+                if(!Mul_GameManger.GetDeadEyeChecker() || DeadEyePlaying)//데드아이 발동중엔 안올라옴
                 {
                     transform.position = new Vector3(transform.position.x, transform.position.y + MoveSpeed, transform.position.z);
                 }
@@ -53,6 +59,7 @@ public class DeathZone : MonoBehaviour {
                 yield return new WaitForSeconds(0.01f);
             }
             LevelIndex++;
+            UI_DeathZoneUp.SetActive(false);
         }
     }
 }

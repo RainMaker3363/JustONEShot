@@ -24,13 +24,18 @@ public class BulletRespawn : MonoBehaviour {
     public Transform DeathZone;
     RaycastHit HitObj;
     // Use this for initialization
-    void Start () {
 
+    void Awake()
+    {
 
         if (Physics.Raycast(transform.position, Vector3.down, out HitObj, 5f))
         {
-            transform.position = new Vector3(transform.position.x, HitObj.point.y+0.5f, transform.position.z);
+            transform.position = new Vector3(transform.position.x, HitObj.point.y + 0.5f, transform.position.z);
         }
+    }
+    void Start () {
+
+
     }
 	
 	// Update is called once per frame

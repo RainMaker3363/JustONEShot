@@ -18,10 +18,10 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
 
     float CreateCoolTime = 30;   // 먹은후 재생성 쿨타임
 
-    bool CreateAble = true; //생성 가능여부
+    public bool CreateAble = false; //생성 가능여부
 
    public MultiGameManager Mul_GameManager;
-
+    public Transform DeathZone;
     RaycastHit HitObj;
 
     // Use this for initialization
@@ -37,12 +37,24 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 
-        if(Mul_GameManager.GetEndGameState())
+        
+        //    CreateAble = true;
+        
+
+        if (DeathZone.position.y + 0.5f > transform.position.y) //데스존에 잠겼다면
+        {
+            gameObject.SetActive(false);
+            //Debug.Log("PointPos" + transform.position.y);
+            //Debug.Log("DeathZonePos" + DeathZone.position.y);
+        }
+        if (Mul_GameManager.GetEndGameState())
         {
             DB_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
             BulletIndex = -1; //인덱스 초기화
             gameObject.SetActive(false);
         }
+
+ 
         if (CreateAble) //생성이 가능할경우
         {
             P_Distance = Vector3.Distance(P_CharPos.position, this.transform.position);
@@ -75,11 +87,24 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
                     //EnemyMove.EnemyDeadEye();
                     DB_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
                     BulletIndex = -1; //인덱스 초기화
-                    StartCoroutine(BulletCreateDelay());    //재생성 쿨타임 시작
+                    CreateAble = false; //적이 먹은경우 난수생성요청을하지않기위해 코루틴은 실행하지않는다
+                    // StartCoroutine(BulletCreateDelay());    //재생성 쿨타임 시작
                 }
 
                 
             }
+          
+        }
+    }
+
+    void OnDisable()
+    {
+        if (CreateAble)//생성이되어있는데 물에 잠긴경우
+        {
+            CreateAble = false;
+            DB_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
+            BulletIndex = -1; //인덱스 초기화
+            DB_CreateManager.GetInstance().Request = true; //물에 잠겨 사라졌으니 재생성을 요청
         }
     }
 
@@ -87,8 +112,8 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
     {
         CreateAble = false;
         yield return new WaitForSeconds(CreateCoolTime);
-        CreateAble = true;  //재생성 가능하게 설정
-
+        //CreateAble = true;  //재생성 가능하게 설정
+        DB_CreateManager.GetInstance().Request = true;//먹었음을 쿨타임 끝나고 알려주므로써 쿨타임 공유
         yield return null;
     }
 }

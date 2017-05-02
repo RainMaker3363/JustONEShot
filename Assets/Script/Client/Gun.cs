@@ -73,6 +73,7 @@ public class Gun : MonoBehaviour
 
     float SillinerRotate = 0;
     Animator anim;
+    public Animator camAni;
 
     //총 위치
     public Transform m_GunTransform;
@@ -163,6 +164,8 @@ public class Gun : MonoBehaviour
                 Effects_Bullet[m_BulletIndex].transform.position = m_BulletTransform.position;
                 Effects_Bullet[m_BulletIndex].transform.rotation = m_BulletTransform.rotation;
                 Effects_Bullet[m_BulletIndex].SetActive(true);
+
+                camAni.SetTrigger("Shot");
                 m_BulletIndex++;
                 if (m_BulletIndex == 3)
                 {

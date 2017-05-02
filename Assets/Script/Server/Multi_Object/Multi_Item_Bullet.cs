@@ -41,7 +41,7 @@ public class Multi_Item_Bullet : MonoBehaviour {
 
             if (Mul_Manager == true)
             {
-                Mul_Manager.CallSendItemStateMessage();
+                //Mul_Manager.CallSendItemStateMessage();
             }
         }
     }

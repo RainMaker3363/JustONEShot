@@ -44,7 +44,8 @@ public class CharMove : MonoBehaviour {
     //이동 속도?
     public Image m_FirstTouch;
 
-    public Camera cam;
+    public GameObject cam;
+    Animator camAni;
     private Vector3 CamPos;
     public Transform CamLook;
     public GameObject UI_Main;
@@ -97,12 +98,15 @@ public class CharMove : MonoBehaviour {
     float EnemyDeadEyeTimer;    //적 데드아이 시간
     bool DeadEyecomplete = false;
     public static bool DeadEyeSuccess;
+    bool DeadEyeSuccessCheck=false;
 
     public Transform DeathZone;
     bool DeathZoneDealay = false;
 
     bool GameEnd = false;
 
+    float Debug_DeadEyeTimer_Player=0;
+    float Debug_DeadEyeTimer_Enemy=0;
 
     void Awake()
     {
@@ -115,6 +119,7 @@ public class CharMove : MonoBehaviour {
 
         //카메라 기본위치 설정
         CamPos = cam.transform.position;
+        camAni = cam.GetComponent<Animator>();
 
         //플레이어 선택 총
         switch (m_GunState)
@@ -141,6 +146,8 @@ public class CharMove : MonoBehaviour {
         //플레이어 UI초기화
         HP_bar.fillAmount = HP;
         Stamina_bar.fillAmount = Stamina;
+
+        cam.transform.position = CamPos + transform.position;
 
         StartCoroutine(ServerUpdate());
     }
@@ -267,14 +274,20 @@ public class CharMove : MonoBehaviour {
             case LSD.PlayerState.DEAD:
                 {
                     ShotAble = false;
-
+                    if(UI_Main.activeSelf)
+                    {
+                        UI_Main.SetActive(false);
+                    }
 
                     break;
                 }
             case LSD.PlayerState.WIN:
                 {
                     ShotAble = false;
-
+                    if (UI_Main.activeSelf)
+                    {
+                        UI_Main.SetActive(false);
+                    }
                     break;
                 }
 
@@ -414,10 +427,11 @@ public class CharMove : MonoBehaviour {
         //조준중에 손을 땠다면
         if (!m_ShotJoyStickControl.GetTouch())
         {
-            anim.SetBool("GunFire", true);
+            anim.SetBool("GunFire", true);           
             if (m_UseGun.Bullet_Gun > 0)
             {
                 anim.SetBool("Shot", true);
+               
                 if (GPGSManager.GetInstance.IsAuthenticated())
                 {
                     Mul_Manager.SendShootMessage(true);
@@ -467,18 +481,23 @@ public class CharMove : MonoBehaviour {
             m_MoveJoyStickControl.PedInit();
         //}
 
-        if(DeadEyeEnd||!Mul_Manager.GetDeadEyeChecker())
+        if((DeadEyeEnd||!Mul_Manager.GetDeadEyeChecker())&& DeadEyeSuccessCheck)
         {
+            //판별했으니 초기화
+            EnemyDeadEyeTimer = 0;
+            m_DeadEyeTimer = 0;
             DeadEyeEnd = false;
+            DeadEyeSuccessCheck = false;
             cam.transform.position = CamPos + transform.position;
             if (GPGSManager.GetInstance.IsAuthenticated())
             {
                 Mul_Manager.SendDeadEyeMessage(false);
             }
             m_PlayerState = LSD.PlayerState.IDLE;
+            DeathZone.GetComponent<DeathZone>().DeadEyePlaying = false;
         }
 
-        if (m_DeadEyeTimer > 0 && !DeadEyecomplete)
+        if (m_DeadEyeTimer > 0 && !DeadEyecomplete && !DeadEyeSuccessCheck)
         {
             Mul_Manager.SendDeadEyeTimerMessage(m_DeadEyeTimer);
             DeadEyecomplete = true;
@@ -486,7 +505,7 @@ public class CharMove : MonoBehaviour {
 
         EnemyDeadEyeTimer = Mul_Manager.GetDeadEyeTimer();
 
-        if (EnemyDeadEyeTimer>0 && DeadEyecomplete)  //플레이어의 데드아이가 끝났고 상대데드아이가 끝났는가
+        if (EnemyDeadEyeTimer>0 && DeadEyecomplete && !DeadEyeSuccessCheck)  //플레이어의 데드아이가 끝났고 상대데드아이가 끝났는가
         {
             if(EnemyDeadEyeTimer> m_DeadEyeTimer)//데드아이성공여부 판별
             {
@@ -496,11 +515,12 @@ public class CharMove : MonoBehaviour {
             {
                 DeadEyeSuccess = false;
             }
-            
-            //판별했으니 초기화
-            EnemyDeadEyeTimer = 0;
-            m_DeadEyeTimer = 0;
+            //디버그용
+            Debug_DeadEyeTimer_Player = m_DeadEyeTimer;
+            Debug_DeadEyeTimer_Enemy = EnemyDeadEyeTimer;
+           
             DeadEyecomplete = false;
+            DeadEyeSuccessCheck = true;
         }
     }
 
@@ -587,6 +607,7 @@ public class CharMove : MonoBehaviour {
         {
             anim.SetTrigger("Damage");
             anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+            camAni.SetTrigger("Damage");
         }
         
 
@@ -616,6 +637,7 @@ public class CharMove : MonoBehaviour {
             {
                 anim.SetTrigger("Damage");
                 anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+                camAni.SetTrigger("Damage");
             }
         }
         else
@@ -625,6 +647,7 @@ public class CharMove : MonoBehaviour {
             {
                 anim.SetTrigger("DeadEyeDamage");
                 anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+                camAni.SetTrigger("Damage");
             }
            
         }
@@ -695,6 +718,8 @@ public class CharMove : MonoBehaviour {
             {
                 Mul_Manager.SendDeadEyeMessage(true);
             }
+
+            DeathZone.GetComponent<DeathZone>().DeadEyePlaying = true;
         }
 
         if (GPGSManager.GetInstance.IsAuthenticated())
@@ -905,34 +930,35 @@ public class CharMove : MonoBehaviour {
     //}
 
 
-    //void OnGUI()
-    //{
-    //    int w = Screen.width, h = Screen.height;
+    void OnGUI()
+    {
+        int w = Screen.width, h = Screen.height;
 
-    //    GUIStyle style = new GUIStyle();
+        GUIStyle style = new GUIStyle();
 
-    //    Rect rect = new Rect(w / 2, 0, 100, 100);
-    //    style.alignment = TextAnchor.UpperLeft;
-    //    style.fontSize = 30;
-    //    style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
+        Rect rect = new Rect(w / 2, 0, 100, 100);
+        style.alignment = TextAnchor.UpperLeft;
+        style.fontSize = 30;
+        style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
 
-    //    string text = string.Format("HP : {0}", HP);
+        //string text = string.Format("HP : {0}", HP);
+        string text = string.Format("My : {0}\nEnemy : {1}", Debug_DeadEyeTimer_Player,Debug_DeadEyeTimer_Enemy);
 
-    //    GUI.Label(rect, text, style);
+        GUI.Label(rect, text, style);
 
-    //    //Rect Bulletrect = new Rect(w - 300, 0, 100, 100);
+        //Rect Bulletrect = new Rect(w - 300, 0, 100, 100);
 
-    //    //string Bullettext = string.Format("탄창 : {0}/{1}\n탄알 : {2}/{3}", m_UseGun.Bullet_Gun, m_UseGun.MaxBullet_Gun, m_UseGun.Bullet_Hand, m_UseGun.MaxBullet_Hand);
+        //string Bullettext = string.Format("탄창 : {0}/{1}\n탄알 : {2}/{3}", m_UseGun.Bullet_Gun, m_UseGun.MaxBullet_Gun, m_UseGun.Bullet_Hand, m_UseGun.MaxBullet_Hand);
 
 
-    //    //GUI.Label(Bulletrect, Bullettext, style);
-    //}
+        //GUI.Label(Bulletrect, Bullettext, style);
+    }
 
     IEnumerator ServerUpdate()
     {
         while (true)
         {
-            yield return new WaitForSeconds(0.08f);
+            yield return new WaitForSeconds( 0.13f);
             if (GPGSManager.GetInstance.IsAuthenticated())
             {
                 if (Mul_Manager == true)
