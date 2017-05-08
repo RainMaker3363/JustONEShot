@@ -4,51 +4,7 @@ using UnityEngine.UI;
 using UnityEngine;
 using GooglePlayGames.BasicApi.Multiplayer;
 
-namespace HY
-{
-    // 멀티 게임 상태
-    public enum MultiGameState
-    {
-        WAIT = 0,
-        SELECT,
-        PLAY,
-        GAMEOVER,
-        GAMEWIN,
-        CONNECTOUT,
-        MAX
-    }
 
-    // 멀티 게임 플레이어의 상태
-    public enum MultiPlayerState
-    {
-        START = 0,
-        LIVE,
-        RELOAD,
-        SHOOT,
-        SHOOTCANCEL,
-        SHOOTCOMPLETE,
-        EVENT,
-        DEADEYESTART,
-        DEADEYEACTIVE,
-        DEAD
-    }
-
-    // 멀티 플레이어 캐릭터 상태
-    public enum MultiCharacterState
-    {
-        CHAR_001 = 0,
-        CHAR_002,
-        CHAR_003
-    }
-
-    // 멀티 플레이어 총 상태
-    public enum MultiGunState
-    {
-        REVOLVER = 0,
-        SHOTGUN,
-        MUSKET
-    }
-}
 
 public class MultiGameManager : MonoBehaviour, MPUpdateListener
 {

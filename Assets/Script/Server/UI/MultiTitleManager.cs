@@ -11,6 +11,7 @@ public class MultiTitleManager : MonoBehaviour
     //private bool ButtonChecker;
     //private bool MultiStartChecker;
     private static bool LoginGPGSOn = false;
+    public static int MultiGameModeNumber;
 
     // Use this for initialization
     void Start () {
@@ -23,6 +24,7 @@ public class MultiTitleManager : MonoBehaviour
             GPGSManager.GetInstance.LoginGPGS();
         }
 
+        MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();
 
         //ButtonChecker = false;
         //MultiStartChecker = false;

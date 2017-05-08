@@ -7,6 +7,61 @@ using GooglePlayGames.BasicApi.SavedGame;
 using GooglePlayGames.BasicApi.Multiplayer;
 using GooglePlayGames.BasicApi;
 
+namespace HY
+{
+    // 멀티 게임 상태
+    public enum MultiGameState
+    {
+        WAIT = 0,
+        SELECT,
+        PLAY,
+        GAMEOVER,
+        GAMEWIN,
+        CONNECTOUT,
+        MAX
+    }
+
+    // 멀티 게임 플레이어의 상태
+    public enum MultiPlayerState
+    {
+        START = 0,
+        LIVE,
+        RELOAD,
+        SHOOT,
+        SHOOTCANCEL,
+        SHOOTCOMPLETE,
+        EVENT,
+        DEADEYESTART,
+        DEADEYEACTIVE,
+        DEAD
+    }
+
+    // 멀티 플레이어 캐릭터 상태
+    public enum MultiCharacterState
+    {
+        CHAR_001 = 0,
+        CHAR_002,
+        CHAR_003
+    }
+
+    // 멀티 플레이어 총 상태
+    public enum MultiGunState
+    {
+        REVOLVER = 0,
+        SHOTGUN,
+        MUSKET
+    }
+
+    // 멀티 게임 모드의 상태
+    enum MultiGameModeState
+    {
+        NONE = 0,
+        PVP,
+        SURVIVAL
+    }
+}
+
+
 public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 {
     private uint minimumOpponents = 1;
@@ -67,6 +122,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private string SendMessage = " ";
     private string NetMessage = " ";
 
+    private HY.MultiGameModeState MultiGameMode;
     public MPUpdateListener updateListener;
 
     // 현재 로그인 중인지 체크
@@ -152,6 +208,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _StateSelectMessage = new List<byte>(_gameStateSelectMesageLength);
         }
 
+        MultiGameMode = HY.MultiGameModeState.NONE;
 
         _myMessageNum = 0;
     }
@@ -159,6 +216,42 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // P2P 방식으로 상대방을 검색하기 시작한다.
     public void StartMatchMaking()
     {
+    
+        // 게임모드가 선택되어 있지 않다면 아무것도 하지 않는다
+        //if(MultiGameMode != HY.MultiGameModeState.NONE)
+        //{
+        //    switch (MultiGameMode)
+        //    {
+        //        case HY.MultiGameModeState.PVP:
+        //            {
+        //                // 최소 수용 인원
+        //                minimumOpponents = 1;
+        //                // 최대 수용 인원
+        //                maximumOpponents = 1;
+
+        //                // 최소 수용 인원
+        //                // 최대 수용 인원
+        //                PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
+        //            }
+        //            break;
+
+        //        case HY.MultiGameModeState.SURVIVAL:
+        //            {
+        //                // 최소 수용 인원
+        //                minimumOpponents = 1;
+        //                // 최대 수용 인원
+        //                maximumOpponents = 7;
+
+
+        //                // 최소 수용 인원
+        //                // 최대 수용 인원
+        //                PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
+        //            }
+        //            break;
+        //    }
+        //}
+
+
         // 최소 수용 인원
         // 최대 수용 인원
         PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
@@ -195,6 +288,63 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         return SendMessage;
     }
 
+    public int GetMultiGameModeState()
+    {
+        int returnindex = 0;
+
+        switch(MultiGameMode)
+        {
+            case HY.MultiGameModeState.NONE:
+                {
+                    returnindex = (int)HY.MultiGameModeState.NONE;
+                }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+                    returnindex = (int)HY.MultiGameModeState.PVP;
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    returnindex = (int)HY.MultiGameModeState.SURVIVAL;
+                }
+                break;
+        }
+
+        return returnindex;
+    }
+
+    public void SetMultiGameModeState(int ModeNumber)
+    {
+        switch(ModeNumber)
+        {
+            case 0:
+                {
+                    ModeNumber = (int)HY.MultiGameModeState.NONE;
+                }
+                break;
+
+            case 1:
+                {
+                    ModeNumber = (int)HY.MultiGameModeState.PVP;
+                }
+                break;
+
+            case 2:
+                {
+                    ModeNumber = (int)HY.MultiGameModeState.SURVIVAL;
+                }
+                break;
+
+            default:
+                {
+                    ModeNumber = (int)HY.MultiGameModeState.NONE;
+                }
+                break;
+        }
+    }
     public void InitMessager()
     {
         if (_updateMessage == null)

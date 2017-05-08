@@ -3,25 +3,26 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 
-public class MultiTitleGameStartButton : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
+public class MultiTitleGameSurvivalButton : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
 {
     public Text NetText;
     public Text NetReadyText;
 
-    public GameObject PVP_Matching_UI;
+    public GameObject Survival_Matching_UI;
 
     private bool ButtonChecker;
     //private bool MultiStartChecker;
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         //GPGSManager.GetInstance.InitializeGPGS(); // 초기화
 
         //GPGSManager.GetInstance.LoginGPGS();
 
         ButtonChecker = false;
 
-        PVP_Matching_UI.SetActive(false);
+        Survival_Matching_UI.SetActive(false);
 
         //MultiStartChecker = false;
     }
@@ -30,13 +31,14 @@ public class MultiTitleGameStartButton : MonoBehaviour, IDragHandler, IPointerUp
     {
         yield return new WaitForSeconds(1.0f);
 
-        PVP_Matching_UI.SetActive(true);
+        Survival_Matching_UI.SetActive(true);
 
         //AutoFade.LoadLevel("GameScene", 0.2f, 0.2f, Color.black);
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
 
         //if (GPGSManager.GetInstance.IsAuthenticated())
         //{
@@ -59,7 +61,7 @@ public class MultiTitleGameStartButton : MonoBehaviour, IDragHandler, IPointerUp
 
         //        StartCoroutine(StartMultiGame());
         //    }
-            
+
         //}
         //else
         //{
@@ -94,12 +96,12 @@ public class MultiTitleGameStartButton : MonoBehaviour, IDragHandler, IPointerUp
             {
                 ButtonChecker = true;
 
-                // PVP 모드로 세팅해준다.
-                GPGSManager.GetInstance.SetMultiGameModeState(1);
-                
-                PVP_Matching_UI.SetActive(true);
+                // Survival 모드로 세팅해준다.
+                GPGSManager.GetInstance.SetMultiGameModeState(2);
 
-                
+                Survival_Matching_UI.SetActive(true);
+
+
             }
 
 

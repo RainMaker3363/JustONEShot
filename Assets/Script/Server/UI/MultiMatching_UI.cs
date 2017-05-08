@@ -7,6 +7,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
     public Text Matching_Text;
 
+    private int MultiGameModeNumber;
     private bool MultiStartChecker;
 
     // Use this for initialization
@@ -25,11 +26,36 @@ public class MultiMatching_UI : MonoBehaviour {
     {
         yield return new WaitForSeconds(2.0f);
 
-        AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
+        switch(MultiGameModeNumber)
+        {
+            // HY.MultiGameModeState.NONE
+            case 0:
+                {
+
+                }
+                break;
+
+            // HY.MultiGameModeState.PVP
+            case 1:
+                {
+                    AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
+                }
+                break;
+
+            // HY.MultiGameModeState.SURVIVAL
+            case 2:
+                {
+
+                }
+                break;
+        }
+
     }
 
     // Update is called once per frame
     void Update () {
+
+        MultiGameModeNumber = MultiTitleManager.MultiGameModeNumber;
 
         if (GPGSManager.GetInstance.IsConnected() == true)
         {
