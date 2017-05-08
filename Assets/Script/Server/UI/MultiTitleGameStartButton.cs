@@ -79,6 +79,7 @@ public class MultiTitleGameStartButton : MonoBehaviour, IDragHandler, IPointerUp
     // 터치를 하고 있을 대 발생하는 함수
     public virtual void OnPointerDown(PointerEventData ped)
     {
+
         if (GPGSManager.GetInstance.IsAuthenticated() == true)
         {
             //PVP_Matching_UI.SetActive(true);

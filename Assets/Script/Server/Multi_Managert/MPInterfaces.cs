@@ -17,4 +17,7 @@
 
     void MultiStateWaitReceived(bool Wait);
     void MultiStateSelectReceived(bool Select);
+
+    void CharacterSelectStateReceived(int CharacterNumber);
+    void WeaponSelectStateReceived(int WeaponNumber);
 }

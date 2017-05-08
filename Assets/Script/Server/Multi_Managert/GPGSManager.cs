@@ -91,6 +91,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private int _gameStateWaitMesageLength = 3;
     // Byte + Byte + 1 Boolean
     private int _gameStateSelectMesageLength = 3;
+    // Byte + Byte + 1 Interger
+    private int _CharacterSelectMessageLength = 6;
+    // Byte + Byte + 1 Interger
+    private int _WeaponSelectMessageLength = 6;
     // Byte + Byte + 1 Vector
     private int _shootVectorMesageLength = 14;
 
@@ -101,6 +105,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
     private List<byte> _StateWaitMessage;
     private List<byte> _StateSelectMessage;
+    private List<byte> _CharacterSelectMessage;
+    private List<byte> _WeaponSelectMessage;
 
     private List<byte> _updateMessage;
     private List<byte> _endMessage;
@@ -206,6 +212,16 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if (_StateSelectMessage == null)
         {
             _StateSelectMessage = new List<byte>(_gameStateSelectMesageLength);
+        }
+
+        if (_WeaponSelectMessage == null)
+        {
+            _WeaponSelectMessage = new List<byte>(_WeaponSelectMessageLength);
+        }
+
+        if (_CharacterSelectMessage == null)
+        {
+            _CharacterSelectMessage = new List<byte>(_CharacterSelectMessageLength);
         }
 
         MultiGameMode = HY.MultiGameModeState.NONE;
@@ -405,6 +421,16 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if (_StateSelectMessage == null)
         {
             _StateSelectMessage = new List<byte>(_gameStateSelectMesageLength);
+        }
+
+        if (_WeaponSelectMessage == null)
+        {
+            _WeaponSelectMessage = new List<byte>(_WeaponSelectMessageLength);
+        }
+
+        if (_CharacterSelectMessage == null)
+        {
+            _CharacterSelectMessage = new List<byte>(_CharacterSelectMessageLength);
         }
 
 
@@ -805,6 +831,33 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, HealthMessageToSend);
     }
 
+    // 자신이 선택한 캐릭터의 고유번호를 보내는 메시지
+    public void SendCharacterSelectNumber(int CharacterNumber)
+    {
+        _CharacterSelectMessage.Clear();
+        _CharacterSelectMessage.Add(_protocolVersion);
+        _CharacterSelectMessage.Add((byte)'C');
+        _CharacterSelectMessage.AddRange(System.BitConverter.GetBytes(CharacterNumber));
+
+        byte[] CharacterSelectMessageToSend = _CharacterSelectMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, CharacterSelectMessageToSend);
+    }
+
+    // 자신이 선택한 무기의 고유번호를 보내는 메시지
+    public void SendWeaponSelectNumber(int WeaponNumber)
+    {
+
+        _WeaponSelectMessage.Clear();
+        _WeaponSelectMessage.Add(_protocolVersion);
+        _WeaponSelectMessage.Add((byte)'P');
+        _WeaponSelectMessage.AddRange(System.BitConverter.GetBytes(WeaponNumber));
+
+        byte[] WeaponSelectMessageToSend = _WeaponSelectMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, WeaponSelectMessageToSend);
+    }
+
     // 상대 ID로부터 메시지를 받았을때 호출되는 리스너 함수
     public void OnRealTimeMessageReceived(bool isReliable, string senderId, byte[] data)
     {
@@ -967,6 +1020,34 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             {
                 //updateListener.ItemStateReceived(Index, ItemGet);
                 updateListener.MultiStateWaitReceived(WaitOut);
+            }
+        }
+        else if (messageType == 'C')
+        {
+            int CharacterNumber = System.BitConverter.ToInt32(data, 2);
+
+            Debug.Log("Character Number is : " + CharacterNumber);
+
+            ReceiveMessage = ByteToString(data);
+
+            if (updateListener != null)
+            {
+                //updateListener.ItemStateReceived(Index, ItemGet);
+                updateListener.CharacterSelectStateReceived(CharacterNumber);
+            }
+        }
+        else if (messageType == 'P')
+        {
+            int WeaponNumber = System.BitConverter.ToInt32(data, 2);
+
+            Debug.Log("Weapon Number is : " + WeaponNumber);
+
+            ReceiveMessage = ByteToString(data);
+
+            if (updateListener != null)
+            {
+                //updateListener.ItemStateReceived(Index, ItemGet);
+                updateListener.WeaponSelectStateReceived(WeaponNumber);
             }
         }
         else if (messageType == 'V')

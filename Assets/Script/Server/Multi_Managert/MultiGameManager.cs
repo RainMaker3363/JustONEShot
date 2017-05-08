@@ -15,6 +15,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     private bool WaitSignal;
     private bool SelectSignal;
+    private int OppentCharacterNumber;
+    private int OppentWeaponNumber;
 
     // 네트워크 정보 텍스트...
     public Text MyInfoText;
@@ -74,11 +76,16 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         // 네트워크 체크 변수들
         ThisGameIsEnd = false;
         ItemCount = 0;
+
         _DeadEyeTimer = 0.0f;
         _DeadEyeChecker = false;
         _DeadEyeRespawnIndex = -1;
+
         WaitSignal = false;
         SelectSignal = false;
+
+        OppentWeaponNumber = -1;
+        OppentCharacterNumber = -1;
 
         // 네트워크 트래픽 최적화 변수 초기화
         _nextBroadcastTime = 0;
@@ -262,6 +269,24 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             SelectSignal = Select;
         }
     }
+    
+    // 상대방이 고른 캐릭터의 고유 번호를 받는다
+    public void CharacterSelectStateReceived(int CharacterNumber)
+    {
+        if (_multiplayerReady)
+        {
+            OppentCharacterNumber = CharacterNumber;
+        }
+    }
+
+    // 상대방이 선택한 무기의 고유 번호를 받는다.
+    public void WeaponSelectStateReceived(int WeaponNumber)
+    {
+        if (_multiplayerReady)
+        {
+            OppentWeaponNumber = WeaponNumber;
+        }
+    }
 
     // 끝내기 메시지를 보내주는 녀석이다.
     public void FinishedReceived(string participantId, bool GameOver)
@@ -407,6 +432,19 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public int GetDeadEyeRespawnIndex()
     {
         return _DeadEyeRespawnIndex;
+    }
+
+    
+    // 상대방의 무기 번호의 정보
+    public int GetOppentWeaponNumber()
+    {
+        return OppentWeaponNumber;
+    }
+
+    // 상대방의 캐릭터 번호의 정보
+    public int GetOppnentChacacterNumber()
+    {
+        return OppentCharacterNumber;
     }
 
     // 현재 애니메이션 상태 값을 갱신 시켜준다.
@@ -635,6 +673,18 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public void SendMultiSelectStateMessage(bool Select)
     {
         GPGSManager.GetInstance.SendStateSelectMesssage(Select);
+    }
+
+    // 자기자신의 캐릭터 고유 번호를 상대방에게 전송해준다.
+    public void SendCharacterNumberMessage(int CharacterNumber)
+    {
+        GPGSManager.GetInstance.SendCharacterSelectNumber(CharacterNumber);
+    }
+
+    // 자기자신의 무기 고유 번호를 상대방에게 전송해준다.
+    public void SendWeaponNumberMessage(int WeaponNumber)
+    {
+        GPGSManager.GetInstance.SendWeaponSelectNumber(WeaponNumber);
     }
 
     // 자기 자신의 HP값을 보내기 위해 사용된다

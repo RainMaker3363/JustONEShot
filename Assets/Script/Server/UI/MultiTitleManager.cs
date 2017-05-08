@@ -24,10 +24,18 @@ public class MultiTitleManager : MonoBehaviour
             GPGSManager.GetInstance.LoginGPGS();
         }
 
-        MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();
 
+
+        MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();
         //ButtonChecker = false;
         //MultiStartChecker = false;
+    }
+
+    void Update()
+    {
+        MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();
+
+        Debug.Log("MultiGameModeNumber : " + MultiGameModeNumber);
     }
 
     //IEnumerator StartMultiGame()
