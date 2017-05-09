@@ -832,7 +832,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     }
 
     // 자신이 선택한 캐릭터의 고유번호를 보내는 메시지
-    public void SendCharacterSelectNumber(int CharacterNumber)
+    public void SendCharacterSelectNumber(int CharacterNumber = 100)
     {
         _CharacterSelectMessage.Clear();
         _CharacterSelectMessage.Add(_protocolVersion);
@@ -845,7 +845,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     }
 
     // 자신이 선택한 무기의 고유번호를 보내는 메시지
-    public void SendWeaponSelectNumber(int WeaponNumber)
+    public void SendWeaponSelectNumber(int WeaponNumber = 100)
     {
 
         _WeaponSelectMessage.Clear();
