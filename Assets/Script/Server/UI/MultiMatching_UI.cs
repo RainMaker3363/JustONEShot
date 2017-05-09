@@ -26,30 +26,31 @@ public class MultiMatching_UI : MonoBehaviour {
     {
         yield return new WaitForSeconds(2.0f);
 
-        switch(MultiGameModeNumber)
-        {
-            // HY.MultiGameModeState.NONE
-            case 0:
-                {
+        //switch(MultiGameModeNumber)
+        //{
+        //    // HY.MultiGameModeState.NONE
+        //    case 0:
+        //        {
 
-                }
-                break;
+        //        }
+        //        break;
 
-            // HY.MultiGameModeState.PVP
-            case 1:
-                {
-                    AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
-                }
-                break;
+        //    // HY.MultiGameModeState.PVP
+        //    case 1:
+        //        {
+        //            AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
+        //        }
+        //        break;
 
-            // HY.MultiGameModeState.SURVIVAL
-            case 2:
-                {
+        //    // HY.MultiGameModeState.SURVIVAL
+        //    case 2:
+        //        {
 
-                }
-                break;
-        }
+        //        }
+        //        break;
+        //}
 
+        AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
     }
 
     // Update is called once per frame

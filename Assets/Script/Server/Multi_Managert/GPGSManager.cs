@@ -224,7 +224,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _CharacterSelectMessage = new List<byte>(_CharacterSelectMessageLength);
         }
 
-        MultiGameMode = HY.MultiGameModeState.NONE;
+        //MultiGameMode = HY.MultiGameModeState.NONE;
 
         _myMessageNum = 0;
     }

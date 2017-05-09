@@ -95,10 +95,12 @@ public class MultiTitleGameStartButton : MonoBehaviour, IDragHandler, IPointerUp
             {
                 ButtonChecker = true;
 
+
+                PVP_Matching_UI.SetActive(true);
+
                 // PVP 모드로 세팅해준다.
                 GPGSManager.GetInstance.SetMultiGameModeState(1);
-                
-                PVP_Matching_UI.SetActive(true);
+
 
                 
             }
