@@ -920,6 +920,27 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
             if(updateListener != null)
             {
+                //switch(MultiGameMode)
+                //{
+                //    case HY.MultiGameModeState.NONE:
+                //        {
+
+                //        }
+                //        break;
+
+                //    case HY.MultiGameModeState.PVP:
+                //        {
+                //            updateListener.DeadEyeRespawnIndexReceived(index);
+                //        }
+                //        break;
+
+                //    case HY.MultiGameModeState.SURVIVAL:
+                //        {
+                //            updateListener.DeadEyeRespawnIndexReceived(senderId, index);
+                //        }
+                //        break;
+                //}
+
                 updateListener.DeadEyeRespawnIndexReceived(index);
             }
         }
