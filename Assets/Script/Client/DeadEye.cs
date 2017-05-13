@@ -14,7 +14,8 @@ public class DeadEye : MonoBehaviour {
     public Bullet_DeadEye Bullets;   
     public GameObject Effects;
     //총 위치
-    public Transform m_GunTransform;
+    [SerializeField]
+    Transform[] m_GunTransform;
 
     public Transform m_EnemyPos;
 
@@ -126,7 +127,7 @@ public class DeadEye : MonoBehaviour {
                 LookVec.y += 1;
 
                 //총알
-                Bullets.transform.position = m_GunTransform.position;
+                Bullets.transform.position = m_GunTransform[CharMove.m_UseGun.NowUseGun].position;
                 Bullets.transform.LookAt(LookVec);
                 Bullets.m_Movespeed = Vector3.Distance(Bullets.transform.position, LookVec)/DeadEyeBulletEffectTime;//거리/시간 = 속도
                 //Bullets[i].DistanceInit();
@@ -135,7 +136,7 @@ public class DeadEye : MonoBehaviour {
                 Bullets.gameObject.SetActive(true);
 
                 //이펙트
-                Effects.transform.position = m_GunTransform.position;
+                Effects.transform.position = m_GunTransform[CharMove.m_UseGun.NowUseGun].position;
                 Effects.transform.rotation = this.transform.rotation;
                 Effects.SetActive(true);
                 

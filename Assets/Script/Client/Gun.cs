@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 abstract public class UseGun
 {
+    public int NowUseGun; //현재 사용하는총 0.리볼버 1.샷건 2.머스캣   
     public int MaxBullet_Gun;  //탄창 탄알 최대수
     public int MaxBullet_Hand; // 소지 탄알 최대수
     public int Bullet_Gun;      //탄창 탄알
@@ -39,6 +40,47 @@ class Gun_Revolver : UseGun
         Bullet_Hand = 0;
         Bullet_Use = 1;
         Damage = 25;
+        NowUseGun = 0;
+    }
+
+    public override void UseBullet()
+    {
+        Bullet_Gun -= Bullet_Use;
+    }
+
+
+}
+class Gun_ShotGun : UseGun
+{
+    public Gun_ShotGun()
+    {
+        MaxBullet_Gun = 2;
+        MaxBullet_Hand = 10;
+        Bullet_Gun = 0;
+        Bullet_Hand = 0;
+        Bullet_Use = 2;
+        Damage = 25;
+        NowUseGun = 1;
+    }
+
+    public override void UseBullet()
+    {
+        Bullet_Gun -= Bullet_Use;
+    }
+
+
+}
+class Gun_Musket : UseGun
+{
+    public Gun_Musket()
+    {
+        MaxBullet_Gun = 1;
+        MaxBullet_Hand = 10;
+        Bullet_Gun = 0;
+        Bullet_Hand = 0;
+        Bullet_Use = 1;
+        Damage = 25;
+        NowUseGun = 2;
     }
 
     public override void UseBullet()
@@ -57,6 +99,8 @@ public class Gun : MonoBehaviour
     [SerializeField]
     Bullet[] Bullets;
 
+    public Bullet_ShotGun ShotGunBullet;
+
     [SerializeField]
     GameObject[] Effects;
 
@@ -67,18 +111,33 @@ public class Gun : MonoBehaviour
     GameObject[] UI_SillinderBullets;
 
     [SerializeField]
+    GameObject[] UI_ShotGunBullets;
+
+    [SerializeField]
+    GameObject UI_MusketBullets;
+
+    [SerializeField]
     Image[] UI_HandsBullets;
 
-    public GameObject UI_Sillinder;
+    [SerializeField]
+    GameObject UI_Sillinder;
+
+    [SerializeField]
+    GameObject UI_ShotGun;
+
+    [SerializeField]
+    GameObject UI_Musket;
 
     float SillinerRotate = 0;
     Animator anim;
     public Animator camAni;
 
     //총 위치
-    public Transform m_GunTransform;
+    [SerializeField]
+    Transform[] m_GunTransform;
     //탄피 위치
-    public Transform m_BulletTransform;
+    [SerializeField]
+    Transform[] m_BulletTransform;
 
     int m_BulletIndex = 0;
 
@@ -94,6 +153,33 @@ public class Gun : MonoBehaviour
 
         Debug.Log(UI_HandsBullets.Length);
         Rotate = Quaternion.identity;
+
+
+        if (gameObject.tag.Equals("Player"))
+        {
+            switch (CharMove.m_UseGun.NowUseGun)
+            {
+                case 0:
+                    {
+                        UI_Sillinder.SetActive(true);
+                        break;
+                    }
+                case 1:
+                    {
+                        UI_ShotGun.SetActive(true);
+                        break;
+                    }
+                case 2:
+                    {
+                        UI_Musket.SetActive(true);
+                        break;
+                    }
+
+                default:
+                    break;
+            }
+
+        }
     }
 
     void Update()
@@ -123,17 +209,38 @@ public class Gun : MonoBehaviour
             if (!Bullets[m_BulletIndex].m_Use)
             {
                 Debug.Log(gameObject.tag);
+                int UseGun=100;
+
                 switch (gameObject.tag)
                 {
                     case "Player":
                         {
+                            UseGun = CharMove.m_UseGun.NowUseGun;
+                            switch (UseGun)
+                            {
+                                case 0:
+                                    {
+                                        Bullets[m_BulletIndex].Damage = CharMove.m_UseGun.Damage;
+                                        CharMove.m_UseGun.UseBullet();
+                                        UI_SillinderBullets[5 - CharMove.m_UseGun.Bullet_Gun].gameObject.SetActive(false);
+                                        SillinerRotate -= 60;
+                                        break;
+                                    } 
+                                case 2:
+                                    {
+                                        Bullets[m_BulletIndex].Damage = CharMove.m_UseGun.Damage;
+                                        CharMove.m_UseGun.UseBullet();
+                                        UI_MusketBullets.SetActive(false);
+                                        
+                                        break;
+                                    }
+
+                                default:
+                                    break;
+                            }
                             
-                            Bullets[m_BulletIndex].Damage = CharMove.m_UseGun.Damage;
-                            CharMove.m_UseGun.UseBullet();
-                            UI_SillinderBullets[5-CharMove.m_UseGun.Bullet_Gun].gameObject.SetActive(false);
-                            SillinerRotate -= 60;
                             
-                            
+
                             //UI_Sillinder.transform.Rotate(new Vector3(0, 0, 1), 60);//Mathf.Deg2Rad*SillinerRotate);
                             break;
                         }
@@ -141,6 +248,24 @@ public class Gun : MonoBehaviour
                         {
                             Bullets[m_BulletIndex].Damage = EnemyMove.m_EnemyUseGun.Damage;
                             EnemyMove.m_EnemyUseGun.UseBullet();
+                            UseGun = EnemyMove.m_EnemyUseGun.NowUseGun;
+
+                            switch (UseGun)
+                            {
+                                case 0:
+                                    {
+                                        Bullets[m_BulletIndex].Damage = CharMove.m_UseGun.Damage;                                       
+                                        break;
+                                    }
+                                case 2:
+                                    {
+                                        Bullets[m_BulletIndex].Damage = CharMove.m_UseGun.Damage;                                    
+                                        break;
+                                    }
+
+                                default:
+                                    break;
+                            }
                             break;
                         }
 
@@ -148,8 +273,10 @@ public class Gun : MonoBehaviour
                         break;
                 }
 
+              
+
                 //총알
-                Bullets[m_BulletIndex].transform.position = m_GunTransform.position;
+                Bullets[m_BulletIndex].transform.position = m_GunTransform[UseGun].position;
                 Bullets[m_BulletIndex].transform.rotation = this.transform.rotation;
                 //Bullets[i].DistanceInit();
 
@@ -157,12 +284,12 @@ public class Gun : MonoBehaviour
                 Bullets[m_BulletIndex].gameObject.SetActive(true);
 
                 //이펙트
-                Effects[m_BulletIndex].transform.position = m_GunTransform.position;
+                Effects[m_BulletIndex].transform.position = m_GunTransform[UseGun].position;
                 Effects[m_BulletIndex].transform.rotation = this.transform.rotation;
                 Effects[m_BulletIndex].SetActive(true);
                 //탄피
-                Effects_Bullet[m_BulletIndex].transform.position = m_BulletTransform.position;
-                Effects_Bullet[m_BulletIndex].transform.rotation = m_BulletTransform.rotation;
+                Effects_Bullet[m_BulletIndex].transform.position = m_BulletTransform[UseGun].position;
+                Effects_Bullet[m_BulletIndex].transform.rotation = m_BulletTransform[UseGun].rotation;
                 Effects_Bullet[m_BulletIndex].SetActive(true);
 
                 camAni.SetTrigger("Shot");
@@ -184,6 +311,74 @@ public class Gun : MonoBehaviour
         }
     }
 
+    void SetBullet_ShotGun()
+    {
+
+
+        if (!ShotGunBullet.m_Use)
+        {
+            Debug.Log(gameObject.tag);
+            int UseGun = 100;
+
+            switch (gameObject.tag)
+            {
+                case "Player":
+                    {
+
+                        ShotGunBullet.Damage = CharMove.m_UseGun.Damage;
+                        CharMove.m_UseGun.UseBullet();
+                        UI_ShotGunBullets[0].gameObject.SetActive(false);
+                        UI_ShotGunBullets[1].gameObject.SetActive(false);
+                        UseGun = CharMove.m_UseGun.NowUseGun;
+
+                        // UI_SillinderBullets[5 - CharMove.m_UseGun.Bullet_Gun].gameObject.SetActive(false);
+                        //SillinerRotate -= 60;
+
+
+                        //UI_Sillinder.transform.Rotate(new Vector3(0, 0, 1), 60);//Mathf.Deg2Rad*SillinerRotate);
+                        break;
+                    }
+                case "Enemy":
+                    {
+                        ShotGunBullet.Damage = EnemyMove.m_EnemyUseGun.Damage;
+                        EnemyMove.m_EnemyUseGun.UseBullet();
+                        UseGun = EnemyMove.m_EnemyUseGun.NowUseGun;
+                        break;
+                    }
+
+                default:
+                    break;
+            }
+
+           
+
+            //총알
+            ShotGunBullet.transform.position = m_GunTransform[UseGun].position;
+            ShotGunBullet.transform.rotation = this.transform.rotation;
+            //Bullets[i].DistanceInit();
+
+            ShotGunBullet.m_Use = true;
+            ShotGunBullet.gameObject.SetActive(true);
+
+            //이펙트
+            Effects[m_BulletIndex].transform.position = m_GunTransform[UseGun].position;
+            Effects[m_BulletIndex].transform.rotation = this.transform.rotation;
+            Effects[m_BulletIndex].SetActive(true);
+            //탄피
+            Effects_Bullet[m_BulletIndex].transform.position = m_BulletTransform[UseGun].position;
+            Effects_Bullet[m_BulletIndex].transform.rotation = m_BulletTransform[UseGun].rotation;
+            Effects_Bullet[m_BulletIndex].SetActive(true);
+
+            camAni.SetTrigger("Shot");
+            m_BulletIndex++;
+            if (m_BulletIndex == 3)
+            {
+                m_BulletIndex = 0;
+            }
+
+
+        }
+    }
 
     void DelaySet()
     {
@@ -203,15 +398,40 @@ public class Gun : MonoBehaviour
 
     void Reload()
     {
-        SillinerRotate += 60;
 
-        m_HandsBulletIndex--;
-        UI_SillinderBullets[5-CharMove.m_UseGun.Bullet_Gun].SetActive(true);//회전때문에 뒤에거부터 활성화
-        UI_HandsBullets[m_HandsBulletIndex].color = Color.black;
-       
-        Debug.Log("m_HandsBulletIndex : " + m_HandsBulletIndex);
-        CharMove.m_UseGun.ReloadBullet();
-       
+        if (gameObject.tag.Equals("Player"))
+        {
+            m_HandsBulletIndex--;
+
+            switch (CharMove.m_UseGun.NowUseGun)
+            {
+                case 0:
+                    {
+                        SillinerRotate += 60;
+                        UI_SillinderBullets[5 - CharMove.m_UseGun.Bullet_Gun].SetActive(true);//회전때문에 뒤에거부터 활성화
+                        break;
+                    }
+                case 1:
+                    {
+                        UI_ShotGunBullets[CharMove.m_UseGun.Bullet_Gun].SetActive(true);
+                        break;
+                    }
+                case 2:
+                    {
+                        UI_MusketBullets.SetActive(true);
+                        break;
+                    }
+
+                default:
+                    break;
+            }
+
+
+            UI_HandsBullets[m_HandsBulletIndex].color = Color.black;
+
+            Debug.Log("m_HandsBulletIndex : " + m_HandsBulletIndex);
+            CharMove.m_UseGun.ReloadBullet();
+        }
     }
 
     void CharDamageEnd()

@@ -50,6 +50,28 @@ public class EnemyMove : MonoBehaviour {
 
     ////데미지모션 여부
     //bool m_Damaged = false;
+    
+    // 게임 끝의 여부
+    public bool GameEndOn;
+
+    bool m_ShootSuccess;
+
+    bool m_DeadEyePlay;
+
+    bool m_AniPlay = false;
+
+    static bool PlayerDeadEyeStart = false;
+    // static bool EnemyDeadEyeStart = false;
+    public static bool DeadEyeEnd = false;
+
+    public Transform PlayerPos;  //  적 캐릭터 위치 추후변경예상
+
+    public static float m_DeadEyeTimer;
+
+    [SerializeField]
+    public GameObject[] Guns;
+
+    public static int m_SelectGun = 100;//서버 초기값
     /// //////////////////////////////////////////////////////////////////////////////////<summary>
     /// 서버
     /// ///////////////////////////////////////////////////////////////////////////////</summary>
@@ -69,22 +91,7 @@ public class EnemyMove : MonoBehaviour {
     // 메시지 순서를 알아낼 변수
     private int _lastMessageNum;
 
-    // 게임 끝의 여부
-    public bool GameEndOn;
-
-    bool m_ShootSuccess;
-
-    bool m_DeadEyePlay;
-
-    bool m_AniPlay =false;
-
-    static bool PlayerDeadEyeStart = false;
-   // static bool EnemyDeadEyeStart = false;
-    public static bool DeadEyeEnd = false;
-
-    public Transform PlayerPos;  //  적 캐릭터 위치 추후변경예상
-
-    public static float m_DeadEyeTimer;
+   
 
     void Awake()
     {
@@ -100,20 +107,20 @@ public class EnemyMove : MonoBehaviour {
        // CamPos = cam.transform.position;
 
         //플레이어 선택 총
-        switch (m_GunState)
-        {
-            case LSD.GunState.Revolver:
-                {
-                    m_EnemyUseGun = new Gun_Revolver();
-                    break;
-                }
-            case LSD.GunState.ShotGun:
-                {
-                    break;
-                }
-            default:
-                break;
-        }
+        //switch (m_GunState)
+        //{
+        //    case LSD.GunState.Revolver:
+        //        {
+        //            m_EnemyUseGun = new Gun_Revolver();
+        //            break;
+        //        }
+        //    case LSD.GunState.ShotGun:
+        //        {
+        //            break;
+        //        }
+        //    default:
+        //        break;
+        //}
 
         // 플레이어 이동 방향 초기화
         m_MoveVector = Vector3.zero;
@@ -836,5 +843,72 @@ public class EnemyMove : MonoBehaviour {
     public void SetShootVectorReceived(Vector3 _vec)
     {
         DamageVec = _vec;
+    }
+
+    public void SetCharacterSelectState(int CharacterNumber)
+    {
+
+    }
+
+    public void SetWeaponSelectState(int WeaponNumber)
+    {
+        m_SelectGun = WeaponNumber;
+        if (m_SelectGun != 100)
+        {
+            switch (m_SelectGun)
+            {
+                case 0:
+                    {
+                        SelectGun_Revolver();
+                        break;
+                    }
+                case 1:
+                    {
+                        SelectGun_ShotGun();
+                        break;
+                    }
+                case 2:
+                    {
+                        SelectGun_Musket();
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+        }
+    }
+
+    public void SelectGun_Revolver()
+    {
+        m_GunState = LSD.GunState.Revolver;
+        m_EnemyUseGun = new Gun_Revolver();
+        Guns[0].SetActive(true);
+        Guns[1].SetActive(false);
+        Guns[2].SetActive(false);
+        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Client/Resource_Art/Character/00/Animation/Character_BaseModel_Revolver", typeof(RuntimeAnimatorController));
+        //Mul_Manager.SendWeaponNumberMessage(0);
+    }
+
+    public void SelectGun_ShotGun()
+    {
+        m_GunState = LSD.GunState.ShotGun;
+        m_EnemyUseGun = new Gun_ShotGun();
+        Guns[0].SetActive(false);
+        Guns[1].SetActive(true);
+        Guns[2].SetActive(false);
+        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Client/Resource_Art/Character/00/Animation/Character_BaseModel_ShotGun", typeof(RuntimeAnimatorController));
+        //Mul_Manager.SendWeaponNumberMessage(1);
+    }
+
+    public void SelectGun_Musket()
+    {
+        m_GunState = LSD.GunState.Musket;
+        m_EnemyUseGun = new Gun_Musket();
+        Guns[0].SetActive(false);
+        Guns[1].SetActive(false);
+        Guns[2].SetActive(true);
+        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Client/Resource_Art/Character/00/Animation/Character_BaseModel_Musket", typeof(RuntimeAnimatorController));
+
     }
 }

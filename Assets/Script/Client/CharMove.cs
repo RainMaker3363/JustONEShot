@@ -27,7 +27,8 @@ namespace LSD
     enum GunState
     {
         Revolver=0,
-        ShotGun
+        ShotGun,
+        Musket
 
     }
 }
@@ -108,9 +109,40 @@ public class CharMove : MonoBehaviour {
     float Debug_DeadEyeTimer_Player=0;
     float Debug_DeadEyeTimer_Enemy=0;
 
+    public GameObject Revlolver;
+    public GameObject ShotGun;
+    public GameObject Musket;
+    public static bool m_GunSelect = false;
+
+    private float PlayerUpdateTime;
+    private float PlayerUpdateDelay = 0.11f;
+    //void OnEnable()
+    //{
+
+    //    //플레이어 선택 총
+    //    switch (m_GunState)
+    //    {
+    //        case LSD.GunState.Revolver:
+    //            {
+
+    //                break;
+    //            }
+    //        case LSD.GunState.ShotGun:
+    //            {
+    //                    break;
+    //            }
+    //        case LSD.GunState.Musket:
+    //            {
+    //                         break;
+    //            }
+    //        default:
+    //            break;
+    //    }
+    //}
+
     void Awake()
     {
-        m_GunState = LSD.GunState.Revolver; //현재는 고정 추후 받아오게함
+        m_GunState = LSD.GunState.ShotGun; //현재는 고정 추후 받아오게함
     }
 
     // Use this for initialization
@@ -121,21 +153,7 @@ public class CharMove : MonoBehaviour {
         CamPos = cam.transform.position;
         camAni = cam.GetComponent<Animator>();
 
-        //플레이어 선택 총
-        switch (m_GunState)
-        {
-            case LSD.GunState.Revolver:
-                {
-                    m_UseGun = new Gun_Revolver();
-                    break;
-                }
-            case LSD.GunState.ShotGun:
-                {
-                    break;
-                }
-            default:
-                break;
-        }
+        
         
         // 플레이어 이동 방향 초기화
         m_MoveVector = Vector3.zero;
@@ -150,152 +168,157 @@ public class CharMove : MonoBehaviour {
         cam.transform.position = CamPos + transform.position;
 
         StartCoroutine(ServerUpdate());
+        PlayerUpdateTime = Time.time + PlayerUpdateDelay;
     }
 
     // Update is called once per frame
     void Update() {
 
-        //Mul_Manager.SendMultiSelectStateMessage
+        //if (PlayerUpdateTime<Time.time)
+        //{
+        //    PlayerUpdateTime = Time.time + PlayerUpdateDelay;
+            //Mul_Manager.SendMultiSelectStateMessage
 
-        m_DebugPlayerState = (int)m_PlayerState;
-        // Debug.Log("VectorForce: " + m_MoveJoyStickControl.GetVectorForce());
-        Debug.Log("PlayerState: " + m_PlayerState);
+            m_DebugPlayerState = (int)m_PlayerState;
+            // Debug.Log("VectorForce: " + m_MoveJoyStickControl.GetVectorForce());
+            Debug.Log("PlayerState: " + m_PlayerState);
 
-        if (m_PlayerBeforeState != m_PlayerState)
-        {
-    
-            if(GameEnd)   //이기거나 졌을경우 변경을 막음
+            if (m_PlayerBeforeState != m_PlayerState)
             {
-                //ShotAble = false;
-                m_PlayerState = m_PlayerBeforeState;
+
+                if (GameEnd)   //이기거나 졌을경우 변경을 막음
+                {
+                    //ShotAble = false;
+                    m_PlayerState = m_PlayerBeforeState;
+                }
+                else
+                {
+                    CharAniInit();
+                    m_PlayerBeforeState = m_PlayerState;
+                }
+
             }
-            else
+
+            DeadEyeCheck();
+            DeathZoneCheck();
+            GameEndCheck();
+
+            if (ShotAble && m_ShotJoyStickControl.GetTouch())
             {
-                CharAniInit();
-                m_PlayerBeforeState = m_PlayerState;
+                //    if(m_PlayerState != LSD.PlayerState.SHOT_FIRE)        
+                m_PlayerState = LSD.PlayerState.SHOT_READY;
             }
-           
-        }
-      
-        DeadEyeCheck();
-        DeathZoneCheck();
-        GameEndCheck();
 
-        if (ShotAble && m_ShotJoyStickControl.GetTouch())
-        {
-            //    if(m_PlayerState != LSD.PlayerState.SHOT_FIRE)        
-            m_PlayerState = LSD.PlayerState.SHOT_READY;
-        }
-
-        switch (m_PlayerState)
-        {
-            case LSD.PlayerState.IDLE:
-                {
-                    ShotAble = true;
-                    anim.SetInteger("DashLevel", 0);
-                    Update_IDLE();
-                    break;
-                }
-            case LSD.PlayerState.DASH_SLOW:
-                {
-                    ShotAble = true;
-                    anim.SetInteger("DashLevel", 1);
-                    m_FirstTouch.color = Color.red;
-                    Update_DASH_SLOW();
-                    break;
-                }
-            case LSD.PlayerState.DASH_SOFT:
-                {
-                    ShotAble = true;
-                    anim.SetInteger("DashLevel", 2);
-                    m_FirstTouch.color = Color.green;
-                    Update_DASH_SOFT();
-                    break;
-                }
-            case LSD.PlayerState.DASH_HARD:
-                {
-                    ShotAble = true;
-                    anim.SetInteger("DashLevel", 3);
-                    m_FirstTouch.color = Color.blue;
-                    Update_DASH_HARD();
-                    break;
-                }
-            case LSD.PlayerState.SHOT_READY:
-                {
-                    if (!m_AniPlay)
+            switch (m_PlayerState)
+            {
+                case LSD.PlayerState.IDLE:
                     {
-                        anim.Play("Shot_Ready");
+                        ShotAble = true;
+                        anim.SetInteger("DashLevel", 0);
+                        Update_IDLE();
+                        break;
+                    }
+                case LSD.PlayerState.DASH_SLOW:
+                    {
+                        ShotAble = true;
+                        anim.SetInteger("DashLevel", 1);
+                        m_FirstTouch.color = Color.red;
+                        Update_DASH_SLOW();
+                        break;
+                    }
+                case LSD.PlayerState.DASH_SOFT:
+                    {
+                        ShotAble = true;
+                        anim.SetInteger("DashLevel", 2);
+                        m_FirstTouch.color = Color.green;
+                        Update_DASH_SOFT();
+                        break;
+                    }
+                case LSD.PlayerState.DASH_HARD:
+                    {
+                        ShotAble = true;
+                        anim.SetInteger("DashLevel", 3);
+                        m_FirstTouch.color = Color.blue;
+                        Update_DASH_HARD();
+                        break;
+                    }
+                case LSD.PlayerState.SHOT_READY:
+                    {
+                        if (!m_AniPlay)
+                        {
+                            anim.Play("Shot_Ready");
+                            m_AniPlay = true;
+                        }
+                        anim.SetBool("ShotReady", true);
+
+                        Update_SHOT_READY();
+                        break;
+                    }
+                case LSD.PlayerState.SHOT_FIRE:
+                    {
+                        ShotAble = false;
+                        anim.SetBool("ShotReady", false);
+                        Update_SHOT_FIRE();
+                        break;
+                    }
+                case LSD.PlayerState.DAMAGE:
+                    {
                         m_AniPlay = true;
-                    }                   
-                    anim.SetBool("ShotReady", true);
-                    
-                    Update_SHOT_READY();
-                    break;
-                }
-            case LSD.PlayerState.SHOT_FIRE:
-                {
-                    ShotAble = false;
-                    anim.SetBool("ShotReady", false);
-                    Update_SHOT_FIRE();
-                    break;
-                }
-            case LSD.PlayerState.DAMAGE:
-                {
-                    m_AniPlay = true;
-                    ShotAble = false;
-                    Update_DAMAGE();
-                    break;
-                }
-            case LSD.PlayerState.DEADEYE:
-                {
-                    ShotAble = false;
-                    Update_DEADEYE();
-                    break;
-                }
-            case LSD.PlayerState.REROAD:
-                {
-                    // anim.Play("Reloading");
-                    ShotAble = false;
-                    anim.SetBool("Reloading", true);
-                    Update_REROAD();
-                    break;
-                }
-            case LSD.PlayerState.ROLL:
-                {
-                    if (!m_AniPlay)
-                    {
-                        anim.Play("Roll");
-                        m_AniPlay = true;
+                        ShotAble = false;
+                        Update_DAMAGE();
+                        break;
                     }
-                    ShotAble = false;
-                    Update_Roll();
-                    break;
-                }
-            case LSD.PlayerState.DEAD:
-                {
-                    ShotAble = false;
-                    if(UI_Main.activeSelf)
+                case LSD.PlayerState.DEADEYE:
                     {
-                        UI_Main.SetActive(false);
+                        ShotAble = false;
+                        Update_DEADEYE();
+                        break;
+                    }
+                case LSD.PlayerState.REROAD:
+                    {
+                        // anim.Play("Reloading");
+                        ShotAble = false;
+                        anim.SetBool("Reloading", true);
+                        Update_REROAD();
+                        break;
+                    }
+                case LSD.PlayerState.ROLL:
+                    {
+                        if (!m_AniPlay)
+                        {
+                            anim.Play("Roll");
+                            m_AniPlay = true;
+                        }
+                        ShotAble = false;
+                        Update_Roll();
+                        break;
+                    }
+                case LSD.PlayerState.DEAD:
+                    {
+                        ShotAble = false;
+                        if (UI_Main.activeSelf)
+                        {
+                            UI_Main.SetActive(false);
+                        }
+
+                        break;
+                    }
+                case LSD.PlayerState.WIN:
+                    {
+                        ShotAble = false;
+                        if (UI_Main.activeSelf)
+                        {
+                            UI_Main.SetActive(false);
+                        }
+                        break;
                     }
 
-                    break;
-                }
-            case LSD.PlayerState.WIN:
-                {
-                    ShotAble = false;
-                    if (UI_Main.activeSelf)
+                default:
                     {
-                        UI_Main.SetActive(false);
+                        break;
                     }
-                    break;
-                }
-
-            default:
-                {
-                    break;
-                }
-        }
+            }
+        //}
     }
 
     void CharAniInit()
@@ -428,7 +451,7 @@ public class CharMove : MonoBehaviour {
         if (!m_ShotJoyStickControl.GetTouch())
         {
             anim.SetBool("GunFire", true);           
-            if (m_UseGun.Bullet_Gun > 0)
+            if (m_UseGun.Bullet_Gun >= m_UseGun.Bullet_Use)
             {
                 anim.SetBool("Shot", true);
                
@@ -981,8 +1004,52 @@ public class CharMove : MonoBehaviour {
         DeathZoneDealay = false;
     }
 
+    public void SelectGun_Revolver()
+    {
+        m_GunState = LSD.GunState.Revolver;
+        m_UseGun = new Gun_Revolver();
+        Revlolver.SetActive(true);
+        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Client/Resource_Art/Character/00/Animation/Character_BaseModel_Revolver", typeof(RuntimeAnimatorController));
+        m_GunSelect = true;
+        if (GPGSManager.GetInstance.IsAuthenticated())
+        {
+            Mul_Manager.SendWeaponNumberMessage(0);
+            Mul_Manager.SendMultiSelectStateMessage(true);
+        }
+    }
+
+    public void SelectGun_ShotGun()
+    {
+        m_GunState = LSD.GunState.ShotGun;
+        m_UseGun = new Gun_ShotGun();
+        ShotGun.SetActive(true);
+        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Client/Resource_Art/Character/00/Animation/Character_BaseModel_ShotGun", typeof(RuntimeAnimatorController));
+        m_GunSelect = true;
+        if (GPGSManager.GetInstance.IsAuthenticated())
+        {
+            Mul_Manager.SendWeaponNumberMessage(1);
+            Mul_Manager.SendMultiSelectStateMessage(true);
+        }
+    }
+
+    public void SelectGun_Musket()
+    {
+        m_GunState = LSD.GunState.Musket;
+        m_UseGun = new Gun_Musket();
+        Musket.SetActive(true);
+        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Client/Resource_Art/Character/00/Animation/Character_BaseModel_Musket", typeof(RuntimeAnimatorController));
+        m_GunSelect = true;
+        if (GPGSManager.GetInstance.IsAuthenticated())
+        {
+            Mul_Manager.SendWeaponNumberMessage(2);
+            Mul_Manager.SendMultiSelectStateMessage(true);
+        }
+    }
+
+
     public void OnExitButton()
     {
+        Debug.Log("Exit");
         Mul_Manager.EndGameAndLeaveRoom();
     }
 }
