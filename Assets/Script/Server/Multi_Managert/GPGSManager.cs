@@ -53,7 +53,7 @@ namespace HY
     }
 
     // 멀티 게임 모드의 상태
-    enum MultiGameModeState
+    public enum MultiGameModeState
     {
         NONE = 0,
         PVP,
@@ -128,7 +128,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private string SendMessage = " ";
     private string NetMessage = " ";
 
-    private HY.MultiGameModeState MultiGameMode;
+    private HY.MultiGameModeState NowMultiGameMode;
     public MPUpdateListener updateListener;
 
     // 현재 로그인 중인지 체크
@@ -224,7 +224,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _CharacterSelectMessage = new List<byte>(_CharacterSelectMessageLength);
         }
 
-        //MultiGameMode = HY.MultiGameModeState.NONE;
+        NowMultiGameMode = HY.MultiGameModeState.NONE;
 
         _myMessageNum = 0;
     }
@@ -232,11 +232,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // P2P 방식으로 상대방을 검색하기 시작한다.
     public void StartMatchMaking()
     {
-    
+
         // 게임모드가 선택되어 있지 않다면 아무것도 하지 않는다
-        //if(MultiGameMode != HY.MultiGameModeState.NONE)
+        //if(NowMultiGameMode != HY.MultiGameModeState.NONE)
         //{
-        //    switch (MultiGameMode)
+        //    switch (NowMultiGameMode)
         //    {
         //        case HY.MultiGameModeState.PVP:
         //            {
@@ -304,59 +304,41 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         return SendMessage;
     }
 
-    public int GetMultiGameModeState()
-    {
-        int returnindex = 0;
-
-        switch(MultiGameMode)
-        {
-            case HY.MultiGameModeState.NONE:
-                {
-                    returnindex = (int)HY.MultiGameModeState.NONE;
-                }
-                break;
-
-            case HY.MultiGameModeState.PVP:
-                {
-                    returnindex = (int)HY.MultiGameModeState.PVP;
-                }
-                break;
-
-            case HY.MultiGameModeState.SURVIVAL:
-                {
-                    returnindex = (int)HY.MultiGameModeState.SURVIVAL;
-                }
-                break;
-        }
-
-        return returnindex;
+    // 현재 멀티게임 모드의 상태를 반환해준다.
+    public HY.MultiGameModeState GetMultiGameModeState()
+    { 
+        return NowMultiGameMode;
     }
 
+    // 현재 멀티게임모드의 상태를 갱신시켜준다
+    // 0 : None
+    // 1 : PVP
+    // 2 : Survival
     public void SetMultiGameModeState(int ModeNumber)
     {
         switch(ModeNumber)
         {
             case 0:
                 {
-                    ModeNumber = (int)HY.MultiGameModeState.NONE;
+                    NowMultiGameMode = HY.MultiGameModeState.NONE;
                 }
                 break;
 
             case 1:
                 {
-                    ModeNumber = (int)HY.MultiGameModeState.PVP;
+                    NowMultiGameMode = HY.MultiGameModeState.PVP;
                 }
                 break;
 
             case 2:
                 {
-                    ModeNumber = (int)HY.MultiGameModeState.SURVIVAL;
+                    NowMultiGameMode = HY.MultiGameModeState.SURVIVAL;
                 }
                 break;
 
             default:
                 {
-                    ModeNumber = (int)HY.MultiGameModeState.NONE;
+                    NowMultiGameMode = HY.MultiGameModeState.NONE;
                 }
                 break;
         }
