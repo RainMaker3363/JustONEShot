@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour {
 
-    int m_Movespeed = 30;    //이동속도
-    [SerializeField]
-    int m_Distance ;    //이동거리
+    public int m_Movespeed = 0;    //이동속도
+   // [SerializeField]
+    public int m_Distance=0 ;    //이동거리
 
     //[SerializeField]
     int m_DistanceInit = 500;
@@ -27,7 +27,7 @@ public class Bullet : MonoBehaviour {
 	
     void OnEnable()
     {
-        m_Distance = m_DistanceInit;
+        m_Distance += m_DistanceInit;
         
     }
 
@@ -35,29 +35,30 @@ public class Bullet : MonoBehaviour {
 	void Update () {
         
     }
+
+    void OnTriggerEnter(Collider col)
+    {
+        if (col.gameObject.tag == "Player")
+        {
+            Debug.Log("Hit");
+            Debug.Log("Hit" + Damage);
+            col.gameObject.GetComponent<CharMove>().Damaged(Damage, transform.forward);
+            // m_Distance = 0;
+        }
+
+        if (col.gameObject.tag == "Enemy")
+        {
+            Debug.Log("Hit");
+
+            col.gameObject.GetComponent<EnemyMove>().Damaged(Damage, transform.forward);
+            // m_Distance = 0;
+        }
+
+        m_Distance = 0;
+    }
     void FixedUpdate()
     {
 
-        if (Physics.Raycast(transform.position, transform.forward, out HitObj, 1.0f))
-        {
-            
-            if (HitObj.collider.gameObject.tag == "Player")
-            {
-                Debug.Log("Hit");
-                Debug.Log("Hit"+ Damage);
-                HitObj.collider.gameObject.GetComponent<CharMove>().Damaged(Damage, transform.forward);
-               // m_Distance = 0;
-            }
-
-            if (HitObj.collider.gameObject.tag == "Enemy")
-            {
-                Debug.Log("Hit");
-
-                HitObj.collider.gameObject.GetComponent<EnemyMove>().Damaged(Damage, transform.forward);
-                // m_Distance = 0;
-            }
-            m_Distance = 0;
-        }
         //Debug.DrawLine(transform.position, transform.position + Vector3.forward * 5, Color.blue);
         if (m_Distance > 0)
         {

@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 6bb84c0581361854fa32caba54636646
+timeCreated: 1494855996
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Carnivalee Freakshow
+  fontNames:
+  - Carnivalee Freakshow
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

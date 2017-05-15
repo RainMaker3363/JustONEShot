@@ -51,6 +51,7 @@ public class CharMove : MonoBehaviour {
     public Transform CamLook;
     public GameObject UI_Main;
     public GameObject UI_GameOver;
+    public Animator Result; //게임 결과 연출
     public Text UI_GameOverText;
 
     // 플레이어의 움직임
@@ -104,7 +105,7 @@ public class CharMove : MonoBehaviour {
     public Transform DeathZone;
     bool DeathZoneDealay = false;
 
-    bool GameEnd = false;
+    public static bool GameEnd = false;
 
     float Debug_DeadEyeTimer_Player=0;
     float Debug_DeadEyeTimer_Enemy=0;
@@ -113,6 +114,7 @@ public class CharMove : MonoBehaviour {
     public GameObject ShotGun;
     public GameObject Musket;
     public static bool m_GunSelect = false;
+
 
     private float PlayerUpdateTime;
     private float PlayerUpdateDelay = 0.11f;
@@ -151,10 +153,12 @@ public class CharMove : MonoBehaviour {
 
         //카메라 기본위치 설정
         CamPos = cam.transform.position;
+        if(m_UseGun.Sight !=null)
+            CamPos = m_UseGun.Sight;
+
         camAni = cam.GetComponent<Animator>();
 
-        
-        
+
         // 플레이어 이동 방향 초기화
         m_MoveVector = Vector3.zero;
         m_MoveSpeed = 2.0f;
@@ -696,11 +700,23 @@ public class CharMove : MonoBehaviour {
             anim.SetTrigger("Death");
             GameEnd = true;
             // Mul_Manager.SendAniStateMessage((int)m_PlayerState); //데미지부분에서도 보내줌
-            Mul_Manager.SendEndGameMssage(true);
+            if (GPGSManager.GetInstance.IsAuthenticated())
+            {
+                Mul_Manager.SendEndGameMssage(true);
+            }
+          
             UI_Main.SetActive(false);
             UI_GameOver.SetActive(true);
-            UI_GameOverText.GetComponent<Text>().text = "Defeat";
+            cam.SetActive(false);
 
+            //EnemyPos.gameObject.SetActive(false);
+            Result.SetTrigger("Lose");
+           // UI_GameOverText.GetComponent<Text>().text = "Defeat";
+
+            return true;
+        }
+        else if(GameEnd)
+        {
             return true;
         }
         return false;
@@ -710,14 +726,12 @@ public class CharMove : MonoBehaviour {
     {
         if(Mul_Manager.GetEndGameState() && !GameEnd)
         {
-            m_PlayerState = LSD.PlayerState.WIN;
-            m_PlayerBeforeState = LSD.PlayerState.WIN;
-            anim.SetTrigger("Victory");
+           //UI_GameOverText.GetComponent<Text>().text = "Victory";
             Mul_Manager.SendAniStateMessage((int)m_PlayerState);
             GameEnd = true;
             UI_Main.SetActive(false);
-            UI_GameOver.SetActive(true);
-            UI_GameOverText.GetComponent<Text>().text = "Victory";
+            StartCoroutine(PlayerWin());
+
         }
     }
 
@@ -1002,6 +1016,20 @@ public class CharMove : MonoBehaviour {
     {
         yield return new WaitForSeconds(Time);
         DeathZoneDealay = false;
+    }
+
+    IEnumerator PlayerWin()
+    {
+        UI_GameOver.SetActive(true);
+        cam.SetActive(false);
+        //yield return new WaitForSeconds(1);
+
+        Result.SetTrigger("Win");
+
+        m_PlayerState = LSD.PlayerState.WIN;
+        m_PlayerBeforeState = LSD.PlayerState.WIN;
+        anim.SetTrigger("Victory");
+        yield return null;
     }
 
     public void SelectGun_Revolver()

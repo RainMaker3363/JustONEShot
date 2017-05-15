@@ -12,6 +12,7 @@ abstract public class UseGun
     public int Bullet_Hand;    //소지 탄알
     public int Bullet_Use;      //소모 탄알
     public int Damage;      //총의 데미지
+    public Vector3 Sight;   //총에 따른 카메라위치
 
     abstract public void UseBullet();
     public void ReloadBullet()  //탄창이 찼을경우는 charmove에서 체크중
@@ -41,6 +42,7 @@ class Gun_Revolver : UseGun
         Bullet_Use = 1;
         Damage = 25;
         NowUseGun = 0;
+        Sight = new Vector3(0, 6.6f, -3.9f);
     }
 
     public override void UseBullet()
@@ -59,8 +61,9 @@ class Gun_ShotGun : UseGun
         Bullet_Gun = 0;
         Bullet_Hand = 0;
         Bullet_Use = 2;
-        Damage = 25;
+        Damage = 35;
         NowUseGun = 1;
+        Sight = new Vector3(0, 5.1f, -3);
     }
 
     public override void UseBullet()
@@ -79,8 +82,9 @@ class Gun_Musket : UseGun
         Bullet_Gun = 0;
         Bullet_Hand = 0;
         Bullet_Use = 1;
-        Damage = 25;
+        Damage = 45;
         NowUseGun = 2;
+        Sight = new Vector3(0, 9, -5.4f);
     }
 
     public override void UseBullet()
@@ -221,7 +225,8 @@ public class Gun : MonoBehaviour
                                 case 0:
                                     {
                                         Bullets[m_BulletIndex].Damage = CharMove.m_UseGun.Damage;
-                                        CharMove.m_UseGun.UseBullet();
+                                        Bullets[m_BulletIndex].m_Movespeed = 30;
+                                       CharMove.m_UseGun.UseBullet();
                                         UI_SillinderBullets[5 - CharMove.m_UseGun.Bullet_Gun].gameObject.SetActive(false);
                                         SillinerRotate -= 60;
                                         break;
@@ -229,6 +234,8 @@ public class Gun : MonoBehaviour
                                 case 2:
                                     {
                                         Bullets[m_BulletIndex].Damage = CharMove.m_UseGun.Damage;
+                                        Bullets[m_BulletIndex].m_Movespeed = 60;
+                                        Bullets[m_BulletIndex].m_Distance += 500;
                                         CharMove.m_UseGun.UseBullet();
                                         UI_MusketBullets.SetActive(false);
                                         
@@ -254,12 +261,15 @@ public class Gun : MonoBehaviour
                             {
                                 case 0:
                                     {
-                                        Bullets[m_BulletIndex].Damage = CharMove.m_UseGun.Damage;                                       
+                                        Bullets[m_BulletIndex].Damage = EnemyMove.m_EnemyUseGun.Damage;
+                                        Bullets[m_BulletIndex].m_Movespeed = 30;
                                         break;
                                     }
                                 case 2:
                                     {
-                                        Bullets[m_BulletIndex].Damage = CharMove.m_UseGun.Damage;                                    
+                                        Bullets[m_BulletIndex].Damage = EnemyMove.m_EnemyUseGun.Damage;
+                                        Bullets[m_BulletIndex].m_Movespeed = 60;
+                                        Bullets[m_BulletIndex].m_Distance += 500;
                                         break;
                                     }
 

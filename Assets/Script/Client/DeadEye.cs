@@ -45,6 +45,16 @@ public class DeadEye : MonoBehaviour {
             StartCoroutine(DeadEyeEnd());
         }
 
+        //if(CharMove.GameEnd)
+        //{
+        //    StopCoroutine(DeadEyeEnd());
+        //    CharMove.DeadEyeEnd = true;
+        //    EnemyMove.DeadEyeEnd = true;
+        //    //MainUI.SetActive(true);
+        //    //MainCam.gameObject.SetActive(true);
+        //    DeadEyeBulletEndCam.SetActive(false);
+        //}
+
     }
 
     void DeadEyeStart()
@@ -73,8 +83,12 @@ public class DeadEye : MonoBehaviour {
         yield return new WaitForSeconds(2f);
         CharMove.DeadEyeEnd = true;
         EnemyMove.DeadEyeEnd = true;
-        MainUI.SetActive(true);
-        MainCam.gameObject.SetActive(true);
+        
+        //if (CharMove.GameEnd)
+        //{
+            MainUI.SetActive(true);
+            MainCam.gameObject.SetActive(true);
+        //}
         DeadEyeBulletEndCam.SetActive(false);
     }
 

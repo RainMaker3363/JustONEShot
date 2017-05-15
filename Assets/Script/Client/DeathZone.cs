@@ -23,6 +23,7 @@ public class DeathZone : MonoBehaviour {
     public bool DeadEyePlaying = false;
 
     public GameObject UI_DeathZoneUp;
+    public GameObject UI_Main;
 
     // Use this for initialization
     void Start () {
@@ -37,29 +38,32 @@ public class DeathZone : MonoBehaviour {
        
         while (Level.Length > LevelIndex)
         {
-            
-            yield return new WaitForSeconds(DealyTime); //딜레이 시간동안 대기
-            UI_DeathZoneUp.SetActive(true);
-
-            MoveSpeed = (Level[LevelIndex] - transform.position.y) / (MoveTime*100);
-            Debug.Log("MoveSpeed" + MoveSpeed);
-            while (Level[LevelIndex] > transform.position.y)
+            if (UI_Main.activeSelf) //메인UI가 꺼져있는경우 플레이 또는 연출중이므로 데스존이 올라오지않음
             {
-                Debug.Log("UP");
-                if (Mul_GameManger.GetEndGameState())  //게임이 끝났을경우
-                {
-                    yield break;
-                }
+                yield return new WaitForSeconds(DealyTime); //딜레이 시간동안 대기
+                UI_DeathZoneUp.SetActive(true);
 
-                if(!Mul_GameManger.GetDeadEyeChecker() || DeadEyePlaying)//데드아이 발동중엔 안올라옴
+                MoveSpeed = (Level[LevelIndex] - transform.position.y) / (MoveTime * 100);
+                Debug.Log("MoveSpeed" + MoveSpeed);
+                while (Level[LevelIndex] > transform.position.y)
                 {
-                    transform.position = new Vector3(transform.position.x, transform.position.y + MoveSpeed, transform.position.z);
-                }
+                    Debug.Log("UP");
+                    if (Mul_GameManger.GetEndGameState())  //게임이 끝났을경우
+                    {
+                        yield break;
+                    }
 
-                yield return new WaitForSeconds(0.01f);
+                    if (!Mul_GameManger.GetDeadEyeChecker() || DeadEyePlaying)//데드아이 발동중엔 안올라옴
+                    {
+                        transform.position = new Vector3(transform.position.x, transform.position.y + MoveSpeed, transform.position.z);
+                    }
+
+                    yield return new WaitForSeconds(0.01f);
+                }
+                LevelIndex++;
+                UI_DeathZoneUp.SetActive(false);
             }
-            LevelIndex++;
-            UI_DeathZoneUp.SetActive(false);
+            yield return new WaitForEndOfFrame();
         }
     }
 }

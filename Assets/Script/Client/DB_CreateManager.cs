@@ -33,6 +33,14 @@ public class DB_CreateManager : MonoBehaviour {
         return Manager;
     }
 
+    void Awake()
+    {
+        if (Manager == null)
+        {
+            Manager = this;
+        }
+    }
+
     void Update()
     {
         ServerIndex = Mul_Manager.GetDeadEyeRespawnIndex(); //서버의 인덱스는 계속 참조를한다
@@ -44,6 +52,10 @@ public class DB_CreateManager : MonoBehaviour {
 
         if(ServerIndex != -1 && CreateIndex != ServerIndex) //생성이 필요할경우 또는 만들었던 인덱스가 다를경우
         {
+            if(CreateIndex != -1 && RespawnPoint[CreateIndex].GetComponent<DeadEyeBulletRespawn>().CreateAble)
+            {
+                RespawnPoint[CreateIndex].GetComponent<DeadEyeBulletRespawn>().BulletInit();    //사용하지않게 초기화
+            }
             BulletCreate = true;    //생성을 하게한다
         }
 
@@ -57,6 +69,7 @@ public class DB_CreateManager : MonoBehaviour {
              }
             else // 데스존에 잠겨있다면
             {
+                BulletCreate = false;
                 Mul_Manager.SendDeadEyeRespawnIndexMessage();//서버에 난수 재생성 요구
             }
         }

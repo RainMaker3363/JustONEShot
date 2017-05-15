@@ -80,6 +80,7 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
                     EnemyMove.PlayerDeadEye();
                     DB_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
                     BulletIndex = -1; //인덱스 초기화
+                    CreateAble = false;
                     StartCoroutine(BulletCreateDelay());    //재생성 쿨타임 시작
                 }
                 else if(E_Distance < 1)
@@ -108,9 +109,15 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
         }
     }
 
+    public void BulletInit()
+    {
+        BulletIndex = -1; //인덱스 초기화
+        DB_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
+        CreateAble = false;
+    }
     IEnumerator BulletCreateDelay()
     {
-        CreateAble = false;
+        //CreateAble = false;
         yield return new WaitForSeconds(CreateCoolTime);
         //CreateAble = true;  //재생성 가능하게 설정
         DB_CreateManager.GetInstance().Request = true;//먹었음을 쿨타임 끝나고 알려주므로써 쿨타임 공유

@@ -72,6 +72,11 @@ public class EnemyMove : MonoBehaviour {
     public GameObject[] Guns;
 
     public static int m_SelectGun = 100;//서버 초기값
+
+    public GameObject EnemyUI;
+    public UnityEngine.UI.Image Hp_Bar;
+    private Vector3 HP_BarPos;
+
     /// //////////////////////////////////////////////////////////////////////////////////<summary>
     /// 서버
     /// ///////////////////////////////////////////////////////////////////////////////</summary>
@@ -128,6 +133,7 @@ public class EnemyMove : MonoBehaviour {
         m_PlayerDir = Vector3.zero;
         m_PlayerPosBack = Vector3.zero;
 
+        HP_BarPos = Vector3.up;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///서버
@@ -171,6 +177,8 @@ public class EnemyMove : MonoBehaviour {
 
         DeadEyeCheck();
         DamageCheck();
+
+        EnemyUI.transform.position = transform.position;
         //if (m_PlayerState != LSD.PlayerState.REROAD && m_PlayerState != LSD.PlayerState.DAMAGE && m_ShotJoyStickControl.GetTouch())
         //{
         //    //    if(m_PlayerState != LSD.PlayerState.SHOT_FIRE)        
@@ -262,6 +270,7 @@ public class EnemyMove : MonoBehaviour {
                     if (!m_AniPlay)
                     {
                         anim.SetTrigger("Death");
+                        m_PlayerBeforeState = m_PlayerState;
                         m_AniPlay = true;   //CharAniInit에서 false로 바꿔줌                       
                     }
                     break;
@@ -271,6 +280,7 @@ public class EnemyMove : MonoBehaviour {
                     if (!m_AniPlay)
                     {
                         anim.SetTrigger("Victory");
+                        m_PlayerBeforeState = m_PlayerState;
                         m_AniPlay = true;   //CharAniInit에서 false로 바꿔줌                       
                     }
                     break;
@@ -566,6 +576,7 @@ public class EnemyMove : MonoBehaviour {
                 }
            // }
             BeforeHP = HP;
+            Hp_Bar.fillAmount = (float)HP / 100;
             DamageVec = Vector3.zero;
         }
     }
@@ -577,20 +588,20 @@ public class EnemyMove : MonoBehaviour {
 
         if (!CharMove.DeadEyeSuccess) //데드아이 피격시 성공했다면
         {
+            HP -= Damage;
             if (!DeadCheck())
             {
                 anim.SetTrigger("Damage");
-                anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
-                HP -= Damage;
+                anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌 
             }
         }
         else
         {
+            HP -= (Damage + 45);
             if (!DeadCheck())
             {
                 anim.SetTrigger("DeadEyeDamage");
-                anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
-                HP -= (Damage + 45);
+                anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌               
             }
         }
 

@@ -17,6 +17,9 @@ public class MoveJoyStick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
     public bool TouchBegin = true;
     private Vector3 BeginPos;
 
+    private float UpdateTime;
+    private float UpdateDealy = 0.13f;
+
     // Use this for initialization
     void Start()
     {
@@ -32,6 +35,7 @@ public class MoveJoyStick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
             joystick_Stick = transform.GetChild(0).GetComponent<Image>();
         }
 
+        UpdateTime = Time.time;
     }
 
     // Update is called once per frame
@@ -43,27 +47,33 @@ public class MoveJoyStick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
     // 터치가 드래그(Drag) 했을때 호출 되는 함수
     public virtual void OnDrag(PointerEventData ped)
     {
-        Vector2 Pos;
-
-        // 터치된 로컬 좌표값을 Pos에 할당하고 Joystick_Pad 직사각형의 sizedelta 값으로 나누어
-        // Pos.X는 0~1, Pos.Y는 0~1 사이의 값으로 만듭니다.
-        // Joystick_Stick을 기준으로 좌우로 움직였을때 Pos.X는 -1~1 사이, 상하라면 Pos.Y를 -1~1의 값으로 변환하기 위해
-        // Pos.x * 2 + 1, Pos.y * 2 - 1 처리를 합니다.
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(Joystick_Pad.rectTransform, ped.position, ped.pressEventCamera, out Pos))
+        if (UpdateTime < Time.time)
         {
-            Pos.x = (Pos.x / Joystick_Pad.rectTransform.sizeDelta.x);
-            Pos.y = (Pos.y / Joystick_Pad.rectTransform.sizeDelta.y);
+            UpdateTime += UpdateDealy;
 
-            //Debug.Log("Pos.x :"+Pos.x);
-            //Debug.Log("Pos.y :" + Pos.y);
-            inputVector = new Vector3((Pos.x ), (Pos.y ) , 0)/4;
-            inputVector = (inputVector.magnitude > 1.0f) ? inputVector.normalized : inputVector;
-            //Debug.Log("inputVector: " + inputVector);
-            // 조이스틱이 움직인다면..
-            // joystick_Stick의 이미지를 터치한 좌표값으로 움직여준다.
-            // joystick_Stick.rectTransform.anchoredPosition = new Vector3(Pos.x* Joystick_Pad.rectTransform.sizeDelta.x, Pos.y* Joystick_Pad.rectTransform.sizeDelta.y);
-            joystick_Stick.rectTransform.anchoredPosition = new Vector3(inputVector.x * (joystick_Stick.rectTransform.sizeDelta.x),
-                 inputVector.y * (joystick_Stick.rectTransform.sizeDelta.y));
+
+            Vector2 Pos;
+
+            // 터치된 로컬 좌표값을 Pos에 할당하고 Joystick_Pad 직사각형의 sizedelta 값으로 나누어
+            // Pos.X는 0~1, Pos.Y는 0~1 사이의 값으로 만듭니다.
+            // Joystick_Stick을 기준으로 좌우로 움직였을때 Pos.X는 -1~1 사이, 상하라면 Pos.Y를 -1~1의 값으로 변환하기 위해
+            // Pos.x * 2 + 1, Pos.y * 2 - 1 처리를 합니다.
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(Joystick_Pad.rectTransform, ped.position, ped.pressEventCamera, out Pos))
+            {
+                Pos.x = (Pos.x / Joystick_Pad.rectTransform.sizeDelta.x);
+                Pos.y = (Pos.y / Joystick_Pad.rectTransform.sizeDelta.y);
+
+                //Debug.Log("Pos.x :"+Pos.x);
+                //Debug.Log("Pos.y :" + Pos.y);
+                inputVector = new Vector3((Pos.x), (Pos.y), 0) / 4;
+                inputVector = (inputVector.magnitude > 1.0f) ? inputVector.normalized : inputVector;
+                //Debug.Log("inputVector: " + inputVector);
+                // 조이스틱이 움직인다면..
+                // joystick_Stick의 이미지를 터치한 좌표값으로 움직여준다.
+                // joystick_Stick.rectTransform.anchoredPosition = new Vector3(Pos.x* Joystick_Pad.rectTransform.sizeDelta.x, Pos.y* Joystick_Pad.rectTransform.sizeDelta.y);
+                joystick_Stick.rectTransform.anchoredPosition = new Vector3(inputVector.x * (joystick_Stick.rectTransform.sizeDelta.x),
+                     inputVector.y * (joystick_Stick.rectTransform.sizeDelta.y));
+            }
         }
     }
 

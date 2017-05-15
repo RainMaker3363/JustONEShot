@@ -12,17 +12,22 @@ public class GameStart : MonoBehaviour {
     public MultiGameManager Mul_Manager;
     public Animator CountDown;
     bool CountDownBool = false;
+    public GameObject Waiting;
+
+
+    private float WaitOverTime;
+    private float WaitTime = 10;
 
     // Use this for initialization
     void Start ()
     {
-
+        WaitOverTime = Time.time + WaitTime;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (!CharMove.m_GunSelect && Input.GetMouseButtonDown(0))
         {
             if (GetClickedObject() != null)
             {
@@ -32,6 +37,7 @@ public class GameStart : MonoBehaviour {
                         {
                             Selectanim.SetTrigger("Revolver");
                             Char.SelectGun_Revolver();
+                            
 
                             //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
                             break;
@@ -61,15 +67,59 @@ public class GameStart : MonoBehaviour {
             }
         }
 
-        if(!CountDown.gameObject.activeSelf)
+        if (!CharMove.m_GunSelect && WaitOverTime < Time.time)
+        {
+            int SelectGun = 0;   //캐릭터 추가시 수정 현재는 리볼버
+            switch (SelectGun)
+            {
+                case 0:
+                    {
+                        Selectanim.SetTrigger("Revolver");
+                        Char.SelectGun_Revolver();
+
+                        //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
+                        break;
+                    }
+                case 1:
+                    {
+                        Selectanim.SetTrigger("ShotGun");
+                        Char.SelectGun_ShotGun();
+                        //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
+                        break;
+                    }
+                case 2:
+                    {
+                        Selectanim.SetTrigger("Musket");
+                        Char.SelectGun_Musket();
+
+                        //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
+                        break;
+                    }
+                default:
+                    break;
+            }
+        }
+
+        if (!CountDown.gameObject.activeSelf)
         {
             if(EnemyMove.m_SelectGun != 100 && CharMove.m_GunSelect)//둘다 총을 골랐을경우
             {
                 if (!CountDownBool)
                 {
+                    Waiting.SetActive(false);
                     CountDownBool = true;
                     StartCoroutine(CountDownStart());
                 }
+            }
+            else if(CharMove.m_GunSelect)   //플레이어는 총을 골랐지만 상대가 고르지 않은경우
+            {
+                if(!Waiting.activeSelf)
+                {
+                    if(Selectanim.GetBool("PlayEnd"))
+                        Waiting.SetActive(true);
+                }
+                
+                //Waiting.SetActive(true); //현재 애니메이션에서 켜줍니다.
             }
         }
 
