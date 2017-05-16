@@ -1096,6 +1096,62 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         PlayGamesPlatform.Instance.RealTime.LeaveRoom();
     }
 
+    // 리 매칭(ReMatching)을 할때 초기화 해주는 옵션
+    public void ReMatchingInit(int Option)
+    {
+        switch(Option)
+        {
+            case 0:
+                {
+                    bLogin = false;
+                    IsConnectedOn = false;
+
+                    NowMultiGameMode = HY.MultiGameModeState.NONE;
+
+                    _myMessageNum = 0;
+
+                }
+                break;
+
+            case 1:
+                {
+                    bLogin = false;
+                    IsConnectedOn = false;
+
+                    NowMultiGameMode = HY.MultiGameModeState.PVP;
+
+                    _myMessageNum = 0;
+
+                    StartMatchMaking();
+                }
+                break;
+
+            case 2:
+                {
+                    bLogin = false;
+                    IsConnectedOn = false;
+
+                    NowMultiGameMode = HY.MultiGameModeState.SURVIVAL;
+
+                    _myMessageNum = 0;
+
+                    StartMatchMaking();
+                }
+                break;
+
+            default:
+                {
+                    bLogin = false;
+                    IsConnectedOn = false;
+
+                    NowMultiGameMode = HY.MultiGameModeState.NONE;
+
+                    _myMessageNum = 0;
+                }
+                break;
+        }
+    }
+
 
     public List<Participant> GetAllPlayers()
     {

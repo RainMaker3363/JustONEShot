@@ -10,19 +10,14 @@ public class MultiTitleManager : MonoBehaviour
 
     //private bool ButtonChecker;
     //private bool MultiStartChecker;
-    private static bool LoginGPGSOn = false;
     public static HY.MultiGameModeState NowMultiGameModeNumber;
 
     // Use this for initialization
     void Start () {
-        if(LoginGPGSOn == false)
-        {
-            LoginGPGSOn = true;
 
-            GPGSManager.GetInstance.InitializeGPGS(); // 초기화
+        GPGSManager.GetInstance.InitializeGPGS(); // 초기화
 
-            GPGSManager.GetInstance.LoginGPGS();
-        }
+        GPGSManager.GetInstance.LoginGPGS();
 
 
         GPGSManager.GetInstance.SetMultiGameModeState(0);
