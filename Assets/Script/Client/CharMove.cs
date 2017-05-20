@@ -52,7 +52,8 @@ public class CharMove : MonoBehaviour {
     public GameObject UI_Main;
     public GameObject UI_GameOver;
     public Animator Result; //게임 결과 연출
-    public Text UI_GameOverText;
+    //public Text UI_GameOverText;
+    public GameObject UI_DamageEffect;
 
     // 플레이어의 움직임
     private float m_MoveSpeed;
@@ -145,10 +146,14 @@ public class CharMove : MonoBehaviour {
     void Awake()
     {
         m_GunState = LSD.GunState.ShotGun; //현재는 고정 추후 받아오게함
+        CharInit();
+        gameObject.SetActive(false);
     }
 
     // Use this for initialization
     void Start() {
+        
+
         m_CharCtr = GetComponent<CharacterController>();
 
         //카메라 기본위치 설정
@@ -332,6 +337,7 @@ public class CharMove : MonoBehaviour {
         {
             anim.SetBool("Reloading", false);
         }
+        UI_DamageEffect.SetActive(false);
     }
 
     /// <summary>
@@ -494,7 +500,8 @@ public class CharMove : MonoBehaviour {
 
     void Update_DAMAGE()
     {
-       if(!anim.GetBool("Damaged"))
+        UI_DamageEffect.SetActive(true);
+        if (!anim.GetBool("Damaged"))
         {
             anim.SetBool("DeadEyeDamage", false);
             m_PlayerState = LSD.PlayerState.IDLE;
@@ -635,6 +642,7 @@ public class CharMove : MonoBehaviour {
             anim.SetTrigger("Damage");
             anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
             camAni.SetTrigger("Damage");
+           
         }
         
 
@@ -1079,5 +1087,40 @@ public class CharMove : MonoBehaviour {
     {
         Debug.Log("Exit");
         Mul_Manager.EndGameAndLeaveRoom();
+    }
+
+    void CharInit()
+    {
+        GameObject GamePlayObj = GameObject.Find("GamePlayObj");
+
+        UI_Main = GamePlayObj.transform.Find("UI_Main").gameObject;
+        
+
+        m_MoveJoyStickControl = UI_Main.GetComponentInChildren<MoveJoyStick>(); //움직임 전용 조이스틱
+        m_ShotJoyStickControl = UI_Main.GetComponentInChildren<JoyStickCtrl>();  //샷 전용 조이스틱
+
+        m_FirstTouch = m_MoveJoyStickControl.transform.Find("Joystickpad").GetComponent<Image>();
+        cam = GameObject.Find("CameraPos");
+
+        
+       UI_GameOver = GamePlayObj.transform.Find("UI_GameOver").gameObject;
+       // UI_GameOver.SetActive(false);
+
+        //UI_GameOverText;
+        UI_DamageEffect = UI_Main.transform.Find("DamageEffect").gameObject;
+       // UI_DamageEffect.SetActive(false);
+
+        EnemyPos = GamePlayObj.transform.Find("EnemyCharacter");
+        HP_bar = UI_Main.transform.Find("LifeHealthLine_Bar").GetComponent<Image>();
+        Stamina_bar = UI_Main.transform.Find("Stamina_Bar").GetComponent<Image>();
+        Mul_Manager = GameObject.Find("MultiGameMananger").GetComponent<MultiGameManager>();
+
+        DeathZone = GameObject.Find("DeathZone").transform;
+
+        UI_Main.transform.Find("Control/Button_Reroad").GetComponent<Button>().onClick.AddListener(OnReroadButton);
+        UI_Main.transform.Find("Control/Button_Roll").GetComponent<Button>().onClick.AddListener(OnRollButton);
+        //anim;
+        //UI_Main.SetActive(false);
+        // gameObject.SetActive(false);
     }
 }

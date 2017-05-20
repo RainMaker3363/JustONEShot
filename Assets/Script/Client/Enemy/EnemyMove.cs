@@ -156,6 +156,8 @@ public class EnemyMove : MonoBehaviour {
         _destinationPos = this.transform.position;
         _destinationRot = Quaternion.identity;
 
+        EnemyUI.transform.SetParent(null);
+
     }
 
     // Update is called once per frame

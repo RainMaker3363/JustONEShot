@@ -43,14 +43,17 @@ public class DB_CreateManager : MonoBehaviour {
 
     void Update()
     {
-        ServerIndex = Mul_Manager.GetDeadEyeRespawnIndex(); //서버의 인덱스는 계속 참조를한다
+        
         if (Request)   //생성이 안되어있는경우
         {
             Mul_Manager.SendDeadEyeRespawnIndexMessage();//서버에 난수를 요청한다
             Request = false;
         }
 
-        if(ServerIndex != -1 && CreateIndex != ServerIndex) //생성이 필요할경우 또는 만들었던 인덱스가 다를경우
+        if(Mul_Manager.GetDeadEyeRespawnIndex() > -1)
+             ServerIndex = Mul_Manager.GetDeadEyeRespawnIndex(); //서버의 인덱스는 계속 참조를한다
+
+        if (ServerIndex != -1 && CreateIndex != ServerIndex) //생성이 필요할경우 또는 만들었던 인덱스가 다를경우
         {
             if(CreateIndex != -1 && RespawnPoint[CreateIndex].GetComponent<DeadEyeBulletRespawn>().CreateAble)
             {
@@ -73,5 +76,22 @@ public class DB_CreateManager : MonoBehaviour {
                 Mul_Manager.SendDeadEyeRespawnIndexMessage();//서버에 난수 재생성 요구
             }
         }
+    }
+
+    void OnGUI()
+    {
+        int w = Screen.width, h = Screen.height;
+
+        GUIStyle style = new GUIStyle();
+
+        Rect rect = new Rect(w / 2, h-100, 100, 100);
+        style.alignment = TextAnchor.UpperLeft;
+        style.fontSize = 30;
+        style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
+
+        //string text = string.Format("HP : {0}", HP);
+        string text = string.Format("ServerIndex : {0}\nCreateIndex : {1}", ServerIndex, CreateIndex);
+
+        GUI.Label(rect, text, style);
     }
 }

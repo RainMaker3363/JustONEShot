@@ -23,6 +23,8 @@ public class BulletRespawn : MonoBehaviour {
    public MultiGameManager Mul_GameManager;
     public Transform DeathZone;
     RaycastHit HitObj;
+
+    public GameObject GamePlayObj;
     // Use this for initialization
 
     void Awake()
@@ -32,16 +34,22 @@ public class BulletRespawn : MonoBehaviour {
         {
             transform.position = new Vector3(transform.position.x, HitObj.point.y + 0.5f, transform.position.z);
         }
+
+        P_CharPos = GamePlayObj.transform.Find("PlayerCharacter");
+        E_CharPos = GamePlayObj.transform.Find("EnemyCharacter");
+
     }
     void Start () {
-
+       
 
     }
 	
 	// Update is called once per frame
 	void Update () {
 
-        if(DeathZone.position.y+0.5f>transform.position.y)
+       
+
+        if (DeathZone.position.y+0.5f>transform.position.y)
         {
             gameObject.SetActive(false);
             Debug.Log("PointPos" + transform.position.y);

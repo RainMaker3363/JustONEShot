@@ -29,9 +29,16 @@ public class DeadEye : MonoBehaviour {
     public GameObject DeadEyeUIBack;
 
     float DeadEyeBulletEffectTime = 3.27f;  //데드아이 총알나가는 연출 시간
-    // Use this for initialization
-    void Start () {
+                                            // Use this for initialization
 
+    public GameObject GamePlayObj;
+
+    void Awake()
+    {
+        DeadEyeInit();
+    }
+    void Start () {
+        
     }
 	
 	// Update is called once per frame
@@ -59,6 +66,7 @@ public class DeadEye : MonoBehaviour {
 
     void DeadEyeStart()
     {
+       
         DeadEyeCamera.SetActive(true);
         MainCam.gameObject.SetActive(false);
         MainUI.SetActive(false);
@@ -160,6 +168,54 @@ public class DeadEye : MonoBehaviour {
           
 
         }
+    }
+
+    void DeadEyeInit()
+    {
+        GamePlayObj = GameObject.Find("GamePlayObj");
+
+
+        MainUI = GamePlayObj.transform.Find("UI_Main").gameObject;
+        DeadEyeUI = GamePlayObj.transform.Find("DeadEyeInfo/DeadEye").gameObject;
+        MainCam = GamePlayObj.transform.Find("CameraPos/Main Camera").GetComponent<Camera>();
+
+        Bullets = GamePlayObj.transform.Find("DeadEyeInfo/DeadEyeBullet/Bullet_DeadEye").GetComponent<Bullet_DeadEye>();
+        
+        Effects = GamePlayObj.transform.Find("DeadEyeInfo/DeadEyeBullet/Effect_DeadEyeFire").gameObject;
+
+        DeadEyeBulletCam = Bullets.transform.Find("DeadEyeBulletCam").gameObject;
+        DeadEyeBulletEndCam = GamePlayObj.transform.Find("DeadEyeInfo/DeadEyeBullet/BulletEndCam").gameObject;
+        
+
+        DeadEyeLoadEffect = GamePlayObj.transform.Find("DeadEyeInfo/DeadEye/ObjectAnimation/GunRoll/Effect_DeadEyeLoadComplete").gameObject;
+        
+        DeadEyeUIBack = GamePlayObj.transform.Find("DeadEyeInfo/DeadEye/Camera/ScreenShotCanvas/ScreenShotImage").gameObject;
+
+        switch (gameObject.tag)
+        {
+            case "Player":
+                {
+                    m_EnemyPos = GamePlayObj.transform.Find("EnemyCharacter");
+                    break;
+                }
+            case "Enemy":
+                {
+                    m_EnemyPos = GamePlayObj.transform.Find("PlayerCharacter");
+                    break;
+                }
+            default:
+                break;
+        }
+
+        //if (gameObject.tag == "Enemy")
+        //{
+        //    DeadEyeBulletCam.SetActive(false);
+        //    DeadEyeBulletEndCam.SetActive(false);
+        //    Bullets.gameObject.SetActive(false);
+        //    DeadEyeLoadEffect.SetActive(false);
+        //    DeadEyeUIBack.SetActive(false);
+        //    DeadEyeUI.SetActive(false);
+        //}
     }
 
 }

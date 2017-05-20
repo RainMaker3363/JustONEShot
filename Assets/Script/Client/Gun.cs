@@ -151,6 +151,13 @@ public class Gun : MonoBehaviour
 
     public GameObject CharRollEffect;
 
+    public GameObject BulletObj;
+
+    void Awake()
+    {
+        GunInit();
+    }
+
     void Start()
     {
         anim = GetComponent<Animator>();
@@ -184,6 +191,8 @@ public class Gun : MonoBehaviour
             }
 
         }
+
+        BulletObj.transform.SetParent(null);
     }
 
     void Update()
@@ -379,7 +388,7 @@ public class Gun : MonoBehaviour
             Effects_Bullet[m_BulletIndex].transform.rotation = m_BulletTransform[UseGun].rotation;
             Effects_Bullet[m_BulletIndex].SetActive(true);
 
-            camAni.SetTrigger("Shot");
+            camAni.SetTrigger("ShotGun");
             m_BulletIndex++;
             if (m_BulletIndex == 3)
             {
@@ -462,5 +471,65 @@ public class Gun : MonoBehaviour
     void SetRollSpeed(float speed) //캐릭터 구르기 속도 조절
     {
         CharMove.m_RollSpeed =10*speed;      
+    }
+
+    void GunInit()
+    {
+        Debug.Log("GunInit");
+        string str = null;
+
+        GameObject GamePlayObj = GameObject.Find("GamePlayObj");
+
+        switch (gameObject.tag)
+        {
+            case "Player":
+                {
+                    UI_Sillinder = GamePlayObj.transform.Find("UI_Main/BlackSillnder").gameObject;
+                    UI_ShotGun = GamePlayObj.transform.Find("UI_Main/ShotGun_UI").gameObject;
+                    UI_Musket = GamePlayObj.transform.Find("UI_Main/Musket_UI").gameObject;
+
+                    UI_SillinderBullets = new GameObject[6];
+                    for(int i =0; i<6;i++)
+                    {
+                        str = "Bullet_In_" + i;
+                        UI_SillinderBullets[i] = UI_Sillinder.transform.Find(str).gameObject;
+                        UI_SillinderBullets[i].SetActive(false);
+                    }
+
+                    UI_ShotGunBullets = new GameObject[2];
+                    for (int i = 0; i < 2; i++)
+                    {
+                        str = "Bullet_ShotGunIn_" + i;
+                        UI_ShotGunBullets[i] = UI_ShotGun.transform.Find(str).gameObject;
+                        UI_ShotGunBullets[i].SetActive(false);
+                    }
+
+                    str = "Bullet_MusketIn";
+                    UI_MusketBullets = UI_Musket.transform.Find(str).gameObject;
+                    UI_MusketBullets.SetActive(false);
+
+                    UI_Sillinder.SetActive(false);
+                    UI_ShotGun.SetActive(false);
+                    UI_Musket.SetActive(false);
+
+                    UI_HandsBullets = new Image[10];
+                    for (int i =0; i<10;i++)
+                    {
+                        str = "UI_Main/UI_Bullets/Bullet_Hands_" + i;
+                        UI_HandsBullets[i] = GamePlayObj.transform.Find(str).GetComponent<Image>();
+                    }
+
+
+                    camAni = GamePlayObj.transform.Find("CameraPos").GetComponent<Animator>();
+                    break;
+                }
+            case "Enemy":
+                {
+                    break;
+                }
+            default:
+                break;
+        }
+        
     }
 }

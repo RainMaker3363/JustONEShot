@@ -13,10 +13,18 @@ public class GameStart : MonoBehaviour {
     public Animator CountDown;
     bool CountDownBool = false;
     public GameObject Waiting;
+    public GameObject Select;
 
+    public GameObject GamePlayObj;
 
     private float WaitOverTime;
     private float WaitTime = 10;
+
+    void Awake()
+    {
+        Char = GamePlayObj.transform.Find("PlayerCharacter").GetComponent<CharMove>();
+        Enemy = GamePlayObj.transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
+    }
 
     // Use this for initialization
     void Start ()
@@ -37,7 +45,7 @@ public class GameStart : MonoBehaviour {
                         {
                             Selectanim.SetTrigger("Revolver");
                             Char.SelectGun_Revolver();
-                            
+                            Select.SetActive(false);
 
                             //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
                             break;
@@ -46,6 +54,7 @@ public class GameStart : MonoBehaviour {
                         {
                             Selectanim.SetTrigger("ShotGun");
                             Char.SelectGun_ShotGun();
+                            Select.SetActive(false);
                             //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
                             break;
                         }
@@ -53,7 +62,7 @@ public class GameStart : MonoBehaviour {
                         {
                             Selectanim.SetTrigger("Musket");
                             Char.SelectGun_Musket();
-
+                            Select.SetActive(false);
                             //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
                             break;
                         }
@@ -76,7 +85,7 @@ public class GameStart : MonoBehaviour {
                     {
                         Selectanim.SetTrigger("Revolver");
                         Char.SelectGun_Revolver();
-
+                        Select.SetActive(false);
                         //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
                         break;
                     }
@@ -84,6 +93,7 @@ public class GameStart : MonoBehaviour {
                     {
                         Selectanim.SetTrigger("ShotGun");
                         Char.SelectGun_ShotGun();
+                        Select.SetActive(false);
                         //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
                         break;
                     }
@@ -91,7 +101,7 @@ public class GameStart : MonoBehaviour {
                     {
                         Selectanim.SetTrigger("Musket");
                         Char.SelectGun_Musket();
-
+                        Select.SetActive(false);
                         //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
                         break;
                     }
@@ -106,7 +116,7 @@ public class GameStart : MonoBehaviour {
             {
                 if (!CountDownBool)
                 {
-                    Waiting.SetActive(false);
+                    Waiting.SetActive(false);                   
                     CountDownBool = true;
                     StartCoroutine(CountDownStart());
                 }
@@ -115,8 +125,10 @@ public class GameStart : MonoBehaviour {
             {
                 if(!Waiting.activeSelf)
                 {
-                    if(Selectanim.GetBool("PlayEnd"))
-                        Waiting.SetActive(true);
+                    if (Selectanim.GetBool("PlayEnd"))
+                    {
+                        Waiting.SetActive(true);                       
+                    }
                 }
                 
                 //Waiting.SetActive(true); //현재 애니메이션에서 켜줍니다.

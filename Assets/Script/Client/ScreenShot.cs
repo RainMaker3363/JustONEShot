@@ -13,7 +13,15 @@ public class ScreenShot : MonoBehaviour
     private Texture2D m_Screenshot;
     public Image m_ScreenImage;
 
+    
     // Use this for initialization
+
+    void Awake()
+    {
+        GameObject GamePlayObj = GameObject.Find("GamePlayObj");
+        EnemyCam = GamePlayObj.transform.Find("EnemyCharacter/Effect_Camera_DeadEye_01_01/CameraMove/Camera (1)").GetComponent<Camera>();
+        PlayerCam = GamePlayObj.transform.Find("PlayerCharacter/Effect_Camera_DeadEye_01_01/CameraMove/Camera (1)").GetComponent<Camera>(); 
+    }
 
     void OnEnable()
     {
