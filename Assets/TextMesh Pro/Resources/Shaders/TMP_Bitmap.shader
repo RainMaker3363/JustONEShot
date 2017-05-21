@@ -1,5 +1,3 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
 Shader "TextMeshPro/Bitmap" {
 
 Properties {
@@ -100,7 +98,7 @@ SubShader{
 
 			vert.xy += (vert.w * 0.5) / _ScreenParams.xy;
 
-			float4 vPosition = UnityPixelSnap(UnityObjectToClipPos(vert));
+			float4 vPosition = UnityPixelSnap(mul(UNITY_MATRIX_MVP, vert));
 
 			fixed4 faceColor = i.color;
 			faceColor *= _FaceColor;

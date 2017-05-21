@@ -107,9 +107,9 @@ public class EnemyMove : MonoBehaviour {
     void Start()
     {
         m_CharCtr = GetComponent<CharacterController>();
-
+        PlayerPos = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter");
         //카메라 기본위치 설정
-       // CamPos = cam.transform.position;
+        // CamPos = cam.transform.position;
 
         //플레이어 선택 총
         //switch (m_GunState)
@@ -860,6 +860,23 @@ public class EnemyMove : MonoBehaviour {
 
     public void SetCharacterSelectState(int CharacterNumber)
     {
+
+    }
+    void OnGUI()
+    {
+        int w = Screen.width, h = Screen.height;
+
+        GUIStyle style = new GUIStyle();
+
+        Rect rect = new Rect(w / 2,h/2, 100, 100);
+        style.alignment = TextAnchor.UpperLeft;
+        style.fontSize = 30;
+        style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
+
+        //string text = string.Format("HP : {0}", HP);
+        string text = string.Format("EmemySelect : {0}", m_SelectGun);
+
+        GUI.Label(rect, text, style);
 
     }
 

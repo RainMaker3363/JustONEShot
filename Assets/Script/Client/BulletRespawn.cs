@@ -30,18 +30,20 @@ public class BulletRespawn : MonoBehaviour {
     void Awake()
     {
 
+   
+
+        
+    }
+    void Start () {
+
         if (Physics.Raycast(transform.position, Vector3.down, out HitObj, 5f))
         {
             transform.position = new Vector3(transform.position.x, HitObj.point.y + 0.5f, transform.position.z);
         }
 
+        Debug.Log("BulletRespawn");
         P_CharPos = GamePlayObj.transform.Find("PlayerCharacter");
         E_CharPos = GamePlayObj.transform.Find("EnemyCharacter");
-
-    }
-    void Start () {
-       
-
     }
 	
 	// Update is called once per frame

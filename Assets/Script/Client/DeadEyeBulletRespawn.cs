@@ -24,16 +24,12 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
     public Transform DeathZone;
     RaycastHit HitObj;
 
-    void Awake()
+    // Use this for initialization
+    void Start()
     {
         GameObject GamePlayObj = GameObject.Find("GamePlayObj");
         P_CharPos = GamePlayObj.transform.Find("PlayerCharacter");
         E_CharPos = GamePlayObj.transform.Find("EnemyCharacter");
-    }   
-
-    // Use this for initialization
-    void Start()
-    {
 
         if (Physics.Raycast(transform.position, Vector3.down, out HitObj, 5f))
         {
