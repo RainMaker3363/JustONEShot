@@ -31,13 +31,11 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     // 플레이어의 정보
     public GameObject MyCharacter;
-    private CharMove MyPlayerCharacter;
     public GameObject MyCharacterPos;
     private string MyPlayerNick;
 
     // 적의 정보
     public GameObject EnemyCharacter;
-    private EnemyMove OpponentPlayerCharacter;
     public GameObject EnemyCharacterPos;
     private string OpponentPlayerNick;
     private Dictionary<string, EnemyMove> _opponentScripts;
@@ -265,47 +263,34 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 // 4
                 if (MyCharacter == null)
                 {
-
-                    MyCharacter = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
-                    MyCharacterPos.transform.position = MyCharacter.transform.position;
-                    //MyCharacter.transform.position = MyCharacterPos.transform.position;
+                    MyCharacter = GameObject.Find("Character");
+                    MyCharacter.transform.position = MyCharacterPos.transform.position;
                 }
                 else
                 {
-
-                    MyCharacter = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
-                    MyCharacterPos.transform.position = MyCharacter.transform.position;
-                    //MyCharacter.transform.position = MyCharacterPos.transform.position;
-
+                    MyCharacter.transform.position = MyCharacterPos.transform.position;
                 }
             }
             else
             {
                 if (EnemyCharacter == null)
                 {
-                    //EnemyCharacter = GameObject.Find("Enemy_Character");
-                    EnemyCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").gameObject;
-                    OpponentPlayerCharacter = EnemyCharacter.GetComponent<EnemyMove>();
-                    MyCharacterPos.transform.position = EnemyCharacter.transform.position;
+                    EnemyCharacter = GameObject.Find("Enemy_Character");
+                    EnemyCharacter.transform.position = EnemyCharacterPos.transform.position;
 
-                    //EnemyCharacter.transform.position = EnemyCharacterPos.transform.position;
-
-                    EnemyMove opponentScript = OpponentPlayerCharacter;//EnemyCharacter.GetComponent<EnemyMove>();
+                    EnemyMove opponentScript = EnemyCharacter.GetComponent<EnemyMove>();
                     _EnemyParticipantId = nextParticipantId;
                     _opponentScripts[nextParticipantId] = opponentScript;
 
                 }
                 else
                 {
-                    EnemyCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").gameObject;
-                    OpponentPlayerCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
-                    MyCharacterPos.transform.position = EnemyCharacter.transform.position;
+                    EnemyCharacter.transform.position = EnemyCharacterPos.transform.position;
 
-                    EnemyMove opponentScript = OpponentPlayerCharacter;//EnemyCharacter.GetComponent<EnemyMove>();
+                    EnemyMove opponentScript = EnemyCharacter.GetComponent<EnemyMove>();
                     _EnemyParticipantId = nextParticipantId;
                     _opponentScripts[nextParticipantId] = opponentScript;
                 }
-
                 // 5
                 //GameObject opponentCar = (Instantiate(opponentPrefab, carStartPoint, Quaternion.identity) as GameObject);
 
