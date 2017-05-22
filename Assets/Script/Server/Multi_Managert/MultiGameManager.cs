@@ -114,7 +114,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
         // 지정해 주면 고정비로 빌드가 되어 단말에서 지정 해상도로 출력이 된다.	
-        //Screen.SetResolution(1280, 720, true); // 1280 x 720 으로 조정
+        Screen.SetResolution(1280, 720, true); // 1280 x 720 으로 조정
 
         //Screen.SetResolution(1920, 1080, true); // 1920 x 1080 으로 조정
 
@@ -122,6 +122,10 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         //Screen.SetResolution(Screen.width, Screen.width * 16 / 9,  true); // 16:9 로 개발시
 
+    }
+
+    void Start()
+    {
         SetupMultiplayerGame();
     }
 
