@@ -289,7 +289,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 {
                     //EnemyCharacter = GameObject.Find("Enemy_Character");
                     EnemyCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").gameObject;
-                    OpponentPlayerCharacter = EnemyCharacter.GetComponent<EnemyMove>();
+                    OpponentPlayerCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
                     MyCharacterPos.transform.position = EnemyCharacter.transform.position;
 
                     //EnemyCharacter.transform.position = EnemyCharacterPos.transform.position;
