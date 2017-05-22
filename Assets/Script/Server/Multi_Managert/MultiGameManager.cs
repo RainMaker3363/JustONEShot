@@ -365,6 +365,29 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     }
 
+    void OnGUI()
+    {
+        int w = Screen.width, h = Screen.height;
+
+        GUIStyle style = new GUIStyle();
+
+        Rect rect = new Rect(400, h - 100, 100, 100);
+        style.alignment = TextAnchor.UpperLeft;
+        style.fontSize = 30;
+        style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
+
+        //string text = string.Format("HP : {0}", HP);
+        string text = string.Format("MyName : {0}\nEnemyName : {1}\nMultiReady : {2}", MyPlayerCharacter.transform.name, EnemyCharacter.transform.name, _multiplayerReady);
+
+        GUI.Label(rect, text, style);
+
+        //Rect Bulletrect = new Rect(w - 300, 0, 100, 100);
+
+        //string Bullettext = string.Format("탄창 : {0}/{1}\n탄알 : {2}/{3}", m_UseGun.Bullet_Gun, m_UseGun.MaxBullet_Gun, m_UseGun.Bullet_Hand, m_UseGun.MaxBullet_Hand);
+
+
+        //GUI.Label(Bulletrect, Bullettext, style);
+    }
 
 
     // 현재 게임이 끝났는지의 여부를 리턴해 준다.
