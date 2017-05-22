@@ -28,6 +28,10 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 테스트해볼 아이템 적용 여부
     public Text ItemGetCount;
     private int ItemCount;
+    private int MyGunNumber;
+    private int MyCharNumber;
+    private int OpponentGunNumber;
+    private int OppenentCharNumber;
 
     // 플레이어의 정보
     public GameObject MyCharacter;
@@ -105,10 +109,13 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         MyPlayerNick = "";
         OpponentPlayerNick = "";
 
+        MyGunNumber = -1;
+        MyCharNumber = -1;
+        OpponentGunNumber = -1;
+        OppenentCharNumber = -1;
 
 
-
-    }
+}
 
     void Start()
     {
@@ -257,15 +264,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 {
 
                     MyCharacter = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
-                    //MyCharacterPos.transform.position = MyCharacter.transform.position;
-                    //MyCharacter.transform.position = MyCharacterPos.transform.position;
+
                 }
                 else
                 {
 
                     MyCharacter = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
-                    //MyCharacterPos.transform.position = MyCharacter.transform.position;
-                    //MyCharacter.transform.position = MyCharacterPos.transform.position;
 
                 }
             }
@@ -337,15 +341,20 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             //PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);//_opponentScripts[_MyParticipantId].name;//GPGSManager.GetInstance.GetOtherNameGPGS(0);
             //EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);
+
+            MyPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(0);
+            OpponentPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(1);
         }
         else
         {
             MyCharacter.transform.position = EnemyCharacterPos.transform.position;
             EnemyCharacter.transform.position = MyCharacterPos.transform.position;
+
+            MyPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(1);
+            OpponentPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(0);
         }
 
-        MyPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(0);
-        OpponentPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(1);
+
 
         /* 
         * 유니티 엔진 사용 시 입력을 하지 않으면 모바일 장치의 화면이 어두워지다가 잠기게 되는데,
@@ -367,29 +376,23 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     }
 
-    void OnGUI()
-    {
-        int w = Screen.width, h = Screen.height;
+    //void OnGUI()
+    //{
+    //    int w = Screen.width, h = Screen.height;
 
-        GUIStyle style = new GUIStyle();
+    //    GUIStyle style = new GUIStyle();
 
-        Rect rect = new Rect(400, h - 100, 100, 100);
-        style.alignment = TextAnchor.UpperLeft;
-        style.fontSize = 30;
-        style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
+    //    Rect rect = new Rect(w / 2, h - 500, 100, 100);
+    //    style.alignment = TextAnchor.UpperLeft;
+    //    style.fontSize = 30;
+    //    style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
 
-        //string text = string.Format("HP : {0}", HP);
-        string text = string.Format("MyName : {0}\nEnemyName : {1}\nMultiReady : {2}", MyPlayerCharacter.transform.name, EnemyCharacter.transform.name, _multiplayerReady);
+    //    //string text = string.Format("HP : {0}", HP);
+    //    string text = string.Format("MyName : {0}\nEnemyName : {1}\nMultiReady : {2}\nThisGameIsEnd : {3}\nReMatchingOn : {4}", MyPlayerCharacter.transform.name, EnemyCharacter.transform.name, _multiplayerReady
+    //        , ThisGameIsEnd, ReMatchingOn);
 
-        GUI.Label(rect, text, style);
-
-        //Rect Bulletrect = new Rect(w - 300, 0, 100, 100);
-
-        //string Bullettext = string.Format("탄창 : {0}/{1}\n탄알 : {2}/{3}", m_UseGun.Bullet_Gun, m_UseGun.MaxBullet_Gun, m_UseGun.Bullet_Hand, m_UseGun.MaxBullet_Hand);
-
-
-        //GUI.Label(Bulletrect, Bullettext, style);
-    }
+    //    GUI.Label(rect, text, style);
+    //}
 
 
     // 현재 게임이 끝났는지의 여부를 리턴해 준다.
@@ -410,8 +413,6 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         ThisGameIsEnd = true;
 
-
- 
 
         if(dTime <= 1.5f)
         {
@@ -591,6 +592,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         if (_multiplayerReady)
         {
+            OppenentCharNumber = CharacterNumber;
+
             EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
 
             if (opponent != null)
@@ -635,6 +638,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         if (_multiplayerReady)
         {
+            OpponentGunNumber = WeaponNumber;
+
             EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
 
             if (opponent != null)
@@ -1080,12 +1085,14 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public void SendCharacterNumberMessage(int CharacterNumber)
     {
         GPGSManager.GetInstance.SendCharacterSelectNumber(CharacterNumber);
+
     }
 
     // 자기자신의 무기 고유 번호를 상대방에게 전송해준다.
     public void SendWeaponNumberMessage(int WeaponNumber)
     {
         GPGSManager.GetInstance.SendWeaponSelectNumber(WeaponNumber);
+
     }
 
     // 자기 자신의 HP값을 보내기 위해 사용된다
@@ -1291,33 +1298,6 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // Update is called once per frame
     void Update ()
     {
-        //switch(MultiState)
-        //{
-        //    case HY.MultiGameState.WAIT:
-        //        {
-
-        //        }
-        //        break;
-
-        //    case HY.MultiGameState.SELECT:
-        //        {
-
-        //        }
-        //        break;
-
-        //    case HY.MultiGameState.PLAY:
-        //        {
-
-
-        //        }
-        //        break;
-
-        //    case HY.MultiGameState.CONNECTOUT:
-        //        {
-
-        //        }
-        //        break;
-        //}
 
         // 현재 게임 상태에 따라 다르게 진행을 해준다.
         MultiGameModeState = GPGSManager.GetInstance.GetMultiGameModeState();
@@ -1403,113 +1383,179 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         //        }
         //        break;
         //}
-        if(ReMatchingOn == false)
+
+        if (_multiplayerReady)
         {
-            if (_multiplayerReady)
+            //if (GPGSManager.GetInstance.GetOtherNameGPGS(1) == _MyParticipantId)
+            //{
+            //    PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);//_opponentScripts[_MyParticipantId].name;//GPGSManager.GetInstance.GetOtherNameGPGS(0);
+            //    EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);
+            //}
+            //else
+            //{
+            //    PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);//GPGSManager.GetInstance.GetOtherNameGPGS(0);
+            //    EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);
+            //}
+
+
+            if (ThisGameIsEnd == false)
             {
-                //if (GPGSManager.GetInstance.GetOtherNameGPGS(1) == _MyParticipantId)
-                //{
-                //    PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);//_opponentScripts[_MyParticipantId].name;//GPGSManager.GetInstance.GetOtherNameGPGS(0);
-                //    EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);
-                //}
-                //else
-                //{
-                //    PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);//GPGSManager.GetInstance.GetOtherNameGPGS(0);
-                //    EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);
-                //}
-
-
-                if (ThisGameIsEnd == false)
-                {
-                    NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
-
-                }
-                else
-                {
-                    NetText.text = "Net Info : 상대방이 연결을 해제했습니다.";
-                }
-
-                PlayerName.text = MyPlayerNick;
-                EnemyName.text = OpponentPlayerNick;
-
-                //MyInfoText.text = "Player Info : " + MyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//MyCharacterPos.transform.position;
-                //EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
-                MyInfoText.text = "WaitSignal : " + WaitSignal + " / SelectSignal : " + SelectSignal + " / GameMode : " + MultiGameModeState;
-
-                EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
-
-                ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
-
+                NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
 
             }
             else
             {
-                PlayerName.text = "Player"; //GPGSManager.GetInstance.GetNameGPGS();
-                EnemyName.text = "Enemy";
-
-                MyInfoText.text = "Player Info : " + MyCharacterPos.transform.position;
-                EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.transform.position;
-                NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
-                ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
+                NetText.text = "Net Info : 상대방이 연결을 해제했습니다.";
             }
 
-            // 적의 타임아웃 체크
-            if (ThisGameIsEnd == false)
-            {
-                if (Time.time > _nextTimeoutCheck)
-                {
+            PlayerName.text = "PlayerNick : " + MyPlayerNick + " / PlayerGun : " + MyGunNumber + " / PlayerChar : " + MyCharNumber;
+            EnemyName.text = "OppentNick : " + OpponentPlayerNick + " / OppenentGun : " + OpponentGunNumber + " / OppenentChar : " + OppenentCharNumber;
 
-                    CheckForTimeOuts();
-                    _nextTimeoutCheck = Time.time + _timeOutCheckInterval;
-                }
-            }
+            //MyInfoText.text = "Player Info : " + MyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//MyCharacterPos.transform.position;
+            //EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
+            MyInfoText.text = "MyCharacter Name : " + MyCharacter.transform.name + " / WaitSignal : " + WaitSignal + " / SelectSignal : " + SelectSignal;
+
+            EnemyInfoText.text = "Enemy Name : " + EnemyCharacter.transform.name + " / ReMatchingOn : " + ReMatchingOn + " / GameMode : " + MultiGameModeState;//EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
+
+            ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
 
 
-            // 플레이어의 위치 동기화
-            SendMyPositionUpdate();
         }
         else
         {
-            if (GPGSManager.GetInstance.IsConnected() == true)
+            PlayerName.text = "Player"; //GPGSManager.GetInstance.GetNameGPGS();
+            EnemyName.text = "Enemy";
+
+            MyInfoText.text = "Player Info : " + MyCharacter.transform.position;
+            EnemyInfoText.text = "Enemy Info : " + EnemyCharacter.transform.position;//EnemyCharacterPos.transform.position;
+            NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
+            ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
+        }
+
+        // 적의 타임아웃 체크
+        if (ThisGameIsEnd == false)
+        {
+            if (Time.time > _nextTimeoutCheck)
             {
-                if (MultiStartChecker == false)
-                {
-                    MultiStartChecker = true;
 
-                    switch(MultiGameModeState)
-                    {
-                        case HY.MultiGameModeState.NONE:
-                            {
-
-                            }
-                            break;
-
-
-                        case HY.MultiGameModeState.PVP:
-                            {
-                                StartCoroutine(StartPVPMultiGame());
-                            }
-                            break;
-
-                        case HY.MultiGameModeState.SURVIVAL:
-                            {
-                                StartCoroutine(StartSurvivalMultiGame());
-                            }
-                            break;
-
-                        default:
-                            {
-
-                            }
-                            break;
-                    }
-                    
-                }
-
+                CheckForTimeOuts();
+                _nextTimeoutCheck = Time.time + _timeOutCheckInterval;
             }
         }
 
-    
+
+        // 플레이어의 위치 동기화
+        SendMyPositionUpdate();
+
+        #region ReMatchingTestZone
+
+        //if (ReMatchingOn == false)
+        //{
+        //    if (_multiplayerReady)
+        //    {
+        //        //if (GPGSManager.GetInstance.GetOtherNameGPGS(1) == _MyParticipantId)
+        //        //{
+        //        //    PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);//_opponentScripts[_MyParticipantId].name;//GPGSManager.GetInstance.GetOtherNameGPGS(0);
+        //        //    EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);
+        //        //}
+        //        //else
+        //        //{
+        //        //    PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);//GPGSManager.GetInstance.GetOtherNameGPGS(0);
+        //        //    EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);
+        //        //}
+
+
+        //        if (ThisGameIsEnd == false)
+        //        {
+        //            NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
+
+        //        }
+        //        else
+        //        {
+        //            NetText.text = "Net Info : 상대방이 연결을 해제했습니다.";
+        //        }
+
+        //        PlayerName.text = MyPlayerNick;
+        //        EnemyName.text = OpponentPlayerNick;
+
+        //        //MyInfoText.text = "Player Info : " + MyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//MyCharacterPos.transform.position;
+        //        //EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
+        //        MyInfoText.text = "WaitSignal : " + WaitSignal + " / SelectSignal : " + SelectSignal + " / GameMode : " + MultiGameModeState;
+
+        //        EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
+
+        //        ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
+
+
+        //    }
+        //    else
+        //    {
+        //        PlayerName.text = "Player"; //GPGSManager.GetInstance.GetNameGPGS();
+        //        EnemyName.text = "Enemy";
+
+        //        MyInfoText.text = "Player Info : " + MyCharacterPos.transform.position;
+        //        EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.transform.position;
+        //        NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
+        //        ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
+        //    }
+
+        //    // 적의 타임아웃 체크
+        //    if (ThisGameIsEnd == false)
+        //    {
+        //        if (Time.time > _nextTimeoutCheck)
+        //        {
+
+        //            CheckForTimeOuts();
+        //            _nextTimeoutCheck = Time.time + _timeOutCheckInterval;
+        //        }
+        //    }
+
+
+        //    // 플레이어의 위치 동기화
+        //    SendMyPositionUpdate();
+        //}
+        //else
+        //{
+        //    if (GPGSManager.GetInstance.IsConnected() == true)
+        //    {
+        //        if (MultiStartChecker == false)
+        //        {
+        //            MultiStartChecker = true;
+
+        //            switch(MultiGameModeState)
+        //            {
+        //                case HY.MultiGameModeState.NONE:
+        //                    {
+
+        //                    }
+        //                    break;
+
+
+        //                case HY.MultiGameModeState.PVP:
+        //                    {
+        //                        StartCoroutine(StartPVPMultiGame());
+        //                    }
+        //                    break;
+
+        //                case HY.MultiGameModeState.SURVIVAL:
+        //                    {
+        //                        StartCoroutine(StartSurvivalMultiGame());
+        //                    }
+        //                    break;
+
+        //                default:
+        //                    {
+
+        //                    }
+        //                    break;
+        //            }
+
+        //        }
+
+        //    }
+        //}
+        #endregion
+
 
         #region BackUpState
 
