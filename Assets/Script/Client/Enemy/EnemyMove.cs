@@ -862,8 +862,14 @@ public class EnemyMove : MonoBehaviour {
     {
 
     }
+
     void OnGUI()
     {
+        
+        
+        MultiGameManager Mul_Manager = GameObject.Find("MultiGameMananger").GetComponent<MultiGameManager>();
+       
+
         int w = Screen.width, h = Screen.height;
 
         GUIStyle style = new GUIStyle();
@@ -873,8 +879,34 @@ public class EnemyMove : MonoBehaviour {
         style.fontSize = 30;
         style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
 
+        string text;
         //string text = string.Format("HP : {0}", HP);
-        string text = string.Format("EmemySelect : {0}", m_SelectGun);
+
+        if (GPGSManager.GetInstance.IsAuthenticated())
+        {
+            if(Mul_Manager != null)
+            {
+                if(Mul_Manager.MyCharacter == null)
+                {
+                    text = string.Format("MultiGameManager Init Trouble");
+                }
+                else
+                {
+                    text = string.Format("EmemyName : {0}\nPlayerName : {1}\nMultyReady : {2}", Mul_Manager.MyCharacter.transform.name, Mul_Manager.MyCharacter.transform.name, Mul_Manager._multiplayerReady);
+                }
+                
+            }
+            else
+            {
+                text = string.Format("GPGS Manager Alive, But MultiManager is Trouble");
+            }
+            
+        }
+        else
+        {
+            text = string.Format("GPGS Manager Missing");
+        }
+        
 
         GUI.Label(rect, text, style);
 

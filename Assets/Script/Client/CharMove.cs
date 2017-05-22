@@ -1047,6 +1047,7 @@ public class CharMove : MonoBehaviour {
         Revlolver.SetActive(true);
         anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Client/Resource_Art/Character/00/Animation/Character_BaseModel_Revolver", typeof(RuntimeAnimatorController));
         m_GunSelect = true;
+
         if (GPGSManager.GetInstance.IsAuthenticated())
         {
             Mul_Manager.SendWeaponNumberMessage(0);
@@ -1061,6 +1062,7 @@ public class CharMove : MonoBehaviour {
         ShotGun.SetActive(true);
         anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Client/Resource_Art/Character/00/Animation/Character_BaseModel_ShotGun", typeof(RuntimeAnimatorController));
         m_GunSelect = true;
+
         if (GPGSManager.GetInstance.IsAuthenticated())
         {
             Mul_Manager.SendWeaponNumberMessage(1);
@@ -1075,6 +1077,7 @@ public class CharMove : MonoBehaviour {
         Musket.SetActive(true);
         anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Client/Resource_Art/Character/00/Animation/Character_BaseModel_Musket", typeof(RuntimeAnimatorController));
         m_GunSelect = true;
+
         if (GPGSManager.GetInstance.IsAuthenticated())
         {
             Mul_Manager.SendWeaponNumberMessage(2);

@@ -172,4 +172,22 @@ public class GameStart : MonoBehaviour {
         CountDown.gameObject.SetActive(true);
         yield return null;
     }
+
+    void OnGUI()
+    {
+         int w = Screen.width, h = Screen.height;
+
+        GUIStyle style = new GUIStyle();
+
+        Rect rect = new Rect(w / 2, h / 2, 100, 100);
+        style.alignment = TextAnchor.UpperLeft;
+        style.fontSize = 30;
+        style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
+
+        //string text = string.Format("HP : {0}", HP);
+        string text = string.Format("EmemyName : {0}\nPlayerName : {1}\nMultyReady : {2}", Mul_Manager.EnemyCharacter.transform.name, Mul_Manager.MyCharacter.transform.name, Mul_Manager._multiplayerReady);
+
+        GUI.Label(rect, text, style);
+
+    }
 }
