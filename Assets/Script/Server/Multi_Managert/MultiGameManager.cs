@@ -141,10 +141,10 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             }
         }
 
-        MyGunNumber = -1;
+        MyGunNumber = 100;
         MyCharNumber = GPGSManager.GetInstance.GetMyCharacterNumber();
-        OpponentGunNumber = -1;
-        OppenentCharNumber = -1;
+        OpponentGunNumber = 100;
+        OppenentCharNumber = 100;
 
     }
 
@@ -752,7 +752,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     {
                         if(CharacterNumber < 0)
                         {
-                            OppenentCharNumber = 0;
+                            OppenentCharNumber = 100;
                         }
                         else if(CharacterNumber > 100)
                         {
@@ -811,7 +811,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     {
                         if (WeaponNumber < 0)
                         {
-                            OppenentCharNumber = 0;
+                            OppenentCharNumber = 100;
                         }
                         else if (WeaponNumber > 100)
                         {
