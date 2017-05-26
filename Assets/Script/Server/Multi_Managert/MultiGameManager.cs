@@ -28,10 +28,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 테스트해볼 아이템 적용 여부
     public Text ItemGetCount;
     private int ItemCount;
-    private int MyGunNumber;
-    private int MyCharNumber;
-    private int OpponentGunNumber;
-    private int OppenentCharNumber;
+
 
     // 플레이어의 정보
     public GameObject MyCharacter;
@@ -59,6 +56,17 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     private string _MyParticipantId;
     private string _EnemyParticipantId;
     private Vector2 _startingPoint;
+
+    // PVP용으로써 서바이벌 모드에선 다른 로직을...
+    // 기본값은 100이다.
+    private List<int> SurvivalOpponentCharNumbers;
+    private int OpponentGunNumber;
+    private int OppenentCharNumber;
+
+    // 나의 캐릭터 고유 번호 및 총기 번호 정보
+    private int MyGunNumber;
+    private int MyCharNumber;
+
 
     // 네트워크 최적화 부분
     private float _nextBroadcastTime;
@@ -116,8 +124,25 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         MyPlayerNick = "";
         OpponentPlayerNick = "";
 
+        if (SurvivalOpponentCharNumbers == null)
+        {
+            SurvivalOpponentCharNumbers = new List<int>(8);
+
+            for (int i = 0; i < SurvivalOpponentCharNumbers.Count; i++)
+            {
+                SurvivalOpponentCharNumbers[i] = 100;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < SurvivalOpponentCharNumbers.Count; i++)
+            {
+                SurvivalOpponentCharNumbers[i] = 100;
+            }
+        }
+
         MyGunNumber = -1;
-        MyCharNumber = -1;
+        MyCharNumber = GPGSManager.GetInstance.GetMyCharacterNumber();
         OpponentGunNumber = -1;
         OppenentCharNumber = -1;
 
@@ -375,6 +400,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
 
 
+
+
         /* 
         * 유니티 엔진 사용 시 입력을 하지 않으면 모바일 장치의 화면이 어두워지다가 잠기게 되는데,
         * 그러면 플레이어는 잠김을 다시 풀어야 해서 불편합니다. 따라서 화면 잠금 방지 기능 추가는 필수적이고,
@@ -393,6 +420,36 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         _multiplayerReady = true;
 
+    }
+
+    // 현재 PVP 모드에서 적의 캐릭터 번호를 가지고 온다
+    public int GetPVPOpponentCharNumber()
+    {
+        return OppenentCharNumber;
+    }
+
+    // 현재 PVP 모드에서 적의 총 번호를 가지고 온다
+    public int GetPVPOpponentGunNumber()
+    {
+        return OpponentGunNumber;
+    }
+
+    // 현재 서바이벌 모드에서 적들의 캐릭터 번호를 가지고 온다
+    // 디폴트 값은 0이다.
+    public int GetSurvivalOpponentCharNumbers(int index = 0)
+    {
+        if (index < 0)
+        {
+            return SurvivalOpponentCharNumbers[0];
+        }
+        else if (index > SurvivalOpponentCharNumbers.Count)
+        {
+            return SurvivalOpponentCharNumbers[SurvivalOpponentCharNumbers.Count - 1];
+        }
+        else
+        {
+            return SurvivalOpponentCharNumbers[index];
+        }
     }
 
     //void OnGUI()
@@ -420,6 +477,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         return ThisGameIsEnd;
     }
+
+
 
     // 게임 종료 메시지
     // 플레이어가 임의로 종료 하거나 게임이 끝나면 호출 해주면 된다.
@@ -679,92 +738,130 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 상대방이 고른 캐릭터의 고유 번호를 받는다
     public void CharacterSelectStateReceived(int CharacterNumber)
     {
-        //switch(MultiGameModeState)
-        //{
-        //    case HY.MultiGameModeState.NONE:
-        //        {
-
-        //        }
-        //        break;
-
-        //    case HY.MultiGameModeState.PVP:
-        //        {
-        //            if (_multiplayerReady)
-        //            {
-        //                EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
-
-        //                if (opponent != null)
-        //                {
-        //                    opponent.SetCharacterSelectState(CharacterNumber);
-        //                }
-        //            }
-        //        }
-        //        break;
-
-        //    case HY.MultiGameModeState.SURVIVAL:
-        //        {
-
-        //        }
-        //        break;
-        //}
-
-        if (_multiplayerReady)
+        switch (MultiGameModeState)
         {
-            OppenentCharNumber = CharacterNumber;
+            case HY.MultiGameModeState.NONE:
+                {
 
-            EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
+                }
+                break;
 
-            if (opponent != null)
-            {
-                opponent.SetCharacterSelectState(CharacterNumber);
-            }
+            case HY.MultiGameModeState.PVP:
+                {
+                    if (_multiplayerReady)
+                    {
+                        if(CharacterNumber < 0)
+                        {
+                            OppenentCharNumber = 0;
+                        }
+                        else if(CharacterNumber > 100)
+                        {
+                            OppenentCharNumber = 100;
+                        }
+                        else
+                        {
+                            OppenentCharNumber = CharacterNumber;
+                        }
+                        
+                        //EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
+
+                        //if (opponent != null)
+                        //{
+                        //    opponent.SetCharacterSelectState(CharacterNumber);
+                        //}
+                    }
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+
+                }
+                break;
         }
+
+        //if (_multiplayerReady)
+        //{
+        //    OppenentCharNumber = CharacterNumber;
+
+        //    //EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
+
+        //    //if (opponent != null)
+        //    //{
+        //    //    opponent.SetCharacterSelectState(CharacterNumber);
+        //    //}
+        //}
 
     }
 
     // 상대방이 선택한 무기의 고유 번호를 받는다.
     public void WeaponSelectStateReceived(int WeaponNumber)
     {
-        //switch (MultiGameModeState)
-        //{
-        //    case HY.MultiGameModeState.NONE:
-        //        {
-
-        //        }
-        //        break;
-
-        //    case HY.MultiGameModeState.PVP:
-        //        {
-        //            if (_multiplayerReady)
-        //            {
-        //                EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
-
-        //                if (opponent != null)
-        //                {
-        //                    opponent.SetWeaponSelectState(WeaponNumber);
-        //                }
-        //            }
-        //        }
-        //        break;
-
-        //    case HY.MultiGameModeState.SURVIVAL:
-        //        {
-
-        //        }
-        //        break;
-        //}
-
-        if (_multiplayerReady)
+        switch (MultiGameModeState)
         {
-            OpponentGunNumber = WeaponNumber;
+            case HY.MultiGameModeState.NONE:
+                {
 
-            EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
+                }
+                break;
 
-            if (opponent != null)
-            {
-                opponent.SetWeaponSelectState(WeaponNumber);
-            }
+            case HY.MultiGameModeState.PVP:
+                {
+                    if (_multiplayerReady)
+                    {
+                        if (WeaponNumber < 0)
+                        {
+                            OppenentCharNumber = 0;
+                        }
+                        else if (WeaponNumber > 100)
+                        {
+                            OppenentCharNumber = 100;
+                        }
+                        else
+                        {
+                            OpponentGunNumber = WeaponNumber;
+                        }
+
+                        //EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
+
+                        //if (opponent != null)
+                        //{
+                        //    opponent.SetWeaponSelectState(WeaponNumber);
+                        //}
+                    }
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+
+                }
+                break;
         }
+
+        //if (_multiplayerReady)
+        //{
+        //    if (WeaponNumber < 0)
+        //    {
+        //        OppenentCharNumber = 0;
+        //    }
+        //    else if (WeaponNumber > 100)
+        //    {
+        //        OppenentCharNumber = 100;
+        //    }
+        //    else
+        //    {
+        //        OpponentGunNumber = WeaponNumber;
+        //    }
+
+
+        //    //EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
+
+        //    //if (opponent != null)
+        //    //{
+        //    //    opponent.SetWeaponSelectState(WeaponNumber);
+        //    //}
+        //}
     }
 
     // 끝내기 메시지를 보내주는 녀석이다.
@@ -1408,7 +1505,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     //            break;
     //    }
 
-        
+
     //}
 
     #endregion Call_Function

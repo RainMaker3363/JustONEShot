@@ -118,7 +118,13 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private List<byte> _DeadEyeRespawnMessage;
     private List<byte> _AnimMessage;
     private List<byte> _HealthMessage;
-    
+
+
+    // 현재 나의 캐릭터 정보를 가지고 있는다.
+    // 기본값은 100이다.
+    private int MyCharacterNumber;
+
+
 
     private bool IsConnectedOn = false;
     private bool showingWaitingRoom = false;
@@ -143,8 +149,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     {
         bLogin = false;
         IsConnectedOn = false;
-        
-        if(IsInitEnd == false)
+        MyCharacterNumber = 100;
+
+
+
+        if (IsInitEnd == false)
         {
             IsInitEnd = true;
 
@@ -303,6 +312,33 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     {
         return SendMessage;
     }
+
+    // 현재 내가 선택한 캐릭터에 대한 정보를 설정해준다.
+    // 기본값은 100
+    public void SetMyCharacterNumber(int number = 100)
+    {
+        if(number < 0)
+        {
+            MyCharacterNumber = 0;
+        }
+        else if(number > 100)
+        {
+            MyCharacterNumber = 100;
+        }
+        else
+        {
+            MyCharacterNumber = number;
+        }
+        
+    }
+
+    // 현재 내가 선택한 캐릭터에 대한 정보를 반환시켜준다.
+    public int GetMyCharacterNumber()
+    {
+        return MyCharacterNumber;
+    }
+
+
 
     // 현재 멀티게임 모드의 상태를 반환해준다.
     public HY.MultiGameModeState GetMultiGameModeState()
