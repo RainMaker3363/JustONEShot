@@ -124,6 +124,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // 기본값은 100이다.
     private int MyCharacterNumber;
 
+    // 난수 발생시 동기화를 위한 변수
+    private int RandomEncounter;
 
 
     private bool IsConnectedOn = false;
@@ -150,6 +152,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         bLogin = false;
         IsConnectedOn = false;
         MyCharacterNumber = 100;
+        RandomEncounter = 0;
 
 
 
@@ -813,7 +816,14 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         _DeadEyeRespawnMessage.Add(_protocolVersion);
         _DeadEyeRespawnMessage.Add((byte)'I');
 
-        int index = UnityEngine.Random.Range(0, 5);
+        int index = 0;
+
+        if(RandomEncounter != 100)
+        {
+            index = UnityEngine.Random.Range(0, 5);
+            RandomEncounter = 100;
+        }
+        
 
         _DeadEyeRespawnMessage.AddRange(System.BitConverter.GetBytes(index));
 
@@ -960,6 +970,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                 //}
 
                 updateListener.DeadEyeRespawnIndexReceived(index);
+
+                RandomEncounter = 0;
             }
         }
         else if(messageType == 'S')

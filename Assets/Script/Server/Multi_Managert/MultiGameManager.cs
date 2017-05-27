@@ -97,6 +97,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         MultiState = HY.MultiGameState.WAIT;
         PlayerState = HY.MultiPlayerState.LIVE;
 
+        GPGSManager.GetInstance.updateListener = this;
         MultiGameModeState = GPGSManager.GetInstance.GetMultiGameModeState();
 
         // 네트워크 체크 변수들
@@ -156,7 +157,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     void SetupMultiplayerGame()
     {
 
-        GPGSManager.GetInstance.updateListener = this;
+        //GPGSManager.GetInstance.updateListener = this;
 
         // 1
         _MyParticipantId = GPGSManager.GetInstance.GetMyParticipantId();
