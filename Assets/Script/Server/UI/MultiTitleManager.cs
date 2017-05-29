@@ -3,17 +3,20 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 
-public class MultiTitleManager : MonoBehaviour
+public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 {
     //public Text NetText;
     //public Text NetReadyText;
 
     //private bool ButtonChecker;
     //private bool MultiStartChecker;
+    private int OpponentCharNumber;
+    
     public static HY.MultiGameModeState NowMultiGameModeNumber;
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
+        OpponentCharNumber = 100;
 
         GPGSManager.GetInstance.InitializeGPGS(); // 초기화
 
@@ -23,8 +26,9 @@ public class MultiTitleManager : MonoBehaviour
         GPGSManager.GetInstance.SetMultiGameModeState(0);
         NowMultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();
 
-        //ButtonChecker = false;
-        //MultiStartChecker = false;
+        // 리스너 설정
+        GPGSManager.GetInstance.LBListener = this;
+        
 
         /* 
         * 유니티 엔진 사용 시 입력을 하지 않으면 모바일 장치의 화면이 어두워지다가 잠기게 되는데,
@@ -48,6 +52,56 @@ public class MultiTitleManager : MonoBehaviour
         NowMultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();
 
         Debug.Log("MultiGameModeNumber : " + NowMultiGameModeNumber);
+    }
+
+    // 현재 자신이 선택한 캐릭터의 정보를 보내준다.
+    public void SendCharacterNumber(int number = 100)
+    {
+        if(number < 0)
+        {
+            GPGSManager.GetInstance.SendCharacterSelectNumber(0);
+        }
+        else if(number >= 100)
+        {
+            GPGSManager.GetInstance.SendCharacterSelectNumber(100);
+        }
+        else
+        {
+            GPGSManager.GetInstance.SendCharacterSelectNumber(number);
+        }
+
+    }
+
+
+    // 현재 자신이 가지고 있는 캐릭터 넘버를 기억한다.
+    public int GetOpponentCharNumber()
+    {
+        return OpponentCharNumber;
+    }
+
+    // 상대방이 보낸 캐릭터의 정보를 받아서 값을 갱신해준다.
+    public void OpponentCharacterNumberReceive(string participantId, int characterNumber)
+    {
+        switch(NowMultiGameModeNumber)
+        {
+            case HY.MultiGameModeState.PVP:
+                {
+                    OpponentCharNumber = characterNumber;
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+
+                }
+                break;
+
+            default:
+                {
+                    OpponentCharNumber = characterNumber;
+                }
+                break;
+        }
     }
 
     //IEnumerator StartMultiGame()
@@ -81,7 +135,7 @@ public class MultiTitleManager : MonoBehaviour
 
     //            StartCoroutine(StartMultiGame());
     //        }
-            
+
     //    }
     //    else
     //    {
@@ -109,7 +163,7 @@ public class MultiTitleManager : MonoBehaviour
 
     //            GPGSManager.GetInstance.SignInAndStartMPGame();
     //        }
-            
+
 
 
 

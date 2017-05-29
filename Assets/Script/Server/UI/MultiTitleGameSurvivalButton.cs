@@ -9,6 +9,7 @@ public class MultiTitleGameSurvivalButton : MonoBehaviour, IDragHandler, IPointe
     public Text NetReadyText;
 
     public GameObject Survival_Matching_UI;
+    public GameObject Survival_Multi_Readey;
 
     private bool ButtonChecker;
     //private bool MultiStartChecker;
@@ -21,6 +22,11 @@ public class MultiTitleGameSurvivalButton : MonoBehaviour, IDragHandler, IPointe
         //GPGSManager.GetInstance.LoginGPGS();
 
         ButtonChecker = false;
+
+        if(Survival_Multi_Readey == null)
+        {
+            Survival_Multi_Readey = GameObject.Find("UI_Ready");
+        }
 
         Survival_Matching_UI.SetActive(false);
 
@@ -100,6 +106,7 @@ public class MultiTitleGameSurvivalButton : MonoBehaviour, IDragHandler, IPointe
                 // Survival 모드로 세팅해준다.
                 GPGSManager.GetInstance.SetMultiGameModeState(2);
 
+                Survival_Multi_Readey.SetActive(false);
                 Survival_Matching_UI.SetActive(true);
 
 

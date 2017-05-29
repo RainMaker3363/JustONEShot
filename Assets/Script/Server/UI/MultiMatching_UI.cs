@@ -6,8 +6,11 @@ using UnityEngine.UI;
 public class MultiMatching_UI : MonoBehaviour {
 
     public Text Matching_Text;
+    
 
     private HY.MultiGameModeState MultiGameModeNumber;
+    public MultiTitleManager TitleManager;
+
     private bool MultiStartChecker;
 
     // Use this for initialization
@@ -18,9 +21,13 @@ public class MultiMatching_UI : MonoBehaviour {
 
         MultiGameModeNumber = MultiTitleManager.NowMultiGameModeNumber;
 
-        GPGSManager.GetInstance.SignInAndStartMPGame();
 
-        
+        if(TitleManager == null)
+        {
+            TitleManager = GameObject.Find("MultiTitleManager").GetComponent<MultiTitleManager>();
+        }
+
+        GPGSManager.GetInstance.SignInAndStartMPGame();
 
         //StartCoroutine(StartMultiGame());
 
@@ -28,7 +35,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
     IEnumerator StartMultiGame()
     {
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(0.2f);
 
         //switch (MultiGameModeNumber)
         //{
@@ -57,21 +64,28 @@ public class MultiMatching_UI : MonoBehaviour {
         AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
     }
 
+
     // Update is called once per frame
     void Update () {
+
+
 
         MultiGameModeNumber = MultiTitleManager.NowMultiGameModeNumber;
 
         if (GPGSManager.GetInstance.IsConnected() == true)
         {
-            Matching_Text.text = "Join the Session.";
-
-            if (MultiStartChecker == false)
+            if(TitleManager.GetOpponentCharNumber() != 100)
             {
-                MultiStartChecker = true;
+                Matching_Text.text = "Join the Session.";
 
-                StartCoroutine(StartMultiGame());
+                if (MultiStartChecker == false)
+                {
+                    MultiStartChecker = true;
+
+                    StartCoroutine(StartMultiGame());
+                }
             }
+
 
         }
     }

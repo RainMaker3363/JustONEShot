@@ -124,8 +124,15 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // 기본값은 100이다.
     private int MyCharacterNumber;
 
+    // 적의 캐릭터 정보를 가지고 있는다.
+    // PVP용으로써 서바이벌 모드에선 다른 로직을...
+    // 기본값은 100이다.
+    private Dictionary<string, int> SurvivalOpponentCharNumbers;
+    private int OppenentCharNumber;
+
     // 난수 발생시 동기화를 위한 변수
-    private int RandomEncounter;
+    // 맨 처음의 발생되는 리스폰 난수는 초기화할때 해준다.
+    private int StartRandomEncounter;
 
 
     private bool IsConnectedOn = false;
@@ -138,6 +145,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
     private HY.MultiGameModeState NowMultiGameMode;
     public MPUpdateListener updateListener;
+    public LBUpdateListener LBListener;
 
     // 현재 로그인 중인지 체크
     public bool bLogin
@@ -151,10 +159,16 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     {
         bLogin = false;
         IsConnectedOn = false;
+
         MyCharacterNumber = 100;
-        RandomEncounter = 0;
+        OppenentCharNumber = 100;
+        StartRandomEncounter = UnityEngine.Random.Range(0, 5);
 
+        if (SurvivalOpponentCharNumbers == null)
+        {
+            SurvivalOpponentCharNumbers = new Dictionary<string, int>(8);
 
+        }
 
         if (IsInitEnd == false)
         {
@@ -314,6 +328,24 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     public string GetSendMessage()
     {
         return SendMessage;
+    }
+
+    // 0~5의 값을 전달해준다.
+    public int GetStartRandomSeed()
+    {
+        return StartRandomEncounter;
+    }
+
+    // 현재 PVP 모드에서 적의 캐릭터 번호를 가지고 온다
+    public int GetPVPOpponentCharNumber()
+    {
+        return OppenentCharNumber;
+    }
+
+    // 서바이벌 모드에서 적들의 캐릭터 번호를 알 수 있습니다.
+    public Dictionary<string, int> GetSurvivalOpponentCharNumbers()
+    {
+        return SurvivalOpponentCharNumbers;
     }
 
     // 현재 내가 선택한 캐릭터에 대한 정보를 설정해준다.
@@ -816,14 +848,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         _DeadEyeRespawnMessage.Add(_protocolVersion);
         _DeadEyeRespawnMessage.Add((byte)'I');
 
-        int index = 0;
+        int index = UnityEngine.Random.Range(0, 5);
 
-        if(RandomEncounter != 100)
-        {
-            index = UnityEngine.Random.Range(0, 5);
-            RandomEncounter = 100;
-        }
-        
 
         _DeadEyeRespawnMessage.AddRange(System.BitConverter.GetBytes(index));
 
@@ -970,8 +996,6 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                 //}
 
                 updateListener.DeadEyeRespawnIndexReceived(index);
-
-                RandomEncounter = 0;
             }
         }
         else if(messageType == 'S')
@@ -1077,15 +1101,44 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             int CharacterNumber = System.BitConverter.ToInt32(data, 2);
 
+            
+
             Debug.Log("Character Number is : " + CharacterNumber);
 
             ReceiveMessage = ByteToString(data);
 
-            if (updateListener != null)
+            if(LBListener != null)
             {
-                //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.CharacterSelectStateReceived(CharacterNumber);
+                OppenentCharNumber = CharacterNumber;
+
+                switch(NowMultiGameMode)
+                {
+                    case HY.MultiGameModeState.PVP:
+                        {
+                            OppenentCharNumber = CharacterNumber;
+                        }
+                        break;
+
+                    case HY.MultiGameModeState.SURVIVAL:
+                        {
+                            //SurvivalOpponentCharNumbers[senderId] = CharacterNumber;
+                        }
+                        break;
+
+                    default:
+                        {
+                            OppenentCharNumber = CharacterNumber;
+                        }
+                        break;
+                }
+
+                LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
             }
+            //if (updateListener != null)
+            //{
+            //    //updateListener.ItemStateReceived(Index, ItemGet);
+            //    updateListener.CharacterSelectStateReceived(CharacterNumber);
+            //}
         }
         else if (messageType == 'P')
         {

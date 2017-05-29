@@ -9,6 +9,7 @@ public class MultiTitleGameStartButton : MonoBehaviour, IDragHandler, IPointerUp
     public Text NetReadyText;
 
     public GameObject PVP_Matching_UI;
+    public GameObject PVP_Multi_Readey;
 
     private bool ButtonChecker;
     //private bool MultiStartChecker;
@@ -20,6 +21,11 @@ public class MultiTitleGameStartButton : MonoBehaviour, IDragHandler, IPointerUp
         //GPGSManager.GetInstance.LoginGPGS();
 
         ButtonChecker = false;
+
+        if (PVP_Multi_Readey == null)
+        {
+            PVP_Multi_Readey = GameObject.Find("UI_Ready");
+        }
 
         PVP_Matching_UI.SetActive(false);
 
@@ -95,7 +101,7 @@ public class MultiTitleGameStartButton : MonoBehaviour, IDragHandler, IPointerUp
             {
                 ButtonChecker = true;
 
-
+                PVP_Multi_Readey.SetActive(false);
                 PVP_Matching_UI.SetActive(true);
 
                 // PVP 모드로 세팅해준다.

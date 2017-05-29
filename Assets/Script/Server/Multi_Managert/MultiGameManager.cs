@@ -120,7 +120,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         MyGunNumber = 100;
         MyCharNumber = GPGSManager.GetInstance.GetMyCharacterNumber();
         OpponentGunNumber = 100;
-        OppenentCharNumber = 100;
+        OppenentCharNumber = GPGSManager.GetInstance.GetPVPOpponentCharNumber();
 
         // 네트워크 체크 변수들
         ThisGameIsEnd = false;
@@ -425,16 +425,34 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     }
 
-    // 현재 PVP 모드에서 적의 캐릭터 번호를 가지고 온다
-    public int GetPVPOpponentCharNumber()
-    {
-        return OppenentCharNumber;
-    }
+    //// 현재 PVP 모드에서 적의 캐릭터 번호를 가지고 온다
+    //public int GetPVPOpponentCharNumber()
+    //{
+    //    return OppenentCharNumber;
+    //}
 
     // 현재 PVP 모드에서 적의 총 번호를 가지고 온다
     public int GetPVPOpponentGunNumber()
     {
         return OpponentGunNumber;
+    }
+    
+    // 현재 PVP 모드에서 적의 총 번호를 가지고 온다
+    public void SetPVPOpponentGunNumber(int number = 100)
+    {
+        if(number > 100)
+        {
+            OpponentGunNumber = 100;
+        }
+        else if(number < 0)
+        {
+            OpponentGunNumber = 0;
+        }
+        else
+        {
+            OpponentGunNumber = number;
+        }
+        
     }
 
     // 내 자신의 캐릭터 고유 번호를 반환
@@ -520,6 +538,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         GPGSManager.GetInstance.LeaveGame();
         GPGSManager.GetInstance.updateListener = null;
+        GPGSManager.GetInstance.LBListener = null;
 
         ThisGameIsEnd = true;
 
@@ -606,6 +625,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         GPGSManager.GetInstance.LeaveGame();
         GPGSManager.GetInstance.updateListener = null;
+        GPGSManager.GetInstance.LBListener = null;
 
         ThisGameIsEnd = true;
 
@@ -768,77 +788,77 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     }
     
     // 상대방이 고른 캐릭터의 고유 번호를 받는다
-    public void CharacterSelectStateReceived(int CharacterNumber)
-    {
-        switch (MultiGameModeState)
-        {
-            case HY.MultiGameModeState.NONE:
-                {
+    //public void CharacterSelectStateReceived(int CharacterNumber)
+    //{
+    //    switch (MultiGameModeState)
+    //    {
+    //        case HY.MultiGameModeState.NONE:
+    //            {
 
-                }
-                break;
+    //            }
+    //            break;
 
-            case HY.MultiGameModeState.PVP:
-                {
-                    if (_multiplayerReady)
-                    {
-                        //if(CharacterNumber < 0)
-                        //{
-                        //    OppenentCharNumber = 100;
-                        //}
-                        //else if(CharacterNumber > 100)
-                        //{
-                        //    OppenentCharNumber = 100;
-                        //}
-                        //else
-                        //{
-                        //    OppenentCharNumber = CharacterNumber;
-                        //}
+    //        case HY.MultiGameModeState.PVP:
+    //            {
+    //                if (_multiplayerReady)
+    //                {
+    //                    //if(CharacterNumber < 0)
+    //                    //{
+    //                    //    OppenentCharNumber = 100;
+    //                    //}
+    //                    //else if(CharacterNumber > 100)
+    //                    //{
+    //                    //    OppenentCharNumber = 100;
+    //                    //}
+    //                    //else
+    //                    //{
+    //                    //    OppenentCharNumber = CharacterNumber;
+    //                    //}
                         
-                        //EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
+    //                    //EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
 
-                        //if (opponent != null)
-                        //{
-                        //    opponent.SetCharacterSelectState(CharacterNumber);
-                        //}
-                    }
+    //                    //if (opponent != null)
+    //                    //{
+    //                    //    opponent.SetCharacterSelectState(CharacterNumber);
+    //                    //}
+    //                }
 
 
-                    if(CharacterNumber < 0)
-                    {
-                        OppenentCharNumber = 100;
-                    }
-                    else if(CharacterNumber > 100)
-                    {
-                        OppenentCharNumber = 100;
-                    }
-                    else
-                    {
-                        OppenentCharNumber = CharacterNumber;
-                    }
-                }
-                break;
+    //                if(CharacterNumber < 0)
+    //                {
+    //                    OppenentCharNumber = 100;
+    //                }
+    //                else if(CharacterNumber > 100)
+    //                {
+    //                    OppenentCharNumber = 100;
+    //                }
+    //                else
+    //                {
+    //                    OppenentCharNumber = CharacterNumber;
+    //                }
+    //            }
+    //            break;
 
-            case HY.MultiGameModeState.SURVIVAL:
-                {
+    //        case HY.MultiGameModeState.SURVIVAL:
+    //            {
 
-                }
-                break;
-        }
+    //            }
+    //            break;
+    //    }
 
-        //if (_multiplayerReady)
-        //{
-        //    OppenentCharNumber = CharacterNumber;
+    //    //if (_multiplayerReady)
+    //    //{
+    //    //    OppenentCharNumber = CharacterNumber;
 
-        //    //EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
+    //    //    //EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
 
-        //    //if (opponent != null)
-        //    //{
-        //    //    opponent.SetCharacterSelectState(CharacterNumber);
-        //    //}
-        //}
+    //    //    //if (opponent != null)
+    //    //    //{
+    //    //    //    opponent.SetCharacterSelectState(CharacterNumber);
+    //    //    //}
+    //    //}
 
-    }
+    //}
 
     // 상대방이 선택한 무기의 고유 번호를 받는다.
     public void WeaponSelectStateReceived(int WeaponNumber)
