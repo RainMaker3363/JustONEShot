@@ -61,6 +61,8 @@ public class WaitRoom : MonoBehaviour {
                     }
                 }
             }
+
+            yield return new WaitForEndOfFrame();
         }
 
 
