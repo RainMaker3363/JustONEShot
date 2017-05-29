@@ -33,31 +33,38 @@ public class WaitRoom : MonoBehaviour {
         SendRoutine = SendCharacterRoutine();
 
         StopCoroutine(SendRoutine);
+        StartCoroutine(SendRoutine);
     }
 	
 	// Update is called once per frame
 	void Update () {
-		if(GPGSManager.GetInstance.IsAuthenticated())
-        {
-            if(GPGSManager.GetInstance.IsConnected())
-            {
-                if(m_MultiTitleManager.GetOpponentCharNumber() == 100)
-                {
-                    StartCoroutine(SendRoutine);
-                }
-                else
-                {
-                    StopCoroutine(SendRoutine);
-                }
-            }
-        }
+
 	}
 
     IEnumerator SendCharacterRoutine()
     {
-        yield return new WaitForSeconds(0.5f);
+        while(true)
+        {
+            if (GPGSManager.GetInstance.IsAuthenticated())
+            {
+                if (GPGSManager.GetInstance.IsConnected())
+                {
+                    if (m_MultiTitleManager.GetOpponentCharNumber() == 100)
+                    {
+                        yield return new WaitForSeconds(0.5f);
 
-        m_MultiTitleManager.SendCharacterNumber(SelectIndex);
+                        m_MultiTitleManager.SendCharacterNumber(SelectIndex);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
+
+        
     }
 
     public void ChangeChar(int Index)  //대기실은 끊겨도되니 GC를 고려하지 않고 삭제후 생성합니다

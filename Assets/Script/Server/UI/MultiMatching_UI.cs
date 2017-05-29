@@ -74,7 +74,9 @@ public class MultiMatching_UI : MonoBehaviour {
 
         if (GPGSManager.GetInstance.IsConnected() == true)
         {
-            if(TitleManager.GetOpponentCharNumber() != 100)
+            Matching_Text.text = "Room Connect...CharNum : " + TitleManager.GetOpponentCharNumber();
+
+            if (TitleManager.GetOpponentCharNumber() != 100)
             {
                 Matching_Text.text = "Join the Session.";
 
