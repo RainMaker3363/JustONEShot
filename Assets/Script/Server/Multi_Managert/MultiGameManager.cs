@@ -437,6 +437,36 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         return OpponentGunNumber;
     }
 
+    // 내 자신의 캐릭터 고유 번호를 반환
+    public int GetMyCharNumber()
+    {
+        return MyCharNumber;
+    }
+
+    // 내 자신의 총 고유 번호를 반환
+    public int GetMyGunNumber()
+    {
+        return MyGunNumber;
+    }
+
+    // 내 자신의 총 고유 번호를 설정
+    public void SetMyGunNumber(int number = 100)
+    {
+        if(number < 0)
+        {
+            MyGunNumber = 0;
+        }
+        else if(number > 100)
+        {
+            MyGunNumber = 100;
+        }
+        else
+        {
+            MyGunNumber = number;
+        }
+        
+    }
+
     // 현재 서바이벌 모드에서 적들의 캐릭터 번호를 가지고 온다
     // 디폴트 값은 0이다.
     public int GetSurvivalOpponentCharNumbers(int index = 0)
