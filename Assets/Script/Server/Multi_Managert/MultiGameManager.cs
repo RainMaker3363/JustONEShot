@@ -100,6 +100,28 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         GPGSManager.GetInstance.updateListener = this;
         MultiGameModeState = GPGSManager.GetInstance.GetMultiGameModeState();
 
+        if (SurvivalOpponentCharNumbers == null)
+        {
+            SurvivalOpponentCharNumbers = new List<int>(8);
+
+            for (int i = 0; i < SurvivalOpponentCharNumbers.Count; i++)
+            {
+                SurvivalOpponentCharNumbers[i] = 100;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < SurvivalOpponentCharNumbers.Count; i++)
+            {
+                SurvivalOpponentCharNumbers[i] = 100;
+            }
+        }
+
+        MyGunNumber = 100;
+        MyCharNumber = GPGSManager.GetInstance.GetMyCharacterNumber();
+        OpponentGunNumber = 100;
+        OppenentCharNumber = 100;
+
         // 네트워크 체크 변수들
         ThisGameIsEnd = false;
         ItemCount = 0;
@@ -125,27 +147,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         MyPlayerNick = "";
         OpponentPlayerNick = "";
 
-        if (SurvivalOpponentCharNumbers == null)
-        {
-            SurvivalOpponentCharNumbers = new List<int>(8);
 
-            for (int i = 0; i < SurvivalOpponentCharNumbers.Count; i++)
-            {
-                SurvivalOpponentCharNumbers[i] = 100;
-            }
-        }
-        else
-        {
-            for (int i = 0; i < SurvivalOpponentCharNumbers.Count; i++)
-            {
-                SurvivalOpponentCharNumbers[i] = 100;
-            }
-        }
-
-        MyGunNumber = 100;
-        MyCharNumber = GPGSManager.GetInstance.GetMyCharacterNumber();
-        OpponentGunNumber = 100;
-        OppenentCharNumber = 100;
 
     }
 
@@ -751,18 +753,18 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 {
                     if (_multiplayerReady)
                     {
-                        if(CharacterNumber < 0)
-                        {
-                            OppenentCharNumber = 100;
-                        }
-                        else if(CharacterNumber > 100)
-                        {
-                            OppenentCharNumber = 100;
-                        }
-                        else
-                        {
-                            OppenentCharNumber = CharacterNumber;
-                        }
+                        //if(CharacterNumber < 0)
+                        //{
+                        //    OppenentCharNumber = 100;
+                        //}
+                        //else if(CharacterNumber > 100)
+                        //{
+                        //    OppenentCharNumber = 100;
+                        //}
+                        //else
+                        //{
+                        //    OppenentCharNumber = CharacterNumber;
+                        //}
                         
                         //EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
 
@@ -770,6 +772,20 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         //{
                         //    opponent.SetCharacterSelectState(CharacterNumber);
                         //}
+                    }
+
+
+                    if(CharacterNumber < 0)
+                    {
+                        OppenentCharNumber = 100;
+                    }
+                    else if(CharacterNumber > 100)
+                    {
+                        OppenentCharNumber = 100;
+                    }
+                    else
+                    {
+                        OppenentCharNumber = CharacterNumber;
                     }
                 }
                 break;
@@ -810,18 +826,18 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 {
                     if (_multiplayerReady)
                     {
-                        if (WeaponNumber < 0)
-                        {
-                            OppenentCharNumber = 100;
-                        }
-                        else if (WeaponNumber > 100)
-                        {
-                            OppenentCharNumber = 100;
-                        }
-                        else
-                        {
-                            OpponentGunNumber = WeaponNumber;
-                        }
+                        //if (WeaponNumber < 0)
+                        //{
+                        //    OpponentGunNumber = 100;
+                        //}
+                        //else if (WeaponNumber > 100)
+                        //{
+                        //    OpponentGunNumber = 100;
+                        //}
+                        //else
+                        //{
+                        //    OpponentGunNumber = WeaponNumber;
+                        //}
 
                         //EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
 
@@ -829,6 +845,19 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         //{
                         //    opponent.SetWeaponSelectState(WeaponNumber);
                         //}
+                    }
+
+                    if (WeaponNumber < 0)
+                    {
+                        OpponentGunNumber = 100;
+                    }
+                    else if (WeaponNumber > 100)
+                    {
+                        OpponentGunNumber = 100;
+                    }
+                    else
+                    {
+                        OpponentGunNumber = WeaponNumber;
                     }
                 }
                 break;
