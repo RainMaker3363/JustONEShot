@@ -425,11 +425,11 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     }
 
-    //// 현재 PVP 모드에서 적의 캐릭터 번호를 가지고 온다
-    //public int GetPVPOpponentCharNumber()
-    //{
-    //    return OppenentCharNumber;
-    //}
+    // 현재 PVP 모드에서 적의 캐릭터 번호를 가지고 온다
+    public int GetPVPOpponentCharNumber()
+    {
+        return OppenentCharNumber;
+    }
 
     // 현재 PVP 모드에서 적의 총 번호를 가지고 온다
     public int GetPVPOpponentGunNumber()
