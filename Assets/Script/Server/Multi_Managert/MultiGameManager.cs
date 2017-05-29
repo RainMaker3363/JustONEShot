@@ -100,22 +100,22 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         GPGSManager.GetInstance.updateListener = this;
         MultiGameModeState = GPGSManager.GetInstance.GetMultiGameModeState();
 
-        if (SurvivalOpponentCharNumbers == null)
-        {
-            SurvivalOpponentCharNumbers = new List<int>(8);
+        //if (SurvivalOpponentCharNumbers == null)
+        //{
+        //    SurvivalOpponentCharNumbers = new List<int>(8);
 
-            for (int i = 0; i < SurvivalOpponentCharNumbers.Count; i++)
-            {
-                SurvivalOpponentCharNumbers[i] = 100;
-            }
-        }
-        else
-        {
-            for (int i = 0; i < SurvivalOpponentCharNumbers.Count; i++)
-            {
-                SurvivalOpponentCharNumbers[i] = 100;
-            }
-        }
+        //    for (int i = 0; i < SurvivalOpponentCharNumbers.Count; i++)
+        //    {
+        //        SurvivalOpponentCharNumbers[i] = 100;
+        //    }
+        //}
+        //else
+        //{
+        //    for (int i = 0; i < SurvivalOpponentCharNumbers.Count; i++)
+        //    {
+        //        SurvivalOpponentCharNumbers[i] = 100;
+        //    }
+        //}
 
         MyGunNumber = 100;
         MyCharNumber = GPGSManager.GetInstance.GetMyCharacterNumber();
@@ -485,23 +485,22 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         }
     }
 
-    //void OnGUI()
-    //{
-    //    int w = Screen.width, h = Screen.height;
+    void OnGUI()
+    {
+        int w = Screen.width, h = Screen.height;
 
-    //    GUIStyle style = new GUIStyle();
+        GUIStyle style = new GUIStyle();
 
-    //    Rect rect = new Rect(w / 2, h - 500, 100, 100);
-    //    style.alignment = TextAnchor.UpperLeft;
-    //    style.fontSize = 30;
-    //    style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
+        Rect rect = new Rect(w / 2, h - 500, 100, 100);
+        style.alignment = TextAnchor.UpperLeft;
+        style.fontSize = 30;
+        style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
 
-    //    //string text = string.Format("HP : {0}", HP);
-    //    string text = string.Format("MyName : {0}\nEnemyName : {1}\nMultiReady : {2}\nThisGameIsEnd : {3}\nReMatchingOn : {4}", MyPlayerCharacter.transform.name, EnemyCharacter.transform.name, _multiplayerReady
-    //        , ThisGameIsEnd, ReMatchingOn);
+        //string text = string.Format("HP : {0}", HP);
+        string text = string.Format("MyCharNum : {0}\nEnemyNum : {1}\nMultiReady : {2}", MyCharNumber, _opponentCharacterNumber, _multiplayerReady);
 
-    //    GUI.Label(rect, text, style);
-    //}
+        GUI.Label(rect, text, style);
+    }
 
 
     // 현재 게임이 끝났는지의 여부를 리턴해 준다.
