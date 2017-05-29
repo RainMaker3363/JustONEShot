@@ -18,11 +18,13 @@ public class BulletRespawn : MonoBehaviour {
 
     float CreateCoolTime = 3;   // 먹은후 재생성 쿨타임
 
-    bool CreateAble = true; //생성 가능여부
+   public bool CreateAble = true; //생성 가능여부
 
    public MultiGameManager Mul_GameManager;
     public Transform DeathZone;
     RaycastHit HitObj;
+
+    public B_RespawnManager m_B_RespawnManager;
 
     public GameObject GamePlayObj;
     // Use this for initialization
@@ -48,8 +50,15 @@ public class BulletRespawn : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if(P_CharPos == null)
+        {
+            P_CharPos = GamePlayObj.transform.Find("PlayerCharacter");
+        }
 
-       
+        if (E_CharPos == null)
+        {
+            E_CharPos = GamePlayObj.transform.Find("EnemyCharacter");
+        }
 
         if (DeathZone.position.y+0.5f>transform.position.y)
         {
@@ -60,40 +69,45 @@ public class BulletRespawn : MonoBehaviour {
 
         if (Mul_GameManager.GetEndGameState())
         {
-            B_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
+            m_B_RespawnManager.DeleteItemBullet(BulletIndex); // 총알 아이템 제거
             BulletIndex = -1; //인덱스 초기화
             gameObject.SetActive(false);
         }
 
-        if (CreateAble) //생성이 가능할경우
+        if (CreateAble &&(P_CharPos!=null&& E_CharPos != null)) //생성이 가능할경우
         {
             P_Distance = Vector3.Distance(P_CharPos.position, this.transform.position);
             E_Distance = Vector3.Distance(E_CharPos.position, this.transform.position);
 
             if (P_Distance < 11 && BulletIndex == -1) //거리가 11이하고 총알인덱스를 배정받지않았을떄(생성 전)
             {
-                BulletIndex = B_RespawnManager.GetInstance().CreateItemBullet(this.transform);
+                BulletIndex = m_B_RespawnManager.CreateItemBullet(this.transform);
             }
 
             if (BulletIndex > -1 && P_Distance >= 11)   //생성을 했지만 거리가 벗어난경우
             {
-                B_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex);// 총알 아이템 제거
+                m_B_RespawnManager.DeleteItemBullet(BulletIndex);// 총알 아이템 제거
                 BulletIndex = -1;   //인덱스 초기화
             }
 
 
             if (BulletIndex > -1) //생성을 했고 캐릭터가 근처에 왔을경우
             {
+                //if(!B_RespawnManager.GetInstance().Item_Bullets[BulletIndex].activeSelf)
+                //{
+                //    B_RespawnManager.GetInstance().Item_Bullets[BulletIndex].SetActive(true);
+                //}
+
                 if (P_Distance < 1) //가까이온게 플레이어일경우
                 {
                     CharMove.m_UseGun.GetBullet();  //캐릭터 총알갯수 추가
-                    B_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
+                    m_B_RespawnManager.DeleteItemBullet(BulletIndex); // 총알 아이템 제거
                     BulletIndex = -1; //인덱스 초기화
                     StartCoroutine(BulletCreateDelay());    //재생성 쿨타임 시작
                 }
                 else if(E_Distance<1)   //가까이온게 적 플레인경우
                 {
-                    B_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
+                    m_B_RespawnManager.DeleteItemBullet(BulletIndex); // 총알 아이템 제거
                     BulletIndex = -1; //인덱스 초기화
                     StartCoroutine(BulletCreateDelay());    //재생성 쿨타임 시작
                 }

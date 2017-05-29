@@ -35,10 +35,10 @@ public class DeadEye : MonoBehaviour {
 
     void Awake()
     {
-        DeadEyeInit();
+        
     }
     void Start () {
-        
+        DeadEyeInit();
     }
 	
 	// Update is called once per frame

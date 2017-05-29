@@ -5,37 +5,40 @@ using UnityEngine;
 public class B_RespawnManager : MonoBehaviour {
 
     [SerializeField]
-    GameObject[] Item_Bullets;
+    public GameObject[] Item_Bullets;
 
-    static B_RespawnManager Manager;
+    //static B_RespawnManager Manager;
 
-    B_RespawnManager()
-    {
-        if(Manager==null)
-        {
-            Manager = this;
-        }
-    }
+    //B_RespawnManager()
+    //{
+    //    if(Manager==null)
+    //    {
+    //        Manager = this;
+    //    }
+    //}
 
-    public static B_RespawnManager GetInstance()
-    {
-        if (Manager == null)
-        {
-            Manager = new B_RespawnManager();
-        }
-        return Manager;
-    }
+    //public static B_RespawnManager GetInstance()
+    //{
+    //    if (Manager == null)
+    //    {
+    //        new B_RespawnManager();
+    //    }
+    //    return Manager;
+   // }
 
     public int CreateItemBullet(Transform RespawnPoint)
     {
+        //Debug.Log(Item_Bullets.Length);
         int BulletIndex = 0;
         for(int i = 0; i<Item_Bullets.Length;i++)
         {
-            if(!Item_Bullets[i].activeSelf)
+            //Debug.Log(Item_Bullets[i].activeSelf);
+            if (!Item_Bullets[i].activeSelf)
             {
-                Item_Bullets[i].transform.position = RespawnPoint.transform.position;
+                Item_Bullets[i].transform.position = RespawnPoint.position;
                 Item_Bullets[i].SetActive(true);
                 BulletIndex = i;
+                Debug.Log(Item_Bullets[i].transform.position);
                 break;
             }
         }

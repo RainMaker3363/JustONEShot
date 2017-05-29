@@ -33,6 +33,42 @@ namespace LSD
     }
 }
 
+abstract public class UseChar
+{
+    public float MaxStamina;
+    public float Stamina;
+    public int MaxHP;
+    public int HP;    
+    public float Speed;  //퍼센트기준 1==100%
+    public float SteminaRecovery; //퍼센트기준 1==100%
+
+}
+
+ class Char_00 : UseChar
+{
+
+    public Char_00()
+    {
+       MaxStamina = Stamina = 1000;
+       MaxHP = HP = 100;
+       Speed = 1;
+       SteminaRecovery = 1;
+    }
+
+}
+
+class Char_01 : UseChar
+{
+
+    public Char_01()
+    {
+        MaxStamina = Stamina = 800;
+        MaxHP = HP = 80;
+        Speed = 1.2f;
+        SteminaRecovery = 1.2f;
+    }
+
+}
 
 public class CharMove : MonoBehaviour {
 
@@ -71,14 +107,20 @@ public class CharMove : MonoBehaviour {
 
     public int m_DebugPlayerState;
 
+    int CharIndex =1; //캐릭터 선택 인덱스
+
     //캐릭터 총
     public static UseGun m_UseGun;
 
     //캐릭터 stat
-    float Stamina = 1000;
+    UseChar CharStat;
+
     bool StaminaRecovery = true;
-    [SerializeField]
-    int HP = 100;
+
+    //float Stamina = 1000;   
+    //[SerializeField]
+    //int HP = 100;
+    //int Speed = 1;
 
     bool ShotAble = true;   //조준 가능여부
 
@@ -146,14 +188,14 @@ public class CharMove : MonoBehaviour {
     void Awake()
     {
         m_GunState = LSD.GunState.ShotGun; //현재는 고정 추후 받아오게함
-        CharInit();
+        
         gameObject.SetActive(false);
     }
 
     // Use this for initialization
     void Start() {
-        
 
+        CharInit();
         m_CharCtr = GetComponent<CharacterController>();
 
         //카메라 기본위치 설정
@@ -170,9 +212,30 @@ public class CharMove : MonoBehaviour {
         m_PlayerDir = Vector3.zero;
         m_PlayerPosBack = Vector3.zero;
 
+        switch (CharIndex)
+        {
+            case 0:
+                {
+                    CharStat = new Char_00();
+                    break;
+                }
+            case 1:
+                {
+                    CharStat = new Char_01();
+                    break;
+                }
+            default:
+                break;
+        }
+
+        if (GPGSManager.GetInstance.IsAuthenticated())
+        {
+            Mul_Manager.SendHPStateMessage(CharStat.HP);
+        }
+
         //플레이어 UI초기화
-        HP_bar.fillAmount = HP;
-        Stamina_bar.fillAmount = Stamina;
+        HP_bar.fillAmount = 1;
+        Stamina_bar.fillAmount = 1;
 
         cam.transform.position = CamPos + transform.position;
 
@@ -224,6 +287,7 @@ public class CharMove : MonoBehaviour {
                     {
                         ShotAble = true;
                         anim.SetInteger("DashLevel", 0);
+                         anim.speed = 1;
                         Update_IDLE();
                         break;
                     }
@@ -231,7 +295,8 @@ public class CharMove : MonoBehaviour {
                     {
                         ShotAble = true;
                         anim.SetInteger("DashLevel", 1);
-                        m_FirstTouch.color = Color.red;
+                    anim.speed = CharStat.Speed;
+                    m_FirstTouch.color = Color.red;
                         Update_DASH_SLOW();
                         break;
                     }
@@ -239,7 +304,8 @@ public class CharMove : MonoBehaviour {
                     {
                         ShotAble = true;
                         anim.SetInteger("DashLevel", 2);
-                        m_FirstTouch.color = Color.green;
+                    anim.speed = CharStat.Speed;
+                    m_FirstTouch.color = Color.green;
                         Update_DASH_SOFT();
                         break;
                     }
@@ -247,7 +313,8 @@ public class CharMove : MonoBehaviour {
                     {
                         ShotAble = true;
                         anim.SetInteger("DashLevel", 3);
-                        m_FirstTouch.color = Color.blue;
+                    anim.speed = CharStat.Speed;
+                    m_FirstTouch.color = Color.blue;
                         Update_DASH_HARD();
                         break;
                     }
@@ -611,9 +678,9 @@ public class CharMove : MonoBehaviour {
     {
         if (m_PlayerState != LSD.PlayerState.SHOT_FIRE && m_PlayerState != LSD.PlayerState.ROLL && !m_Exhausted)
         {
-            if (Stamina > 400)
+            if (CharStat.Stamina > 400)
             {
-                Stamina -= 400;               
+                CharStat.Stamina -= 400;               
                 anim.SetBool("Rolling", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
                 m_PlayerState = LSD.PlayerState.ROLL;
                 StaminaCheck();
@@ -633,9 +700,9 @@ public class CharMove : MonoBehaviour {
 
         m_PlayerState = LSD.PlayerState.DAMAGE;
 
-        HP -= Damage;
+        CharStat.HP -= Damage;
   
-        HP_bar.fillAmount = (float)HP/100;
+        HP_bar.fillAmount = (float)CharStat.HP / CharStat.MaxHP;
 
         if (!DeadCheck())
         {
@@ -650,7 +717,7 @@ public class CharMove : MonoBehaviour {
         {
             Mul_Manager.SendMyPositionUpdate();
             Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
-            Mul_Manager.SendHPStateMessage(HP);
+            Mul_Manager.SendHPStateMessage(CharStat.HP);
             Mul_Manager.SendShootVectorMessage(DamageVec);
         }
         
@@ -666,8 +733,8 @@ public class CharMove : MonoBehaviour {
 
         if (DeadEyeSuccess) //데드아이 피격시 성공했다면
         {
-            
-            HP -= Damage;
+
+            CharStat.HP -= Damage;
             if (!DeadCheck())
             {
                 anim.SetTrigger("Damage");
@@ -677,7 +744,7 @@ public class CharMove : MonoBehaviour {
         }
         else
         {
-            HP -= (Damage + 45);
+            CharStat.HP -= (Damage + 45);
             if (!DeadCheck())
             {
                 anim.SetTrigger("DeadEyeDamage");
@@ -687,22 +754,22 @@ public class CharMove : MonoBehaviour {
            
         }
 
-        HP_bar.fillAmount = (float)HP / 100;
+        HP_bar.fillAmount = (float)CharStat.HP / CharStat.MaxHP;
 
         if (GPGSManager.GetInstance.IsAuthenticated())
         {
             Mul_Manager.SendMyPositionUpdate();
             Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
-            Mul_Manager.SendHPStateMessage(HP);
+            Mul_Manager.SendHPStateMessage(CharStat.HP);
         }
         
     }
 
     public bool DeadCheck()
     {
-        if(HP<=0 && !GameEnd)
+        if(CharStat.HP <= 0 && !GameEnd)
         {
-            HP = 0;
+            CharStat.HP = 0;
             m_PlayerState = LSD.PlayerState.DEAD;
             m_PlayerBeforeState = LSD.PlayerState.DEAD;
             anim.SetTrigger("Death");
@@ -789,8 +856,8 @@ public class CharMove : MonoBehaviour {
             if (!DeathZoneDealay)
             {
                 DeathZoneDealay = true;
-                HP -= DeathZone.gameObject.GetComponent<DeathZone>().Damage;
-                HP_bar.fillAmount = (float)HP / 100;
+                CharStat.HP -= DeathZone.gameObject.GetComponent<DeathZone>().Damage;
+                HP_bar.fillAmount = (float)CharStat.HP / 100;
                 DeadCheck();
                 StartCoroutine(DeathZoneDealyTime(DeathZone.gameObject.GetComponent<DeathZone>().DamageDealay));
             }
@@ -869,35 +936,35 @@ public class CharMove : MonoBehaviour {
     {
         if (m_Exhausted)
         {
-            Stamina += 7;
+            CharStat.Stamina += (7* CharStat.SteminaRecovery);
         }
         else
         {
             if (StaminaRecovery)
-                Stamina += 10;
+                CharStat.Stamina += (10* CharStat.SteminaRecovery);
         }
         StaminaCheck();
     }
     void FixedUpdate_DASH_SLOW()    //탈진 달리기
     {
-        m_MoveSpeed = 1;
+        m_MoveSpeed = 1*CharStat.Speed;
         if (StaminaRecovery)
-            Stamina += 7;
+            CharStat.Stamina += (7* CharStat.SteminaRecovery);
         PlayerMove();
         StaminaCheck();
     }
     void FixedUpdate_DASH_SOFT()    // 천천히 달리기
     {
-        m_MoveSpeed = 5;
+        m_MoveSpeed = 5 * CharStat.Speed;
         if(StaminaRecovery)
-             Stamina += 10;
+            CharStat.Stamina += (10 * CharStat.SteminaRecovery);
         PlayerMove();
         StaminaCheck();
     }
     void FixedUpdate_DASH_HARD()
     {
-        m_MoveSpeed = 8;
-        Stamina -= 4;
+        m_MoveSpeed = 8 * CharStat.Speed;
+        CharStat.Stamina -= (4 * CharStat.SteminaRecovery);
         PlayerMove();
         StaminaCheck();
     }
@@ -949,22 +1016,22 @@ public class CharMove : MonoBehaviour {
 
     void StaminaCheck()
     {
-        if (Stamina < 0)
+        if (CharStat.Stamina < 0)
         {
-            Stamina = 0;
+            CharStat.Stamina = 0;
             m_Exhausted = true;
         }
 
-        if (Stamina > 1000)
+        if (CharStat.Stamina > CharStat.MaxStamina)
         {
-            Stamina = 1000;
+            CharStat.Stamina = CharStat.MaxStamina;
             if (m_Exhausted)
             {
                 m_Exhausted = false;
             }           
         }
         
-        Stamina_bar.fillAmount = Stamina / 1000;
+        Stamina_bar.fillAmount = CharStat.Stamina / CharStat.MaxStamina;
     }
 
     //public void SetDeadEyeTimer(float _DeadEyeEndTime)
@@ -1045,7 +1112,8 @@ public class CharMove : MonoBehaviour {
         m_GunState = LSD.GunState.Revolver;
         m_UseGun = new Gun_Revolver();
         Revlolver.SetActive(true);
-        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Client/Resource_Art/Character/00/Animation/Character_BaseModel_Revolver", typeof(RuntimeAnimatorController));
+        string Path = "Client/Resource_Art/Character/0" + CharIndex + "/Animation/Character_BaseModel_Revolver";
+        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(Path, typeof(RuntimeAnimatorController));
         m_GunSelect = true;
 
         if (GPGSManager.GetInstance.IsAuthenticated())
@@ -1060,7 +1128,9 @@ public class CharMove : MonoBehaviour {
         m_GunState = LSD.GunState.ShotGun;
         m_UseGun = new Gun_ShotGun();
         ShotGun.SetActive(true);
-        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Client/Resource_Art/Character/00/Animation/Character_BaseModel_ShotGun", typeof(RuntimeAnimatorController));
+        string Path = "Client/Resource_Art/Character/0" + CharIndex + "/Animation/Character_BaseModel_ShotGun";
+
+        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(Path, typeof(RuntimeAnimatorController));
         m_GunSelect = true;
 
         if (GPGSManager.GetInstance.IsAuthenticated())
@@ -1075,7 +1145,9 @@ public class CharMove : MonoBehaviour {
         m_GunState = LSD.GunState.Musket;
         m_UseGun = new Gun_Musket();
         Musket.SetActive(true);
-        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Client/Resource_Art/Character/00/Animation/Character_BaseModel_Musket", typeof(RuntimeAnimatorController));
+
+        string Path = "Client/Resource_Art/Character/0" + CharIndex + "/Animation/Character_BaseModel_Musket";
+        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(Path, typeof(RuntimeAnimatorController));
         m_GunSelect = true;
 
         if (GPGSManager.GetInstance.IsAuthenticated())
@@ -1094,6 +1166,11 @@ public class CharMove : MonoBehaviour {
 
     void CharInit()
     {
+        if (GPGSManager.GetInstance.IsAuthenticated())  //접속중일때
+        {
+            CharIndex = GPGSManager.GetInstance.GetMyCharacterNumber();
+        }
+
         GameObject GamePlayObj = GameObject.Find("GamePlayObj");
 
         UI_Main = GamePlayObj.transform.Find("UI_Main").gameObject;
@@ -1122,8 +1199,16 @@ public class CharMove : MonoBehaviour {
 
         UI_Main.transform.Find("Control/Button_Reroad").GetComponent<Button>().onClick.AddListener(OnReroadButton);
         UI_Main.transform.Find("Control/Button_Roll").GetComponent<Button>().onClick.AddListener(OnRollButton);
+
+        GamePlayObj.transform.Find("UI_GameOver/Image/Button_Exit").GetComponent<Button>().onClick.AddListener(OnExitButton);
         //anim;
         //UI_Main.SetActive(false);
         // gameObject.SetActive(false);
+    }
+
+    void OnDestory()
+    {
+        m_UseGun = null;
+        m_GunSelect = false;
     }
 }

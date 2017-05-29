@@ -26,6 +26,11 @@ public class DB_RespawnManager : MonoBehaviour {
         return Manager;
     }
 
+    void Awake()
+    {
+        Manager = this;
+    }
+
     public int CreateItemBullet(Transform RespawnPoint)
     {
         int BulletIndex = 0;

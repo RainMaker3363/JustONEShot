@@ -1,0 +1,209 @@
+fileFormatVersion: 2
+guid: 690b2507ef32b58479b67e5e63944573
+timeCreated: 1494812560
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Arm_High_L
+    100002: Arm_High_R
+    100004: Arm_Low_L
+    100006: Arm_Low_R
+    100008: Body_High
+    100010: Body_low
+    100012: Breast
+    100014: //RootNode
+    100016: Finger_L_1
+    100018: Finger_L_1_2
+    100020: Finger_L_2
+    100022: Finger_L_2_2
+    100024: Finger_L_2_3
+    100026: Finger_L_3
+    100028: Finger_L_3_2
+    100030: Finger_L_3_3
+    100032: Finger_L_4
+    100034: Finger_L_4_2
+    100036: Finger_L_4_3
+    100038: Finger_L_5
+    100040: Finger_L_5_2
+    100042: Finger_L_5_3
+    100044: Finger_R_1
+    100046: Finger_R_1_2
+    100048: Finger_R_2
+    100050: Finger_R_2_2
+    100052: Finger_R_2_3
+    100054: Finger_R_3
+    100056: Finger_R_3_2
+    100058: Finger_R_3_3
+    100060: Finger_R_4
+    100062: Finger_R_4_2
+    100064: Finger_R_4_3
+    100066: Finger_R_5
+    100068: Finger_R_5_2
+    100070: Finger_R_5_3
+    100072: Foot_L
+    100074: Foot_R
+    100076: Hair_1
+    100078: Hair_2
+    100080: Hair_3
+    100082: Hand_L
+    100084: Hand_R
+    100086: Head
+    100088: IK Chain001
+    100090: IK Chain002
+    100092: Item_Gun
+    100094: Leg_High_L
+    100096: Leg_High_R
+    100098: Leg_Low_L
+    100100: Leg_Low_R
+    100102: Musket
+    100104: Point001
+    100106: Point002
+    100108: Revolber
+    100110: ShotGun
+    100112: Skirt_1
+    100114: Skirt_2
+    100116: Skirt_3
+    100118: Skirt_4
+    100120: Skirt_5
+    100122: Woman
+    400000: Arm_High_L
+    400002: Arm_High_R
+    400004: Arm_Low_L
+    400006: Arm_Low_R
+    400008: Body_High
+    400010: Body_low
+    400012: Breast
+    400014: //RootNode
+    400016: Finger_L_1
+    400018: Finger_L_1_2
+    400020: Finger_L_2
+    400022: Finger_L_2_2
+    400024: Finger_L_2_3
+    400026: Finger_L_3
+    400028: Finger_L_3_2
+    400030: Finger_L_3_3
+    400032: Finger_L_4
+    400034: Finger_L_4_2
+    400036: Finger_L_4_3
+    400038: Finger_L_5
+    400040: Finger_L_5_2
+    400042: Finger_L_5_3
+    400044: Finger_R_1
+    400046: Finger_R_1_2
+    400048: Finger_R_2
+    400050: Finger_R_2_2
+    400052: Finger_R_2_3
+    400054: Finger_R_3
+    400056: Finger_R_3_2
+    400058: Finger_R_3_3
+    400060: Finger_R_4
+    400062: Finger_R_4_2
+    400064: Finger_R_4_3
+    400066: Finger_R_5
+    400068: Finger_R_5_2
+    400070: Finger_R_5_3
+    400072: Foot_L
+    400074: Foot_R
+    400076: Hair_1
+    400078: Hair_2
+    400080: Hair_3
+    400082: Hand_L
+    400084: Hand_R
+    400086: Head
+    400088: IK Chain001
+    400090: IK Chain002
+    400092: Item_Gun
+    400094: Leg_High_L
+    400096: Leg_High_R
+    400098: Leg_Low_L
+    400100: Leg_Low_R
+    400102: Musket
+    400104: Point001
+    400106: Point002
+    400108: Revolber
+    400110: ShotGun
+    400112: Skirt_1
+    400114: Skirt_2
+    400116: Skirt_3
+    400118: Skirt_4
+    400120: Skirt_5
+    400122: Woman
+    4300000: Woman
+    4300002: Revolber
+    4300004: ShotGun
+    4300006: Musket
+    9500000: //RootNode
+    11100000: //RootNode
+    13700000: Musket
+    13700002: Revolber
+    13700004: ShotGun
+    13700006: Woman
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

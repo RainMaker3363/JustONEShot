@@ -30,6 +30,8 @@ public class EnemyMove : MonoBehaviour {
 
     public int m_DebugPlayerState;
 
+    int CharIndex = 0; //캐릭터 선택 인덱스
+
     //캐릭터 총
     public static UseGun m_EnemyUseGun;
 
@@ -77,6 +79,8 @@ public class EnemyMove : MonoBehaviour {
     public UnityEngine.UI.Image Hp_Bar;
     private Vector3 HP_BarPos;
 
+    MultiGameManager Mul_Manager;
+
     /// //////////////////////////////////////////////////////////////////////////////////<summary>
     /// 서버
     /// ///////////////////////////////////////////////////////////////////////////////</summary>
@@ -107,6 +111,13 @@ public class EnemyMove : MonoBehaviour {
     void Start()
     {
         m_CharCtr = GetComponent<CharacterController>();
+        if (GPGSManager.GetInstance.IsAuthenticated())  //접속중일때
+        {
+            Mul_Manager = GameObject.Find("MultiGameMananger").GetComponent<MultiGameManager>();
+            CharIndex = Mul_Manager.GetPVPOpponentCharNumber();
+            StartCoroutine(WaitSelectEnemyGun());
+        }
+
         PlayerPos = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter");
         //카메라 기본위치 설정
         // CamPos = cam.transform.position;
@@ -863,58 +874,75 @@ public class EnemyMove : MonoBehaviour {
 
     }
 
-    void OnGUI()
-    {
+    //void OnGUI()
+    //{
         
         
-        MultiGameManager Mul_Manager = GameObject.Find("MultiGameMananger").GetComponent<MultiGameManager>();
+    //    MultiGameManager Mul_Manager = GameObject.Find("MultiGameMananger").GetComponent<MultiGameManager>();
        
 
-        int w = Screen.width, h = Screen.height;
+    //    int w = Screen.width, h = Screen.height;
 
-        GUIStyle style = new GUIStyle();
+    //    GUIStyle style = new GUIStyle();
 
-        Rect rect = new Rect(w / 2,h/2, 100, 100);
-        style.alignment = TextAnchor.UpperLeft;
-        style.fontSize = 30;
-        style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
+    //    Rect rect = new Rect(w / 2,h/2, 100, 100);
+    //    style.alignment = TextAnchor.UpperLeft;
+    //    style.fontSize = 30;
+    //    style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
 
-        string text;
-        //string text = string.Format("HP : {0}", HP);
+    //    string text;
+    //    //string text = string.Format("HP : {0}", HP);
 
-        if (GPGSManager.GetInstance.IsAuthenticated())
-        {
-            if(Mul_Manager != null)
-            {
-                if(Mul_Manager.MyCharacter == null)
-                {
-                    text = string.Format("MultiGameManager Init Trouble");
-                }
-                else
-                {
-                    text = string.Format("EmemyName : {0}\nPlayerName : {1}\nMultyReady : {2}", Mul_Manager.MyCharacter.transform.name, Mul_Manager.MyCharacter.transform.name, Mul_Manager._multiplayerReady);
-                }
+    //    if (GPGSManager.GetInstance.IsAuthenticated())
+    //    {
+    //        if(Mul_Manager != null)
+    //        {
+    //            if(Mul_Manager.MyCharacter == null)
+    //            {
+    //                text = string.Format("MultiGameManager Init Trouble");
+    //            }
+    //            else
+    //            {
+    //                text = string.Format("EmemyName : {0}\nPlayerName : {1}\nMultyReady : {2}", Mul_Manager.MyCharacter.transform.name, Mul_Manager.MyCharacter.transform.name, Mul_Manager._multiplayerReady);
+    //            }
                 
-            }
-            else
-            {
-                text = string.Format("GPGS Manager Alive, But MultiManager is Trouble");
-            }
+    //        }
+    //        else
+    //        {
+    //            text = string.Format("GPGS Manager Alive, But MultiManager is Trouble");
+    //        }
             
-        }
-        else
-        {
-            text = string.Format("GPGS Manager Missing");
-        }
+    //    }
+    //    else
+    //    {
+    //        text = string.Format("GPGS Manager Missing");
+    //    }
         
 
-        GUI.Label(rect, text, style);
+    //    GUI.Label(rect, text, style);
+
+    //}
+
+    IEnumerator WaitSelectEnemyGun()
+    {
+
+        while (true)
+        {
+            if(SetEnemyGun())
+            {
+                yield break;
+            }
+
+            yield return new WaitForEndOfFrame();
+           
+        }
 
     }
 
-    public void SetWeaponSelectState(int WeaponNumber)
-    {
-        m_SelectGun = WeaponNumber;
+
+    public bool SetEnemyGun()
+    {       
+        m_SelectGun = Mul_Manager.GetPVPOpponentGunNumber(); 
         if (m_SelectGun != 100)
         {
             switch (m_SelectGun)
@@ -937,8 +965,10 @@ public class EnemyMove : MonoBehaviour {
                 default:
                     break;
             }
-
+            return true;
         }
+
+        return false;
     }
 
     public void SelectGun_Revolver()
@@ -948,7 +978,11 @@ public class EnemyMove : MonoBehaviour {
         Guns[0].SetActive(true);
         Guns[1].SetActive(false);
         Guns[2].SetActive(false);
-        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Client/Resource_Art/Character/00/Animation/Character_BaseModel_Revolver", typeof(RuntimeAnimatorController));
+        
+
+        string Path = "Client/Resource_Art/Character/0"+ CharIndex + "/Animation/Character_BaseModel_Revolver";
+
+        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(Path, typeof(RuntimeAnimatorController));
         //Mul_Manager.SendWeaponNumberMessage(0);
     }
 
@@ -959,7 +993,9 @@ public class EnemyMove : MonoBehaviour {
         Guns[0].SetActive(false);
         Guns[1].SetActive(true);
         Guns[2].SetActive(false);
-        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Client/Resource_Art/Character/00/Animation/Character_BaseModel_ShotGun", typeof(RuntimeAnimatorController));
+        
+        string Path = "Client/Resource_Art/Character/0" + CharIndex + "/Animation/Character_BaseModel_ShotGun";
+        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(Path, typeof(RuntimeAnimatorController));
         //Mul_Manager.SendWeaponNumberMessage(1);
     }
 
@@ -970,7 +1006,16 @@ public class EnemyMove : MonoBehaviour {
         Guns[0].SetActive(false);
         Guns[1].SetActive(false);
         Guns[2].SetActive(true);
-        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load("Client/Resource_Art/Character/00/Animation/Character_BaseModel_Musket", typeof(RuntimeAnimatorController));
+        
+        string Path = "Client/Resource_Art/Character/0" + CharIndex + "/Animation/Character_BaseModel_Musket";
 
+        anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(Path, typeof(RuntimeAnimatorController));
+
+    }
+
+    void OnDestroy()
+    {
+        m_SelectGun = 100; //static이니 파괴됬을때 초기화
+        m_EnemyUseGun = null;
     }
 }
