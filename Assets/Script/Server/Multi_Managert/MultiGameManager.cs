@@ -402,9 +402,6 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         }
 
 
-
-
-
         /* 
         * 유니티 엔진 사용 시 입력을 하지 않으면 모바일 장치의 화면이 어두워지다가 잠기게 되는데,
         * 그러면 플레이어는 잠김을 다시 풀어야 해서 불편합니다. 따라서 화면 잠금 방지 기능 추가는 필수적이고,
@@ -515,7 +512,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
 
         //string text = string.Format("HP : {0}", HP);
-        string text = string.Format("MyCharNum : {0}\nEnemyNum : {1}\nMultiReady : {2}", MyCharNumber, _opponentCharacterNumber, _multiplayerReady);
+        string text = string.Format("MyCharNum : {0}\nEnemyNum : {1}\nMultiReady : {2}", MyCharNumber, OppenentCharNumber, _multiplayerReady);
 
         GUI.Label(rect, text, style);
     }
@@ -1619,8 +1616,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                             NetText.text = "Net Info : 상대방이 연결을 해제했습니다.";
                         }
 
-                        PlayerName.text = "PlayerNick : " + MyPlayerNick + " / PlayerGun : " + MyGunNumber + " / PlayerChar : " + MyCharNumber;
-                        EnemyName.text = "OppentNick : " + OpponentPlayerNick + " / OppenentGun : " + OpponentGunNumber + " / OppenentChar : " + OppenentCharNumber;
+                        PlayerName.text = "PlayerNick : " + MyPlayerNick + " / PlayerGun : " + MyGunNumber + " / PlayerChar : " + GPGSManager.GetInstance.GetMyCharacterNumber();
+                        EnemyName.text = "OppentNick : " + OpponentPlayerNick + " / OppenentGun : " + OpponentGunNumber + " / OppenentChar : " + GPGSManager.GetInstance.GetPVPOpponentCharNumber();
 
                         //MyInfoText.text = "Player Info : " + MyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//MyCharacterPos.transform.position;
                         //EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;

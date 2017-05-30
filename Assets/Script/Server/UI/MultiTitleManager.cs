@@ -54,22 +54,22 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         Debug.Log("MultiGameModeNumber : " + NowMultiGameModeNumber);
     }
 
-    void OnGUI()
-    {
-        int w = Screen.width, h = Screen.height;
+    //void OnGUI()
+    //{
+    //    int w = Screen.width, h = Screen.height;
 
-        GUIStyle style = new GUIStyle();
+    //    GUIStyle style = new GUIStyle();
 
-        Rect rect = new Rect(w / 2, h - 500, 100, 100);
-        style.alignment = TextAnchor.UpperLeft;
-        style.fontSize = 30;
-        style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
+    //    Rect rect = new Rect(w / 2, h - 500, 100, 100);
+    //    style.alignment = TextAnchor.UpperLeft;
+    //    style.fontSize = 60;
+    //    style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
 
-        //string text = string.Format("HP : {0}", HP);
-        string text = string.Format("OpponentCharNumber : {0}\nOpponentCharNumber2 : {1}", OpponentCharNumber, GPGSManager.GetInstance.GetPVPOpponentCharNumber());
+    //    //string text = string.Format("HP : {0}", HP);
+    //    string text = string.Format("OpponentCharNumber : {0}\nOpponentCharNumber2 : {1}", OpponentCharNumber, GPGSManager.GetInstance.GetPVPOpponentCharNumber());
 
-        GUI.Label(rect, text, style);
-    }
+    //    GUI.Label(rect, text, style);
+    //}
 
     // 현재 자신이 선택한 캐릭터의 정보를 보내준다.
     public void SendCharacterNumber(int number = 100)

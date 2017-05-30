@@ -122,13 +122,13 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
     // 현재 나의 캐릭터 정보를 가지고 있는다.
     // 기본값은 100이다.
-    private int MyCharacterNumber;
+    private int MyCharacterNumber = 100;
 
     // 적의 캐릭터 정보를 가지고 있는다.
     // PVP용으로써 서바이벌 모드에선 다른 로직을...
     // 기본값은 100이다.
     private Dictionary<string, int> SurvivalOpponentCharNumbers;
-    private int OppenentCharNumber;
+    private int OppenentCharNumber = 100;
 
     // 난수 발생시 동기화를 위한 변수
     // 맨 처음의 발생되는 리스폰 난수는 초기화할때 해준다.
