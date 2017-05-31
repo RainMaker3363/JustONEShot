@@ -54,11 +54,13 @@ public class SceneInit : MonoBehaviour {
         }
 
 #else
+        GPGSManager.GetInstance.GetStartRandomSeed();
+
         if (m_Player == null)
         {
            // Mul_Manager.SendCharacterNumberMessage(Mul_Manager.GetMyCharNumber());
 
-            m_Player = Instantiate(Player[Mul_Manager.GetMyCharNumber()]);
+            m_Player = Instantiate(Player[GPGSManager.GetInstance.GetMyCharacterNumber()]);
             m_Player.transform.position = PlayerStartPos.position;
             m_Player.name = "PlayerCharacter";
             m_Player.transform.SetParent(GamePlayObj.transform);
@@ -66,17 +68,17 @@ public class SceneInit : MonoBehaviour {
         }
 
 
-        while (true)
-        {       
-            if (Mul_Manager.GetPVPOpponentCharNumber() != 100)
-            {
-                break;
-            }
-        }
+        //while (true)
+        //{       
+        //    if (Mul_Manager.GetPVPOpponentCharNumber() != 100)
+        //    {
+        //        break;
+        //    }
+        //}
         //Debug.Log(Mul_Manager.GetPVPOpponentCharNumber());
-        if (m_Enemy == null && Mul_Manager.GetPVPOpponentCharNumber() != 100)
+        if (m_Enemy == null)// && Mul_Manager.GetPVPOpponentCharNumber() != 100)
         {
-            m_Enemy = Instantiate(Enemy[Mul_Manager.GetPVPOpponentCharNumber()]);
+            m_Enemy = Instantiate(Enemy[GPGSManager.GetInstance.GetPVPOpponentCharNumber()]);
 
             m_Enemy.transform.position = EnemyStartPos.position;
             m_Enemy.name = "EnemyCharacter";

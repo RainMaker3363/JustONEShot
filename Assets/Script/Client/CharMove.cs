@@ -1112,15 +1112,9 @@ public class CharMove : MonoBehaviour {
         m_GunState = LSD.GunState.Revolver;
         m_UseGun = new Gun_Revolver();
         Revlolver.SetActive(true);
-        string Path = "Client/Resource_Art/Character/0" + CharIndex + "/Animation/Character_BaseModel_Revolver";
+        string Path = "Client/Resource_Art/Character/0" + CharIndex.ToString() + "/Animation/Character_BaseModel_Revolver";
         anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(Path, typeof(RuntimeAnimatorController));
-        m_GunSelect = true;
-
-        if (GPGSManager.GetInstance.IsAuthenticated())
-        {
-            Mul_Manager.SendWeaponNumberMessage(0);
-            Mul_Manager.SendMultiSelectStateMessage(true);
-        }
+        m_GunSelect = true;      
     }
 
     public void SelectGun_ShotGun()
@@ -1128,16 +1122,12 @@ public class CharMove : MonoBehaviour {
         m_GunState = LSD.GunState.ShotGun;
         m_UseGun = new Gun_ShotGun();
         ShotGun.SetActive(true);
-        string Path = "Client/Resource_Art/Character/0" + CharIndex + "/Animation/Character_BaseModel_ShotGun";
+        string Path = "Client/Resource_Art/Character/0" + CharIndex.ToString() + "/Animation/Character_BaseModel_ShotGun";
 
         anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(Path, typeof(RuntimeAnimatorController));
         m_GunSelect = true;
 
-        if (GPGSManager.GetInstance.IsAuthenticated())
-        {
-            Mul_Manager.SendWeaponNumberMessage(1);
-            Mul_Manager.SendMultiSelectStateMessage(true);
-        }
+      
     }
 
     public void SelectGun_Musket()
@@ -1146,15 +1136,10 @@ public class CharMove : MonoBehaviour {
         m_UseGun = new Gun_Musket();
         Musket.SetActive(true);
 
-        string Path = "Client/Resource_Art/Character/0" + CharIndex + "/Animation/Character_BaseModel_Musket";
+        string Path = "Client/Resource_Art/Character/0" + CharIndex.ToString() + "/Animation/Character_BaseModel_Musket";
         anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(Path, typeof(RuntimeAnimatorController));
         m_GunSelect = true;
 
-        if (GPGSManager.GetInstance.IsAuthenticated())
-        {
-            Mul_Manager.SendWeaponNumberMessage(2);
-            Mul_Manager.SendMultiSelectStateMessage(true);
-        }
     }
 
 

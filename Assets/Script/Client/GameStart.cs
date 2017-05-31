@@ -28,21 +28,21 @@ public class GameStart : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
-        //Char = GamePlayObj.transform.Find("PlayerCharacter").GetComponent<CharMove>();
-        //Enemy = GamePlayObj.transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
+        Char = GamePlayObj.transform.Find("PlayerCharacter").GetComponent<CharMove>();
+        Enemy = GamePlayObj.transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
         WaitOverTime = Time.time + WaitTime;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Char == null)
+        if (Char == null)
         {
             Char = GamePlayObj.transform.Find("PlayerCharacter").GetComponent<CharMove>();
         }
 
 
-        if(Enemy == null)
+        if (Enemy == null)
         {
             Enemy = GamePlayObj.transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
         }
@@ -59,6 +59,12 @@ public class GameStart : MonoBehaviour {
                             {
                                 Selectanim.SetTrigger("Revolver");
                                 Char.SelectGun_Revolver();
+                                if (GPGSManager.GetInstance.IsAuthenticated())
+                                {
+                                    Mul_Manager.SendWeaponNumberMessage(0);
+                                    Mul_Manager.SendMultiSelectStateMessage(true);
+                                }
+
                                 Select.SetActive(false);
 
                                 //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
@@ -68,6 +74,11 @@ public class GameStart : MonoBehaviour {
                             {
                                 Selectanim.SetTrigger("ShotGun");
                                 Char.SelectGun_ShotGun();
+                                if (GPGSManager.GetInstance.IsAuthenticated())
+                                {
+                                    Mul_Manager.SendWeaponNumberMessage(1);
+                                    Mul_Manager.SendMultiSelectStateMessage(true);
+                                }
                                 Select.SetActive(false);
                                 //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
                                 break;
@@ -76,6 +87,11 @@ public class GameStart : MonoBehaviour {
                             {
                                 Selectanim.SetTrigger("Musket");
                                 Char.SelectGun_Musket();
+                                if (GPGSManager.GetInstance.IsAuthenticated())
+                                {
+                                    Mul_Manager.SendWeaponNumberMessage(2);
+                                    Mul_Manager.SendMultiSelectStateMessage(true);
+                                }
                                 Select.SetActive(false);
                                 //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
                                 break;
@@ -99,6 +115,11 @@ public class GameStart : MonoBehaviour {
                         {
                             Selectanim.SetTrigger("Revolver");
                             Char.SelectGun_Revolver();
+                            if (GPGSManager.GetInstance.IsAuthenticated())
+                            {
+                                Mul_Manager.SendWeaponNumberMessage(0);
+                                Mul_Manager.SendMultiSelectStateMessage(true);
+                            }
                             Select.SetActive(false);
                             //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
                             break;
@@ -107,6 +128,11 @@ public class GameStart : MonoBehaviour {
                         {
                             Selectanim.SetTrigger("ShotGun");
                             Char.SelectGun_ShotGun();
+                            if (GPGSManager.GetInstance.IsAuthenticated())
+                            {
+                                Mul_Manager.SendWeaponNumberMessage(1);
+                                Mul_Manager.SendMultiSelectStateMessage(true);
+                            }
                             Select.SetActive(false);
                             //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
                             break;
@@ -115,6 +141,11 @@ public class GameStart : MonoBehaviour {
                         {
                             Selectanim.SetTrigger("Musket");
                             Char.SelectGun_Musket();
+                            if (GPGSManager.GetInstance.IsAuthenticated())
+                            {
+                                Mul_Manager.SendWeaponNumberMessage(2);
+                                Mul_Manager.SendMultiSelectStateMessage(true);
+                            }
                             Select.SetActive(false);
                             //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
                             break;

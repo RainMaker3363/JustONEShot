@@ -512,7 +512,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
 
         //string text = string.Format("HP : {0}", HP);
-        string text = string.Format("MyCharNum : {0}\nEnemyNum : {1}\nMultiReady : {2}", MyCharNumber, OppenentCharNumber, _multiplayerReady);
+        string text = string.Format("MyCharNum : {0}\nEnemyNum : {1}\nMultiReady : {2}\nEnemyWeapon : {3}\nMyWeapon : {4}\nSelect : {5}\nConfirm : {6}", MyCharNumber, OppenentCharNumber, _multiplayerReady
+            , OpponentGunNumber, MyGunNumber, SelectSignal, GPGSManager.GetInstance.IsAuthenticated());
 
         GUI.Label(rect, text, style);
     }
@@ -897,7 +898,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     {
                         OpponentGunNumber = 100;
                     }
-                    else if (WeaponNumber > 100)
+                    else if (WeaponNumber >= 100)
                     {
                         OpponentGunNumber = 100;
                     }

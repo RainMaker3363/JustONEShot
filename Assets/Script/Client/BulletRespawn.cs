@@ -50,15 +50,15 @@ public class BulletRespawn : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if(P_CharPos == null)
-        {
-            P_CharPos = GamePlayObj.transform.Find("PlayerCharacter");
-        }
+        //if(P_CharPos == null)
+        //{
+        //    P_CharPos = GamePlayObj.transform.Find("PlayerCharacter");
+        //}
 
-        if (E_CharPos == null)
-        {
-            E_CharPos = GamePlayObj.transform.Find("EnemyCharacter");
-        }
+        //if (E_CharPos == null)
+        //{
+        //    E_CharPos = GamePlayObj.transform.Find("EnemyCharacter");
+        //}
 
         if (DeathZone.position.y+0.5f>transform.position.y)
         {
@@ -74,7 +74,7 @@ public class BulletRespawn : MonoBehaviour {
             gameObject.SetActive(false);
         }
 
-        if (CreateAble &&(P_CharPos!=null&& E_CharPos != null)) //생성이 가능할경우
+        if (CreateAble)// &&(P_CharPos!=null&& E_CharPos != null)) //생성이 가능할경우
         {
             P_Distance = Vector3.Distance(P_CharPos.position, this.transform.position);
             E_Distance = Vector3.Distance(E_CharPos.position, this.transform.position);

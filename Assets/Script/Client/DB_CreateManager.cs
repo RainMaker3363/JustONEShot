@@ -10,7 +10,7 @@ public class DB_CreateManager : MonoBehaviour {
     static DB_CreateManager Manager;
 
     bool BulletCreate = true;   //생성이 필요한경우
-    public bool Request = true;    //서버에 난수생성 요청 필요 여부
+    public bool Request = false;    //서버에 난수생성 요청 필요 여부
     int ServerIndex = -1;    //서버로 받을 난수
     int CreateIndex = -1;    //총알이 생성된 인덱스 
 
