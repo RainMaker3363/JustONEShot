@@ -7,13 +7,14 @@ public class DeathZone : MonoBehaviour {
 
     [SerializeField]
     float[] Level;
-
+    [SerializeField]
     int LevelIndex=0;
 
     public float DealyTime; 
     public float MoveTime; //데스존이 올라오는 시간
 
     float MoveSpeed; //데스존 올라오는 속도
+    float DownMoveSpeed; //데스존 올라오는 속도
 
     public int Damage;  //데스존 데미지
     public float DamageDealay;  //데스존 데미지 딜레이
@@ -27,17 +28,28 @@ public class DeathZone : MonoBehaviour {
     public GameObject UI_Main;
 
     public bool Reset;
+    bool ResetComplete;
 
+    IEnumerator coroutine;
 
     // Use this for initialization
     void Start () {
-        StartCoroutine(DeathZoneMove());
+        coroutine = DeathZoneMove();
+        StartCoroutine(coroutine);
         DeathZoneInit = transform.position.y;
         Reset = false;
+        ResetComplete = true;
          }
     void Update()
     {
-        
+        if(Reset && ResetComplete)
+        {
+            
+            ResetComplete = false;
+            StopCoroutine(coroutine);
+            //UI_DeathZoneUp.SetActive(false);
+            StartCoroutine(ZombieDeathZoneReset());
+        }
     }
     IEnumerator DeathZoneMove()
     {
@@ -52,19 +64,19 @@ public class DeathZone : MonoBehaviour {
 
                     MoveSpeed = (Level[LevelIndex] - transform.position.y) / (MoveTime * 100);
                     Debug.Log("MoveSpeed" + MoveSpeed);
-                    while (Level[LevelIndex] > transform.position.y)
+                    while (Level[LevelIndex] > transform.position.y )
                     {
                         Debug.Log("UP");
                         if (Mul_GameManger.GetEndGameState())  //게임이 끝났을경우
                         {
                             yield break;
                         }
-                        if (Reset)
-                        {
-                            Reset = false;
-                            StartCoroutine(ZombieDeathZoneReset());
-                            yield break;
-                        }
+                        //if (Reset)
+                        //{
+                        //    Reset = false;
+                        //    StartCoroutine(ZombieDeathZoneReset());
+                        //    yield break;
+                        //}
 
                         if (!Mul_GameManger.GetDeadEyeChecker() || DeadEyePlaying)//데드아이 발동중엔 안올라옴
                         {
@@ -76,42 +88,46 @@ public class DeathZone : MonoBehaviour {
                     LevelIndex++;
                     UI_DeathZoneUp.SetActive(false);
                 }
-                if (Reset)
-                {
-                    Reset = false;
-                    StartCoroutine(ZombieDeathZoneReset());
-                    yield break;
-                }
+                //if (Reset)
+                //{
+                //    Reset = false;
+                //    StartCoroutine(ZombieDeathZoneReset());
+                //    yield break;
+                //}
                 yield return new WaitForEndOfFrame();
             }
-            if (Reset)
-            {
-                Reset = false;
-                StartCoroutine(ZombieDeathZoneReset());
-                yield break;
-            }
+            //if (Reset)
+            //{
+            //    Reset = false;
+            //    StartCoroutine(ZombieDeathZoneReset());
+            //    yield break;
+            //}
             yield return new WaitForEndOfFrame();
         }
+        
     }
 
     IEnumerator ZombieDeathZoneReset()
     {
        // StopCoroutine(DeathZoneMove());
         UI_DeathZoneUp.SetActive(false);
-        MoveSpeed = (DeathZoneInit - transform.position.y) / (MoveTime * 100);
-        Debug.Log("MoveSpeed" + MoveSpeed);
+        DownMoveSpeed = (DeathZoneInit - transform.position.y) / (MoveTime * 100);
+        Debug.Log("DownMoveSpeed" + DownMoveSpeed);
         while (DeathZoneInit < transform.position.y)
         {
             Debug.Log("Down");
             
-            transform.position = new Vector3(transform.position.x, transform.position.y + MoveSpeed, transform.position.z);
+            transform.position = new Vector3(transform.position.x, transform.position.y + DownMoveSpeed, transform.position.z);
 
             yield return new WaitForSeconds(0.01f);
         }
         
         LevelIndex = 0;
-       
-        StartCoroutine(DeathZoneMove());
-        yield break;
+
+        Reset = false;
+        ResetComplete = true;
+
+        StartCoroutine(coroutine);
+       // yield break;
     }
 }

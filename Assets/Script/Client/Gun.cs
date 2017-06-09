@@ -14,6 +14,8 @@ abstract public class UseGun
     public int Damage;      //총의 데미지
     public Vector3 Sight;   //총에 따른 카메라위치
     public int GetBulletQuantity =1;
+    public float ReloadSpeed = 1;
+    public int DamageUpgrade = 0;
 
     abstract public void UseBullet();
     public void ReloadBullet()  //탄창이 찼을경우는 charmove에서 체크중
@@ -470,9 +472,17 @@ public class Gun : MonoBehaviour
 
     void CharRollEnd()
     {
-        anim.SetBool("Rolling", false);
+         anim.SetBool("Rolling", false);
     }
 
+    void CharInvincibilityStart()
+    {
+        CharMove.Invincibility = true;        
+    }
+    void CharInvincibilityEnd()
+    {
+        CharMove.Invincibility = false;
+    }
     void CharRollEffectOn()
     {
         CharRollEffect.SetActive(true);
@@ -481,6 +491,15 @@ public class Gun : MonoBehaviour
     void SetRollSpeed(float speed) //캐릭터 구르기 속도 조절
     {
         CharMove.m_RollSpeed =10*speed;      
+    }
+
+    void SetReloadSpeed() //캐릭터 재장전 속도 조절
+    {
+        anim.speed = CharMove.m_UseGun.ReloadSpeed;
+    }
+    void SetReloadEnd()
+    {
+        anim.speed = 1;
     }
 
     void GunInit()

@@ -113,9 +113,12 @@ public class CharMove : MonoBehaviour {
     public static UseGun m_UseGun;
 
     //캐릭터 stat
-    UseChar CharStat;
+    public static UseChar CharStat;
 
     bool StaminaRecovery = true;
+
+    public static bool Invincibility = false;
+
 
     //float Stamina = 1000;   
     //[SerializeField]
@@ -680,7 +683,8 @@ public class CharMove : MonoBehaviour {
         {
             if (CharStat.Stamina > 400)
             {
-                CharStat.Stamina -= 400;               
+                CharStat.Stamina -= 400;
+                PlayerMove();
                 anim.SetBool("Rolling", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
                 m_PlayerState = LSD.PlayerState.ROLL;
                 StaminaCheck();
@@ -694,31 +698,34 @@ public class CharMove : MonoBehaviour {
 
     public void Damaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
     {
-        Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
-        DamageVec.y = 0; //위아래로는 움직이지 않게합니다
-        transform.rotation = Quaternion.LookRotation(DamageVec);
-
-        m_PlayerState = LSD.PlayerState.DAMAGE;
-
-        CharStat.HP -= Damage;
-  
-        HP_bar.fillAmount = (float)CharStat.HP / CharStat.MaxHP;
-
-        if (!DeadCheck())
+        if (!Invincibility)
         {
-            anim.SetTrigger("Damage");
-            anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
-            camAni.SetTrigger("Damage");
-           
-        }
-        
+            Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
+            DamageVec.y = 0; //위아래로는 움직이지 않게합니다
+            transform.rotation = Quaternion.LookRotation(DamageVec);
 
-        if (GPGSManager.GetInstance.IsAuthenticated())
-        {
-            Mul_Manager.SendMyPositionUpdate();
-            Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
-            Mul_Manager.SendHPStateMessage(CharStat.HP);
-            Mul_Manager.SendShootVectorMessage(DamageVec);
+            m_PlayerState = LSD.PlayerState.DAMAGE;
+
+            CharStat.HP -= Damage;
+
+            HP_bar.fillAmount = (float)CharStat.HP / CharStat.MaxHP;
+
+            if (!DeadCheck())
+            {
+                anim.SetTrigger("Damage");
+                anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+                camAni.SetTrigger("Damage");
+
+            }
+
+
+            if (GPGSManager.GetInstance.IsAuthenticated())
+            {
+                Mul_Manager.SendMyPositionUpdate();
+                Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
+                Mul_Manager.SendHPStateMessage(CharStat.HP);
+                Mul_Manager.SendShootVectorMessage(DamageVec);
+            }
         }
         
     }
@@ -852,7 +859,7 @@ public class CharMove : MonoBehaviour {
 
     void DeathZoneCheck()
     {
-        if(DeathZone.position.y+0.02>=transform.position.y )
+        if (DeathZone.position.y + 0.02 >= transform.position.y)
         {
             if (!DeathZoneDealay)
             {

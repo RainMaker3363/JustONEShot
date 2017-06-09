@@ -39,6 +39,24 @@ public class ZombieCreateManager : MonoBehaviour {
 	void Update () {
         UI_Stage.text = Stage.ToString() + " STAGE " + ZombieCount.ToString() + " ALIVE";
 
+        if(LevelUP_UI.activeSelf)
+        {
+            if (CharMove.CharStat.HP >= CharMove.CharStat.MaxHP)    //max로 찍었으면 추후찍지못하게 합니다
+            {
+                LevelUP_UI.transform.Find("HP_Button").Find("BackWhite").gameObject.SetActive(false);
+                LevelUP_UI.transform.Find("HP_Button").Find("state").gameObject.SetActive(false);
+                LevelUP_UI.transform.Find("HP_Button").Find("Max").gameObject.SetActive(true);
+                LevelUP_UI.transform.Find("HP_Button").GetComponent<Button>().enabled = false;
+            }
+            else
+            {
+                LevelUP_UI.transform.Find("HP_Button").Find("BackWhite").gameObject.SetActive(true);
+                LevelUP_UI.transform.Find("HP_Button").Find("state").gameObject.SetActive(true);
+                LevelUP_UI.transform.Find("HP_Button").Find("Max").gameObject.SetActive(false);
+                LevelUP_UI.transform.Find("HP_Button").GetComponent<Button>().enabled = true;
+                LevelUP_UI.transform.Find("HP_Button").Find("state").GetComponent<Image>().fillAmount = (float)CharMove.CharStat.HP / (float)CharMove.CharStat.MaxHP;
+            }
+        }
     }
 
     void OnEnable()
@@ -51,14 +69,31 @@ public class ZombieCreateManager : MonoBehaviour {
         LevelUP_UI.transform.Find("Bullet_Button").GetComponent<Button>().onClick.AddListener(BulletUP);
         LevelUP_UI.transform.Find("BulletMax_Button").GetComponent<Button>().onClick.AddListener(BulletMaxUP);
         LevelUP_UI.transform.Find("HP_Button").GetComponent<Button>().onClick.AddListener(HPUP);
+        LevelUP_UI.transform.Find("Damage_Button").GetComponent<Button>().onClick.AddListener(DamageUP);
+        LevelUP_UI.transform.Find("Reload_Button").GetComponent<Button>().onClick.AddListener(ReloadUP);
+        
         LevelUPStatSelect = true;
 
+      
         StartCoroutine(StageSetup());
     }
 
     void BulletUP()
     {
         CharMove.m_UseGun.GetBulletQuantity++;
+        if (CharMove.m_UseGun.GetBulletQuantity >= 6)    //max로 찍었으면 추후찍지못하게 합니다
+        {
+            LevelUP_UI.transform.Find("Bullet_Button").Find("BackWhite").gameObject.SetActive(false);
+            LevelUP_UI.transform.Find("Bullet_Button").Find("state").gameObject.SetActive(false);
+            LevelUP_UI.transform.Find("Bullet_Button").Find("Max").gameObject.SetActive(true);
+            LevelUP_UI.transform.Find("Bullet_Button").GetComponent<Button>().enabled = false;
+        }
+        else
+        {
+            //LevelUP_UI.transform.Find("Bullet_Button").Find("BackWhite").gameObject.SetActive(false);
+            LevelUP_UI.transform.Find("Bullet_Button").Find("state").GetComponent<Image>().fillAmount = CharMove.m_UseGun.GetBulletQuantity / 6.0f;
+        }
+
         LevelUP_UI.SetActive(false);
         Main_UI.SetActive(true);
         LevelUPStatSelect = true;
@@ -67,6 +102,19 @@ public class ZombieCreateManager : MonoBehaviour {
     void BulletMaxUP()
     {
         CharMove.m_UseGun.MaxBullet_Hand++;
+        if (CharMove.m_UseGun.MaxBullet_Hand >= 20f)    //max로 찍었으면 추후찍지못하게 합니다
+        {
+            LevelUP_UI.transform.Find("BulletMax_Button").Find("BackWhite").gameObject.SetActive(false);
+            LevelUP_UI.transform.Find("BulletMax_Button").Find("state").gameObject.SetActive(false);
+            LevelUP_UI.transform.Find("BulletMax_Button").Find("Max").gameObject.SetActive(true);
+            LevelUP_UI.transform.Find("BulletMax_Button").GetComponent<Button>().enabled = false;
+        }
+        else
+        {
+           // LevelUP_UI.transform.Find("BulletMax_Button").Find("BackWhite").gameObject.SetActive(false);
+            LevelUP_UI.transform.Find("BulletMax_Button").Find("state").GetComponent<Image>().fillAmount = (CharMove.m_UseGun.MaxBullet_Hand-10) / 20.0f;
+        }
+
         LevelUP_UI.SetActive(false);
         Main_UI.SetActive(true);
         LevelUPStatSelect = true;
@@ -74,13 +122,59 @@ public class ZombieCreateManager : MonoBehaviour {
     }
     void HPUP()
     {
-        GameObject.Find("PlayerCharacter").GetComponent<CharMove>().HPRecovery(10);
+        GameObject.Find("PlayerCharacter").GetComponent<CharMove>().HPRecovery(30);
+
         LevelUP_UI.SetActive(false);
         Main_UI.SetActive(true);
         LevelUPStatSelect = true;
         Time.timeScale = 1;
     }
 
+    void DamageUP()
+    {
+        CharMove.m_UseGun.Damage += 5;
+        CharMove.m_UseGun.DamageUpgrade++;
+        if (CharMove.m_UseGun.DamageUpgrade >= 5)    //max로 찍었으면 추후찍지못하게 합니다
+        {
+            LevelUP_UI.transform.Find("Damage_Button").Find("BackWhite").gameObject.SetActive(false);
+            LevelUP_UI.transform.Find("Damage_Button").Find("state").gameObject.SetActive(false);
+            LevelUP_UI.transform.Find("Damage_Button").Find("Max").gameObject.SetActive(true);
+            LevelUP_UI.transform.Find("Damage_Button").GetComponent<Button>().enabled = false;
+        }
+        else
+        {
+            //LevelUP_UI.transform.Find("Damage_Button").Find("BackWhite").gameObject.SetActive(false);
+            LevelUP_UI.transform.Find("Damage_Button").Find("state").GetComponent<Image>().fillAmount = CharMove.m_UseGun.DamageUpgrade / 5.0f;
+        }
+
+        LevelUP_UI.SetActive(false);
+        Main_UI.SetActive(true);
+        LevelUPStatSelect = true;
+        Time.timeScale = 1;
+    }
+    void ReloadUP()
+    {
+        CharMove.m_UseGun.ReloadSpeed += 0.2f;
+
+        if (CharMove.m_UseGun.ReloadSpeed >= 2.0f)    //max로 찍었으면 추후찍지못하게 합니다
+        {
+            LevelUP_UI.transform.Find("Reload_Button").Find("BackWhite").gameObject.SetActive(false);
+            LevelUP_UI.transform.Find("Reload_Button").Find("state").gameObject.SetActive(false);
+            LevelUP_UI.transform.Find("Reload_Button").Find("Max").gameObject.SetActive(true);
+            LevelUP_UI.transform.Find("Reload_Button").GetComponent<Button>().enabled = false;
+        }
+        else
+        {
+            //LevelUP_UI.transform.Find("Reload_Button").Find("BackWhite").gameObject.SetActive(false);
+            LevelUP_UI.transform.Find("Reload_Button").Find("state").GetComponent<Image>().fillAmount = (CharMove.m_UseGun.ReloadSpeed - 1);
+        }
+
+        LevelUP_UI.SetActive(false);
+        Main_UI.SetActive(true);
+        LevelUPStatSelect = true;
+        Time.timeScale = 1;
+        
+    }
     void ZombieCreate()
     {
         for (int i = 0; i < 4; i++)

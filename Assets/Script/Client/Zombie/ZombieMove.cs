@@ -37,6 +37,7 @@ public class ZombieMove : MonoBehaviour {
 
     public bool Die = false;  //에디터 테스트용
 
+    public SkinnedMeshRenderer shader;
 
     // Use this for initialization
     void Start () {
@@ -46,11 +47,15 @@ public class ZombieMove : MonoBehaviour {
         anim = gameObject.GetComponent<Animator>();
         MotionPlay = false;
         AttackDealy = 5;
-        StartCoroutine(ZombieMoveSystem(m_MoveDealy));
+        StartCoroutine(ZombieMoveSystem(m_MoveDealy));       
     }
 	
 	// Update is called once per frame
 	void Update () {
+#if UNITY_EDITOR    //유니티에디터에서 실행시킬경우 이쪽코드를 실행
+        if (Input.GetKeyDown(KeyCode.Space))
+            Die = true;
+#endif
         Distance = Vector3.Distance(transform.position, PlayerPos.position);
         if (!MotionPlay)
         {
@@ -144,13 +149,14 @@ public class ZombieMove : MonoBehaviour {
         {
             Z_State = ZombieState.DAMAGE;
             anim.SetTrigger("Damage");
+            StartCoroutine(ZombieDamageEffect());
         }
         NvAgent.Stop();
         MotionPlay = true;
     }
 
     public void MotionEnd()
-    {
+    {       
         MotionPlay = false;
     }
 
@@ -162,6 +168,14 @@ public class ZombieMove : MonoBehaviour {
             NvAgent.SetDestination(PlayerPos.position);
         }
 
+        yield return null;
+    }
+
+    IEnumerator ZombieDamageEffect()
+    {
+        shader.material.SetFloat("_DissolveEdgeRange", 1);
+        yield return new WaitForSeconds(0.1f);
+        shader.material.SetFloat("_DissolveEdgeRange", 0);
         yield return null;
     }
 

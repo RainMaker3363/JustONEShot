@@ -15,6 +15,7 @@ public class ZombiSceneInit : MonoBehaviour
     GameObject m_Player;
     
     public GameObject GamePlayObj;  //게임에 필요한것들은 이 오브젝트 하위에 생성됩니다
+    public GameObject RainEffect;   //빗방울 떨어지는 이펙트, 캐릭터에 붙어야합니다
 
     // Use this for initialization
     void Awake()
@@ -39,11 +40,12 @@ public class ZombiSceneInit : MonoBehaviour
             else
                 m_Player = Instantiate(Player[1]);   //에디터상에서는 고정
 
+            RainEffect.transform.SetParent(m_Player.transform);
             m_Player.transform.position = PlayerStartPos.position;
             m_Player.name = "PlayerCharacter";
             m_Player.transform.SetParent(GamePlayObj.transform);
         }
-    
+
 
 #else
         GPGSManager.GetInstance.GetStartRandomSeed();
@@ -53,6 +55,7 @@ public class ZombiSceneInit : MonoBehaviour
            // Mul_Manager.SendCharacterNumberMessage(Mul_Manager.GetMyCharNumber());
 
             m_Player = Instantiate(Player[GPGSManager.GetInstance.GetMyCharacterNumber()]);
+            RainEffect.transform.SetParent(m_Player.transform);
             m_Player.transform.position = PlayerStartPos.position;
             m_Player.name = "PlayerCharacter";
             m_Player.transform.SetParent(GamePlayObj.transform);
