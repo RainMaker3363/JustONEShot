@@ -100,21 +100,25 @@ public class EnemyMove : MonoBehaviour {
     // 메시지 순서를 알아낼 변수
     private int _lastMessageNum;
 
-   
+
 
     void Awake()
     {
         m_GunState = LSD.GunState.Revolver; //현재는 고정 추후 받아오게함
+        if (GPGSManager.GetInstance.IsAuthenticated())  //접속중일때
+        {
+            Mul_Manager = GameObject.Find("MultiGameMananger").GetComponent<MultiGameManager>();
+            CharIndex = Mul_Manager.GetPVPOpponentCharNumber();
+        }
     }
 
     // Use this for initialization
     void Start()
     {
         m_CharCtr = GetComponent<CharacterController>();
+
         if (GPGSManager.GetInstance.IsAuthenticated())  //접속중일때
         {
-            Mul_Manager = GameObject.Find("MultiGameMananger").GetComponent<MultiGameManager>();
-            CharIndex = Mul_Manager.GetPVPOpponentCharNumber();
             StartCoroutine(WaitSelectEnemyGun());
         }
 

@@ -16,6 +16,7 @@ public class Bullet : MonoBehaviour {
 
     public int Damage;
 
+    public bool Penetrate = false;
 
     RaycastHit HitObj;
 
@@ -53,8 +54,14 @@ public class Bullet : MonoBehaviour {
             col.gameObject.GetComponent<EnemyMove>().Damaged(Damage, transform.forward);
             // m_Distance = 0;
         }
+        if (col.gameObject.tag == "Zombie")
+        {
+            col.gameObject.GetComponent<ZombieMove>().ZombieDamage(Damage);
+            // m_Distance = 0;
+        }
 
-        m_Distance = 0;
+        if(!Penetrate || col.gameObject.tag == "Untagged")
+            m_Distance = 0;
     }
     void FixedUpdate()
     {

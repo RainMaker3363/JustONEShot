@@ -13,6 +13,7 @@ abstract public class UseGun
     public int Bullet_Use;      //소모 탄알
     public int Damage;      //총의 데미지
     public Vector3 Sight;   //총에 따른 카메라위치
+    public int GetBulletQuantity =1;
 
     abstract public void UseBullet();
     public void ReloadBullet()  //탄창이 찼을경우는 charmove에서 체크중
@@ -25,7 +26,11 @@ abstract public class UseGun
     {
         if (MaxBullet_Hand > Bullet_Hand)
         {
-            Bullet_Hand++;
+            Bullet_Hand+= GetBulletQuantity;
+            if(MaxBullet_Hand< Bullet_Hand)
+            {
+                Bullet_Hand = MaxBullet_Hand;
+            }
         }
     }
 
@@ -152,6 +157,8 @@ public class Gun : MonoBehaviour
     public GameObject CharRollEffect;
 
     public GameObject BulletObj;
+ 
+    public TMPro.TextMeshProUGUI UI_HandsBulletsText;
 
     void Awake()
     {
@@ -199,12 +206,14 @@ public class Gun : MonoBehaviour
     {
         if (gameObject.tag.Equals("Player"))
         {
+           
             if (CharMove.m_UseGun.Bullet_Hand > m_HandsBulletIndex)
             {
-                UI_HandsBullets[m_HandsBulletIndex].color = Color.white;
+                //UI_HandsBullets[m_HandsBulletIndex].color = Color.white;
                 m_HandsBulletIndex++;
                 
             }
+            UI_HandsBulletsText.text = CharMove.m_UseGun.Bullet_Hand.ToString()+"/" + CharMove.m_UseGun.MaxBullet_Hand.ToString();
         }
 
         if (UI_Sillinder != null)
@@ -279,6 +288,7 @@ public class Gun : MonoBehaviour
                                         Bullets[m_BulletIndex].Damage = EnemyMove.m_EnemyUseGun.Damage;
                                         Bullets[m_BulletIndex].m_Movespeed = 60;
                                         Bullets[m_BulletIndex].m_Distance += 500;
+                                        Bullets[m_BulletIndex].Penetrate = true;
                                         break;
                                     }
 
@@ -446,7 +456,7 @@ public class Gun : MonoBehaviour
             }
 
 
-            UI_HandsBullets[m_HandsBulletIndex].color = Color.black;
+           // UI_HandsBullets[m_HandsBulletIndex].color = Color.black;
 
             Debug.Log("m_HandsBulletIndex : " + m_HandsBulletIndex);
             CharMove.m_UseGun.ReloadBullet();
@@ -487,6 +497,7 @@ public class Gun : MonoBehaviour
                     UI_Sillinder = GamePlayObj.transform.Find("UI_Main/BlackSillnder").gameObject;
                     UI_ShotGun = GamePlayObj.transform.Find("UI_Main/ShotGun_UI").gameObject;
                     UI_Musket = GamePlayObj.transform.Find("UI_Main/Musket_UI").gameObject;
+                    UI_HandsBulletsText = GamePlayObj.transform.Find("UI_Main/BulletText_UI").GetComponent<TMPro.TextMeshProUGUI>();
 
                     UI_SillinderBullets = new GameObject[6];
                     for(int i =0; i<6;i++)

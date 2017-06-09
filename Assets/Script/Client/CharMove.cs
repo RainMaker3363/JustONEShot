@@ -188,14 +188,14 @@ public class CharMove : MonoBehaviour {
     void Awake()
     {
         m_GunState = LSD.GunState.ShotGun; //현재는 고정 추후 받아오게함
-        
+        CharInit();
         gameObject.SetActive(false);
     }
 
     // Use this for initialization
     void Start() {
 
-        CharInit();
+        
         m_CharCtr = GetComponent<CharacterController>();
 
         //카메라 기본위치 설정
@@ -783,6 +783,7 @@ public class CharMove : MonoBehaviour {
             UI_Main.SetActive(false);
             UI_GameOver.SetActive(true);
             cam.SetActive(false);
+            gameObject.GetComponent<CharacterController>().enabled = false;
 
             //EnemyPos.gameObject.SetActive(false);
             Result.SetTrigger("Lose");
@@ -862,6 +863,16 @@ public class CharMove : MonoBehaviour {
                 StartCoroutine(DeathZoneDealyTime(DeathZone.gameObject.GetComponent<DeathZone>().DamageDealay));
             }
         }
+    }
+
+    public void HPRecovery(int Recovery)
+    {
+        CharStat.HP += Recovery;
+        if(CharStat.MaxHP< CharStat.HP)
+        {
+            CharStat.HP = CharStat.MaxHP;
+        }
+        HP_bar.fillAmount = (float)CharStat.HP / 100;
     }
 
     //public void DeadEyeUIOn()
@@ -1156,6 +1167,18 @@ public class CharMove : MonoBehaviour {
             CharIndex = GPGSManager.GetInstance.GetMyCharacterNumber();
         }
 
+        if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene")
+        {
+            if (GPGSManager.GetInstance.GetMyCharacterNumber() != 100)
+            {
+                CharIndex = GPGSManager.GetInstance.GetMyCharacterNumber();
+                Debug.Log("CharIndex" + CharIndex);
+            }
+            else
+            {
+                CharIndex = 1;
+            }
+        }
         GameObject GamePlayObj = GameObject.Find("GamePlayObj");
 
         UI_Main = GamePlayObj.transform.Find("UI_Main").gameObject;
@@ -1192,8 +1215,9 @@ public class CharMove : MonoBehaviour {
     }
 
     void OnDestory()
-    {
+    {        
         m_UseGun = null;
         m_GunSelect = false;
+        GameEnd = false;
     }
 }

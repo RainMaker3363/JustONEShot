@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class BulletRespawn : MonoBehaviour {
@@ -45,7 +46,9 @@ public class BulletRespawn : MonoBehaviour {
 
         Debug.Log("BulletRespawn");
         P_CharPos = GamePlayObj.transform.Find("PlayerCharacter");
-        E_CharPos = GamePlayObj.transform.Find("EnemyCharacter");
+
+        if (SceneManager.GetActiveScene().name != "GameScene")
+            E_CharPos = GamePlayObj.transform.Find("EnemyCharacter");
     }
 	
 	// Update is called once per frame
@@ -77,7 +80,8 @@ public class BulletRespawn : MonoBehaviour {
         if (CreateAble)// &&(P_CharPos!=null&& E_CharPos != null)) //생성이 가능할경우
         {
             P_Distance = Vector3.Distance(P_CharPos.position, this.transform.position);
-            E_Distance = Vector3.Distance(E_CharPos.position, this.transform.position);
+            if(E_CharPos!=null)
+             E_Distance = Vector3.Distance(E_CharPos.position, this.transform.position);
 
             if (P_Distance < 11 && BulletIndex == -1) //거리가 11이하고 총알인덱스를 배정받지않았을떄(생성 전)
             {
@@ -105,7 +109,7 @@ public class BulletRespawn : MonoBehaviour {
                     BulletIndex = -1; //인덱스 초기화
                     StartCoroutine(BulletCreateDelay());    //재생성 쿨타임 시작
                 }
-                else if(E_Distance<1)   //가까이온게 적 플레인경우
+                else if(E_Distance<1 && E_CharPos != null)   //가까이온게 적 플레인경우
                 {
                     m_B_RespawnManager.DeleteItemBullet(BulletIndex); // 총알 아이템 제거
                     BulletIndex = -1; //인덱스 초기화

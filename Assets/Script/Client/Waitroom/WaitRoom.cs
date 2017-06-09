@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class WaitRoom : MonoBehaviour {
 
@@ -14,6 +16,8 @@ public class WaitRoom : MonoBehaviour {
     GPGSManager m_GPGSManager;
     MultiTitleManager m_MultiTitleManager;
     private IEnumerator SendRoutine;
+
+    public Button Zombie_Button;
 
     // Use this for initialization
     void Start () {
@@ -34,12 +38,18 @@ public class WaitRoom : MonoBehaviour {
 
         StopCoroutine(SendRoutine);
         StartCoroutine(SendRoutine);
+        
+        Zombie_Button.onClick.AddListener(OnZombieButton);
     }
 	
 	// Update is called once per frame
 	void Update () {
 
 	}
+    void OnZombieButton()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("ZombieScene");
+    }
 
     IEnumerator SendCharacterRoutine()
     {

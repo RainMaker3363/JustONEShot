@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class DeadEye : MonoBehaviour {
@@ -38,6 +39,9 @@ public class DeadEye : MonoBehaviour {
         
     }
     void Start () {
+        if(SceneManager.GetActiveScene().name != "GameScene")
+            Destroy(gameObject.GetComponent<DeadEye>());
+        else
         DeadEyeInit();
     }
 	

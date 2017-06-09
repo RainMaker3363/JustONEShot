@@ -62,6 +62,7 @@ public class Bullet_ShotGun : MonoBehaviour {
             Debug.Log("Hit");
             Debug.Log("Hit" + Damage);
             HitObj.gameObject.GetComponent<CharMove>().Damaged(Damage, transform.forward);
+            gameObject.GetComponent<MeshCollider>().enabled = false;
             // m_Distance = 0;
         }
 
@@ -70,10 +71,19 @@ public class Bullet_ShotGun : MonoBehaviour {
             Debug.Log("Hit");
 
             HitObj.gameObject.GetComponent<EnemyMove>().Damaged(Damage, transform.forward);
+            gameObject.GetComponent<MeshCollider>().enabled = false;
             // m_Distance = 0;
         }
         //m_Distance = 0;
-        gameObject.GetComponent<MeshCollider>().enabled = false;
+        Debug.Log(HitObj.gameObject.tag);
+        if (HitObj.gameObject.tag == "Zombie")
+        {
+            Debug.Log("ZombieHit");
+            HitObj.gameObject.GetComponent<ZombieMove>().ZombieDamage(Damage);
+            // m_Distance = 0;
+        }
+
+       
     }
    //public void DistanceInit()
    // {
