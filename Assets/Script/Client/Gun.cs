@@ -150,6 +150,18 @@ public class Gun : MonoBehaviour
     [SerializeField]
     Transform[] m_BulletTransform;
 
+    [SerializeField]
+    AudioClip[] ShotSounds;
+
+    [SerializeField]
+    AudioClip[] ReloadSounds;
+    public AudioClip CharRollSound;
+    public AudioClip GunReadySound;
+    public AudioClip BulletGetSound;
+
+    AudioSource m_AudioSource;
+    
+
     int m_BulletIndex = 0;
 
     //int m_SillinderBulletIndex = 0;
@@ -212,8 +224,8 @@ public class Gun : MonoBehaviour
             if (CharMove.m_UseGun.Bullet_Hand > m_HandsBulletIndex)
             {
                 //UI_HandsBullets[m_HandsBulletIndex].color = Color.white;
-                m_HandsBulletIndex++;
-                
+                m_HandsBulletIndex += CharMove.m_UseGun.GetBulletQuantity;
+                m_AudioSource.PlayOneShot(BulletGetSound);
             }
             UI_HandsBulletsText.text = CharMove.m_UseGun.Bullet_Hand.ToString()+"/" + CharMove.m_UseGun.MaxBullet_Hand.ToString();
         }
@@ -256,6 +268,7 @@ public class Gun : MonoBehaviour
                                         Bullets[m_BulletIndex].Damage = CharMove.m_UseGun.Damage;
                                         Bullets[m_BulletIndex].m_Movespeed = 60;
                                         Bullets[m_BulletIndex].m_Distance += 500;
+                                        Bullets[m_BulletIndex].Penetrate = true;
                                         CharMove.m_UseGun.UseBullet();
                                         UI_MusketBullets.SetActive(false);
                                         
@@ -330,7 +343,9 @@ public class Gun : MonoBehaviour
                     m_BulletIndex = 0;
                 }
 
-
+                //사운드
+                //m_AudioSource.clip = ShotSounds[UseGun];
+                m_AudioSource.PlayOneShot(ShotSounds[UseGun]);
 
                 break;
             }
@@ -407,13 +422,15 @@ public class Gun : MonoBehaviour
                 m_BulletIndex = 0;
             }
 
-
+            //사운드
+            m_AudioSource.PlayOneShot(ShotSounds[UseGun]);
         }
     }
 
     void DelaySet()
     {
         anim.SetBool("ShotDelay", true);
+        m_AudioSource.PlayOneShot(GunReadySound);
     }
 
     void DelayOver()    //애니메이터상 딜레이 해제
@@ -440,6 +457,7 @@ public class Gun : MonoBehaviour
                     {
                         SillinerRotate += 60;
                         UI_SillinderBullets[5 - CharMove.m_UseGun.Bullet_Gun].SetActive(true);//회전때문에 뒤에거부터 활성화
+                        
                         break;
                     }
                 case 1:
@@ -457,8 +475,9 @@ public class Gun : MonoBehaviour
                     break;
             }
 
+            m_AudioSource.PlayOneShot(ReloadSounds[CharMove.m_UseGun.NowUseGun]);
 
-           // UI_HandsBullets[m_HandsBulletIndex].color = Color.black;
+            // UI_HandsBullets[m_HandsBulletIndex].color = Color.black;
 
             Debug.Log("m_HandsBulletIndex : " + m_HandsBulletIndex);
             CharMove.m_UseGun.ReloadBullet();
@@ -486,6 +505,7 @@ public class Gun : MonoBehaviour
     void CharRollEffectOn()
     {
         CharRollEffect.SetActive(true);
+        m_AudioSource.PlayOneShot(CharRollSound);
     }
 
     void SetRollSpeed(float speed) //캐릭터 구르기 속도 조절
@@ -560,6 +580,7 @@ public class Gun : MonoBehaviour
             default:
                 break;
         }
-        
+
+        m_AudioSource = gameObject.GetComponent<AudioSource>();
     }
 }

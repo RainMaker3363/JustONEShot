@@ -39,6 +39,13 @@ public class ZombieMove : MonoBehaviour {
 
     public SkinnedMeshRenderer shader;
 
+    public AudioClip HitSound;
+    public AudioClip AttackSound;
+    public AudioClip DeadSound;
+    public AudioClip IdleSound;
+
+    AudioSource m_AudioSource;
+
     // Use this for initialization
     void Start () {
         GamePlayObj = GameObject.Find("GamePlayObj").transform;
@@ -47,7 +54,9 @@ public class ZombieMove : MonoBehaviour {
         anim = gameObject.GetComponent<Animator>();
         MotionPlay = false;
         AttackDealy = 5;
-        StartCoroutine(ZombieMoveSystem(m_MoveDealy));       
+        StartCoroutine(ZombieMoveSystem(m_MoveDealy));
+
+        m_AudioSource = gameObject.GetComponentInParent<AudioSource>();
     }
 	
 	// Update is called once per frame
@@ -70,6 +79,7 @@ public class ZombieMove : MonoBehaviour {
                 Z_State = ZombieState.WALK;
                 anim.SetTrigger("Walk");
                 NvAgent.Resume();
+                //m_AudioSource.PlayOneShot(IdleSound);
             }
             else if(Distance <= 2.5f && AttackTime<Time.time)
             {
@@ -79,6 +89,7 @@ public class ZombieMove : MonoBehaviour {
                 anim.SetTrigger("Attack");
                 NvAgent.Stop();
                 MotionPlay = true;
+                m_AudioSource.PlayOneShot(AttackSound);
             }
             else if (Distance <= 2.5f && AttackTime > Time.time)
             {
@@ -87,6 +98,10 @@ public class ZombieMove : MonoBehaviour {
                 NvAgent.Stop();
                
             }
+        }
+        if(CharMove.CharStat.HP<=0)
+        {
+            m_AudioSource.enabled = false;
         }
 
         if (Die)    //에디터 테스트용
@@ -144,13 +159,15 @@ public class ZombieMove : MonoBehaviour {
             Z_State = ZombieState.DEATH;
             
             anim.SetTrigger("Death");
+            m_AudioSource.PlayOneShot(DeadSound);
         }
         else
         {
             Z_State = ZombieState.DAMAGE;
-            anim.SetTrigger("Damage");
-            StartCoroutine(ZombieDamageEffect());
+            anim.SetTrigger("Damage");          
+            m_AudioSource.PlayOneShot(HitSound);
         }
+        StartCoroutine(ZombieDamageEffect());
         NvAgent.Stop();
         MotionPlay = true;
     }

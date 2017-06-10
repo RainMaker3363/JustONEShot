@@ -164,6 +164,7 @@ public class CharMove : MonoBehaviour {
 
     private float PlayerUpdateTime;
     private float PlayerUpdateDelay = 0.11f;
+
     //void OnEnable()
     //{
 
@@ -650,14 +651,17 @@ public class CharMove : MonoBehaviour {
     void Update_Roll()
     {
         
+
         if (!anim.GetBool("Rolling"))
         {
             StopCoroutine(StaminaRecoveryDealy());
             StartCoroutine(StaminaRecoveryDealy());
+            Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemy"), false);
             m_PlayerState = LSD.PlayerState.IDLE;
         }
         else
         {
+            Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemy"), true);
             StaminaRecovery = false;
         }
     }
@@ -684,7 +688,7 @@ public class CharMove : MonoBehaviour {
             if (CharStat.Stamina > 400)
             {
                 CharStat.Stamina -= 400;
-                PlayerMove();
+                //PlayerMove();
                 anim.SetBool("Rolling", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
                 m_PlayerState = LSD.PlayerState.ROLL;
                 StaminaCheck();

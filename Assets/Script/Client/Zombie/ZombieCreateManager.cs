@@ -28,16 +28,18 @@ public class ZombieCreateManager : MonoBehaviour {
     public GameObject Main_UI;
 
     public DeathZone m_DeathZone;
-    
+
+    public AudioClip SelectSound;
+    AudioSource m_AudioSource;
 
     // Use this for initialization
     void Start () {
-       
+        m_AudioSource = gameObject.GetComponent<AudioSource>();
     }
 	
 	// Update is called once per frame
 	void Update () {
-        UI_Stage.text = Stage.ToString() + " STAGE " + ZombieCount.ToString() + " ALIVE";
+        UI_Stage.text = Stage.ToString() + " stage " + ZombieCount.ToString() + " zombie";
 
         if(LevelUP_UI.activeSelf)
         {
@@ -80,6 +82,7 @@ public class ZombieCreateManager : MonoBehaviour {
 
     void BulletUP()
     {
+        m_AudioSource.PlayOneShot(SelectSound);
         CharMove.m_UseGun.GetBulletQuantity++;
         if (CharMove.m_UseGun.GetBulletQuantity >= 6)    //max로 찍었으면 추후찍지못하게 합니다
         {
@@ -101,6 +104,7 @@ public class ZombieCreateManager : MonoBehaviour {
     }
     void BulletMaxUP()
     {
+        m_AudioSource.PlayOneShot(SelectSound);
         CharMove.m_UseGun.MaxBullet_Hand++;
         if (CharMove.m_UseGun.MaxBullet_Hand >= 20f)    //max로 찍었으면 추후찍지못하게 합니다
         {
@@ -122,6 +126,7 @@ public class ZombieCreateManager : MonoBehaviour {
     }
     void HPUP()
     {
+        m_AudioSource.PlayOneShot(SelectSound);
         GameObject.Find("PlayerCharacter").GetComponent<CharMove>().HPRecovery(30);
 
         LevelUP_UI.SetActive(false);
@@ -132,6 +137,7 @@ public class ZombieCreateManager : MonoBehaviour {
 
     void DamageUP()
     {
+        m_AudioSource.PlayOneShot(SelectSound);
         CharMove.m_UseGun.Damage += 5;
         CharMove.m_UseGun.DamageUpgrade++;
         if (CharMove.m_UseGun.DamageUpgrade >= 5)    //max로 찍었으면 추후찍지못하게 합니다
@@ -154,6 +160,7 @@ public class ZombieCreateManager : MonoBehaviour {
     }
     void ReloadUP()
     {
+        m_AudioSource.PlayOneShot(SelectSound);
         CharMove.m_UseGun.ReloadSpeed += 0.2f;
 
         if (CharMove.m_UseGun.ReloadSpeed >= 2.0f)    //max로 찍었으면 추후찍지못하게 합니다

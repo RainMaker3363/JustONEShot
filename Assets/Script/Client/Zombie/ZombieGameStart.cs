@@ -19,6 +19,9 @@ public class ZombieGameStart : MonoBehaviour {
     private float WaitOverTime;
     private float WaitTime = 10;
 
+    public AudioClip SelectSound;
+    AudioSource m_AudioSource;
+
     void Awake()
     {
 
@@ -29,6 +32,7 @@ public class ZombieGameStart : MonoBehaviour {
     {
         Char = GamePlayObj.transform.Find("PlayerCharacter").GetComponent<CharMove>();
           WaitOverTime = Time.time + WaitTime;
+        m_AudioSource = gameObject.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -47,6 +51,7 @@ public class ZombieGameStart : MonoBehaviour {
             {
                 if (GetClickedObject() != null)
                 {
+                    m_AudioSource.PlayOneShot(SelectSound);
                     switch (GetClickedObject().gameObject.tag)
                     {
                         case "Revolver":
