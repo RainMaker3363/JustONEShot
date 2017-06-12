@@ -86,6 +86,10 @@ public class DeathZone : MonoBehaviour {
                                 transform.position = new Vector3(transform.position.x, transform.position.y + MoveSpeed, transform.position.z);
                             }
                         }
+                        else
+                        {
+                            transform.position = new Vector3(transform.position.x, transform.position.y + MoveSpeed, transform.position.z);
+                        }
 
                         yield return new WaitForSeconds(0.01f);
                     }

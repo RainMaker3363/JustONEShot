@@ -20,6 +20,8 @@ public class ZombiSceneInit : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
 
         //for(int i =0; i< InitObject.Length;i++)
         //{
@@ -31,7 +33,7 @@ public class ZombiSceneInit : MonoBehaviour
         // Mul_Manager.CharacterSelectStateReceived();
 
 
-//#if UNITY_EDITOR    //유니티에디터에서 실행시킬경우 이쪽코드를 실행
+        //#if UNITY_EDITOR    //유니티에디터에서 실행시킬경우 이쪽코드를 실행
 
         if (m_Player == null)
         {

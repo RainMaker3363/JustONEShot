@@ -107,10 +107,10 @@ public class EnemyMove : MonoBehaviour {
         m_GunState = LSD.GunState.Revolver; //현재는 고정 추후 받아오게함
         Mul_Manager = GameObject.Find("MultiGameMananger").GetComponent<MultiGameManager>();
         Mul_Manager.EnemyCharacter = this.gameObject;
-        if (GPGSManager.GetInstance.IsAuthenticated())  //접속중일때
-        {            
-            CharIndex = Mul_Manager.GetPVPOpponentCharNumber();
-        }
+        //if (GPGSManager.GetInstance.IsAuthenticated())  //접속중일때
+        //{            
+        //    CharIndex = Mul_Manager.GetPVPOpponentCharNumber();
+        //}
     }
 
     // Use this for initialization
@@ -934,7 +934,8 @@ public class EnemyMove : MonoBehaviour {
 
         while (true)
         {
-            if(SetEnemyGun())
+            
+            if (SetEnemyGun())
             {
                 yield break;
             }
@@ -947,7 +948,8 @@ public class EnemyMove : MonoBehaviour {
 
 
     public bool SetEnemyGun()
-    {       
+    {
+        CharIndex = Mul_Manager.GetPVPOpponentCharNumber();
         m_SelectGun = Mul_Manager.GetPVPOpponentGunNumber(); 
         if (m_SelectGun != 100)
         {
@@ -973,7 +975,7 @@ public class EnemyMove : MonoBehaviour {
             }
             return true;
         }
-
+   
         return false;
     }
 

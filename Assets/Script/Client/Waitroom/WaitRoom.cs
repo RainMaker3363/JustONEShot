@@ -37,6 +37,12 @@ public class WaitRoom : MonoBehaviour {
 
     public Button Zombie_Button;
 
+    void Awake()
+    {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
+    }
+
     // Use this for initialization
     void Start () {
         m_GPGSManager = GameObject.Find("GPGSManager").GetComponent<GPGSManager>();

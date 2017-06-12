@@ -10,8 +10,9 @@ public class FrameChecker : MonoBehaviour {
 
     void Awake()
     {
-        FrameRate = 60;
-
+        //FrameRate = 60;
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
         //Application.targetFrameRate = 60;
     }
 	

@@ -17,11 +17,22 @@ public class SceneInit : MonoBehaviour {
     GameObject m_Player;
     GameObject m_Enemy;
 
+    [SerializeField]
+    Sprite[] Poster;
+    public SpriteRenderer Char1;
+    public SpriteRenderer Char2;
+
 
     public GameObject GamePlayObj;  //게임에 필요한것들은 이 오브젝트 하위에 생성됩니다
 
     // Use this for initialization
     void Awake () {
+
+        //프레임 고정
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
+        /////
+
 
         //for(int i =0; i< InitObject.Length;i++)
         //{
@@ -52,6 +63,9 @@ public class SceneInit : MonoBehaviour {
             m_Enemy.name = "EnemyCharacter";
             m_Enemy.transform.SetParent(GamePlayObj.transform);
         }
+
+        Char1.sprite = Poster[1];
+        Char2.sprite = Poster[0];
 
 #else
         GPGSManager.GetInstance.GetStartRandomSeed();
@@ -85,6 +99,8 @@ public class SceneInit : MonoBehaviour {
             m_Enemy.transform.SetParent(GamePlayObj.transform);
         }
 
+        Char1.sprite = Poster[GPGSManager.GetInstance.GetMyCharacterNumber()];
+        Char2.sprite = Poster[GPGSManager.GetInstance.GetPVPOpponentCharNumber()];
 #endif
 
 

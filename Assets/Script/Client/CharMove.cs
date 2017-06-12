@@ -1075,29 +1075,29 @@ public class CharMove : MonoBehaviour {
     //}
 
 
-    void OnGUI()
-    {
-        int w = Screen.width, h = Screen.height;
+    //void OnGUI()
+    //{
+    //    int w = Screen.width, h = Screen.height;
 
-        GUIStyle style = new GUIStyle();
+    //    GUIStyle style = new GUIStyle();
 
-        Rect rect = new Rect(w / 2, 0, 100, 100);
-        style.alignment = TextAnchor.UpperLeft;
-        style.fontSize = 30;
-        style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
+    //    Rect rect = new Rect(w / 2, 0, 100, 100);
+    //    style.alignment = TextAnchor.UpperLeft;
+    //    style.fontSize = 30;
+    //    style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
 
-        //string text = string.Format("HP : {0}", HP);
-        string text = string.Format("My : {0}\nEnemy : {1}", Debug_DeadEyeTimer_Player,Debug_DeadEyeTimer_Enemy);
+    //    //string text = string.Format("HP : {0}", HP);
+    //    string text = string.Format("My : {0}\nEnemy : {1}", Debug_DeadEyeTimer_Player,Debug_DeadEyeTimer_Enemy);
 
-        GUI.Label(rect, text, style);
+    //    GUI.Label(rect, text, style);
 
-        //Rect Bulletrect = new Rect(w - 300, 0, 100, 100);
+    //    //Rect Bulletrect = new Rect(w - 300, 0, 100, 100);
 
-        //string Bullettext = string.Format("탄창 : {0}/{1}\n탄알 : {2}/{3}", m_UseGun.Bullet_Gun, m_UseGun.MaxBullet_Gun, m_UseGun.Bullet_Hand, m_UseGun.MaxBullet_Hand);
+    //    //string Bullettext = string.Format("탄창 : {0}/{1}\n탄알 : {2}/{3}", m_UseGun.Bullet_Gun, m_UseGun.MaxBullet_Gun, m_UseGun.Bullet_Hand, m_UseGun.MaxBullet_Hand);
 
 
-        //GUI.Label(Bulletrect, Bullettext, style);
-    }
+    //    //GUI.Label(Bulletrect, Bullettext, style);
+    //}
 
     IEnumerator ServerUpdate()
     {
@@ -1183,7 +1183,7 @@ public class CharMove : MonoBehaviour {
         {
             Mul_Manager.EndGameAndLeaveRoom();
         }
-        else
+        else if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene")
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene("WaitingRoom");
            // UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);

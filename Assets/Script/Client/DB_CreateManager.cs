@@ -78,20 +78,20 @@ public class DB_CreateManager : MonoBehaviour {
         }
     }
 
-    void OnGUI()
-    {
-        int w = Screen.width, h = Screen.height;
+    //void OnGUI()
+    //{
+    //    int w = Screen.width, h = Screen.height;
 
-        GUIStyle style = new GUIStyle();
+    //    GUIStyle style = new GUIStyle();
 
-        Rect rect = new Rect(w / 2, h-100, 100, 100);
-        style.alignment = TextAnchor.UpperLeft;
-        style.fontSize = 30;
-        style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
+    //    Rect rect = new Rect(w / 2, h-100, 100, 100);
+    //    style.alignment = TextAnchor.UpperLeft;
+    //    style.fontSize = 30;
+    //    style.normal.textColor = new Color(0.0f, 0.0f, 1.5f, 1.5f);
 
-        //string text = string.Format("HP : {0}", HP);
-        string text = string.Format("ServerIndex : {0}\nCreateIndex : {1}", ServerIndex, CreateIndex);
+    //    //string text = string.Format("HP : {0}", HP);
+    //    string text = string.Format("ServerIndex : {0}\nCreateIndex : {1}", ServerIndex, CreateIndex);
 
-        GUI.Label(rect, text, style);
-    }
+    //    GUI.Label(rect, text, style);
+    //}
 }
