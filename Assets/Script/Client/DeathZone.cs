@@ -67,20 +67,24 @@ public class DeathZone : MonoBehaviour {
                     while (Level[LevelIndex] > transform.position.y )
                     {
                         Debug.Log("UP");
-                        if (Mul_GameManger.GetEndGameState())  //게임이 끝났을경우
+                        if (Mul_GameManger != null)
                         {
-                            yield break;
-                        }
-                        //if (Reset)
-                        //{
-                        //    Reset = false;
-                        //    StartCoroutine(ZombieDeathZoneReset());
-                        //    yield break;
-                        //}
+                            if (Mul_GameManger.GetEndGameState())  //게임이 끝났을경우
+                            {
+                                yield break;
+                            }
 
-                        if (!Mul_GameManger.GetDeadEyeChecker() || DeadEyePlaying)//데드아이 발동중엔 안올라옴
-                        {
-                            transform.position = new Vector3(transform.position.x, transform.position.y + MoveSpeed, transform.position.z);
+                            //if (Reset)
+                            //{
+                            //    Reset = false;
+                            //    StartCoroutine(ZombieDeathZoneReset());
+                            //    yield break;
+                            //}
+
+                            if (!Mul_GameManger.GetDeadEyeChecker() || DeadEyePlaying)//데드아이 발동중엔 안올라옴
+                            {
+                                transform.position = new Vector3(transform.position.x, transform.position.y + MoveSpeed, transform.position.z);
+                            }
                         }
 
                         yield return new WaitForSeconds(0.01f);

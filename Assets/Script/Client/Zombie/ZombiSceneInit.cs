@@ -31,15 +31,15 @@ public class ZombiSceneInit : MonoBehaviour
         // Mul_Manager.CharacterSelectStateReceived();
 
 
-#if UNITY_EDITOR    //유니티에디터에서 실행시킬경우 이쪽코드를 실행
+//#if UNITY_EDITOR    //유니티에디터에서 실행시킬경우 이쪽코드를 실행
 
         if (m_Player == null)
         {
-            if(GPGSManager.GetInstance.GetMyCharacterNumber() != 100)
-                m_Player = Instantiate(Player[GPGSManager.GetInstance.GetMyCharacterNumber()]);
-            else
-                m_Player = Instantiate(Player[1]);   //에디터상에서는 고정
-
+            //if(GPGSManager.GetInstance.GetMyCharacterNumber() != 100)
+            //    m_Player = Instantiate(Player[GPGSManager.GetInstance.GetMyCharacterNumber()]);
+            //else
+            //    m_Player = Instantiate(Player[1]);   //에디터상에서는 고정
+            m_Player = Instantiate(Player[GameInfoManager.GetInstance().SelectIndex]);
             RainEffect.transform.SetParent(m_Player.transform);
             m_Player.transform.position = PlayerStartPos.position;
             m_Player.name = "PlayerCharacter";
@@ -47,22 +47,22 @@ public class ZombiSceneInit : MonoBehaviour
         }
 
 
-#else
-        GPGSManager.GetInstance.GetStartRandomSeed();
+//#else
+//        GPGSManager.GetInstance.GetStartRandomSeed();
 
-        if (m_Player == null)
-        {
-           // Mul_Manager.SendCharacterNumberMessage(Mul_Manager.GetMyCharNumber());
+//        if (m_Player == null)
+//        {
+//           // Mul_Manager.SendCharacterNumberMessage(Mul_Manager.GetMyCharNumber());
 
-            m_Player = Instantiate(Player[GPGSManager.GetInstance.GetMyCharacterNumber()]);
-            RainEffect.transform.SetParent(m_Player.transform);
-            m_Player.transform.position = PlayerStartPos.position;
-            m_Player.name = "PlayerCharacter";
-            m_Player.transform.SetParent(GamePlayObj.transform);
+//            m_Player = Instantiate(Player[GPGSManager.GetInstance.GetMyCharacterNumber()]);
+//            RainEffect.transform.SetParent(m_Player.transform);
+//            m_Player.transform.position = PlayerStartPos.position;
+//            m_Player.name = "PlayerCharacter";
+//            m_Player.transform.SetParent(GamePlayObj.transform);
 
-        }
+//        }
       
-#endif
+//#endif
 
 
     }

@@ -69,12 +69,14 @@ public class BulletRespawn : MonoBehaviour {
             Debug.Log("PointPos" + transform.position.y);
             Debug.Log("DeathZonePos" + DeathZone.position.y);
         }
-
-        if (Mul_GameManager.GetEndGameState())
+        if (GPGSManager.GetInstance.IsAuthenticated() && Mul_GameManager != null)  //접속중일때
         {
-            m_B_RespawnManager.DeleteItemBullet(BulletIndex); // 총알 아이템 제거
-            BulletIndex = -1; //인덱스 초기화
-            gameObject.SetActive(false);
+            if (Mul_GameManager.GetEndGameState())
+            {
+                m_B_RespawnManager.DeleteItemBullet(BulletIndex); // 총알 아이템 제거
+                BulletIndex = -1; //인덱스 초기화
+                gameObject.SetActive(false);
+            }
         }
 
         if (CreateAble)// &&(P_CharPos!=null&& E_CharPos != null)) //생성이 가능할경우

@@ -232,7 +232,7 @@ public class CharMove : MonoBehaviour {
                 break;
         }
 
-        if (GPGSManager.GetInstance.IsAuthenticated())
+        if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
         {
             Mul_Manager.SendHPStateMessage(CharStat.HP);
         }
@@ -536,7 +536,7 @@ public class CharMove : MonoBehaviour {
             {
                 anim.SetBool("Shot", true);
                
-                if (GPGSManager.GetInstance.IsAuthenticated())
+                if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
                 {
                     Mul_Manager.SendShootMessage(true);
                 }
@@ -545,7 +545,7 @@ public class CharMove : MonoBehaviour {
             else
             {
                 anim.SetBool("Shot", false);
-                if (GPGSManager.GetInstance.IsAuthenticated())
+                if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
                 {
                     Mul_Manager.SendShootMessage(false);
                 }
@@ -687,12 +687,18 @@ public class CharMove : MonoBehaviour {
         {
             if (CharStat.Stamina > 400)
             {
+                if(m_PlayerState == LSD.PlayerState.DAMAGE)
+                {
+                    anim.SetBool("Damaged", false);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌 중간에 캔슬된경우 여기서 바꿔줌
+                }
+
+
                 CharStat.Stamina -= 400;
                 //PlayerMove();
                 anim.SetBool("Rolling", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
                 m_PlayerState = LSD.PlayerState.ROLL;
                 StaminaCheck();
-                if (GPGSManager.GetInstance.IsAuthenticated())
+                if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
                 {
                     Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
                 }
@@ -723,13 +729,14 @@ public class CharMove : MonoBehaviour {
             }
 
 
-            if (GPGSManager.GetInstance.IsAuthenticated())
+            if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
             {
                 Mul_Manager.SendMyPositionUpdate();
                 Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
                 Mul_Manager.SendHPStateMessage(CharStat.HP);
                 Mul_Manager.SendShootVectorMessage(DamageVec);
             }
+            Handheld.Vibrate();
         }
         
     }
@@ -767,13 +774,14 @@ public class CharMove : MonoBehaviour {
 
         HP_bar.fillAmount = (float)CharStat.HP / CharStat.MaxHP;
 
-        if (GPGSManager.GetInstance.IsAuthenticated())
+        if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
         {
             Mul_Manager.SendMyPositionUpdate();
             Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
             Mul_Manager.SendHPStateMessage(CharStat.HP);
         }
-        
+
+        Handheld.Vibrate();
     }
 
     public bool DeadCheck()
@@ -786,7 +794,7 @@ public class CharMove : MonoBehaviour {
             anim.SetTrigger("Death");
             GameEnd = true;
             // Mul_Manager.SendAniStateMessage((int)m_PlayerState); //데미지부분에서도 보내줌
-            if (GPGSManager.GetInstance.IsAuthenticated())
+            if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
             {
                 Mul_Manager.SendEndGameMssage(true);
             }
@@ -811,14 +819,17 @@ public class CharMove : MonoBehaviour {
 
     public void GameEndCheck()
     {
-        if(Mul_Manager.GetEndGameState() && !GameEnd)
+        if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)  //접속중일때
         {
-           //UI_GameOverText.GetComponent<Text>().text = "Victory";
-            Mul_Manager.SendAniStateMessage((int)m_PlayerState);
-            GameEnd = true;
-            UI_Main.SetActive(false);
-            StartCoroutine(PlayerWin());
+            if (Mul_Manager.GetEndGameState() && !GameEnd)
+            {
+                //UI_GameOverText.GetComponent<Text>().text = "Victory";
+                Mul_Manager.SendAniStateMessage((int)m_PlayerState);
+                GameEnd = true;
+                UI_Main.SetActive(false);
+                StartCoroutine(PlayerWin());
 
+            }
         }
     }
 
@@ -838,7 +849,7 @@ public class CharMove : MonoBehaviour {
             anim.SetTrigger("DeadEye");
 
             DeadEyeStart = false;
-            if (GPGSManager.GetInstance.IsAuthenticated())
+            if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
             {
                 Mul_Manager.SendDeadEyeMessage(true);
             }
@@ -846,7 +857,7 @@ public class CharMove : MonoBehaviour {
             DeathZone.GetComponent<DeathZone>().DeadEyePlaying = true;
         }
 
-        if (GPGSManager.GetInstance.IsAuthenticated())
+        if (GPGSManager.GetInstance.IsAuthenticated()&& Mul_Manager != null)
         {
             if (Mul_Manager.GetDeadEyeChecker())
             {
@@ -1093,7 +1104,7 @@ public class CharMove : MonoBehaviour {
         while (true)
         {
             yield return new WaitForSeconds( 0.13f);
-            if (GPGSManager.GetInstance.IsAuthenticated())
+            if (GPGSManager.GetInstance.IsAuthenticated()&& Mul_Manager != null)
             {
                 if (Mul_Manager == true)
                 {
@@ -1168,27 +1179,42 @@ public class CharMove : MonoBehaviour {
     public void OnExitButton()
     {
         Debug.Log("Exit");
-        Mul_Manager.EndGameAndLeaveRoom();
+        if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)  //접속중일때
+        {
+            Mul_Manager.EndGameAndLeaveRoom();
+        }
+        else
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("WaitingRoom");
+           // UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        }
     }
 
     void CharInit()
     {
-        if (GPGSManager.GetInstance.IsAuthenticated())  //접속중일때
-        {
-            CharIndex = GPGSManager.GetInstance.GetMyCharacterNumber();
-        }
-
+        
+       
         if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene")
         {
-            if (GPGSManager.GetInstance.GetMyCharacterNumber() != 100)
+            //if (GPGSManager.GetInstance.GetMyCharacterNumber() != 100)
+            //{
+            //    CharIndex = GPGSManager.GetInstance.GetMyCharacterNumber();
+            //    Debug.Log("CharIndex" + CharIndex);
+            //}
+            //else
+            //{
+                CharIndex = GameInfoManager.GetInstance().SelectIndex;
+                Debug.Log("SingleCharIndex" + CharIndex);
+            //}
+        }
+        else
+        {
+            if (GPGSManager.GetInstance.IsAuthenticated())  //접속중일때
             {
                 CharIndex = GPGSManager.GetInstance.GetMyCharacterNumber();
-                Debug.Log("CharIndex" + CharIndex);
             }
-            else
-            {
-                CharIndex = 1;
-            }
+            Mul_Manager = GameObject.Find("MultiGameMananger").GetComponent<MultiGameManager>();
+            Mul_Manager.MyCharacter = this.gameObject;
         }
         GameObject GamePlayObj = GameObject.Find("GamePlayObj");
 
@@ -1209,10 +1235,11 @@ public class CharMove : MonoBehaviour {
         UI_DamageEffect = UI_Main.transform.Find("DamageEffect").gameObject;
        // UI_DamageEffect.SetActive(false);
 
-        EnemyPos = GamePlayObj.transform.Find("EnemyCharacter");
+        //EnemyPos = GamePlayObj.transform.Find("EnemyCharacter");
         HP_bar = UI_Main.transform.Find("LifeHealthLine_Bar").GetComponent<Image>();
         Stamina_bar = UI_Main.transform.Find("Stamina_Bar").GetComponent<Image>();
-        Mul_Manager = GameObject.Find("MultiGameMananger").GetComponent<MultiGameManager>();
+        
+
 
         DeathZone = GameObject.Find("DeathZone").transform;
 
@@ -1225,7 +1252,7 @@ public class CharMove : MonoBehaviour {
         // gameObject.SetActive(false);
     }
 
-    void OnDestory()
+    void OnDestroy()
     {        
         m_UseGun = null;
         m_GunSelect = false;

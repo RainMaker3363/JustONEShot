@@ -3,6 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public class GameInfoManager
+{
+    static GameInfoManager m_Manager;
+
+    public int SelectIndex = 1;
+
+    public static GameInfoManager GetInstance()
+    {
+        if(m_Manager==null)
+        {
+            m_Manager = new GameInfoManager();
+        }
+
+        return m_Manager;
+    }
+}
+
+
 
 public class WaitRoom : MonoBehaviour {
 
@@ -33,6 +51,7 @@ public class WaitRoom : MonoBehaviour {
         SelectChar.transform.rotation = CharPos.rotation;
         SelectChar.transform.SetParent(CharPos);
 
+        GameInfoManager.GetInstance().SelectIndex = SelectIndex;
         m_GPGSManager.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
         SendRoutine = SendCharacterRoutine();
 
@@ -95,6 +114,7 @@ public class WaitRoom : MonoBehaviour {
                 {
                     m_GPGSManager.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
                 }
+                GameInfoManager.GetInstance().SelectIndex = SelectIndex;
             }
         }
     }

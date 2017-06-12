@@ -105,9 +105,10 @@ public class EnemyMove : MonoBehaviour {
     void Awake()
     {
         m_GunState = LSD.GunState.Revolver; //현재는 고정 추후 받아오게함
+        Mul_Manager = GameObject.Find("MultiGameMananger").GetComponent<MultiGameManager>();
+        Mul_Manager.EnemyCharacter = this.gameObject;
         if (GPGSManager.GetInstance.IsAuthenticated())  //접속중일때
-        {
-            Mul_Manager = GameObject.Find("MultiGameMananger").GetComponent<MultiGameManager>();
+        {            
             CharIndex = Mul_Manager.GetPVPOpponentCharNumber();
         }
     }
@@ -123,6 +124,7 @@ public class EnemyMove : MonoBehaviour {
         }
 
         PlayerPos = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter");
+        PlayerPos.GetComponent<CharMove>().EnemyPos = this.gameObject.transform;
         //카메라 기본위치 설정
         // CamPos = cam.transform.position;
 

@@ -49,7 +49,8 @@ public class DB_RespawnManager : MonoBehaviour {
 
     public void DeleteItemBullet(int BulletIndex)
     {
-        Item_Bullets[BulletIndex].SetActive(false);
+        if(BulletIndex>-1)
+            Item_Bullets[BulletIndex].SetActive(false);
     }
 
 }
