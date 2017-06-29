@@ -660,7 +660,7 @@ public class CharMove : MonoBehaviour {
             m_PlayerState = LSD.PlayerState.IDLE;
         }
         else
-        {
+        {          
             Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemy"), true);
             StaminaRecovery = false;
         }

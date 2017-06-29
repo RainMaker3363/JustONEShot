@@ -18,6 +18,8 @@ public class Bullet : MonoBehaviour {
 
     public bool Penetrate = false;
 
+    public int HitCount=0;
+
     RaycastHit HitObj;
 
 	// Use this for initialization
@@ -44,6 +46,7 @@ public class Bullet : MonoBehaviour {
             Debug.Log("Hit");
             Debug.Log("Hit" + Damage);
             col.gameObject.GetComponent<CharMove>().Damaged(Damage, transform.forward);
+            HitCount++;
             // m_Distance = 0;
         }
 
@@ -52,16 +55,27 @@ public class Bullet : MonoBehaviour {
             Debug.Log("Hit");
 
             col.gameObject.GetComponent<EnemyMove>().Damaged(Damage, transform.forward);
+            HitCount++;
             // m_Distance = 0;
         }
         if (col.gameObject.tag == "Zombie")
         {
             col.gameObject.GetComponent<ZombieMove>().ZombieDamage(Damage);
+            HitCount++;
             // m_Distance = 0;
         }
 
         if(!Penetrate || col.gameObject.tag == "Untagged")
+        {
             m_Distance = 0;
+            HitCount = 0;
+        }
+
+        if (HitCount > 2)
+        {
+            m_Distance = 0;
+            HitCount = 0;
+        }
     }
     void FixedUpdate()
     {
