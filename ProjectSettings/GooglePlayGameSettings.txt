@@ -1,10 +1,10 @@
 lastUpgrade=00936
 proj.pluginVersion=0.9.36
-proj.AppId=97508285310
-and.BundleId=com.NewGuest.JustONEShot
+proj.AppId=224798891945
+and.BundleId=com.NewGuest.ONESHOT
 proj.classDir=Assets
-proj.ConstantsClassName=GPGSIds
-and.ResourceData=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%0d%0a%3c%21--%0d%0aGoogle+Play+game+services+IDs.%0d%0aSave+this+file+as+res%2fvalues%2fgames-ids.xml+in+your+project.%0d%0a--%3e%0d%0a%3cresources%3e%0d%0a++%3cstring+name%3d%22app_id%22%3e97508285310%3c%2fstring%3e%0d%0a++%3cstring+name%3d%22package_name%22%3ecom.NewGuest.JustONEShot%3c%2fstring%3e%0d%0a++%3cstring+name%3d%22achievement_helloworld%22%3eCgkI_rbJn-sCEAIQAQ%3c%2fstring%3e%0d%0a++%3cstring+name%3d%22achievement_firststep%22%3eCgkI_rbJn-sCEAIQAg%3c%2fstring%3e%0d%0a++%3cstring+name%3d%22achievement_secondstep%22%3eCgkI_rbJn-sCEAIQAw%3c%2fstring%3e%0d%0a++%3cstring+name%3d%22achievement_thridstep%22%3eCgkI_rbJn-sCEAIQBA%3c%2fstring%3e%0d%0a++%3cstring+name%3d%22achievement_justoneshot%22%3eCgkI_rbJn-sCEAIQBQ%3c%2fstring%3e%0d%0a%3c%2fresources%3e
-and.ClientId=97508285310-s7m3mfqbkke2m9k81beghtjl507c122u.apps.googleusercontent.com
+proj.ConstantsClassName=ONESHOTAchievements
+and.ResourceData=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%0d%0a%3c%21--%0d%0aGoogle+Play+game+services+IDs.%0d%0aSave+this+file+as+res%2fvalues%2fgames-ids.xml+in+your+project.%0d%0a--%3e%0d%0a%3cresources%3e%0d%0a++%3cstring+name%3d%22app_id%22%3e224798891945%3c%2fstring%3e%0d%0a++%3cstring+name%3d%22package_name%22%3ecom.NewGuest.ONESHOT%3c%2fstring%3e%0d%0a++%3cstring+name%3d%22achievement_hello_player%22%3eCgkIqb-7uMUGEAIQAQ%3c%2fstring%3e%0d%0a++%3cstring+name%3d%22achievement_its_highnoon..%22%3eCgkIqb-7uMUGEAIQAg%3c%2fstring%3e%0d%0a++%3cstring+name%3d%22achievement_and_then_there_were_none%22%3eCgkIqb-7uMUGEAIQAw%3c%2fstring%3e%0d%0a++%3cstring+name%3d%22achievement_dead_or_alive%22%3eCgkIqb-7uMUGEAIQBA%3c%2fstring%3e%0d%0a++%3cstring+name%3d%22achievement_undying%22%3eCgkIqb-7uMUGEAIQBQ%3c%2fstring%3e%0d%0a%3c%2fresources%3e%0d%0a
+and.ClientId=224798891945-gsn32t0red8lm74denhmehd0k553148o.apps.googleusercontent.com
 proj.requireGPlus=false
 android.SetupDone=true
