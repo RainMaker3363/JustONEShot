@@ -12,12 +12,18 @@ enum ZombieState
     DEATH
 }
 
-public class ZombieMove : MonoBehaviour {
+abstract public class Zombie : MonoBehaviour
+{
+    abstract public void ZombieDamage(int Damage);
+
+}
+public class ZombieMove : Zombie
+{
 
     public Transform GamePlayObj;
     public Transform PlayerPos;
     public GameObject ParentObj;
-    NavMeshAgent NvAgent;
+    public NavMeshAgent NvAgent;
     [SerializeField]
     float m_MoveDealy;
     
@@ -30,7 +36,7 @@ public class ZombieMove : MonoBehaviour {
     bool MotionPlay;
 
   Animator anim;
-    
+
 
    public int HP;
    public int AttackDamge;
@@ -57,6 +63,7 @@ public class ZombieMove : MonoBehaviour {
         StartCoroutine(ZombieMoveSystem(m_MoveDealy));
 
         m_AudioSource = gameObject.GetComponentInParent<AudioSource>();
+
     }
 	
 	// Update is called once per frame
@@ -145,13 +152,13 @@ public class ZombieMove : MonoBehaviour {
     void OnTriggerEnter(Collider col)
     {
         if (col.gameObject.tag == "Player")
-        {          
-            col.gameObject.GetComponent<CharMove>().Damaged(AttackDamge, transform.forward);
+        {
+            col.gameObject.GetComponent<CharMove>().Damaged(AttackDamge, transform.forward);          
             // m_Distance = 0;
         }
     }
-   
-    public void ZombieDamage(int Damage)
+
+    override public void ZombieDamage(int Damage)
     {
         HP -= Damage;
         if(HP<=0)
@@ -177,6 +184,8 @@ public class ZombieMove : MonoBehaviour {
         MotionPlay = false;
     }
 
+
+
     IEnumerator ZombieMoveSystem(float MoveDealy)
     {
         while(true)
@@ -196,4 +205,5 @@ public class ZombieMove : MonoBehaviour {
         yield return null;
     }
 
+    
 }

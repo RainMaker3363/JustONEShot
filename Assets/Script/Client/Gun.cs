@@ -68,7 +68,7 @@ class Gun_ShotGun : UseGun
         Bullet_Gun = 0;
         Bullet_Hand = 0;
         Bullet_Use = 2;
-        Damage = 35;
+        Damage = 45;
         NowUseGun = 1;
         Sight = new Vector3(0, 5.1f, -3);
     }
@@ -89,7 +89,7 @@ class Gun_Musket : UseGun
         Bullet_Gun = 0;
         Bullet_Hand = 0;
         Bullet_Use = 1;
-        Damage = 45;
+        Damage = 35;
         NowUseGun = 2;
         Sight = new Vector3(0, 9, -5.4f);
     }

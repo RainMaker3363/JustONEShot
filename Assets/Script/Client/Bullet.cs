@@ -60,7 +60,7 @@ public class Bullet : MonoBehaviour {
         }
         if (col.gameObject.tag == "Zombie")
         {
-            col.gameObject.GetComponent<ZombieMove>().ZombieDamage(Damage);
+            col.gameObject.GetComponent<Zombie>().ZombieDamage(Damage);
             HitCount++;
             // m_Distance = 0;
         }

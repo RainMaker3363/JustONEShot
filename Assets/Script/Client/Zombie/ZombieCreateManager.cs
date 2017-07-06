@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.AI;
 using UnityEngine;
 
 
 public class ZombieCreateManager : MonoBehaviour {
 
     public GameObject GameplayObj;
-   // [SerializeField]
-   public GameObject ZombieObj;
+   [SerializeField]
+    GameObject[] ZombieObj;
 
     [SerializeField]
     Transform[] ZombiePoint;
@@ -19,6 +20,7 @@ public class ZombieCreateManager : MonoBehaviour {
     int Stage=0;
     int Level = 0;
     int LevelDamage = 0;
+    int LevelHP=0;
 
     bool StageInit;
     bool LevelUPStatSelect;
@@ -182,37 +184,242 @@ public class ZombieCreateManager : MonoBehaviour {
         Time.timeScale = 1;
         
     }
-    void ZombieCreate()
+    void ZombieCreate()//0 일반좀비
     {
         for (int i = 0; i < 4; i++)
         {
-            Temp = Instantiate(ZombieObj);
+            Temp = Instantiate(ZombieObj[0]);
             Temp.transform.position = ZombiePoint[i].position;
-            Temp.GetComponentInChildren<ZombieMove>().HP = 50;
+        
+            Temp.GetComponent<NavMeshAgent>().enabled = true;
             switch (Level)
             {
                 case 0:
                     {
-                        LevelDamage = 10;
+                        LevelHP = 25;
+                        LevelDamage = 10;//*0.5
                         break;
                     }
                 case 1:
                     {
-                        LevelDamage = 20;
+                        LevelHP = 40;
+                        LevelDamage = 20;//*1
                         break;
                     }
                 case 2:
                     {
-                        LevelDamage = 50;
+                        LevelHP = 70;
+                        LevelDamage = 30;//*1.5
                         break;
                     }
                 default:
                     break;
             }
 
+            Temp.GetComponentInChildren<ZombieMove>().HP = LevelHP;
             Temp.GetComponentInChildren<ZombieMove>().AttackDamge = LevelDamage;
             Temp.transform.SetParent(GameplayObj.transform);
             ZombieCount++;
+            Temp = null;
+        }
+    }
+    void Zombie_BoomCreate()//1 폭탄좀비
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            Temp = Instantiate(ZombieObj[1]);
+            Temp.transform.position = ZombiePoint[i].position;
+           
+            Temp.GetComponent<NavMeshAgent>().enabled = true;
+            switch (Level)  //좀비스크립트내에서 적용중(현재 Level수치는 미적용)
+            {
+                case 0:
+                    {
+                        LevelHP = 30;
+                        LevelDamage = 25;//*0.5
+                        break;
+                    }
+                case 1:
+                    {
+                        LevelHP = 50;
+                        LevelDamage = 40;//*1
+                        break;
+                    }
+                case 2:
+                    {
+                        LevelHP = 75;
+                        LevelDamage = 55;//*2.5
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+            Temp.GetComponentInChildren<ZombieMove_Boom>().HP = LevelHP;
+            Temp.GetComponentInChildren<ZombieMove_Boom>().AttackDamge = LevelDamage;
+            Temp.transform.SetParent(GameplayObj.transform);
+            ZombieCount++;
+            Temp = null;
+        }
+    }
+
+    void Zombie_VomitCreate()//2 구토좀비
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            Temp = Instantiate(ZombieObj[2]);
+            Temp.transform.position = ZombiePoint[i].position;
+           
+            Temp.GetComponent<NavMeshAgent>().enabled = true;
+            switch (Level)
+            {
+                case 0:
+                    {
+                        LevelHP = 25;
+                        LevelDamage = 0;//*0.5
+                        break;
+                    }
+                case 1:
+                    {
+                        LevelHP = 40;
+                        LevelDamage = 0;//*1
+                        break;
+                    }
+                case 2:
+                    {
+                        LevelHP = 70;
+                        LevelDamage = 0;//*2.5
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+            Temp.GetComponentInChildren<ZombieMove_Vomit>().HP = LevelHP;
+            Temp.GetComponentInChildren<ZombieMove_Vomit>().AttackDamge = LevelDamage;
+            Temp.transform.SetParent(GameplayObj.transform);
+            ZombieCount++;
+            Temp = null;
+        }
+    }
+
+    void Zombie_SpeedCreate()//3 스피드좀비
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            Temp = Instantiate(ZombieObj[3]);
+            Temp.transform.position = ZombiePoint[i].position;
+            
+            Temp.GetComponent<NavMeshAgent>().enabled = true;
+            switch (Level)
+            {
+                case 0:
+                    {
+                        LevelHP = 25;
+                        LevelDamage = 10;//*0.5
+                        break;
+                    }
+                case 1:
+                    {
+                        LevelHP = 40;
+                        LevelDamage = 20;//*1
+                        break;
+                    }
+                case 2:
+                    {
+                        LevelHP = 70;
+                        LevelDamage = 30;//*1.5
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+            Temp.GetComponentInChildren<ZombieMove>().HP = LevelHP;
+            Temp.GetComponentInChildren<ZombieMove>().AttackDamge = LevelDamage;
+            Temp.transform.SetParent(GameplayObj.transform);
+            ZombieCount++;
+            Temp = null;
+        }
+    }
+
+    void Zombie_HideCreate()//4 투명좀비
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            Temp = Instantiate(ZombieObj[4]);
+            Temp.transform.position = ZombiePoint[i].position;
+            
+            Temp.GetComponent<NavMeshAgent>().enabled = true;
+            switch (Level)
+            {
+                case 0:
+                    {
+                        LevelHP = 25;
+                        LevelDamage = 10;//*0.5
+                        break;
+                    }
+                case 1:
+                    {
+                        LevelHP = 40;
+                        LevelDamage = 20;//*1
+                        break;
+                    }
+                case 2:
+                    {
+                        LevelHP = 70;
+                        LevelDamage = 30;//*1.5
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+            Temp.GetComponentInChildren<ZombieMove>().HP = LevelHP;
+            Temp.GetComponentInChildren<ZombieMove>().AttackDamge = LevelDamage;
+            Temp.transform.SetParent(GameplayObj.transform);
+            ZombieCount++;
+            Temp = null;
+        }
+    }
+
+    void Zombie_BigCreate()//5 초대형좀비
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            Temp = Instantiate(ZombieObj[5]);
+            Temp.transform.position = ZombiePoint[i].position;
+           
+            Temp.GetComponent<NavMeshAgent>().enabled = true;
+            switch (Level)
+            {
+                case 0:
+                    {
+                        LevelHP = 250;
+                        LevelDamage = 25;//*0.5
+                        break;
+                    }
+                case 1:
+                    {
+                        LevelHP = 400;
+                        LevelDamage = 50;//*1
+                        break;
+                    }
+                case 2:
+                    {
+                        LevelHP = 700;
+                        LevelDamage = 75;//*2.5
+                        break;
+                    }
+                default:
+                    break;
+            }
+
+            Temp.GetComponentInChildren<ZombieMove_Big>().HP = LevelHP;
+            Temp.GetComponentInChildren<ZombieMove_Big>().AttackDamge = LevelDamage;
+            Temp.transform.SetParent(GameplayObj.transform);
+            ZombieCount++;
+            Temp = null;
         }
     }
     IEnumerator StageSetup()
@@ -239,12 +446,54 @@ public class ZombieCreateManager : MonoBehaviour {
             {
                 if (StageInit)
                 {
+                    int test = Stage;
+                    if(test > 6)
+                    {
+                        test %= 6;
+                    }
+
+                    switch(test)
+                    {
+                        case 1:
+                            {
+                                ZombieCreate();
+                                break;
+                            }
+                        case 2:
+                            {
+                                Zombie_BoomCreate();
+                                break;
+                            }
+                        case 3:
+                            {
+                                Zombie_VomitCreate();
+                                break;
+                            }
+                        case 4:
+                            {
+                                Zombie_SpeedCreate();
+                                break;
+                            }
+                        case 5:
+                            {
+                                Zombie_HideCreate();
+                                break;
+                            }
+                        case 6:
+                            {
+                                Zombie_BigCreate();
+                                break;
+                            }
+
+                        default:
+                            break;
+                    }
                     //Debug.Log("Create");
-                       for (int i = 0; i < Stage; i++)    //좀비 소환
-                        {
-                            ZombieCreate();
+                       //for (int i = 0; i < Stage; i++)    //좀비 소환
+                       // {
+                            //ZombieCreate();
                             yield return new WaitForSeconds(2);
-                        }
+                       // }
                         StageInit = false;
                 }
                 else if (ZombieCount <= 0 && !StageInit)

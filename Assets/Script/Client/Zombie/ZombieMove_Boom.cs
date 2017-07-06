@@ -4,7 +4,7 @@ using UnityEngine.AI;
 using UnityEngine;
 
 
-public class ZombieMove_Boom : MonoBehaviour
+public class ZombieMove_Boom : Zombie
 {
 
     public Transform GamePlayObj;
@@ -20,7 +20,7 @@ public class ZombieMove_Boom : MonoBehaviour
     bool MotionPlay;
 
     Animator anim;
-
+    Animator CamAnim;
 
     public int HP;
     public int AttackDamge;
@@ -48,6 +48,8 @@ public class ZombieMove_Boom : MonoBehaviour
         StartCoroutine(ZombieMoveSystem(m_MoveDealy));
 
         m_AudioSource = gameObject.GetComponentInParent<AudioSource>();
+
+        CamAnim = GameObject.Find("CameraPos").GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -66,14 +68,14 @@ public class ZombieMove_Boom : MonoBehaviour
                 ZombieCreateManager.ZombieCount--;
                 Destroy(ParentObj);
             }
-            else if (Distance > 7.5f)
+            else if (Distance > 3.5f)
             {
                 Z_State = ZombieState.WALK;
                 anim.SetTrigger("Walk");
                 NvAgent.Resume();
                 //m_AudioSource.PlayOneShot(IdleSound);
             }
-            else if (Distance <= 7.5f && Distance > 2.5f)
+            else if (Distance <= 3.5f && Distance > 2.5f)
             {
 
                 if(Z_State != ZombieState.ATTACK)
@@ -81,8 +83,8 @@ public class ZombieMove_Boom : MonoBehaviour
                     Z_State = ZombieState.ATTACK;
                     transform.LookAt(PlayerPos.position);
                     anim.SetTrigger("Dash");
-                    NvAgent.speed = 0;//2.94f;  //기본이 2.1f 기준 40%증가
-                    StartCoroutine(ZombieBoom());
+                    NvAgent.speed = 3.99f;  //기본이 2.1f 기준 40%증가
+                    //StartCoroutine(ZombieBoom());
                 }
                 
                 //NvAgent.Stop();
@@ -152,9 +154,21 @@ public class ZombieMove_Boom : MonoBehaviour
             {
                 Damage = 5;
             }
-            else
+            else if (Distance>0 && Distance <= 1.9f)
             {
-                Damage = AttackDamge - (int)((Distance - 1) * 15);
+                //Damage = 40;//55 25
+                Damage = AttackDamge;   //attackdamge = 40(보통기준)
+            }
+            else if (Distance > 1.9f && Distance <= 2.8f)
+            {
+                //Damage = 25;//40 10
+                Damage = AttackDamge-15;
+            }
+            else if (Distance > 2.8 && Distance <= 3.5f)
+            {
+                //Damage = 10; //25 5
+                Damage = Mathf.Abs(AttackDamge-30);
+
             }
             // 
             Debug.Log("BoomDamage : " + Damage);
@@ -163,13 +177,13 @@ public class ZombieMove_Boom : MonoBehaviour
         }
     }
 
-    public void ZombieDamage(int Damage)
+    override public void ZombieDamage(int Damage)
     {
         HP -= Damage;
         if (HP <= 0)
         {
             Z_State = ZombieState.DEATH;
-
+            MotionPlay = true;
             anim.SetTrigger("Death");
            // m_AudioSource.PlayOneShot(DeadSound);
         }
@@ -181,7 +195,7 @@ public class ZombieMove_Boom : MonoBehaviour
         }
         StartCoroutine(ZombieDamageEffect());
         NvAgent.Stop();
-        MotionPlay = true;
+       
     }
 
     public void MotionEnd()
@@ -192,6 +206,7 @@ public class ZombieMove_Boom : MonoBehaviour
     public void BoomEffectOn()
     {
         BoomEffect.SetActive(true);
+        CamAnim.SetTrigger("Effect");
     }
 
     IEnumerator ZombieMoveSystem(float MoveDealy)
@@ -205,14 +220,14 @@ public class ZombieMove_Boom : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator ZombieBoom()
-    {
+    //IEnumerator ZombieBoom()
+    //{
         
-        yield return new WaitForSeconds(3);
-        ZombieDamage(100);
+    //    yield return new WaitForSeconds(3);
+    //    ZombieDamage(100);
 
-        yield return null;
-    }
+    //    yield return null;
+    //}
     IEnumerator ZombieDamageEffect()
     {
         shader.material.SetFloat("_DissolveEdgeRange", 1);
