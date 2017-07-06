@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
+using System.Collections.Generic;
 
 public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 {
@@ -11,8 +12,10 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     //private bool ButtonChecker;
     //private bool MultiStartChecker;
     private int OpponentCharNumber;
-    
+    private Dictionary<string, int> __SurvivalOpponentCharNumbers;
+
     public static HY.MultiGameModeState NowMultiGameModeNumber;
+
 
     // Use this for initialization
     void Awake () {
@@ -29,6 +32,10 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         // 리스너 설정
         GPGSManager.GetInstance.LBListener = this;
         
+        if(__SurvivalOpponentCharNumbers == null)
+        {
+            __SurvivalOpponentCharNumbers = new Dictionary<string, int>(8);
+        }
 
         /* 
         * 유니티 엔진 사용 시 입력을 하지 않으면 모바일 장치의 화면이 어두워지다가 잠기게 되는데,
@@ -96,6 +103,12 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         return OpponentCharNumber;
     }
 
+    // 상대방 캐릭터 정보를 기억한다.
+    public Dictionary<string, int> GetSurvivalOpponentCharNumber()
+    {
+        return __SurvivalOpponentCharNumbers;
+    }
+
     // 상대방이 보낸 캐릭터의 정보를 받아서 값을 갱신해준다.
     public void OpponentCharacterNumberReceive(string participantId, int characterNumber)
     {
@@ -109,7 +122,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
-
+                    __SurvivalOpponentCharNumbers[participantId] = characterNumber;
                 }
                 break;
 

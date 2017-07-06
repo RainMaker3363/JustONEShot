@@ -97,6 +97,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private int _WeaponSelectMessageLength = 6;
     // Byte + Byte + 1 Vector
     private int _shootVectorMesageLength = 14;
+    // Byte + Byte + 1 Boolean
+    private int _BossAlarmMesageLength = 3;
 
     // 메시지 도착 순서를 제어할 변수
     // 네트워크 도착 순서가 무작위로 된다면 동기화가 이상하게 될 가능성이 있기에
@@ -118,6 +120,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private List<byte> _DeadEyeRespawnMessage;
     private List<byte> _AnimMessage;
     private List<byte> _HealthMessage;
+    private List<byte> _BossAlarmMessage;
 
 
     // 현재 나의 캐릭터 정보를 가지고 있는다.
@@ -167,12 +170,52 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if (SurvivalOpponentCharNumbers == null)
         {
             SurvivalOpponentCharNumbers = new Dictionary<string, int>(8);
-
+            //SurvivalOpponentCharNumbers.Clear();
+        }
+        else
+        {
+            SurvivalOpponentCharNumbers.Clear();
         }
 
         if (IsInitEnd == false)
         {
             IsInitEnd = true;
+
+            minimumOpponents = 1;
+            maximumOpponents = 1;
+            gameVariation = 0;
+            _protocolVersion = 1;
+
+            // Byte + Byte + 3 floats for position  + 1 float for rotY + 1 Interget for MessageNumber
+            _updateMessageLength = 22;
+            // Byte + Byte + 1 boolen for finish Game
+            _finishMessageLength = 3;
+            // Byte + Byte + 1 boolen for Item State + 1 Interger
+            _itemStateMessageLength = 7;
+            // Byte + Byte + 1 boolen
+            _shootMessageLength = 3;
+            // Byte + Byte + 1 Float
+            _deadeyeTimerMessageLength = 6;
+            // Byte + Byte + 1 Boolean
+            _deadeyeMessageLength = 3;
+             // Byte + Byte + 1 Interger
+             _deadeyeRespawnMessageLength = 6;
+            // Byte + Byte + 1 Interger
+            _animMessageLength = 6;
+            // Byte + Byte + 1 Interget
+            _healthMessageLength = 6;
+            // Byte + Byte + 1 Boolean
+            _gameStateWaitMesageLength = 3;
+            // Byte + Byte + 1 Boolean
+            _gameStateSelectMesageLength = 3;
+            // Byte + Byte + 1 Interger
+            _CharacterSelectMessageLength = 6;
+            // Byte + Byte + 1 Interger
+            _WeaponSelectMessageLength = 6;
+             // Byte + Byte + 1 Vector
+            _shootVectorMesageLength = 14;
+            // Byte + Byte + 1 Boolean
+            _BossAlarmMesageLength = 3;
 
             PlayGamesPlatform.DebugLogEnabled = true;
             PlayGamesPlatform.Activate();
@@ -250,6 +293,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _CharacterSelectMessage = new List<byte>(_CharacterSelectMessageLength);
         }
 
+        if(_BossAlarmMessage == null)
+        {
+            _BossAlarmMessage = new List<byte>(_BossAlarmMesageLength);
+        }
+
         NowMultiGameMode = HY.MultiGameModeState.NONE;
 
         _myMessageNum = 0;
@@ -260,43 +308,67 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     {
 
         // 게임모드가 선택되어 있지 않다면 아무것도 하지 않는다
-        //if(NowMultiGameMode != HY.MultiGameModeState.NONE)
-        //{
-        //    switch (NowMultiGameMode)
-        //    {
-        //        case HY.MultiGameModeState.PVP:
-        //            {
-        //                // 최소 수용 인원
-        //                minimumOpponents = 1;
-        //                // 최대 수용 인원
-        //                maximumOpponents = 1;
+        switch (NowMultiGameMode)
+        {
+            case HY.MultiGameModeState.NONE:
+                {
+                    // 최소 수용 인원
+                    minimumOpponents = 1;
+                    // 최대 수용 인원
+                    maximumOpponents = 1;
 
-        //                // 최소 수용 인원
-        //                // 최대 수용 인원
-        //                PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
-        //            }
-        //            break;
+                    // 최소 수용 인원
+                    // 최대 수용 인원
+                    PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
+                }
+                break;
 
-        //        case HY.MultiGameModeState.SURVIVAL:
-        //            {
-        //                // 최소 수용 인원
-        //                minimumOpponents = 1;
-        //                // 최대 수용 인원
-        //                maximumOpponents = 7;
+            case HY.MultiGameModeState.PVP:
+                {
+                    // 최소 수용 인원
+                    minimumOpponents = 1;
+                    // 최대 수용 인원
+                    maximumOpponents = 1;
 
+                    // 최소 수용 인원
+                    // 최대 수용 인원
+                    PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
+                }
+                break;
 
-        //                // 최소 수용 인원
-        //                // 최대 수용 인원
-        //                PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
-        //            }
-        //            break;
-        //    }
-        //}
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    // 최소 수용 인원
+                    minimumOpponents = 1;
+                    // 최대 수용 인원
+                    maximumOpponents = 7;
+
+                    PlayGamesPlatform.Instance.RealTime.ShowWaitingRoomUI();
+
+                    // 최소 수용 인원
+                    // 최대 수용 인원
+                    PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
+                }
+                break;
+
+            default:
+                {
+                    // 최소 수용 인원
+                    minimumOpponents = 1;
+                    // 최대 수용 인원
+                    maximumOpponents = 1;
+
+                    // 최소 수용 인원
+                    // 최대 수용 인원
+                    PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
+                }
+                break;
+        }
 
 
         // 최소 수용 인원
         // 최대 수용 인원
-        PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
+        //PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
         //PlayGamesPlatform.Instance.RealTime.ShowWaitingRoomUI();
     }
 
@@ -347,6 +419,12 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     {
         return SurvivalOpponentCharNumbers;
     }
+
+    //// 서바이벌 모드에서 적들의 캐릭터 번호를 설정할 때 사용합니다.
+    //public void SetSurvivalOpponentCharNumbers(string PlayerID, int CharNumber)
+    //{
+    //    SurvivalOpponentCharNumbers[PlayerID] = CharNumber;
+    //}
 
     // 현재 내가 선택한 캐릭터에 대한 정보를 설정해준다.
     // 기본값은 100
@@ -414,6 +492,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                 break;
         }
     }
+
     public void InitMessager()
     {
         if (_updateMessage == null)
@@ -486,6 +565,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _CharacterSelectMessage = new List<byte>(_CharacterSelectMessageLength);
         }
 
+        if (_BossAlarmMessage == null)
+        {
+            _BossAlarmMessage = new List<byte>(_BossAlarmMesageLength);
+        }
 
         _myMessageNum = 0;
     }
@@ -912,6 +995,20 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, WeaponSelectMessageToSend);
     }
 
+    // 서바이벌 모드에서 보스 레이드 이벤트를 보내는 메시지
+    public void SendBossAlertEvent(bool Alarm)
+    {
+
+        _BossAlarmMessage.Clear();
+        _BossAlarmMessage.Add(_protocolVersion);
+        _BossAlarmMessage.Add((byte)'B');
+        _BossAlarmMessage.AddRange(System.BitConverter.GetBytes(Alarm));
+
+        byte[] WeaponSelectMessageToSend = _WeaponSelectMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, WeaponSelectMessageToSend);
+    }
+
     // 상대 ID로부터 메시지를 받았을때 호출되는 리스너 함수
     public void OnRealTimeMessageReceived(bool isReliable, string senderId, byte[] data)
     {
@@ -995,7 +1092,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                 //        break;
                 //}
 
-                updateListener.DeadEyeRespawnIndexReceived(index);
+                updateListener.DeadEyeRespawnIndexReceived(senderId, index);
             }
         }
         else if(messageType == 'S')
@@ -1009,7 +1106,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             if (updateListener != null)
             {
                 //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.ShootStateReceived(shoot);
+                updateListener.ShootStateReceived(senderId, shoot);
             }
         }
         else if(messageType == 'D')
@@ -1024,7 +1121,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             if (updateListener != null)
             {
                 //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.DeadEyeStateReceived(DeadEyeActive);
+                updateListener.DeadEyeStateReceived(senderId, DeadEyeActive);
             }
         }
         else if (messageType == 'E')
@@ -1038,7 +1135,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             if (updateListener != null)
             {
                 //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.DeadEyeTimerStateReceived(DeadEyeActive);
+                updateListener.DeadEyeTimerStateReceived(senderId, DeadEyeActive);
             }
         }
         else if(messageType == 'A')
@@ -1052,7 +1149,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             if (updateListener != null)
             {
                 //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.AniStateReceived(AniStateNumber);
+                updateListener.AniStateReceived(senderId, AniStateNumber);
             }
         }
         else if(messageType == 'H')
@@ -1066,7 +1163,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             if (updateListener != null)
             {
                 //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.HPStateReceived(HPState);
+                updateListener.HPStateReceived(senderId, HPState);
             }
         }
         else if(messageType == 'Q')
@@ -1080,7 +1177,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             if (updateListener != null)
             {
                 //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.MultiStateSelectReceived(SelectOut);
+                updateListener.MultiStateSelectReceived(senderId, SelectOut);
             }
         }
         else if(messageType == 'W')
@@ -1094,7 +1191,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             if (updateListener != null)
             {
                 //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.MultiStateWaitReceived(WaitOut);
+                updateListener.MultiStateWaitReceived(senderId, WaitOut);
             }
         }
         else if (messageType == 'C')
@@ -1116,12 +1213,14 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                     case HY.MultiGameModeState.PVP:
                         {
                             OppenentCharNumber = CharacterNumber;
+                            //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
                         }
                         break;
 
                     case HY.MultiGameModeState.SURVIVAL:
                         {
-                            //SurvivalOpponentCharNumbers[senderId] = CharacterNumber;
+                            SurvivalOpponentCharNumbers[senderId] = CharacterNumber;
+                            //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
                         }
                         break;
 
@@ -1132,7 +1231,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                         break;
                 }
 
-                LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
+                if(LBListener != null)
+                {
+                    LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
+                }
+
             }
             //if (updateListener != null)
             //{
@@ -1151,7 +1254,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             if (updateListener != null)
             {
                 //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.WeaponSelectStateReceived(WeaponNumber);
+                updateListener.WeaponSelectStateReceived(senderId, WeaponNumber);
             }
         }
         else if (messageType == 'V')
@@ -1168,9 +1271,20 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
             if (updateListener != null)
             {
-                updateListener.ShootVectorReceived(VecX, VecY, VecZ);
+                updateListener.ShootVectorReceived(senderId, VecX, VecY, VecZ);
             }
 
+        }
+        else if(messageType == 'B')
+        {
+            bool Alarm = System.BitConverter.ToBoolean(data, 2);
+
+            Debug.Log("Boss Raid Event Trigger On : " + Alarm);
+
+            if(updateListener != null)
+            {
+                updateListener.BossRaidAlarm(Alarm);
+            }
         }
     }
 
@@ -1327,7 +1441,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         }
         else
         {
-            return null;
+            string UnknownStr = "UnKnown Player";
+
+            return UnknownStr;
         }
     }
 }

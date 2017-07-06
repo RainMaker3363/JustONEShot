@@ -33,6 +33,23 @@ public class MultiMatching_UI : MonoBehaviour {
 
     }
 
+    private void OnEnable()
+    {
+        Matching_Text.text = "Player Searching...";
+
+        MultiStartChecker = false;
+
+        MultiGameModeNumber = MultiTitleManager.NowMultiGameModeNumber;
+
+
+        if (TitleManager == null)
+        {
+            TitleManager = GameObject.Find("MultiTitleManager").GetComponent<MultiTitleManager>();
+        }
+
+        GPGSManager.GetInstance.SignInAndStartMPGame();
+    }
+
     IEnumerator StartMultiGame()
     {
         yield return new WaitForSeconds(0.2f);
@@ -72,23 +89,76 @@ public class MultiMatching_UI : MonoBehaviour {
 
         MultiGameModeNumber = MultiTitleManager.NowMultiGameModeNumber;
 
-        if (GPGSManager.GetInstance.IsConnected() == true)
+        switch(MultiGameModeNumber)
         {
-            Matching_Text.text = "Room Connect...\nCharNum : " + TitleManager.GetOpponentCharNumber();
-
-            if (TitleManager.GetOpponentCharNumber() != 100)
-            {
-                Matching_Text.text = "Join the Session.\nCharNum : " + TitleManager.GetOpponentCharNumber();
-
-                if (MultiStartChecker == false)
+            case HY.MultiGameModeState.NONE:
                 {
-                    MultiStartChecker = true;
 
-                    StartCoroutine(StartMultiGame());
                 }
-            }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+                    if (GPGSManager.GetInstance.IsConnected() == true)
+                    {
+                        Matching_Text.text = "Room Connect...\nCharNum : " + TitleManager.GetOpponentCharNumber();
+
+                        if (TitleManager.GetOpponentCharNumber() != 100)
+                        {
+                            Matching_Text.text = "Join the Session.\nCharNum : " + TitleManager.GetOpponentCharNumber();
+
+                            if (MultiStartChecker == false)
+                            {
+                                MultiStartChecker = true;
+
+                                StartCoroutine(StartMultiGame());
+                            }
+                        }
 
 
+                    }
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    if (GPGSManager.GetInstance.IsConnected() == true)
+                    {
+                        Matching_Text.text = "Room Connect...\nCharCount : " + TitleManager.GetOpponentCharNumber()
+                            + "\nCharName[0] = " + GPGSManager.GetInstance.GetOtherNameGPGS(0)
+                            + "\nCharName[1] = " + GPGSManager.GetInstance.GetOtherNameGPGS(1)
+                            + "\nCharName[2] = " + GPGSManager.GetInstance.GetOtherNameGPGS(2)
+                            + "\nCharName[3] = " + GPGSManager.GetInstance.GetOtherNameGPGS(3)
+                            + "\nCharName[4] = " + GPGSManager.GetInstance.GetOtherNameGPGS(4)
+                            + "\nCharName[5] = " + GPGSManager.GetInstance.GetOtherNameGPGS(5)
+                            + "\nCharName[6] = " + GPGSManager.GetInstance.GetOtherNameGPGS(6)
+                            + "\nCharName[7] = " + GPGSManager.GetInstance.GetOtherNameGPGS(7);
+
+                        if (TitleManager.GetOpponentCharNumber() != 100)
+                        {
+                            Matching_Text.text = "Join the Session.\nCharCount : " + TitleManager.GetOpponentCharNumber()
+                            + "\nCharName[0] = " + GPGSManager.GetInstance.GetOtherNameGPGS(0)
+                            + "\nCharName[1] = " + GPGSManager.GetInstance.GetOtherNameGPGS(1)
+                            + "\nCharName[2] = " + GPGSManager.GetInstance.GetOtherNameGPGS(2)
+                            + "\nCharName[3] = " + GPGSManager.GetInstance.GetOtherNameGPGS(3)
+                            + "\nCharName[4] = " + GPGSManager.GetInstance.GetOtherNameGPGS(4)
+                            + "\nCharName[5] = " + GPGSManager.GetInstance.GetOtherNameGPGS(5)
+                            + "\nCharName[6] = " + GPGSManager.GetInstance.GetOtherNameGPGS(6)
+                            + "\nCharName[7] = " + GPGSManager.GetInstance.GetOtherNameGPGS(7);
+
+                            if (MultiStartChecker == false)
+                            {
+                                MultiStartChecker = true;
+
+                                StartCoroutine(StartMultiGame());
+                            }
+                        }
+
+
+                    }
+                }
+                break;
         }
+       
     }
 }
