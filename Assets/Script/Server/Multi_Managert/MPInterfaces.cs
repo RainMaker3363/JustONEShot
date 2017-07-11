@@ -24,7 +24,11 @@
 
     //void CharacterSelectStateReceived(int CharacterNumber);
     void WeaponSelectStateReceived(string participantId, int WeaponNumber);
-    void BossRaidAlarm(bool Alarm);
+    void BossRaidAlarmReceived(bool Alarm);
+    void BossHPStateReceived(int HPState);
+    void BossAnimStateReceived(int AnimState);
+    void BossDeadEventReceived(bool BossDead);
+    void BossPosReceived(int messageNum, float x, float y, float z, float rotY);
 
     // ===========================================================================================================================
     // 다인용 멀티 함수

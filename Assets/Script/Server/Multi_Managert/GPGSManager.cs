@@ -97,13 +97,23 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private int _WeaponSelectMessageLength = 6;
     // Byte + Byte + 1 Vector
     private int _shootVectorMesageLength = 14;
-    // Byte + Byte + 1 Boolean
-    private int _BossAlarmMesageLength = 3;
+
+    // Byte + Byte + Byte + 3 floats for position  + 1 float for rotY + 1 Interget for MessageNumber
+    private int _BossAlarmMesageLength = 23;
+    // Byte + Byte + Byte + 1 Boolean
+    private int _BossDeadEventMessageLength = 4;
+    // Byte + Byte + Byte + 1 Boolean
+    private int _BossAnimMessageLength = 4;
+    // Byte + Byte + Byte + 1 Interger
+    private int _BossPosMessageLength = 7;
+    // Byte + Byte + Byte + 1 interger
+    private int _BossHPStateMessageLength = 7;
 
     // 메시지 도착 순서를 제어할 변수
     // 네트워크 도착 순서가 무작위로 된다면 동기화가 이상하게 될 가능성이 있기에
     // 이것을 보정해줄 변수이다.
     private int _myMessageNum;
+    private int _BossPosMessageNum;
 
     private List<byte> _StateWaitMessage;
     private List<byte> _StateSelectMessage;
@@ -120,7 +130,13 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private List<byte> _DeadEyeRespawnMessage;
     private List<byte> _AnimMessage;
     private List<byte> _HealthMessage;
+
+    // 보스 이벤트
     private List<byte> _BossAlarmMessage;
+    private List<byte> _BossPosMessage;
+    private List<byte> _BossAnimMessage;
+    private List<byte> _BossDeadEventMessage;
+    private List<byte> _BossHPStateMeesage;
 
 
     // 현재 나의 캐릭터 정보를 가지고 있는다.
@@ -214,8 +230,18 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _WeaponSelectMessageLength = 6;
              // Byte + Byte + 1 Vector
             _shootVectorMesageLength = 14;
-            // Byte + Byte + 1 Boolean
-            _BossAlarmMesageLength = 3;
+            
+            
+            // Byte + Byte + Byte + 3 floats for position  + 1 float for rotY + 1 Interget for MessageNumber
+            _BossAlarmMesageLength = 23;
+            // Byte + Byte + Byte + 1 Boolean
+            _BossDeadEventMessageLength = 4;
+            // Byte + Byte + Byte + 1 Boolean
+            _BossAnimMessageLength = 4;
+            // Byte + Byte + Byte + 1 Interger
+            _BossPosMessageLength = 7;
+            // Byte + Byte + Byte + 1 interger
+            _BossHPStateMessageLength = 7;
 
             PlayGamesPlatform.DebugLogEnabled = true;
             PlayGamesPlatform.Activate();
@@ -293,13 +319,35 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _CharacterSelectMessage = new List<byte>(_CharacterSelectMessageLength);
         }
 
+        // 보스 이벤트
         if(_BossAlarmMessage == null)
         {
             _BossAlarmMessage = new List<byte>(_BossAlarmMesageLength);
         }
 
+        if(_BossPosMessage == null)
+        {
+            _BossPosMessage = new List<byte>(_BossPosMessageLength);
+        }
+
+        if(_BossAnimMessage == null)
+        {
+            _BossAnimMessage = new List<byte>(_BossAnimMessageLength);
+        }
+
+        if(_BossDeadEventMessage == null)
+        {
+            _BossDeadEventMessage = new List<byte>(_BossDeadEventMessageLength);
+        }
+
+        if(_BossHPStateMeesage == null)
+        {
+            _BossHPStateMeesage = new List<byte>(_BossHPStateMessageLength);
+        }
+
         NowMultiGameMode = HY.MultiGameModeState.NONE;
 
+        _BossPosMessageNum = 0;
         _myMessageNum = 0;
     }
 
@@ -565,11 +613,33 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _CharacterSelectMessage = new List<byte>(_CharacterSelectMessageLength);
         }
 
+        // 보스 이벤트
         if (_BossAlarmMessage == null)
         {
             _BossAlarmMessage = new List<byte>(_BossAlarmMesageLength);
         }
 
+        if (_BossPosMessage == null)
+        {
+            _BossPosMessage = new List<byte>(_BossPosMessageLength);
+        }
+
+        if (_BossAnimMessage == null)
+        {
+            _BossAnimMessage = new List<byte>(_BossAnimMessageLength);
+        }
+
+        if (_BossDeadEventMessage == null)
+        {
+            _BossDeadEventMessage = new List<byte>(_BossDeadEventMessageLength);
+        }
+
+        if (_BossHPStateMeesage == null)
+        {
+            _BossHPStateMeesage = new List<byte>(_BossHPStateMessageLength);
+        }
+
+        _BossPosMessageNum = 0;
         _myMessageNum = 0;
     }
 
@@ -1002,11 +1072,76 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         _BossAlarmMessage.Clear();
         _BossAlarmMessage.Add(_protocolVersion);
         _BossAlarmMessage.Add((byte)'B');
+        _BossAlarmMessage.Add((byte)'E');
         _BossAlarmMessage.AddRange(System.BitConverter.GetBytes(Alarm));
 
-        byte[] WeaponSelectMessageToSend = _WeaponSelectMessage.ToArray();
+        byte[] _BossAlarmMessageToSend = _BossAlarmMessage.ToArray();
 
-        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, WeaponSelectMessageToSend);
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, _BossAlarmMessageToSend);
+    }
+
+    // 서바이벌 모드에서 보스의 위치를 동기화 하는 메시지
+    public void SendBossPosition(float posX, float posY, float posZ, float rotY)
+    {
+
+        _BossPosMessage.Clear();
+        _BossPosMessage.Add(_protocolVersion);
+        _BossPosMessage.Add((byte)'B');
+        _BossPosMessage.Add((byte)'U');
+        _BossPosMessage.AddRange(System.BitConverter.GetBytes(++_BossPosMessageNum));
+        _BossPosMessage.AddRange(System.BitConverter.GetBytes(posX));
+        _BossPosMessage.AddRange(System.BitConverter.GetBytes(posY));
+        _BossPosMessage.AddRange(System.BitConverter.GetBytes(posZ));
+        _BossPosMessage.AddRange(System.BitConverter.GetBytes(rotY));
+
+        byte[] messageToSend = _BossPosMessage.ToArray();
+
+        Debug.Log("Sending Boss update  Position message  " + messageToSend + " to all players in the room");
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, messageToSend);
+        //PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, messageToSend);
+    }
+
+    // 서바이벌 모드에서 보스의 애니메이션을 동기화 하는 메시지
+    public void SendBossAnimation(int AnimationNum)
+    {
+        _BossAlarmMessage.Clear();
+        _BossAlarmMessage.Add(_protocolVersion);
+        _BossAlarmMessage.Add((byte)'B');
+        _BossAlarmMessage.Add((byte)'A');
+        _BossAlarmMessage.AddRange(System.BitConverter.GetBytes(AnimationNum));
+
+        byte[] _BossAlarmMessageToSend = _BossAlarmMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, _BossAlarmMessageToSend);
+    }
+
+    // 서바이벌 모드에서 보스의 HP 상태를 동기화 하는 메시지
+    public void SendBossHPState(int HPState)
+    {
+        _BossHPStateMeesage.Clear();
+        _BossHPStateMeesage.Add(_protocolVersion);
+        _BossHPStateMeesage.Add((byte)'B');
+        _BossHPStateMeesage.Add((byte)'H');
+        _BossHPStateMeesage.AddRange(System.BitConverter.GetBytes(HPState));
+
+        byte[] BossHPStateMessageToSend = _BossHPStateMeesage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(false, BossHPStateMessageToSend);
+    }
+
+    // 서바이벌 모드에서 보스의 사망 여부를 동기화 하는 메시지
+    public void SendBossDeadState(bool DeadState)
+    {
+        _BossDeadEventMessage.Clear();
+        _BossDeadEventMessage.Add(_protocolVersion);
+        _BossDeadEventMessage.Add((byte)'B');
+        _BossDeadEventMessage.Add((byte)'D');
+        _BossDeadEventMessage.AddRange(System.BitConverter.GetBytes(DeadState));
+
+        byte[] BossDeadStateMessageToSend = _BossDeadEventMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, BossDeadStateMessageToSend);
     }
 
     // 상대 ID로부터 메시지를 받았을때 호출되는 리스너 함수
@@ -1019,273 +1154,631 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         // Let's figure out what type of message this is.
         char messageType = (char)data[1];
 
-        //if (messageType == 'U' && data.Length == _updateMessageLength)
-        if (messageType == 'U')
+        switch(messageType)
         {
-            int messageNum = System.BitConverter.ToInt32(data, 2);
-            float posX = System.BitConverter.ToSingle(data, 6);
-            float posY = System.BitConverter.ToSingle(data, 10);
-            float posZ = System.BitConverter.ToSingle(data, 14);
-            float rotY = System.BitConverter.ToSingle(data, 18);
-            //float rotZ = System.BitConverter.ToSingle(data, 18);
-            Debug.Log("Player " + senderId + " is at (" + posX + ", " + posY + ") rotation " + rotY);
-
-            ReceiveMessage = ByteToString(data);
-            // We'd better tell our GameController about this.
-            //updateListener.UpdateReceived(senderId, posX, posY, velX, velY, rotZ);
-
-            if (updateListener != null)
-            {
-                updateListener.UpdatePositionReceived(senderId, messageNum, posX, posY, posZ, rotY);
-            }
-
-        }
-        else if(messageType == 'F')
-        {
-            bool GameOver = System.BitConverter.ToBoolean(data, 2);
-
-            Debug.Log("This Game Is End");
-
-            ReceiveMessage = ByteToString(data);
-
-            if(updateListener != null)
-            {
-                updateListener.FinishedReceived(senderId, GameOver);
-            }
-        }
-        else if(messageType == 'I')
-        {
-            //bool ItemGet = System.BitConverter.ToBoolean(data, 2);
-            //int Index = System.BitConverter.ToInt32(data, 3);
-
-            //Debug.Log("Item Get");
-
-            //ReceiveMessage = ByteToString(data);
-
-            //if (updateListener != null)
-            //{
-            //    //updateListener.ItemStateReceived(Index, ItemGet);
-            //    updateListener.ItemStateReceived(0, ItemGet);
-            //}
-            int index = System.BitConverter.ToInt32(data, 2);
-
-            if(updateListener != null)
-            {
-                //switch(MultiGameMode)
-                //{
-                //    case HY.MultiGameModeState.NONE:
-                //        {
-
-                //        }
-                //        break;
-
-                //    case HY.MultiGameModeState.PVP:
-                //        {
-                //            updateListener.DeadEyeRespawnIndexReceived(index);
-                //        }
-                //        break;
-
-                //    case HY.MultiGameModeState.SURVIVAL:
-                //        {
-                //            updateListener.DeadEyeRespawnIndexReceived(senderId, index);
-                //        }
-                //        break;
-                //}
-
-                updateListener.DeadEyeRespawnIndexReceived(senderId, index);
-            }
-        }
-        else if(messageType == 'S')
-        {
-            bool shoot = System.BitConverter.ToBoolean(data, 2);
-
-            Debug.Log("Shoot Get");
-
-            ReceiveMessage = ByteToString(data);
-
-            if (updateListener != null)
-            {
-                //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.ShootStateReceived(senderId, shoot);
-            }
-        }
-        else if(messageType == 'D')
-        {
-            bool DeadEyeActive = System.BitConverter.ToBoolean(data, 2);
-
-            Debug.Log("DeadEye Message!");
-            
-
-            ReceiveMessage = ByteToString(data);
-
-            if (updateListener != null)
-            {
-                //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.DeadEyeStateReceived(senderId, DeadEyeActive);
-            }
-        }
-        else if (messageType == 'E')
-        {
-            float DeadEyeActive = System.BitConverter.ToSingle(data, 2);
-
-            Debug.Log("DeadEye Timer Get");
-
-            ReceiveMessage = ByteToString(data);
-
-            if (updateListener != null)
-            {
-                //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.DeadEyeTimerStateReceived(senderId, DeadEyeActive);
-            }
-        }
-        else if(messageType == 'A')
-        {
-            int AniStateNumber = System.BitConverter.ToInt32(data, 2);
-
-            Debug.Log("AniState Get");
-
-            ReceiveMessage = ByteToString(data);
-
-            if (updateListener != null)
-            {
-                //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.AniStateReceived(senderId, AniStateNumber);
-            }
-        }
-        else if(messageType == 'H')
-        {
-            int HPState = System.BitConverter.ToInt32(data, 2);
-
-            Debug.Log("HPState Get");
-
-            ReceiveMessage = ByteToString(data);
-
-            if (updateListener != null)
-            {
-                //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.HPStateReceived(senderId, HPState);
-            }
-        }
-        else if(messageType == 'Q')
-        {
-            bool SelectOut = System.BitConverter.ToBoolean(data, 2);
-
-            Debug.Log("Select Complete");
-
-            ReceiveMessage = ByteToString(data);
-
-            if (updateListener != null)
-            {
-                //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.MultiStateSelectReceived(senderId, SelectOut);
-            }
-        }
-        else if(messageType == 'W')
-        {
-            bool WaitOut = System.BitConverter.ToBoolean(data, 2);
-
-            Debug.Log("Wait signal is over");
-
-            ReceiveMessage = ByteToString(data);
-
-            if (updateListener != null)
-            {
-                //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.MultiStateWaitReceived(senderId, WaitOut);
-            }
-        }
-        else if (messageType == 'C')
-        {
-            int CharacterNumber = System.BitConverter.ToInt32(data, 2);
-
-            
-
-            Debug.Log("Character Number is : " + CharacterNumber);
-
-            ReceiveMessage = ByteToString(data);
-
-            if(LBListener != null)
-            {
-                OppenentCharNumber = CharacterNumber;
-
-                switch(NowMultiGameMode)
+            case 'U':
                 {
-                    case HY.MultiGameModeState.PVP:
-                        {
-                            OppenentCharNumber = CharacterNumber;
-                            //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
-                        }
-                        break;
+                    int messageNum = System.BitConverter.ToInt32(data, 2);
+                    float posX = System.BitConverter.ToSingle(data, 6);
+                    float posY = System.BitConverter.ToSingle(data, 10);
+                    float posZ = System.BitConverter.ToSingle(data, 14);
+                    float rotY = System.BitConverter.ToSingle(data, 18);
+                    //float rotZ = System.BitConverter.ToSingle(data, 18);
+                    Debug.Log("Player " + senderId + " is at (" + posX + ", " + posY + ") rotation " + rotY);
 
-                    case HY.MultiGameModeState.SURVIVAL:
-                        {
-                            SurvivalOpponentCharNumbers[senderId] = CharacterNumber;
-                            //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
-                        }
-                        break;
+                    ReceiveMessage = ByteToString(data);
+                    // We'd better tell our GameController about this.
+                    //updateListener.UpdateReceived(senderId, posX, posY, velX, velY, rotZ);
 
-                    default:
-                        {
-                            OppenentCharNumber = CharacterNumber;
-                        }
-                        break;
+                    if (updateListener != null)
+                    {
+                        updateListener.UpdatePositionReceived(senderId, messageNum, posX, posY, posZ, rotY);
+                    }
+
                 }
+                break;
 
-                if(LBListener != null)
+            case 'F':
                 {
-                    LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
+                    bool GameOver = System.BitConverter.ToBoolean(data, 2);
+
+                    Debug.Log("This Game Is End");
+
+                    ReceiveMessage = ByteToString(data);
+
+                    if (updateListener != null)
+                    {
+                        updateListener.FinishedReceived(senderId, GameOver);
+                    }
                 }
+                break;
 
-            }
-            //if (updateListener != null)
-            //{
-            //    //updateListener.ItemStateReceived(Index, ItemGet);
-            //    updateListener.CharacterSelectStateReceived(CharacterNumber);
-            //}
+            case 'I':
+                {
+                    int index = System.BitConverter.ToInt32(data, 2);
+
+                    if (updateListener != null)
+                    {
+                        //switch(MultiGameMode)
+                        //{
+                        //    case HY.MultiGameModeState.NONE:
+                        //        {
+
+                        //        }
+                        //        break;
+
+                        //    case HY.MultiGameModeState.PVP:
+                        //        {
+                        //            updateListener.DeadEyeRespawnIndexReceived(index);
+                        //        }
+                        //        break;
+
+                        //    case HY.MultiGameModeState.SURVIVAL:
+                        //        {
+                        //            updateListener.DeadEyeRespawnIndexReceived(senderId, index);
+                        //        }
+                        //        break;
+                        //}
+
+                        updateListener.DeadEyeRespawnIndexReceived(senderId, index);
+                    }
+                }
+                break;
+
+            case 'S':
+                {
+                    bool shoot = System.BitConverter.ToBoolean(data, 2);
+
+                    Debug.Log("Shoot Get");
+
+                    ReceiveMessage = ByteToString(data);
+
+                    if (updateListener != null)
+                    {
+                        //updateListener.ItemStateReceived(Index, ItemGet);
+                        updateListener.ShootStateReceived(senderId, shoot);
+                    }
+                }
+                break;
+
+            case 'D':
+                {
+                    bool DeadEyeActive = System.BitConverter.ToBoolean(data, 2);
+
+                    Debug.Log("DeadEye Message!");
+
+
+                    ReceiveMessage = ByteToString(data);
+
+                    if (updateListener != null)
+                    {
+                        //updateListener.ItemStateReceived(Index, ItemGet);
+                        updateListener.DeadEyeStateReceived(senderId, DeadEyeActive);
+                    }
+                }
+                break;
+
+            case 'E':
+                {
+                    float DeadEyeActive = System.BitConverter.ToSingle(data, 2);
+
+                    Debug.Log("DeadEye Timer Get");
+
+                    ReceiveMessage = ByteToString(data);
+
+                    if (updateListener != null)
+                    {
+                        //updateListener.ItemStateReceived(Index, ItemGet);
+                        updateListener.DeadEyeTimerStateReceived(senderId, DeadEyeActive);
+                    }
+                }
+                break;
+
+            case 'A':
+                {
+                    int AniStateNumber = System.BitConverter.ToInt32(data, 2);
+
+                    Debug.Log("AniState Get");
+
+                    ReceiveMessage = ByteToString(data);
+
+                    if (updateListener != null)
+                    {
+                        //updateListener.ItemStateReceived(Index, ItemGet);
+                        updateListener.AniStateReceived(senderId, AniStateNumber);
+                    }
+                }
+                break;
+
+            case 'H':
+                {
+                    int HPState = System.BitConverter.ToInt32(data, 2);
+
+                    Debug.Log("HPState Get");
+
+                    ReceiveMessage = ByteToString(data);
+
+                    if (updateListener != null)
+                    {
+                        //updateListener.ItemStateReceived(Index, ItemGet);
+                        updateListener.HPStateReceived(senderId, HPState);
+                    }
+                }
+                break;
+
+            case 'Q':
+                {
+                    bool SelectOut = System.BitConverter.ToBoolean(data, 2);
+
+                    Debug.Log("Select Complete");
+
+                    ReceiveMessage = ByteToString(data);
+
+                    if (updateListener != null)
+                    {
+                        //updateListener.ItemStateReceived(Index, ItemGet);
+                        updateListener.MultiStateSelectReceived(senderId, SelectOut);
+                    }
+                }
+                break;
+
+            case 'W':
+                {
+                    bool WaitOut = System.BitConverter.ToBoolean(data, 2);
+
+                    Debug.Log("Wait signal is over");
+
+                    ReceiveMessage = ByteToString(data);
+
+                    if (updateListener != null)
+                    {
+                        //updateListener.ItemStateReceived(Index, ItemGet);
+                        updateListener.MultiStateWaitReceived(senderId, WaitOut);
+                    }
+                }
+                break;
+
+            case 'C':
+                {
+                    int CharacterNumber = System.BitConverter.ToInt32(data, 2);
+
+
+
+                    Debug.Log("Character Number is : " + CharacterNumber);
+
+                    ReceiveMessage = ByteToString(data);
+
+                    if (LBListener != null)
+                    {
+                        OppenentCharNumber = CharacterNumber;
+
+                        switch (NowMultiGameMode)
+                        {
+                            case HY.MultiGameModeState.PVP:
+                                {
+                                    OppenentCharNumber = CharacterNumber;
+                                    //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
+                                }
+                                break;
+
+                            case HY.MultiGameModeState.SURVIVAL:
+                                {
+                                    SurvivalOpponentCharNumbers[senderId] = CharacterNumber;
+                                    //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
+                                }
+                                break;
+
+                            default:
+                                {
+                                    OppenentCharNumber = CharacterNumber;
+                                }
+                                break;
+                        }
+
+                        if (LBListener != null)
+                        {
+                            LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
+                        }
+
+                    }
+                    //if (updateListener != null)
+                    //{
+                    //    //updateListener.ItemStateReceived(Index, ItemGet);
+                    //    updateListener.CharacterSelectStateReceived(CharacterNumber);
+                    //}
+                }
+                break;
+
+            case 'P':
+                {
+                    int WeaponNumber = System.BitConverter.ToInt32(data, 2);
+
+                    Debug.Log("Weapon Number is : " + WeaponNumber);
+
+                    ReceiveMessage = ByteToString(data);
+
+                    if (updateListener != null)
+                    {
+                        //updateListener.ItemStateReceived(Index, ItemGet);
+                        updateListener.WeaponSelectStateReceived(senderId, WeaponNumber);
+                    }
+                }
+                break;
+
+            case 'V':
+                {
+                    float VecX = System.BitConverter.ToSingle(data, 2);
+                    float VecY = System.BitConverter.ToSingle(data, 6);
+                    float VecZ = System.BitConverter.ToSingle(data, 10);
+
+                    Debug.Log("Player " + senderId + " is at (" + VecX + ", " + VecY + ", " + VecZ + " )");
+
+                    ReceiveMessage = ByteToString(data);
+                    // We'd better tell our GameController about this.
+                    //updateListener.UpdateReceived(senderId, posX, posY, velX, velY, rotZ);
+
+                    if (updateListener != null)
+                    {
+                        updateListener.ShootVectorReceived(senderId, VecX, VecY, VecZ);
+                    }
+                }
+                break;
+
+            case 'B':
+                {
+                    char BossMessageType = (char)data[2];
+
+                    switch(BossMessageType)
+                    {
+                        case 'A':
+                            {
+                               int AnimNumber = System.BitConverter.ToInt32(data, 3);
+
+                                Debug.Log("Boss Anim : " + AnimNumber);
+
+                                if (updateListener != null)
+                                {
+                                    updateListener.BossAnimStateReceived(AnimNumber);
+                                }
+                            }
+                            break;
+
+                        case 'D':
+                            {
+                                bool IsDead = System.BitConverter.ToBoolean(data, 3);
+
+                                Debug.Log("Boss IS Dead : " + IsDead);
+
+                                if (updateListener != null)
+                                {
+                                    updateListener.BossDeadEventReceived(IsDead);
+                                }
+                            }
+                            break;
+
+                        case 'U':
+                            {
+                                int messageNum = System.BitConverter.ToInt32(data, 3);
+                                float posX = System.BitConverter.ToSingle(data, 7);
+                                float posY = System.BitConverter.ToSingle(data, 11);
+                                float posZ = System.BitConverter.ToSingle(data, 15);
+                                float rotY = System.BitConverter.ToSingle(data, 19);
+                                //float rotZ = System.BitConverter.ToSingle(data, 18);
+
+                                Debug.Log("Num : " + messageNum + "Boss is at (" + posX + ", " + posY + ") rotation " + rotY);
+
+                                ReceiveMessage = ByteToString(data);
+                                // We'd better tell our GameController about this.
+                                //updateListener.UpdateReceived(senderId, posX, posY, velX, velY, rotZ);
+
+                                if (updateListener != null)
+                                {
+                                    updateListener.BossPosReceived(messageNum, posX, posY, posZ, rotY);
+                                }
+                            }
+                            break;
+
+                        case 'E':
+                            {
+                                bool Alarm = System.BitConverter.ToBoolean(data, 3);
+
+                                Debug.Log("Boss Raid Event Trigger On : " + Alarm);
+
+                                if (updateListener != null)
+                                {
+                                    updateListener.BossRaidAlarmReceived(Alarm);
+                                }
+                            }
+                            break;
+
+                        case 'H':
+                            {
+                                int bossHP = System.BitConverter.ToInt32(data, 3);
+
+                                Debug.Log("Boss HP : " + bossHP);
+
+                                if(updateListener != null)
+                                {
+                                    updateListener.BossHPStateReceived(bossHP);
+                                }
+                            }
+                            break;
+                    }
+
+                }
+                break;
         }
-        else if (messageType == 'P')
-        {
-            int WeaponNumber = System.BitConverter.ToInt32(data, 2);
 
-            Debug.Log("Weapon Number is : " + WeaponNumber);
+        #region Old Message if
+        
+        ////if (messageType == 'U' && data.Length == _updateMessageLength)
+        //if (messageType == 'U')
+        //{
+        //    int messageNum = System.BitConverter.ToInt32(data, 2);
+        //    float posX = System.BitConverter.ToSingle(data, 6);
+        //    float posY = System.BitConverter.ToSingle(data, 10);
+        //    float posZ = System.BitConverter.ToSingle(data, 14);
+        //    float rotY = System.BitConverter.ToSingle(data, 18);
+        //    //float rotZ = System.BitConverter.ToSingle(data, 18);
+        //    Debug.Log("Player " + senderId + " is at (" + posX + ", " + posY + ") rotation " + rotY);
 
-            ReceiveMessage = ByteToString(data);
+        //    ReceiveMessage = ByteToString(data);
+        //    // We'd better tell our GameController about this.
+        //    //updateListener.UpdateReceived(senderId, posX, posY, velX, velY, rotZ);
 
-            if (updateListener != null)
-            {
-                //updateListener.ItemStateReceived(Index, ItemGet);
-                updateListener.WeaponSelectStateReceived(senderId, WeaponNumber);
-            }
-        }
-        else if (messageType == 'V')
-        {
-            float VecX = System.BitConverter.ToSingle(data, 2);
-            float VecY = System.BitConverter.ToSingle(data, 6);
-            float VecZ = System.BitConverter.ToSingle(data, 10);
+        //    if (updateListener != null)
+        //    {
+        //        updateListener.UpdatePositionReceived(senderId, messageNum, posX, posY, posZ, rotY);
+        //    }
+
+        //}
+        //else if(messageType == 'F')
+        //{
+        //    bool GameOver = System.BitConverter.ToBoolean(data, 2);
+
+        //    Debug.Log("This Game Is End");
+
+        //    ReceiveMessage = ByteToString(data);
+
+        //    if(updateListener != null)
+        //    {
+        //        updateListener.FinishedReceived(senderId, GameOver);
+        //    }
+        //}
+        //else if(messageType == 'I')
+        //{
+        //    //bool ItemGet = System.BitConverter.ToBoolean(data, 2);
+        //    //int Index = System.BitConverter.ToInt32(data, 3);
+
+        //    //Debug.Log("Item Get");
+
+        //    //ReceiveMessage = ByteToString(data);
+
+        //    //if (updateListener != null)
+        //    //{
+        //    //    //updateListener.ItemStateReceived(Index, ItemGet);
+        //    //    updateListener.ItemStateReceived(0, ItemGet);
+        //    //}
+        //    int index = System.BitConverter.ToInt32(data, 2);
+
+        //    if(updateListener != null)
+        //    {
+        //        //switch(MultiGameMode)
+        //        //{
+        //        //    case HY.MultiGameModeState.NONE:
+        //        //        {
+
+        //        //        }
+        //        //        break;
+
+        //        //    case HY.MultiGameModeState.PVP:
+        //        //        {
+        //        //            updateListener.DeadEyeRespawnIndexReceived(index);
+        //        //        }
+        //        //        break;
+
+        //        //    case HY.MultiGameModeState.SURVIVAL:
+        //        //        {
+        //        //            updateListener.DeadEyeRespawnIndexReceived(senderId, index);
+        //        //        }
+        //        //        break;
+        //        //}
+
+        //        updateListener.DeadEyeRespawnIndexReceived(senderId, index);
+        //    }
+        //}
+        //else if(messageType == 'S')
+        //{
+        //    bool shoot = System.BitConverter.ToBoolean(data, 2);
+
+        //    Debug.Log("Shoot Get");
+
+        //    ReceiveMessage = ByteToString(data);
+
+        //    if (updateListener != null)
+        //    {
+        //        //updateListener.ItemStateReceived(Index, ItemGet);
+        //        updateListener.ShootStateReceived(senderId, shoot);
+        //    }
+        //}
+        //else if(messageType == 'D')
+        //{
+        //    bool DeadEyeActive = System.BitConverter.ToBoolean(data, 2);
+
+        //    Debug.Log("DeadEye Message!");
             
-            Debug.Log("Player " + senderId + " is at (" + VecX + ", " + VecY + ", " + VecZ + " )");
 
-            ReceiveMessage = ByteToString(data);
-            // We'd better tell our GameController about this.
-            //updateListener.UpdateReceived(senderId, posX, posY, velX, velY, rotZ);
+        //    ReceiveMessage = ByteToString(data);
 
-            if (updateListener != null)
-            {
-                updateListener.ShootVectorReceived(senderId, VecX, VecY, VecZ);
-            }
+        //    if (updateListener != null)
+        //    {
+        //        //updateListener.ItemStateReceived(Index, ItemGet);
+        //        updateListener.DeadEyeStateReceived(senderId, DeadEyeActive);
+        //    }
+        //}
+        //else if (messageType == 'E')
+        //{
+        //    float DeadEyeActive = System.BitConverter.ToSingle(data, 2);
 
-        }
-        else if(messageType == 'B')
-        {
-            bool Alarm = System.BitConverter.ToBoolean(data, 2);
+        //    Debug.Log("DeadEye Timer Get");
 
-            Debug.Log("Boss Raid Event Trigger On : " + Alarm);
+        //    ReceiveMessage = ByteToString(data);
 
-            if(updateListener != null)
-            {
-                updateListener.BossRaidAlarm(Alarm);
-            }
-        }
+        //    if (updateListener != null)
+        //    {
+        //        //updateListener.ItemStateReceived(Index, ItemGet);
+        //        updateListener.DeadEyeTimerStateReceived(senderId, DeadEyeActive);
+        //    }
+        //}
+        //else if(messageType == 'A')
+        //{
+        //    int AniStateNumber = System.BitConverter.ToInt32(data, 2);
+
+        //    Debug.Log("AniState Get");
+
+        //    ReceiveMessage = ByteToString(data);
+
+        //    if (updateListener != null)
+        //    {
+        //        //updateListener.ItemStateReceived(Index, ItemGet);
+        //        updateListener.AniStateReceived(senderId, AniStateNumber);
+        //    }
+        //}
+        //else if(messageType == 'H')
+        //{
+        //    int HPState = System.BitConverter.ToInt32(data, 2);
+
+        //    Debug.Log("HPState Get");
+
+        //    ReceiveMessage = ByteToString(data);
+
+        //    if (updateListener != null)
+        //    {
+        //        //updateListener.ItemStateReceived(Index, ItemGet);
+        //        updateListener.HPStateReceived(senderId, HPState);
+        //    }
+        //}
+        //else if(messageType == 'Q')
+        //{
+        //    bool SelectOut = System.BitConverter.ToBoolean(data, 2);
+
+        //    Debug.Log("Select Complete");
+
+        //    ReceiveMessage = ByteToString(data);
+
+        //    if (updateListener != null)
+        //    {
+        //        //updateListener.ItemStateReceived(Index, ItemGet);
+        //        updateListener.MultiStateSelectReceived(senderId, SelectOut);
+        //    }
+        //}
+        //else if(messageType == 'W')
+        //{
+        //    bool WaitOut = System.BitConverter.ToBoolean(data, 2);
+
+        //    Debug.Log("Wait signal is over");
+
+        //    ReceiveMessage = ByteToString(data);
+
+        //    if (updateListener != null)
+        //    {
+        //        //updateListener.ItemStateReceived(Index, ItemGet);
+        //        updateListener.MultiStateWaitReceived(senderId, WaitOut);
+        //    }
+        //}
+        //else if (messageType == 'C')
+        //{
+        //    int CharacterNumber = System.BitConverter.ToInt32(data, 2);
+
+            
+
+        //    Debug.Log("Character Number is : " + CharacterNumber);
+
+        //    ReceiveMessage = ByteToString(data);
+
+        //    if(LBListener != null)
+        //    {
+        //        OppenentCharNumber = CharacterNumber;
+
+        //        switch(NowMultiGameMode)
+        //        {
+        //            case HY.MultiGameModeState.PVP:
+        //                {
+        //                    OppenentCharNumber = CharacterNumber;
+        //                    //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
+        //                }
+        //                break;
+
+        //            case HY.MultiGameModeState.SURVIVAL:
+        //                {
+        //                    SurvivalOpponentCharNumbers[senderId] = CharacterNumber;
+        //                    //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
+        //                }
+        //                break;
+
+        //            default:
+        //                {
+        //                    OppenentCharNumber = CharacterNumber;
+        //                }
+        //                break;
+        //        }
+
+        //        if(LBListener != null)
+        //        {
+        //            LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
+        //        }
+
+        //    }
+        //    //if (updateListener != null)
+        //    //{
+        //    //    //updateListener.ItemStateReceived(Index, ItemGet);
+        //    //    updateListener.CharacterSelectStateReceived(CharacterNumber);
+        //    //}
+        //}
+        //else if (messageType == 'P')
+        //{
+        //    int WeaponNumber = System.BitConverter.ToInt32(data, 2);
+
+        //    Debug.Log("Weapon Number is : " + WeaponNumber);
+
+        //    ReceiveMessage = ByteToString(data);
+
+        //    if (updateListener != null)
+        //    {
+        //        //updateListener.ItemStateReceived(Index, ItemGet);
+        //        updateListener.WeaponSelectStateReceived(senderId, WeaponNumber);
+        //    }
+        //}
+        //else if (messageType == 'V')
+        //{
+        //    float VecX = System.BitConverter.ToSingle(data, 2);
+        //    float VecY = System.BitConverter.ToSingle(data, 6);
+        //    float VecZ = System.BitConverter.ToSingle(data, 10);
+            
+        //    Debug.Log("Player " + senderId + " is at (" + VecX + ", " + VecY + ", " + VecZ + " )");
+
+        //    ReceiveMessage = ByteToString(data);
+        //    // We'd better tell our GameController about this.
+        //    //updateListener.UpdateReceived(senderId, posX, posY, velX, velY, rotZ);
+
+        //    if (updateListener != null)
+        //    {
+        //        updateListener.ShootVectorReceived(senderId, VecX, VecY, VecZ);
+        //    }
+
+        //}
+        //else if(messageType == 'B')
+        //{
+        //    bool Alarm = System.BitConverter.ToBoolean(data, 2);
+
+        //    Debug.Log("Boss Raid Event Trigger On : " + Alarm);
+
+        //    if(updateListener != null)
+        //    {
+        //        updateListener.BossRaidAlarm(Alarm);
+        //    }
+        //}
+#endregion
     }
 
     // GPGS를 로그인 합니다.

@@ -1579,6 +1579,167 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     }
 
+    #region Survival Boss Received Callback
+
+    // 서바이벌 모드에서 쓰일 보스 이벤트 리시버
+
+    // 보스의 HP 값을 받는다
+    public void BossHPStateReceived(int HPState)
+    {
+        switch (MultiGameModeState)
+        {
+            case HY.MultiGameModeState.NONE:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+                    if (_multiplayerReady)
+                    {
+                        
+                    }
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    if (_multiplayerReady)
+                    {
+
+                    }
+                }
+                break;
+        }
+    }
+
+    // 보스의 애니메이션 값을 받는다
+    public void BossAnimStateReceived(int AnimState)
+    {
+        switch (MultiGameModeState)
+        {
+            case HY.MultiGameModeState.NONE:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+                    if (_multiplayerReady)
+                    {
+
+                    }
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    if (_multiplayerReady)
+                    {
+
+                    }
+                }
+                break;
+        }
+    }
+
+    // 보스의 사망 이벤트를 받는다
+    public void BossDeadEventReceived(bool BossDead)
+    {
+        switch (MultiGameModeState)
+        {
+            case HY.MultiGameModeState.NONE:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+                    if (_multiplayerReady)
+                    {
+
+                    }
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    if (_multiplayerReady)
+                    {
+
+                    }
+                }
+                break;
+        }
+    }
+
+    // 보스의 위치값 x, y, z, 그리고 y축 회전값을 받는다.
+    public void BossPosReceived(int messageNum, float x, float y, float z, float rotY)
+    {
+        switch (MultiGameModeState)
+        {
+            case HY.MultiGameModeState.NONE:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+                    if (_multiplayerReady)
+                    {
+
+                    }
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    if (_multiplayerReady)
+                    {
+
+                    }
+                }
+                break;
+        }
+    }
+
+    public void BossRaidAlarmReceived(bool Alarm)
+    {
+        switch (MultiGameModeState)
+        {
+            case HY.MultiGameModeState.NONE:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+                    if (_multiplayerReady)
+                    {
+
+                    }
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    if (_multiplayerReady)
+                    {
+                        BossEvent = Alarm;
+                    }
+                }
+                break;
+        }
+        
+    }
+
+    #endregion
+
     // 데드아이 타이머를 반환 시켜준다.
     public float GetDeadEyeTimer()
     {
@@ -1906,13 +2067,6 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     }
 
-    // 서바이벌 모드에서 작동하는 보스 레이드 알람
-    // 서버 쪽에서 
-    public void BossRaidAlarm(bool Alarm)
-    {
-        BossEvent = Alarm;
-    }
-
     #endregion GPGS_CallBack_Interface
 
     // 다른 스크립트에서 서버로 보낼 메시지를 호출하고 싶을때 보낼 콜 함수들...
@@ -2077,12 +2231,37 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         
     }
 
+    #region Survival Boss Send Event
+
     // 서바이벌 모드에서 보스 이벤트를 발동 시킬때 사용한다.
     public void SendBossAlarmMessage(bool Alarm)
     {
         GPGSManager.GetInstance.SendBossAlertEvent(Alarm);
     }
 
+    public void SendBossAnimMessage(int AnimNumber)
+    {
+        GPGSManager.GetInstance.SendBossAnimation(AnimNumber);
+    }
+
+    public void SendBossDeadMessage(bool IsDead)
+    {
+        GPGSManager.GetInstance.SendBossDeadState(IsDead);
+
+    }
+
+    public void SendBossPosition(float posX, float posY, float posZ, float rotY)
+    {
+        if (ThisGameIsEnd == false)
+        {
+            if (BossEvent == true)
+            {
+                GPGSManager.GetInstance.SendBossPosition(posX, posY, posZ, rotY);
+            }
+        }
+    }
+
+    #endregion
     //// 애니메이션 값을 넣어준다.
     //// int값으로 바꿔줘야 한다
     //public void SendAniStateMessage(LSD.PlayerState AniState)
@@ -2296,6 +2475,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                     // 플레이어의 위치 동기화
                     SendMyPositionUpdate();
+
+                    // 보스가 출현했다면 보스의 위치도 동기화 시켜준다.
+                    if(BossEvent == true)
+                    {
+                        //SendBossPositionUpdate();
+                    }
                 }
                 break;
         }
