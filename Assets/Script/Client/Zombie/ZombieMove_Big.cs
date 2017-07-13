@@ -25,6 +25,8 @@ public class ZombieMove_Big : Zombie
     Animator anim;
     Animator CamAnim;
 
+    IEnumerator Dealy_Coroutine;
+
     public int HP;
     public int AttackDamge;
 
@@ -50,7 +52,7 @@ public class ZombieMove_Big : Zombie
         anim = gameObject.GetComponent<Animator>();
         MotionPlay = false;
         AttackDealy = 5;
-        StartCoroutine(ZombieMoveSystem(m_MoveDealy));
+        
 
         m_AudioSource = gameObject.GetComponentInParent<AudioSource>();
         CamAnim = GameObject.Find("CameraPos").GetComponent<Animator>();
@@ -71,7 +73,8 @@ public class ZombieMove_Big : Zombie
             {
                 Z_State = ZombieState.DEATH;
                 ZombieCreateManager.ZombieCount--;
-                Destroy(ParentObj);
+                // Destroy(ParentObj);
+                ParentObj.SetActive(false);
             }
             else if (Distance > 3.5f)
             {
@@ -148,7 +151,19 @@ public class ZombieMove_Big : Zombie
             col.gameObject.GetComponent<CharMove>().Damaged(AttackDamge, transform.forward);
         }
     }
+    void OnEnable()
+    {
+       
+        Dealy_Coroutine = ZombieMoveSystem(m_MoveDealy);
+        StartCoroutine(Dealy_Coroutine);
+    }
 
+    void OnDisable()
+    {
+        StopCoroutine(Dealy_Coroutine);
+        NvAgent.enabled = false;
+        GetComponent<CapsuleCollider>().enabled = true;
+    }
     override public void ZombieDamage(int Damage)
     {
         HP -= Damage;
@@ -183,10 +198,10 @@ public class ZombieMove_Big : Zombie
         EarthEffect.transform.rotation = this.transform.rotation;
         EarthEffect.SetActive(true);
     }
-    void OnDestroy()
-    {
-        Destroy(EarthEffect);
-    }
+    //void OnDestroy()
+    //{
+    //    Destroy(EarthEffect);
+    //}
 
     IEnumerator ZombieMoveSystem(float MoveDealy)
     {

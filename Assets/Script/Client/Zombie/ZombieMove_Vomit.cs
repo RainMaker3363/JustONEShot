@@ -24,6 +24,7 @@ public class ZombieMove_Vomit : Zombie
 
     Animator anim;
 
+    IEnumerator Dealy_Coroutine;
 
     public int HP;
     public int AttackDamge;
@@ -50,7 +51,7 @@ public class ZombieMove_Vomit : Zombie
         anim = gameObject.GetComponent<Animator>();
         MotionPlay = false;
         AttackDealy = 5;
-        StartCoroutine(ZombieMoveSystem(m_MoveDealy));
+        
 
         m_AudioSource = gameObject.GetComponentInParent<AudioSource>();
     }
@@ -69,7 +70,8 @@ public class ZombieMove_Vomit : Zombie
             {
                 Z_State = ZombieState.DEATH;
                 ZombieCreateManager.ZombieCount--;
-                Destroy(ParentObj);
+                // Destroy(ParentObj);
+                ParentObj.SetActive(false);
             }
             else if (Distance > 3.5f)
             {
@@ -145,6 +147,20 @@ public class ZombieMove_Vomit : Zombie
         {           
             GameObject.Find("Effects_Vomit").GetComponent<ZombieVomit_Cam>().EffectOnVomit();
         }
+    }
+
+    void OnEnable()
+    {
+        
+        Dealy_Coroutine = ZombieMoveSystem(m_MoveDealy);
+        StartCoroutine(Dealy_Coroutine);
+    }
+
+    void OnDisable()
+    {
+        StopCoroutine(Dealy_Coroutine);
+        NvAgent.enabled = false;
+        GetComponent<CapsuleCollider>().enabled = true;
     }
 
     override public void ZombieDamage(int Damage)

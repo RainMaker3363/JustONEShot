@@ -79,7 +79,7 @@ public class Bullet_ShotGun : MonoBehaviour {
         if (HitObj.gameObject.tag == "Zombie")
         {
             Debug.Log("ZombieHit");
-            HitObj.gameObject.GetComponent<ZombieMove>().ZombieDamage(Damage);
+            HitObj.gameObject.GetComponent<Zombie>().ZombieDamage(Damage);
             // m_Distance = 0;
         }
 
