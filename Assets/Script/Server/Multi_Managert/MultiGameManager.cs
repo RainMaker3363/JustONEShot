@@ -36,13 +36,19 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public GameObject MyCharacterPos;
     private string MyPlayerNick;
 
+    
+
     // 적의 정보
     public GameObject EnemyCharacter;
     private EnemyMove OpponentPlayerCharacter;
     public GameObject EnemyCharacterPos;
     private string OpponentPlayerNick;
+
     private List<Participant> allPlayers;
+    private List<Vector3> PlayerCharacters_Pos;
     private Dictionary<string, EnemyMove> _opponentScripts;
+    private Dictionary<string, GameObject> PlayerCharacters;
+    private Dictionary<string, string> PlayerCharacters_Nick;
 
     // 서바이벌 모드에서 쓰일 여러 유저들의 ID 기반의 값들
     private Dictionary<string, bool> _SurvivalOpponentWaitSignals;
@@ -329,6 +335,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         allPlayers = GPGSManager.GetInstance.GetAllPlayers();
         LeftPlayerCount = allPlayers.Count - 1;
         _opponentScripts = new Dictionary<string, EnemyMove>(allPlayers.Count - 1);
+        PlayerCharacters = new Dictionary<string, GameObject>(allPlayers.Count - 1);
+        PlayerCharacters_Nick = new Dictionary<string, string>(allPlayers.Count - 1);
+        PlayerCharacters_Pos = new List<Vector3>(allPlayers.Count - 1);
 
         switch (MultiGameModeState)
         {
@@ -341,7 +350,6 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             case HY.MultiGameModeState.PVP:
                 {
                     Debug.Log("MultiGameModeState : " + MultiGameModeState);
-
 
                     for (int i = 0; i < allPlayers.Count; i++)
                     {
@@ -393,10 +401,27 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                                 _opponentScripts[nextParticipantId] = opponentScript;
                             }
 
-                            // 5
-                            //GameObject opponentCar = (Instantiate(opponentPrefab, carStartPoint, Quaternion.identity) as GameObject);
-
                         }
+                    }
+
+                    if (allPlayers[0].ParticipantId == _MyParticipantId)
+                    {
+                        MyCharacter.transform.position = MyCharacterPos.transform.position;
+                        EnemyCharacter.transform.position = EnemyCharacterPos.transform.position;
+
+                        //PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);//_opponentScripts[_MyParticipantId].name;//GPGSManager.GetInstance.GetOtherNameGPGS(0);
+                        //EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);
+
+                        MyPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(0);
+                        OpponentPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(1);
+                    }
+                    else
+                    {
+                        MyCharacter.transform.position = EnemyCharacterPos.transform.position;
+                        EnemyCharacter.transform.position = MyCharacterPos.transform.position;
+
+                        MyPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(1);
+                        OpponentPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(0);
                     }
 
                     //for (int i = 0; i < allPlayers.Count; i++)
@@ -426,26 +451,6 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     //_timePlayed = 0;
                     //guiObject.SetLaps(_lapsRemaining);
                     //guiObject.SetTime(_timePlayed);
-
-                    if (allPlayers[0].ParticipantId == _MyParticipantId)
-                    {
-                        MyCharacter.transform.position = MyCharacterPos.transform.position;
-                        EnemyCharacter.transform.position = EnemyCharacterPos.transform.position;
-
-                        //PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);//_opponentScripts[_MyParticipantId].name;//GPGSManager.GetInstance.GetOtherNameGPGS(0);
-                        //EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);
-
-                        MyPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(0);
-                        OpponentPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(1);
-                    }
-                    else
-                    {
-                        MyCharacter.transform.position = EnemyCharacterPos.transform.position;
-                        EnemyCharacter.transform.position = MyCharacterPos.transform.position;
-
-                        MyPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(1);
-                        OpponentPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(0);
-                    }
 
                     //for (int i = 0; i < allPlayers.Count; i++)
                     //{
@@ -559,9 +564,11 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 {
                     Debug.Log("MultiGameModeState : " + MultiGameModeState);
 
+
                     for (int i = 0; i < allPlayers.Count; i++)
                     {
                         string nextParticipantId = allPlayers[i].ParticipantId;
+                        PlayerCharacters_Nick[nextParticipantId] = allPlayers[i].DisplayName;
                         Debug.Log("Setting up for " + nextParticipantId);
 
 
@@ -571,15 +578,16 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                             // 4
                             if (MyCharacter == null)
                             {
-
-                                MyCharacter = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
-
+                                //MyCharacter = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
+                                PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
+                                PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find("StartPos_Player").gameObject.transform.position;
                             }
                             else
                             {
 
-                                MyCharacter = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
-
+                                //MyCharacter = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
+                                PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
+                                PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find("StartPos_Player").gameObject.transform.position;
                             }
                         }
                         else
@@ -587,50 +595,96 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                             if (EnemyCharacter == null)
                             {
                                 //EnemyCharacter = GameObject.Find("Enemy_Character");
-                                EnemyCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").gameObject;
-                                OpponentPlayerCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
+
+                                //EnemyCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").gameObject;
+
+                                string OpponentObjectName = ("EnemyCharacter" + i).ToString();
+                                string OpponentPosObjectName = ("StartPos_Enemy" + i).ToString();
+
+                                PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).gameObject;
+                                PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
+                                _opponentScripts[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).GetComponent<EnemyMove>();
+
+
+                                //OpponentPlayerCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
                                 //MyCharacterPos.transform.position = EnemyCharacter.transform.position;
 
                                 //EnemyCharacter.transform.position = EnemyCharacterPos.transform.position;
 
-                                EnemyMove opponentScript = OpponentPlayerCharacter;//EnemyCharacter.GetComponent<EnemyMove>();
-                                _EnemyParticipantId = nextParticipantId;
-                                _opponentScripts[nextParticipantId] = opponentScript;
+                                //EnemyMove opponentScript = OpponentPlayerCharacter;//EnemyCharacter.GetComponent<EnemyMove>();
+                                //_EnemyParticipantId = nextParticipantId;
+
 
                             }
                             else
                             {
-                                EnemyCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").gameObject;
-                                OpponentPlayerCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
-                                //MyCharacterPos.transform.position = EnemyCharacter.transform.position;
+                                string OpponentObjectName = ("EnemyCharacter" + i).ToString();
+                                string OpponentPosObjectName = ("StartPos_Enemy" + i).ToString();
 
-                                EnemyMove opponentScript = OpponentPlayerCharacter;//EnemyCharacter.GetComponent<EnemyMove>();
-                                _EnemyParticipantId = nextParticipantId;
-                                _opponentScripts[nextParticipantId] = opponentScript;
+                                PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).gameObject;
+                                PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
+                                _opponentScripts[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).GetComponent<EnemyMove>();
+
+                                ////EnemyCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").gameObject;
+                                //PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").gameObject;
+                                //OpponentPlayerCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
+                                ////MyCharacterPos.transform.position = EnemyCharacter.transform.position;
+
+                                //EnemyMove opponentScript = OpponentPlayerCharacter;//EnemyCharacter.GetComponent<EnemyMove>();
+                                //_EnemyParticipantId = nextParticipantId;
+                                //_opponentScripts[nextParticipantId] = opponentScript;
                             }
+
+                            // 5
+                            //GameObject opponentCar = (Instantiate(opponentPrefab, carStartPoint, Quaternion.identity) as GameObject);
 
                         }
                     }
 
-                    if (allPlayers[0].ParticipantId == _MyParticipantId)
+                    //for (int i = 0; i < allPlayers.Count; i++)
+                    //{
+                    //    string nextParticipantId = allPlayers[i].ParticipantId;
+                    //    Debug.Log("Setting up car for " + nextParticipantId);
+                    //    // 3
+                    //    Vector3 carStartPoint = new Vector3(_startingPoint.x, _startingPoint.y + (i * _startingPointYOffset), 0);
+                    //    if (nextParticipantId == _myParticipantId)
+                    //    {
+                    //        // 4
+                    //        myCar.GetComponent<CarController>().SetCarChoice(i + 1, true);
+                    //        myCar.transform.position = carStartPoint;
+                    //    }
+                    //    else
+                    //    {
+                    //        // 5
+                    //        GameObject opponentCar = (Instantiate(opponentPrefab, carStartPoint, Quaternion.identity) as GameObject);
+                    //        OpponentCarController opponentScript = opponentCar.GetComponent<OpponentCarController>();
+                    //        opponentScript.SetCarNumber(i + 1);
+                    //        // 6
+                    //        _opponentScripts[nextParticipantId] = opponentScript;
+                    //    }
+                    //}
+                    //// 7
+                    //_lapsRemaining = 3;
+                    //_timePlayed = 0;
+                    //guiObject.SetLaps(_lapsRemaining);
+                    //guiObject.SetTime(_timePlayed);
+
+                    for(int i =0; i<PlayerCharacters.Count; i++)
                     {
-                        MyCharacter.transform.position = MyCharacterPos.transform.position;
-                        EnemyCharacter.transform.position = EnemyCharacterPos.transform.position;
-
-                        //PlayerName.text = GPGSManager.GetInstance.GetOtherNameGPGS(1);//_opponentScripts[_MyParticipantId].name;//GPGSManager.GetInstance.GetOtherNameGPGS(0);
-                        //EnemyName.text = GPGSManager.GetInstance.GetOtherNameGPGS(0);
-
-                        MyPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(0);
-                        OpponentPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(1);
+                        if (allPlayers[i].ParticipantId == _MyParticipantId)
+                        {
+                            //MyCharacter.transform.position = PlayerCharacters_Pos[i];
+                            PlayerCharacters[_MyParticipantId].transform.position = PlayerCharacters_Pos[i];
+                        }
+                        else
+                        {
+                            //MyCharacter.transform.position = EnemyCharacterPos.transform.position;
+                            PlayerCharacters[allPlayers[i].ParticipantId].transform.position = PlayerCharacters_Pos[i];
+                        }
                     }
-                    else
-                    {
-                        MyCharacter.transform.position = EnemyCharacterPos.transform.position;
-                        EnemyCharacter.transform.position = MyCharacterPos.transform.position;
 
-                        MyPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(1);
-                        OpponentPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(0);
-                    }
+
+            
                 }
                 break;
         }
@@ -827,84 +881,90 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 디폴트는 2.0초로 되어있다.
     public void EndGameAndLeaveRoom(float dTime = 2.0f)
     {
-        GPGSManager.GetInstance.LeaveGame();
-        GPGSManager.GetInstance.updateListener = null;
-        GPGSManager.GetInstance.LBListener = null;
-
-        ThisGameIsEnd = true;
-
-        switch (MultiGameModeState)
+        if(MultiStartChecker == false)
         {
-            case HY.MultiGameModeState.NONE:
-                {
-                    GPGSManager.GetInstance.ReMatchingInit(0);
+            MultiStartChecker = true;
 
-                    if (dTime <= 1.5f)
-                    {
-                        Invoke("StartLobbyScene", 1.5f);
-                    }
-                    else if (dTime >= 5.0f)
-                    {
-                        Invoke("StartLobbyScene", 5.0f);
-                    }
-                    else
-                    {
-                        Invoke("StartLobbyScene", dTime);
-                    }
-                }
-                break;
+            GPGSManager.GetInstance.LeaveGame();
+            GPGSManager.GetInstance.updateListener = null;
+            GPGSManager.GetInstance.LBListener = null;
 
-            case HY.MultiGameModeState.PVP:
-                {
-                    GPGSManager.GetInstance.ReMatchingInit(1);
+            ThisGameIsEnd = true;
 
-                    if (dTime <= 1.5f)
+            switch (MultiGameModeState)
+            {
+                case HY.MultiGameModeState.NONE:
                     {
-                        Invoke("StartLobbyScene", 1.5f);
-                    }
-                    else if (dTime >= 5.0f)
-                    {
-                        Invoke("StartLobbyScene", 5.0f);
-                    }
-                    else
-                    {
-                        Invoke("StartLobbyScene", dTime);
-                    }
-                }
-                break;
+                        GPGSManager.GetInstance.ReMatchingInit(0);
 
-            case HY.MultiGameModeState.SURVIVAL:
-                {
-                    GPGSManager.GetInstance.ReMatchingInit(2);
+                        if (dTime <= 1.5f)
+                        {
+                            Invoke("StartLobbyScene", 1.5f);
+                        }
+                        else if (dTime >= 5.0f)
+                        {
+                            Invoke("StartLobbyScene", 5.0f);
+                        }
+                        else
+                        {
+                            Invoke("StartLobbyScene", dTime);
+                        }
+                    }
+                    break;
 
-                    if (dTime <= 1.5f)
+                case HY.MultiGameModeState.PVP:
                     {
-                        Invoke("StartLobbyScene", 1.5f);
+                        GPGSManager.GetInstance.ReMatchingInit(1);
+
+                        if (dTime <= 1.5f)
+                        {
+                            Invoke("StartLobbyScene", 1.5f);
+                        }
+                        else if (dTime >= 5.0f)
+                        {
+                            Invoke("StartLobbyScene", 5.0f);
+                        }
+                        else
+                        {
+                            Invoke("StartLobbyScene", dTime);
+                        }
                     }
-                    else if (dTime >= 5.0f)
+                    break;
+
+                case HY.MultiGameModeState.SURVIVAL:
                     {
-                        Invoke("StartLobbyScene", 5.0f);
+                        GPGSManager.GetInstance.ReMatchingInit(2);
+
+                        if (dTime <= 1.5f)
+                        {
+                            Invoke("StartLobbyScene", 1.5f);
+                        }
+                        else if (dTime >= 5.0f)
+                        {
+                            Invoke("StartLobbyScene", 5.0f);
+                        }
+                        else
+                        {
+                            Invoke("StartLobbyScene", dTime);
+                        }
                     }
-                    else
-                    {
-                        Invoke("StartLobbyScene", dTime);
-                    }
-                }
-                break;
+                    break;
+            }
+
+            //if (dTime <= 1.5f)
+            //{
+            //    Invoke("StartLobbyScene", 1.5f);
+            //}
+            //else if (dTime >= 5.0f)
+            //{
+            //    Invoke("StartLobbyScene", 5.0f);
+            //}
+            //else
+            //{
+            //    Invoke("StartLobbyScene", dTime);
+            //}
+
         }
-
-        //if (dTime <= 1.5f)
-        //{
-        //    Invoke("StartLobbyScene", 1.5f);
-        //}
-        //else if (dTime >= 5.0f)
-        //{
-        //    Invoke("StartLobbyScene", 5.0f);
-        //}
-        //else
-        //{
-        //    Invoke("StartLobbyScene", dTime);
-        //}
 
     }
 
@@ -914,71 +974,78 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 디폴트는 2.0초로 되어있다.
     public void EndGameRematchingGame(float dTime = 2.0f)
     {
-        GPGSManager.GetInstance.LeaveGame();
-        GPGSManager.GetInstance.updateListener = null;
-        GPGSManager.GetInstance.LBListener = null;
-
-        ThisGameIsEnd = true;
-
-        switch (MultiGameModeState)
+        if (MultiStartChecker == false)
         {
-            case HY.MultiGameModeState.NONE:
-                {
-                    GPGSManager.GetInstance.ReMatchingInit(0);
+            MultiStartChecker = true;
 
-                    if (dTime <= 1.5f)
-                    {
-                        Invoke("StartRemathcingScene", 1.5f);
-                    }
-                    else if (dTime >= 5.0f)
-                    {
-                        Invoke("StartRemathcingScene", 5.0f);
-                    }
-                    else
-                    {
-                        Invoke("StartRemathcingScene", dTime);
-                    }
-                }
-                break;
+            GPGSManager.GetInstance.LeaveGame();
+            GPGSManager.GetInstance.updateListener = null;
+            GPGSManager.GetInstance.LBListener = null;
 
-            case HY.MultiGameModeState.PVP:
-                {
-                    GPGSManager.GetInstance.ReMatchingInit(1);
+            ThisGameIsEnd = true;
 
-                    if (dTime <= 1.5f)
+            switch (MultiGameModeState)
+            {
+                case HY.MultiGameModeState.NONE:
                     {
-                        Invoke("StartRemathcingScene", 1.5f);
-                    }
-                    else if (dTime >= 5.0f)
-                    {
-                        Invoke("StartRemathcingScene", 5.0f);
-                    }
-                    else
-                    {
-                        Invoke("StartRemathcingScene", dTime);
-                    }
-                }
-                break;
+                        GPGSManager.GetInstance.ReMatchingInit(0);
 
-            case HY.MultiGameModeState.SURVIVAL:
-                {
-                    GPGSManager.GetInstance.ReMatchingInit(2);
+                        if (dTime <= 1.5f)
+                        {
+                            Invoke("StartRemathcingScene", 1.5f);
+                        }
+                        else if (dTime >= 5.0f)
+                        {
+                            Invoke("StartRemathcingScene", 5.0f);
+                        }
+                        else
+                        {
+                            Invoke("StartRemathcingScene", dTime);
+                        }
+                    }
+                    break;
 
-                    if (dTime <= 1.5f)
+                case HY.MultiGameModeState.PVP:
                     {
-                        Invoke("StartRemathcingScene", 1.5f);
+                        GPGSManager.GetInstance.ReMatchingInit(1);
+
+                        if (dTime <= 1.5f)
+                        {
+                            Invoke("StartRemathcingScene", 1.5f);
+                        }
+                        else if (dTime >= 5.0f)
+                        {
+                            Invoke("StartRemathcingScene", 5.0f);
+                        }
+                        else
+                        {
+                            Invoke("StartRemathcingScene", dTime);
+                        }
                     }
-                    else if (dTime >= 5.0f)
+                    break;
+
+                case HY.MultiGameModeState.SURVIVAL:
                     {
-                        Invoke("StartRemathcingScene", 5.0f);
+                        GPGSManager.GetInstance.ReMatchingInit(2);
+
+                        if (dTime <= 1.5f)
+                        {
+                            Invoke("StartRemathcingScene", 1.5f);
+                        }
+                        else if (dTime >= 5.0f)
+                        {
+                            Invoke("StartRemathcingScene", 5.0f);
+                        }
+                        else
+                        {
+                            Invoke("StartRemathcingScene", dTime);
+                        }
                     }
-                    else
-                    {
-                        Invoke("StartRemathcingScene", dTime);
-                    }
-                }
-                break;
+                    break;
+            }
         }
+
+       
 
     }
 
@@ -2377,23 +2444,15 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         }
 
                         PlayerName.text = "PlayerNick : " + MyPlayerNick + " / PlayerGun : " + MyGunNumber + " / PlayerChar : " + GPGSManager.GetInstance.GetMyCharacterNumber();
-                        EnemyName.text = "OppentNick[0] : " + allPlayers[0].ParticipantId + " / OppenentGun[0] : " + _SurvivalOpponentCharacterNumber[allPlayers[0].ParticipantId].ToString() + " / OppenentChar[0] : " + _SurvivalOpponentCharacterNumber[allPlayers[0].ParticipantId].ToString()
-                            + "\nOppentNick[1] : " + allPlayers[1].ParticipantId + " / OppenentGun[1] : " + _SurvivalOpponentCharacterNumber[allPlayers[1].ParticipantId].ToString() + " / OppenentChar[1] : " + _SurvivalOpponentCharacterNumber[allPlayers[1].ParticipantId].ToString()
-                            + "\nOppentNick[2] : " + allPlayers[2].ParticipantId + " / OppenentGun[2] : " + _SurvivalOpponentCharacterNumber[allPlayers[2].ParticipantId].ToString() + " / OppenentChar[2] : " + _SurvivalOpponentCharacterNumber[allPlayers[2].ParticipantId].ToString()
-                            + "\nOppentNick[3] : " + allPlayers[3].ParticipantId + " / OppenentGun[3] : " + _SurvivalOpponentCharacterNumber[allPlayers[3].ParticipantId].ToString() + " / OppenentChar[3] : " + _SurvivalOpponentCharacterNumber[allPlayers[3].ParticipantId].ToString()
-                            + "\nOppentNick[4] : " + allPlayers[4].ParticipantId + " / OppenentGun[4] : " + _SurvivalOpponentCharacterNumber[allPlayers[4].ParticipantId].ToString() + " / OppenentChar[4] : " + _SurvivalOpponentCharacterNumber[allPlayers[4].ParticipantId].ToString()
-                            + "\nOppentNick[5] : " + allPlayers[5].ParticipantId + " / OppenentGun[5] : " + _SurvivalOpponentCharacterNumber[allPlayers[5].ParticipantId].ToString() + " / OppenentChar[5] : " + _SurvivalOpponentCharacterNumber[allPlayers[5].ParticipantId].ToString()
-                            + "\nOppentNick[6] : " + allPlayers[6].ParticipantId + " / OppenentGun[6] : " + _SurvivalOpponentCharacterNumber[allPlayers[6].ParticipantId].ToString() + " / OppenentChar[6] : " + _SurvivalOpponentCharacterNumber[allPlayers[6].ParticipantId].ToString()
-                            + "\nOppentNick[7] : " + allPlayers[7].ParticipantId + " / OppenentGun[7] : " + _SurvivalOpponentCharacterNumber[allPlayers[7].ParticipantId].ToString() + " / OppenentChar[7] : " + _SurvivalOpponentCharacterNumber[allPlayers[7].ParticipantId].ToString();
+                        EnemyName.text = "OppentNick : " + OpponentPlayerNick + " / OppenentGun : " + OpponentGunNumber + " / OppenentChar : " + GPGSManager.GetInstance.GetPVPOpponentCharNumber();
 
                         //MyInfoText.text = "Player Info : " + MyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//MyCharacterPos.transform.position;
                         //EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
-                        //MyInfoText.text = "MyCharacter Name : " + MyCharacter.transform.name + " / WaitSignal : " + WaitSignal + " / SelectSignal : " + SelectSignal;
+                        MyInfoText.text = "MyCharacter Name : " + MyCharacter.transform.name + " / WaitSignal : " + WaitSignal + " / SelectSignal : " + SelectSignal;
 
-                        //EnemyInfoText.text = "Enemy Name : " + EnemyCharacter.transform.name + " / ReMatchingOn : " + ReMatchingOn + " / GameMode : " + MultiGameModeState;//EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
+                        EnemyInfoText.text = "Enemy Name : " + EnemyCharacter.transform.name + " / ReMatchingOn : " + ReMatchingOn + " / GameMode : " + MultiGameModeState;//EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
 
-                        //ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
-
+                        ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
 
                     }
                     else
@@ -2437,18 +2496,16 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         {
                             NetText.text = "Net Info : 상대방이 연결을 해제했습니다.";
                         }
-
                         PlayerName.text = "PlayerNick : " + MyPlayerNick + " / PlayerGun : " + MyGunNumber + " / PlayerChar : " + GPGSManager.GetInstance.GetMyCharacterNumber();
-                        EnemyName.text = "OppentNick : " + OpponentPlayerNick + " / OppenentGun : " + OpponentGunNumber + " / OppenentChar : " + GPGSManager.GetInstance.GetPVPOpponentCharNumber();
-
-                        //MyInfoText.text = "Player Info : " + MyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//MyCharacterPos.transform.position;
-                        //EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
-                        MyInfoText.text = "MyCharacter Name : " + MyCharacter.transform.name + " / WaitSignal : " + WaitSignal + " / SelectSignal : " + SelectSignal;
-
-                        EnemyInfoText.text = "Enemy Name : " + EnemyCharacter.transform.name + " / ReMatchingOn : " + ReMatchingOn + " / GameMode : " + MultiGameModeState;//EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
-
-                        ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
-
+                        EnemyName.text = "OppentNick[0] : " + allPlayers[0].ParticipantId + " / OppenentGun[0] : " + _SurvivalOpponentWeaponNumber[allPlayers[0].ParticipantId].ToString() + " / OppenentChar[0] : " + _SurvivalOpponentCharacterNumber[allPlayers[0].ParticipantId].ToString()
+                            + "\nOppentNick[1] : " + allPlayers[1].ParticipantId + " / OppenentGun[1] : " + _SurvivalOpponentWeaponNumber[allPlayers[1].ParticipantId].ToString() + " / OppenentChar[1] : " + _SurvivalOpponentCharacterNumber[allPlayers[1].ParticipantId].ToString()
+                            + "\nOppentNick[2] : " + allPlayers[2].ParticipantId + " / OppenentGun[2] : " + _SurvivalOpponentWeaponNumber[allPlayers[2].ParticipantId].ToString() + " / OppenentChar[2] : " + _SurvivalOpponentCharacterNumber[allPlayers[2].ParticipantId].ToString()
+                            + "\nOppentNick[3] : " + allPlayers[3].ParticipantId + " / OppenentGun[3] : " + _SurvivalOpponentWeaponNumber[allPlayers[3].ParticipantId].ToString() + " / OppenentChar[3] : " + _SurvivalOpponentCharacterNumber[allPlayers[3].ParticipantId].ToString()
+                            + "\nOppentNick[4] : " + allPlayers[4].ParticipantId + " / OppenentGun[4] : " + _SurvivalOpponentWeaponNumber[allPlayers[4].ParticipantId].ToString() + " / OppenentChar[4] : " + _SurvivalOpponentCharacterNumber[allPlayers[4].ParticipantId].ToString()
+                            + "\nOppentNick[5] : " + allPlayers[5].ParticipantId + " / OppenentGun[5] : " + _SurvivalOpponentWeaponNumber[allPlayers[5].ParticipantId].ToString() + " / OppenentChar[5] : " + _SurvivalOpponentCharacterNumber[allPlayers[5].ParticipantId].ToString()
+                            + "\nOppentNick[6] : " + allPlayers[6].ParticipantId + " / OppenentGun[6] : " + _SurvivalOpponentWeaponNumber[allPlayers[6].ParticipantId].ToString() + " / OppenentChar[6] : " + _SurvivalOpponentCharacterNumber[allPlayers[6].ParticipantId].ToString()
+                            + "\nOppentNick[7] : " + allPlayers[7].ParticipantId + " / OppenentGun[7] : " + _SurvivalOpponentWeaponNumber[allPlayers[7].ParticipantId].ToString() + " / OppenentChar[7] : " + _SurvivalOpponentCharacterNumber[allPlayers[7].ParticipantId].ToString();
+                            
 
                     }
                     else
