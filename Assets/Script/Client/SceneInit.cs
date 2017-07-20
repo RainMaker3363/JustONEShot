@@ -49,7 +49,7 @@ public class SceneInit : MonoBehaviour {
         if (m_Player == null)
         {
 
-            m_Player = Instantiate(Player[1]);   //에디터상에서는 고정
+            m_Player = Instantiate(Player[2]);   //에디터상에서는 고정
             m_Player.transform.position = PlayerStartPos.position;
             m_Player.name = "PlayerCharacter";
             m_Player.transform.SetParent(GamePlayObj.transform);
@@ -64,7 +64,7 @@ public class SceneInit : MonoBehaviour {
             m_Enemy.transform.SetParent(GamePlayObj.transform);
         }
 
-        Char1.sprite = Poster[1];
+        Char1.sprite = Poster[2];
         Char2.sprite = Poster[0];
 
 #else

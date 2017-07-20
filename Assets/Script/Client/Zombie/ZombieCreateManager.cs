@@ -549,31 +549,45 @@ public class ZombieCreateManager : MonoBehaviour
             {
                 if (StageInit)
                 {
-                    //Debug.Log("ZombieCode : " + ZombieStagearr[Stage, Order]);
-                    int ZombieCode = ZombieStagearr[Stage-1, Order];
-                   
-                    if (ZombieCode != 0)
-                    {
-                        ZombieStageCreate(ZombieCode);
-                        Order++;
-                        yield return new WaitForSeconds(2);
-                    }
-                    else
-                    {
-                        Order = 0;
-                        StageInit = false;
-                        ZombieIndexInit();//생성이 완료됬으니 인덱스 초기화
-                    }
                     
-                    // }
-                   
+                        //Debug.Log("ZombieCode : " + ZombieStagearr[Stage, Order]);\
+                        int ZombieCode=0;
+                        if (Order < 13)
+                        {
+                            ZombieCode = ZombieStagearr[Stage - 1, Order];
+                        }
+
+                        if (ZombieCode != 0)
+                        {
+                            ZombieStageCreate(ZombieCode);
+                            Order++;
+                            yield return new WaitForSeconds(2);
+                        }
+                        else
+                        {
+                            Order = 0;
+                            StageInit = false;
+                            ZombieIndexInit();//생성이 완료됬으니 인덱스 초기화
+                        }
+
+                    //}
+                    
+
                 }
                 else if (ZombieCount <= 0 && !StageInit)
                 {
                     StageInit = true;
-                    LevelUP_UI.SetActive(true);
-                    Main_UI.SetActive(false);
-                    Time.timeScale = 0;
+                    if (Stage < 20)
+                    {
+                        LevelUP_UI.SetActive(true);
+                        Main_UI.SetActive(false);
+                        Time.timeScale = 0;
+                    }
+                    else
+                    {
+                        GameObject.Find("PlayerCharacter").GetComponent<CharMove>().m_ZombieClear = true;
+                        yield break;
+                    }
                     break;
                 }
                 yield return new WaitForEndOfFrame();

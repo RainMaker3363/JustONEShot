@@ -7,7 +7,7 @@ public class GameInfoManager
 {
     static GameInfoManager m_Manager;
 
-    public int SelectIndex = 1;
+    public int SelectIndex = 2;
 
     public static GameInfoManager GetInstance()
     {
@@ -106,7 +106,7 @@ public class WaitRoom : MonoBehaviour {
 
     public void ChangeChar(int Index)  //대기실은 끊겨도되니 GC를 고려하지 않고 삭제후 생성합니다
     {
-        if (Index < 2)  //캐릭터 최대개수
+        if (Index < 3)  //캐릭터 최대개수
         {
             if (SelectIndex != Index)   //전에 선택한것과 다를경우
             {

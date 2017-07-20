@@ -70,6 +70,19 @@ class Char_01 : UseChar
 
 }
 
+class Char_02 : UseChar
+{
+
+    public Char_02()
+    {
+        MaxStamina = Stamina = 850;
+        MaxHP = HP = 150;
+        Speed = 0.8f;
+        SteminaRecovery = 0.8f;
+    }
+
+}
+
 public class CharMove : MonoBehaviour {
 
 
@@ -107,7 +120,7 @@ public class CharMove : MonoBehaviour {
 
     public int m_DebugPlayerState;
 
-    int CharIndex =1; //캐릭터 선택 인덱스
+    int CharIndex =2; //캐릭터 선택 인덱스
 
     //캐릭터 총
     public static UseGun m_UseGun;
@@ -165,6 +178,8 @@ public class CharMove : MonoBehaviour {
     private float PlayerUpdateTime;
     private float PlayerUpdateDelay = 0.11f;
 
+    public bool m_ZombieClear = false;
+
     //void OnEnable()
     //{
 
@@ -194,6 +209,7 @@ public class CharMove : MonoBehaviour {
         m_GunState = LSD.GunState.ShotGun; //현재는 고정 추후 받아오게함
         CharInit();
         gameObject.SetActive(false);
+        m_ZombieClear = false;
     }
 
     // Use this for initialization
@@ -226,6 +242,11 @@ public class CharMove : MonoBehaviour {
             case 1:
                 {
                     CharStat = new Char_01();
+                    break;
+                }
+            case 2:
+                {
+                    CharStat = new Char_02();
                     break;
                 }
             default:
@@ -831,6 +852,13 @@ public class CharMove : MonoBehaviour {
 
             }
         }
+
+        if(m_ZombieClear && !GameEnd)
+        {
+            GameEnd = true;
+            UI_Main.SetActive(false);
+            StartCoroutine(PlayerWin());
+        }
     }
 
     public static void DeadEye()    //데드아이 총알을 먹었을경우
@@ -1183,10 +1211,25 @@ public class CharMove : MonoBehaviour {
         {
             Mul_Manager.EndGameAndLeaveRoom();
         }
-        else if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene")
+        else if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene")
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene("WaitingRoom");
-           // UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            // UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        }
+    }
+
+    public void OnRematchButton()
+    {
+        Debug.Log("Rematch");
+        if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)  //접속중일때
+        {
+            Mul_Manager.EndGameAndLeaveRoom();  //멀티는 일단 종료
+        }
+        else if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene")
+        {
+            UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("ZombieScene");
+            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("ZombieScene");
+            // UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
     }
 
@@ -1247,6 +1290,7 @@ public class CharMove : MonoBehaviour {
         UI_Main.transform.Find("Control/Button_Roll").GetComponent<Button>().onClick.AddListener(OnRollButton);
 
         GamePlayObj.transform.Find("UI_GameOver/Image/Button_Exit").GetComponent<Button>().onClick.AddListener(OnExitButton);
+        GamePlayObj.transform.Find("UI_GameOver/Image/Button_Rematch").GetComponent<Button>().onClick.AddListener(OnRematchButton);
         //anim;
         //UI_Main.SetActive(false);
         // gameObject.SetActive(false);

@@ -1,0 +1,194 @@
+fileFormatVersion: 2
+guid: d68d7f097c6f83b4481f849ee93b15f5
+timeCreated: 1499432063
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Arm_High_L
+    100002: Arm_High_R
+    100004: Arm_Low_L
+    100006: Arm_Low_R
+    100008: Body_High
+    100010: Body_low
+    100012: Bone006
+    100014: Bone010
+    100016: Bone011
+    100018: Bone012
+    100020: Bone013
+    100022: Bone014
+    100024: Bone015
+    100026: Bone016
+    100028: Bone017
+    100030: Bone018
+    100032: Bone019
+    100034: Bone020
+    100036: Bone021
+    100038: Bone022
+    100040: Bone024
+    100042: Bone028
+    100044: Bone029
+    100046: Bone030
+    100048: Bone031
+    100050: Bone032
+    100052: Bone033
+    100054: Bone034
+    100056: Bone035
+    100058: Bone036
+    100060: Bone037
+    100062: Bone038
+    100064: Bone039
+    100066: Bone040
+    100068: Bone041
+    100070: Bone044
+    100072: Character_02
+    100074: //RootNode
+    100076: Hand_L
+    100078: Hand_R
+    100080: Head
+    100082: IK Chain001
+    100084: IK Chain002
+    100086: Leg_High_L
+    100088: Leg_High_R
+    100090: Leg_Low_L
+    100092: Leg_Low_R
+    100094: Musket
+    100096: Point001
+    100098: Point002
+    100100: Revolber
+    100102: ShotGun
+    100104: Weapon
+    400000: Arm_High_L
+    400002: Arm_High_R
+    400004: Arm_Low_L
+    400006: Arm_Low_R
+    400008: Body_High
+    400010: Body_low
+    400012: Bone006
+    400014: Bone010
+    400016: Bone011
+    400018: Bone012
+    400020: Bone013
+    400022: Bone014
+    400024: Bone015
+    400026: Bone016
+    400028: Bone017
+    400030: Bone018
+    400032: Bone019
+    400034: Bone020
+    400036: Bone021
+    400038: Bone022
+    400040: Bone024
+    400042: Bone028
+    400044: Bone029
+    400046: Bone030
+    400048: Bone031
+    400050: Bone032
+    400052: Bone033
+    400054: Bone034
+    400056: Bone035
+    400058: Bone036
+    400060: Bone037
+    400062: Bone038
+    400064: Bone039
+    400066: Bone040
+    400068: Bone041
+    400070: Bone044
+    400072: Character_02
+    400074: //RootNode
+    400076: Hand_L
+    400078: Hand_R
+    400080: Head
+    400082: IK Chain001
+    400084: IK Chain002
+    400086: Leg_High_L
+    400088: Leg_High_R
+    400090: Leg_Low_L
+    400092: Leg_Low_R
+    400094: Musket
+    400096: Point001
+    400098: Point002
+    400100: Revolber
+    400102: ShotGun
+    400104: Weapon
+    2300000: Musket
+    2300002: Revolber
+    2300004: ShotGun
+    3300000: Musket
+    3300002: Revolber
+    3300004: ShotGun
+    4300000: Character_02
+    4300002: ShotGun
+    4300004: Musket
+    4300006: Revolber
+    7400000: Take 001
+    9500000: //RootNode
+    13700000: Character_02
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
