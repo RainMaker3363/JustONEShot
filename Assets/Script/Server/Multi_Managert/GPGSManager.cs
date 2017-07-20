@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SocialPlatforms;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -243,6 +244,12 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             // Byte + Byte + Byte + 1 interger
             _BossHPStateMessageLength = 7;
 
+            PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
+                // 클라우드 게임 데이터 저장을 위해서 사용
+                .EnableSavedGames()
+                .Build();
+
+            PlayGamesPlatform.InitializeInstance(config);
             PlayGamesPlatform.DebugLogEnabled = true;
             PlayGamesPlatform.Activate();
         }
@@ -367,7 +374,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
                     // 최소 수용 인원
                     // 최대 수용 인원
-                    PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
+                    //PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
                 }
                 break;
 
@@ -1865,6 +1872,103 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     {
         return PlayGamesPlatform.Instance.RealTime.GetConnectedParticipants();
     }
+
+    #region LeaderBoard Settings
+
+    // 리더보드 UI를 활성화 시킵니다.
+    public void OpenLeaderboardUI()
+    {
+        if (Social.localUser.authenticated)
+        {
+            Social.ShowLeaderboardUI();
+        }
+        else
+        {
+            Debug.Log("OpenLeaderboard : Not Loggin Google Play GameService");
+        }
+    }
+
+    /// <summary>
+    /// 리더보드에 점수를 보내어 서버에 갱신시키고 순위를 매겨준다.
+    /// LeaderBoardID는 어느 리더보드에 저장할지의 대한 ID값이다.
+    /// Score는 보낼 점수
+    /// </summary>
+    /// <param name="LeaderBoardID"></param>
+    /// <param name="Score"></param>
+    public void Send_LeaderBoard_Score(string LeaderBoardID, long Score)
+    {
+        if (Social.localUser.authenticated)
+        {
+            if(Score < 0)
+            {
+                Score = 0;
+            }
+            else if(Score > long.MaxValue)
+            {
+                Score = long.MaxValue;
+            }
+
+            Social.ReportScore(Score, LeaderBoardID, (bool success) =>
+            {
+                Debug.Log("Send_LeaderBoard_Score [ID] : " + LeaderBoardID + " [Score] : " + Score);
+            });
+        }
+    }
+
+    #endregion
+
+    #region Acheievement Settings
+
+    // 도전과제 UI를 활성화 시킵니다.
+    public void OpenAcheieveMentUI()
+    {
+        if(Social.localUser.authenticated)
+        {
+            Social.ShowAchievementsUI();
+        }
+        else
+        {
+            Debug.Log("OpenAchievement : Not Loggin Google Play GameService");
+        }
+    }
+
+    /// <summary>
+    /// 해당하는 ID의 도전과제를 언락 시킵니다.
+    /// </summary>
+    /// <param name="AchieveID"></param>
+    public void UnlockAcheievement(string AchieveID)
+    {
+        if (Social.localUser.authenticated)
+        {
+            Social.ReportProgress(AchieveID, 100.0f, (bool success) =>
+            {
+                Debug.Log("UnlockAcheievement : " + AchieveID);
+            });
+        }
+
+    }
+
+    /// <summary>
+    /// 도전과제를 언락시킬때 바로 언락이 아닌 진행도를 두어 100이 채워지면 해제 되는 식입니다.
+    /// AchieveID는 언락 시킬 도전과제의 고유 ID입니다.
+    /// Progress는 진행도입니다. 이것이 100이 되면 해당 도전과제는 언락됩니다.
+    /// </summary>
+    /// <param name="AchieveID"></param>
+    /// <param name="Progress"></param>
+    public void UnlockAcheievement(string AchieveID, int Progress)
+    {
+        if (Social.localUser.authenticated)
+        {
+            PlayGamesPlatform.Instance.IncrementAchievement(AchieveID, Progress, (bool success) =>
+            {
+                Debug.Log("UnlockAcheievement : " + AchieveID);
+            });
+        }
+
+    }
+
+    #endregion
+
 
     // 바이트 배열을 String으로 변환 
     private string ByteToString(byte[] strByte)
