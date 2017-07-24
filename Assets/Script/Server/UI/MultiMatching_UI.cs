@@ -19,10 +19,10 @@ public class MultiMatching_UI : MonoBehaviour {
 
         MultiStartChecker = false;
 
-        MultiGameModeNumber = MultiTitleManager.NowMultiGameModeNumber;
+        MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();//MultiTitleManager.NowMultiGameModeNumber;
 
 
-        if(TitleManager == null)
+        if (TitleManager == null)
         {
             TitleManager = GameObject.Find("MultiTitleManager").GetComponent<MultiTitleManager>();
         }
@@ -39,7 +39,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
         MultiStartChecker = false;
 
-        MultiGameModeNumber = MultiTitleManager.NowMultiGameModeNumber;
+        MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();//MultiTitleManager.NowMultiGameModeNumber;
 
 
         if (TitleManager == null)
@@ -87,7 +87,8 @@ public class MultiMatching_UI : MonoBehaviour {
 
 
 
-        MultiGameModeNumber = MultiTitleManager.NowMultiGameModeNumber;
+        //MultiGameModeNumber = MultiTitleManager.NowMultiGameModeNumber;
+        MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();
 
         switch(MultiGameModeNumber)
         {
