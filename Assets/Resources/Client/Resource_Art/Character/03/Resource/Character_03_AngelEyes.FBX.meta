@@ -1,0 +1,223 @@
+fileFormatVersion: 2
+guid: 07e1f0480884fc34ab215be2ab7caf75
+timeCreated: 1500728933
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Arm_High_L
+    100002: Arm_High_R
+    100004: Arm_Low_L
+    100006: Arm_Low_R
+    100008: Body_High
+    100010: Body_Low
+    100012: Bone003
+    100014: Bone010
+    100016: Bone011
+    100018: Bone012
+    100020: Bone013
+    100022: Bone014
+    100024: Bone015
+    100026: Bone016
+    100028: Bone017
+    100030: Bone018
+    100032: Bone019
+    100034: Bone020
+    100036: Bone021
+    100038: Bone022
+    100040: Bone024
+    100042: Bone028
+    100044: Bone029
+    100046: Bone030
+    100048: Bone031
+    100050: Bone032
+    100052: Bone033
+    100054: Bone034
+    100056: Bone035
+    100058: Bone036
+    100060: Bone037
+    100062: Bone038
+    100064: Bone039
+    100066: Bone040
+    100068: Bone041
+    100070: //RootNode
+    100072: Cloth_1_1
+    100074: Cloth_1_2
+    100076: Cloth_1_3
+    100078: Cloth_2_1
+    100080: Cloth_2_2
+    100082: Cloth_2_3
+    100084: Cloth_3_1
+    100086: Cloth_3_2
+    100088: Cloth_3_3
+    100090: Cloth_4_1
+    100092: Cloth_4_2
+    100094: Cloth_4_3
+    100096: Cloth_5_1
+    100098: Cloth_5_2
+    100100: Cloth_5_3
+    100102: Foot_L
+    100104: Foot_R
+    100106: Hand_L
+    100108: Hand_R
+    100110: IK Chain001
+    100112: IK Chain002
+    100114: Item_Weapon
+    100116: Leg_High_L
+    100118: Leg_High_R
+    100120: Leg_Low_L
+    100122: Leg_Low_R
+    100124: Musket
+    100126: Point001
+    100128: Point002
+    100130: RetopoGroup1
+    100132: Revolver
+    100134: ShotGun
+    400000: Arm_High_L
+    400002: Arm_High_R
+    400004: Arm_Low_L
+    400006: Arm_Low_R
+    400008: Body_High
+    400010: Body_Low
+    400012: Bone003
+    400014: Bone010
+    400016: Bone011
+    400018: Bone012
+    400020: Bone013
+    400022: Bone014
+    400024: Bone015
+    400026: Bone016
+    400028: Bone017
+    400030: Bone018
+    400032: Bone019
+    400034: Bone020
+    400036: Bone021
+    400038: Bone022
+    400040: Bone024
+    400042: Bone028
+    400044: Bone029
+    400046: Bone030
+    400048: Bone031
+    400050: Bone032
+    400052: Bone033
+    400054: Bone034
+    400056: Bone035
+    400058: Bone036
+    400060: Bone037
+    400062: Bone038
+    400064: Bone039
+    400066: Bone040
+    400068: Bone041
+    400070: //RootNode
+    400072: Cloth_1_1
+    400074: Cloth_1_2
+    400076: Cloth_1_3
+    400078: Cloth_2_1
+    400080: Cloth_2_2
+    400082: Cloth_2_3
+    400084: Cloth_3_1
+    400086: Cloth_3_2
+    400088: Cloth_3_3
+    400090: Cloth_4_1
+    400092: Cloth_4_2
+    400094: Cloth_4_3
+    400096: Cloth_5_1
+    400098: Cloth_5_2
+    400100: Cloth_5_3
+    400102: Foot_L
+    400104: Foot_R
+    400106: Hand_L
+    400108: Hand_R
+    400110: IK Chain001
+    400112: IK Chain002
+    400114: Item_Weapon
+    400116: Leg_High_L
+    400118: Leg_High_R
+    400120: Leg_Low_L
+    400122: Leg_Low_R
+    400124: Musket
+    400126: Point001
+    400128: Point002
+    400130: RetopoGroup1
+    400132: Revolver
+    400134: ShotGun
+    2300000: Musket
+    2300002: Revolver
+    2300004: ShotGun
+    3300000: Musket
+    3300002: Revolver
+    3300004: ShotGun
+    4300000: RetopoGroup1
+    4300002: ShotGun
+    4300004: Revolver
+    4300006: Musket
+    9500000: //RootNode
+    13700000: RetopoGroup1
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

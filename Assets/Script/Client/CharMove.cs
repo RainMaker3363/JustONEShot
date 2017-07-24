@@ -83,6 +83,19 @@ class Char_02 : UseChar
 
 }
 
+class Char_03 : UseChar
+{
+
+    public Char_03()
+    {
+        MaxStamina = Stamina = 850;
+        MaxHP = HP = 150;
+        Speed = 0.8f;
+        SteminaRecovery = 0.8f;
+    }
+
+}
+
 public class CharMove : MonoBehaviour {
 
 
@@ -120,7 +133,7 @@ public class CharMove : MonoBehaviour {
 
     public int m_DebugPlayerState;
 
-    int CharIndex =2; //캐릭터 선택 인덱스
+    int CharIndex =3; //캐릭터 선택 인덱스
 
     //캐릭터 총
     public static UseGun m_UseGun;
@@ -247,6 +260,11 @@ public class CharMove : MonoBehaviour {
             case 2:
                 {
                     CharStat = new Char_02();
+                    break;
+                }
+            case 3:
+                {
+                    CharStat = new Char_03();
                     break;
                 }
             default:
