@@ -15,7 +15,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        Matching_Text.text = "Player Searching...";
+        //Matching_Text.text = "Player Searching...";
 
         MultiStartChecker = false;
 
@@ -26,6 +26,8 @@ public class MultiMatching_UI : MonoBehaviour {
         {
             TitleManager = GameObject.Find("MultiTitleManager").GetComponent<MultiTitleManager>();
         }
+
+        Matching_Text.text = "Matching The Player...\nMode : " + MultiGameModeNumber.ToString();
 
         GPGSManager.GetInstance.SignInAndStartMPGame();
 
@@ -35,7 +37,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
     private void OnEnable()
     {
-        Matching_Text.text = "Player Searching...";
+        //Matching_Text.text = "Player Searching...";
 
         MultiStartChecker = false;
 
@@ -46,6 +48,8 @@ public class MultiMatching_UI : MonoBehaviour {
         {
             TitleManager = GameObject.Find("MultiTitleManager").GetComponent<MultiTitleManager>();
         }
+
+        Matching_Text.text = "Matching The Player...\nMode : " + MultiGameModeNumber.ToString();
 
         GPGSManager.GetInstance.SignInAndStartMPGame();
     }

@@ -244,12 +244,12 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             // Byte + Byte + Byte + 1 interger
             _BossHPStateMessageLength = 7;
 
-            PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
-                // 클라우드 게임 데이터 저장을 위해서 사용
-                .EnableSavedGames()
-                .Build();
+            //PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
+            //    // 클라우드 게임 데이터 저장을 위해서 사용
+            //    .EnableSavedGames()
+            //    .Build();
 
-            PlayGamesPlatform.InitializeInstance(config);
+            //PlayGamesPlatform.InitializeInstance(config);
             PlayGamesPlatform.DebugLogEnabled = true;
             PlayGamesPlatform.Activate();
         }
@@ -371,6 +371,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                     minimumOpponents = 1;
                     // 최대 수용 인원
                     maximumOpponents = 1;
+                    // 게임 모드 (기본값)
+                    gameVariation = 0;
 
                     // 최소 수용 인원
                     // 최대 수용 인원
@@ -384,6 +386,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                     minimumOpponents = 1;
                     // 최대 수용 인원
                     maximumOpponents = 1;
+                    // 게임 모드 (기본값)
+                    gameVariation = 0;
 
                     // 최소 수용 인원
                     // 최대 수용 인원
@@ -394,9 +398,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             case HY.MultiGameModeState.SURVIVAL:
                 {
                     // 최소 수용 인원
-                    minimumOpponents = 1;
+                    minimumOpponents = 2;
                     // 최대 수용 인원
                     maximumOpponents = 2;
+                    // 게임 모드
+                    gameVariation = 1;
 
                     PlayGamesPlatform.Instance.RealTime.ShowWaitingRoomUI();
 
@@ -406,18 +412,18 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                 }
                 break;
 
-            default:
-                {
-                    // 최소 수용 인원
-                    minimumOpponents = 1;
-                    // 최대 수용 인원
-                    maximumOpponents = 1;
+            //default:
+            //    {
+            //        // 최소 수용 인원
+            //        minimumOpponents = 1;
+            //        // 최대 수용 인원
+            //        maximumOpponents = 1;
 
-                    // 최소 수용 인원
-                    // 최대 수용 인원
-                    PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
-                }
-                break;
+            //        // 최소 수용 인원
+            //        // 최대 수용 인원
+            //        PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
+            //    }
+            //    break;
         }
 
 
@@ -520,6 +526,15 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // 2 : Survival
     public void SetMultiGameModeState(int ModeNumber)
     {
+        if(ModeNumber <= 0)
+        {
+            ModeNumber = 0;
+        }
+        else if(ModeNumber >= (int)HY.MultiGameModeState.SURVIVAL)
+        {
+            ModeNumber = (int)HY.MultiGameModeState.SURVIVAL;
+        }
+
         switch(ModeNumber)
         {
             case 0:
@@ -546,6 +561,12 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                 }
                 break;
         }
+    }
+
+    // 현재 멀티게임모드의 상태를 갱신시켜준다
+    public void SetMultiGameModeState(HY.MultiGameModeState Mode)
+    {
+        NowMultiGameMode = Mode;
     }
 
     public void InitMessager()
@@ -1892,6 +1913,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     /// 리더보드에 점수를 보내어 서버에 갱신시키고 순위를 매겨준다.
     /// LeaderBoardID는 어느 리더보드에 저장할지의 대한 ID값이다.
     /// Score는 보낼 점수
+    /// ONESHOT_Cloud 안에 있는 ID값을 써주면 된다.
     /// </summary>
     /// <param name="LeaderBoardID"></param>
     /// <param name="Score"></param>
@@ -1934,6 +1956,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
     /// <summary>
     /// 해당하는 ID의 도전과제를 언락 시킵니다.
+    /// ONESHOT_Cloud 안에 있는 ID값을 써주면 된다.
     /// </summary>
     /// <param name="AchieveID"></param>
     public void UnlockAcheievement(string AchieveID)
@@ -1952,6 +1975,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     /// 도전과제를 언락시킬때 바로 언락이 아닌 진행도를 두어 100이 채워지면 해제 되는 식입니다.
     /// AchieveID는 언락 시킬 도전과제의 고유 ID입니다.
     /// Progress는 진행도입니다. 이것이 100이 되면 해당 도전과제는 언락됩니다.
+    /// ONESHOT_Cloud 안에 있는 ID값을 써주면 된다.
     /// </summary>
     /// <param name="AchieveID"></param>
     /// <param name="Progress"></param>

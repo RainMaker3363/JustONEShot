@@ -104,7 +104,7 @@ public class MultiTitleGameSurvivalButton : MonoBehaviour, IDragHandler, IPointe
                 ButtonChecker = true;
 
                 // Survival 모드로 세팅해준다.
-                GPGSManager.GetInstance.SetMultiGameModeState(2);
+                GPGSManager.GetInstance.SetMultiGameModeState(HY.MultiGameModeState.SURVIVAL);
 
                 Survival_Multi_Readey.SetActive(false);
                 Survival_Matching_UI.SetActive(true);
