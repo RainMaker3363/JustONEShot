@@ -196,7 +196,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
         if (IsInitEnd == false)
         {
-            IsInitEnd = true;
+            //IsInitEnd = true;
 
             minimumOpponents = 1;
             maximumOpponents = 1;
@@ -389,6 +389,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                     // 게임 모드 (기본값)
                     gameVariation = 0;
 
+                    //PlayGamesPlatform.Instance.RealTime.ShowWaitingRoomUI();
+
                     // 최소 수용 인원
                     // 최대 수용 인원
                     PlayGamesPlatform.Instance.RealTime.CreateQuickGame(minimumOpponents, maximumOpponents, gameVariation, this);
@@ -398,9 +400,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             case HY.MultiGameModeState.SURVIVAL:
                 {
                     // 최소 수용 인원
-                    minimumOpponents = 2;
+                    minimumOpponents = 1;
                     // 최대 수용 인원
-                    maximumOpponents = 2;
+                    maximumOpponents = 7;
                     // 게임 모드
                     gameVariation = 1;
 

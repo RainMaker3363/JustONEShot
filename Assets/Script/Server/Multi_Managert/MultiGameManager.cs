@@ -166,35 +166,35 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                     _SurvivalOpponentCharacterNumber = GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers();
 
-                    if (_SurvivalOpponentWeaponNumber == null)
-                    {
-                        _SurvivalOpponentWeaponNumber = new Dictionary<string, int>(8);
-                       //_SurvivalOpponentWeaponNumber.Clear();
-                    }
-                    else
-                    {
-                        _SurvivalOpponentWeaponNumber.Clear();
-                    }
+                    //if (_SurvivalOpponentWeaponNumber == null)
+                    //{
+                    //    _SurvivalOpponentWeaponNumber = new Dictionary<string, int>(8);
+                    //   //_SurvivalOpponentWeaponNumber.Clear();
+                    //}
+                    //else
+                    //{
+                    //    _SurvivalOpponentWeaponNumber.Clear();
+                    //}
 
-                    if (_SurvivalOpponentWaitSignals == null)
-                    {
-                        _SurvivalOpponentWaitSignals = new Dictionary<string, bool>(8);
-                        //_SurvivalOpponentWaitSignals.Clear();
-                    }
-                    else
-                    {
-                        _SurvivalOpponentWeaponNumber.Clear();
-                    }
+                    //if (_SurvivalOpponentWaitSignals == null)
+                    //{
+                    //    _SurvivalOpponentWaitSignals = new Dictionary<string, bool>(8);
+                    //    //_SurvivalOpponentWaitSignals.Clear();
+                    //}
+                    //else
+                    //{
+                    //    _SurvivalOpponentWeaponNumber.Clear();
+                    //}
 
-                    if (_SurvivalOpponentSelectSignals == null)
-                    {
-                        _SurvivalOpponentSelectSignals = new Dictionary<string, bool>(8);
-                        //_SurvivalOpponentSelectSignals.Clear();
-                    }
-                    else
-                    {
-                        _SurvivalOpponentWeaponNumber.Clear();
-                    }
+                    //if (_SurvivalOpponentSelectSignals == null)
+                    //{
+                    //    _SurvivalOpponentSelectSignals = new Dictionary<string, bool>(8);
+                    //    //_SurvivalOpponentSelectSignals.Clear();
+                    //}
+                    //else
+                    //{
+                    //    _SurvivalOpponentWeaponNumber.Clear();
+                    //}
 
                     #endregion
 
@@ -333,11 +333,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         _MyParticipantId = GPGSManager.GetInstance.GetMyParticipantId();
 
         allPlayers = GPGSManager.GetInstance.GetAllPlayers();
-        LeftPlayerCount = allPlayers.Count - 1;
-        _opponentScripts = new Dictionary<string, EnemyMove>(allPlayers.Count - 1);
-        PlayerCharacters = new Dictionary<string, GameObject>(allPlayers.Count - 1);
-        PlayerCharacters_Nick = new Dictionary<string, string>(allPlayers.Count - 1);
-        PlayerCharacters_Pos = new List<Vector3>(allPlayers.Count - 1);
+
 
         switch (MultiGameModeState)
         {
@@ -564,6 +560,42 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 {
                     Debug.Log("MultiGameModeState : " + MultiGameModeState);
 
+                    LeftPlayerCount = allPlayers.Count - 1;
+
+                    if (_SurvivalOpponentWeaponNumber == null)
+                    {
+                        _SurvivalOpponentWeaponNumber = new Dictionary<string, int>(allPlayers.Count - 1);
+                        //_SurvivalOpponentWeaponNumber.Clear();
+                    }
+                    else
+                    {
+                        _SurvivalOpponentWeaponNumber.Clear();
+                    }
+
+                    if (_SurvivalOpponentWaitSignals == null)
+                    {
+                        _SurvivalOpponentWaitSignals = new Dictionary<string, bool>(allPlayers.Count - 1);
+                        //_SurvivalOpponentWaitSignals.Clear();
+                    }
+                    else
+                    {
+                        _SurvivalOpponentWaitSignals.Clear();
+                    }
+
+                    if (_SurvivalOpponentSelectSignals == null)
+                    {
+                        _SurvivalOpponentSelectSignals = new Dictionary<string, bool>(allPlayers.Count - 1);
+                        //_SurvivalOpponentSelectSignals.Clear();
+                    }
+                    else
+                    {
+                        _SurvivalOpponentSelectSignals.Clear();
+                    }
+
+                    _opponentScripts = new Dictionary<string, EnemyMove>(allPlayers.Count - 1);
+                    PlayerCharacters = new Dictionary<string, GameObject>(allPlayers.Count - 1);
+                    PlayerCharacters_Nick = new Dictionary<string, string>(allPlayers.Count - 1);
+                    PlayerCharacters_Pos = new List<Vector3>(allPlayers.Count - 1);
 
                     for (int i = 0; i < allPlayers.Count; i++)
                     {
@@ -2435,7 +2467,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                         if (ThisGameIsEnd == false)
                         {
-                            NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
+                            NetText.text = "Net Info : " + MultiGameModeState;//GPGSManager.GetInstance.GetNetMessage().ToString();
 
                         }
                         else
@@ -2489,7 +2521,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                         if (ThisGameIsEnd == false)
                         {
-                            NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
+                            NetText.text = "Net Info : " + MultiGameModeState;// GPGSManager.GetInstance.GetNetMessage().ToString();
 
                         }
                         else

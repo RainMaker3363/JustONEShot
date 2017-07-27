@@ -58,31 +58,31 @@ public class MultiMatching_UI : MonoBehaviour {
     {
         yield return new WaitForSeconds(0.2f);
 
-        //switch (MultiGameModeNumber)
-        //{
-        //    // HY.MultiGameModeState.NONE
-        //    case HY.MultiGameModeState.NONE:
-        //        {
+        switch (MultiGameModeNumber)
+        {
+            // HY.MultiGameModeState.NONE
+            case HY.MultiGameModeState.NONE:
+                {
 
-        //        }
-        //        break;
+                }
+                break;
 
-        //    // HY.MultiGameModeState.PVP
-        //    case HY.MultiGameModeState.PVP:
-        //        {
-        //            AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
-        //        }
-        //        break;
+            // HY.MultiGameModeState.PVP
+            case HY.MultiGameModeState.PVP:
+                {
+                    AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
+                }
+                break;
 
-        //    // HY.MultiGameModeState.SURVIVAL
-        //    case HY.MultiGameModeState.SURVIVAL:
-        //        {
+            // HY.MultiGameModeState.SURVIVAL
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
+                }
+                break;
+        }
 
-        //        }
-        //        break;
-        //}
 
-        AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
     }
 
 
@@ -127,6 +127,15 @@ public class MultiMatching_UI : MonoBehaviour {
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
+                    Matching_Text.text = "Connect Testing...\nCharCount : " + TitleManager.GetOpponentCharNumber()
+    + "\nCharName[0] = " + GPGSManager.GetInstance.GetOtherNameGPGS(0)
+    + "\nCharName[1] = " + GPGSManager.GetInstance.GetOtherNameGPGS(1)
+    + "\nCharName[2] = " + GPGSManager.GetInstance.GetOtherNameGPGS(2)
+    + "\nCharName[3] = " + GPGSManager.GetInstance.GetOtherNameGPGS(3)
+    + "\nCharName[4] = " + GPGSManager.GetInstance.GetOtherNameGPGS(4)
+                    + "\nCharName[5] = " + GPGSManager.GetInstance.GetOtherNameGPGS(5)
+    + "\nCharName[6] = " + GPGSManager.GetInstance.GetOtherNameGPGS(6);
+
                     if (GPGSManager.GetInstance.IsConnected() == true)
                     {
                         Matching_Text.text = "Room Connect...\nCharCount : " + TitleManager.GetOpponentCharNumber()
@@ -136,10 +145,9 @@ public class MultiMatching_UI : MonoBehaviour {
                             + "\nCharName[3] = " + GPGSManager.GetInstance.GetOtherNameGPGS(3)
                             + "\nCharName[4] = " + GPGSManager.GetInstance.GetOtherNameGPGS(4)
                             + "\nCharName[5] = " + GPGSManager.GetInstance.GetOtherNameGPGS(5)
-                            + "\nCharName[6] = " + GPGSManager.GetInstance.GetOtherNameGPGS(6)
-                            + "\nCharName[7] = " + GPGSManager.GetInstance.GetOtherNameGPGS(7);
+                            + "\nCharName[6] = " + GPGSManager.GetInstance.GetOtherNameGPGS(6);
 
-                        if (TitleManager.GetOpponentCharNumber() != 100)
+                        if (TitleManager.GetSurvivalOpoonentCharNumbers() >= 7)
                         {
                             Matching_Text.text = "Join the Session.\nCharCount : " + TitleManager.GetOpponentCharNumber()
                             + "\nCharName[0] = " + GPGSManager.GetInstance.GetOtherNameGPGS(0)
@@ -148,8 +156,7 @@ public class MultiMatching_UI : MonoBehaviour {
                             + "\nCharName[3] = " + GPGSManager.GetInstance.GetOtherNameGPGS(3)
                             + "\nCharName[4] = " + GPGSManager.GetInstance.GetOtherNameGPGS(4)
                             + "\nCharName[5] = " + GPGSManager.GetInstance.GetOtherNameGPGS(5)
-                            + "\nCharName[6] = " + GPGSManager.GetInstance.GetOtherNameGPGS(6)
-                            + "\nCharName[7] = " + GPGSManager.GetInstance.GetOtherNameGPGS(7);
+                            + "\nCharName[6] = " + GPGSManager.GetInstance.GetOtherNameGPGS(6);
 
                             if (MultiStartChecker == false)
                             {

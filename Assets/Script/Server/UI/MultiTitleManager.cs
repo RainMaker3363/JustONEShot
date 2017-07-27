@@ -13,6 +13,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     //private bool MultiStartChecker;
     private int OpponentCharNumber;
     private Dictionary<string, int> __SurvivalOpponentCharNumbers;
+    private IDictionaryEnumerator __SurvivalOpoonentCharNumbers_Iter;
 
     public static HY.MultiGameModeState NowMultiGameModeNumber;
 
@@ -34,7 +35,18 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         
         if(__SurvivalOpponentCharNumbers == null)
         {
-            __SurvivalOpponentCharNumbers = new Dictionary<string, int>(8);
+            __SurvivalOpponentCharNumbers = new Dictionary<string, int>(7);
+        }
+        else
+        {
+            //__SurvivalOpoonentCharNumbers_Iter = __SurvivalOpponentCharNumbers.GetEnumerator();
+            
+            //while(__SurvivalOpoonentCharNumbers_Iter.MoveNext())
+            //{
+            //    __SurvivalOpponentCharNumbers[__SurvivalOpoonentCharNumbers_Iter.Key.ToString()] = 100;
+            //}
+
+            //__SurvivalOpponentCharNumbers.Clear();
         }
 
         /* 
@@ -101,6 +113,24 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     public int GetOpponentCharNumber()
     {
         return OpponentCharNumber;
+    }
+
+    // 
+    public int GetSurvivalOpoonentCharNumbers(int CurrentPlayerCount = 7)
+    {
+        int AlreadyChecker = 0;
+
+        __SurvivalOpoonentCharNumbers_Iter = __SurvivalOpponentCharNumbers.GetEnumerator();
+
+        while (__SurvivalOpoonentCharNumbers_Iter.MoveNext())
+        {
+            if(__SurvivalOpponentCharNumbers[__SurvivalOpoonentCharNumbers_Iter.Key.ToString()] != 100)
+            {
+                AlreadyChecker++;
+            }
+        }
+
+        return AlreadyChecker;
     }
 
     // 상대방 캐릭터 정보를 기억한다.
