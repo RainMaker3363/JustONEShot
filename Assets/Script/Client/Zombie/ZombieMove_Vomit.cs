@@ -43,11 +43,16 @@ public class ZombieMove_Vomit : Zombie
     public GameObject VomitEffect;
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         GamePlayObj = GameObject.Find("GamePlayObj").transform;
-        PlayerPos = GamePlayObj.transform.Find("PlayerCharacter");
         NvAgent = gameObject.GetComponentInParent<NavMeshAgent>();
+        PlayerPos = GamePlayObj.transform.Find("PlayerCharacter");
+    }
+
+    void Start()
+    {
+       
         anim = gameObject.GetComponent<Animator>();
         MotionPlay = false;
         AttackDealy = 5;
@@ -213,5 +218,22 @@ public class ZombieMove_Vomit : Zombie
         yield return null;
     }
 
+   public IEnumerator ZombieFastMoving()
+    {
+        Distance = Vector3.Distance(transform.position, PlayerPos.position);
+
+        float speed = NvAgent.speed;
+
+        NvAgent.speed = FastMoveSpeed;
+        while (!ZombieFastMoveCheck(Distance))
+        {
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        NvAgent.speed = speed;
+
+        // yield return null;
+    }
 }
 

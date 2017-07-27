@@ -14,8 +14,19 @@ enum ZombieState
 
 abstract public class Zombie : MonoBehaviour
 {
+    public float FastMoveSpeed = 10;
+
     abstract public void ZombieDamage(int Damage);
 
+    public bool ZombieFastMoveCheck(float PlayerDistance)
+    {
+        if(PlayerDistance>15)
+        {
+            return false;
+        }
+
+        return true;
+    }
 }
 public class ZombieMove : Zombie
 {
@@ -54,15 +65,18 @@ public class ZombieMove : Zombie
     AudioSource m_AudioSource;
 
     // Use this for initialization
-    void Start () {
+    void Awake()
+    {
         GamePlayObj = GameObject.Find("GamePlayObj").transform;
-        PlayerPos = GamePlayObj.transform.Find("PlayerCharacter");
         NvAgent = gameObject.GetComponentInParent<NavMeshAgent>();
+        PlayerPos = GamePlayObj.transform.Find("PlayerCharacter");
+    }
+
+    void Start () {
+
         anim = gameObject.GetComponent<Animator>();
         MotionPlay = false;
         AttackDealy = 5;
-        
-       
 
         m_AudioSource = gameObject.GetComponentInParent<AudioSource>();
 
@@ -162,8 +176,7 @@ public class ZombieMove : Zombie
     }
 
     void OnEnable()
-    {
-        
+    {        
         Dealy_Coroutine = ZombieMoveSystem(m_MoveDealy);
         StartCoroutine(Dealy_Coroutine);
     }
@@ -222,5 +235,22 @@ public class ZombieMove : Zombie
         yield return null;
     }
 
-    
+    public IEnumerator ZombieFastMoving()
+    {
+        Distance = Vector3.Distance(transform.position, PlayerPos.position);
+        float speed = NvAgent.speed;
+
+        NvAgent.speed = FastMoveSpeed;
+        Debug.Log("FastMoveDistance" + Distance);
+        while (!ZombieFastMoveCheck(Distance))
+        {
+            Debug.Log("FastMove!");
+            yield return new WaitForEndOfFrame();
+        }
+
+        Debug.Log("FastMoveEnd");
+        NvAgent.speed = speed;
+        
+       // yield return null;
+    }
 }

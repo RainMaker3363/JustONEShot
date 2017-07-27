@@ -276,6 +276,8 @@ public class ZombieCreateManager : MonoBehaviour
 
             Zombies[Index_Zombie].GetComponentInChildren<ZombieMove>().HP = LevelHP;
             Zombies[Index_Zombie].GetComponentInChildren<ZombieMove>().AttackDamge = LevelDamage;
+            StartCoroutine(Zombies[Index_Zombie].GetComponentInChildren<ZombieMove>().ZombieFastMoving());
+
             //Zombies[Index_Zombie].transform.SetParent(GameplayObj.transform);
             ZombieCount++;
             Index_Zombie++;
@@ -323,6 +325,7 @@ public class ZombieCreateManager : MonoBehaviour
 
             Zombies_Boom[Index_Zombie_Boom].GetComponentInChildren<ZombieMove_Boom>().HP = LevelHP;
             Zombies_Boom[Index_Zombie_Boom].GetComponentInChildren<ZombieMove_Boom>().AttackDamge = LevelDamage;
+            StartCoroutine(Zombies_Boom[Index_Zombie_Boom].GetComponentInChildren<ZombieMove_Boom>().ZombieFastMoving());
             //Zombies_Boom[Index_Zombie_Boom].transform.SetParent(GameplayObj.transform);
             ZombieCount++;
             Index_Zombie_Boom++;
@@ -371,6 +374,7 @@ public class ZombieCreateManager : MonoBehaviour
 
             Zombies_Vomit[Index_Zombie_Vomit].GetComponentInChildren<ZombieMove_Vomit>().HP = LevelHP;
             Zombies_Vomit[Index_Zombie_Vomit].GetComponentInChildren<ZombieMove_Vomit>().AttackDamge = LevelDamage;
+            StartCoroutine(Zombies_Vomit[Index_Zombie_Vomit].GetComponentInChildren<ZombieMove_Vomit>().ZombieFastMoving());
             //Zombies_Vomit[Index_Zombie_Vomit].transform.SetParent(GameplayObj.transform);
             ZombieCount++;
             Index_Zombie_Vomit++;
@@ -420,6 +424,7 @@ public class ZombieCreateManager : MonoBehaviour
 
             Zombies_Speed[Index_Zombie_Speed].GetComponentInChildren<ZombieMove>().HP = LevelHP;
             Zombies_Speed[Index_Zombie_Speed].GetComponentInChildren<ZombieMove>().AttackDamge = LevelDamage;
+            StartCoroutine(Zombies_Speed[Index_Zombie_Speed].GetComponentInChildren<ZombieMove>().ZombieFastMoving());
             //Zombies_Speed[Index_Zombie_Speed].transform.SetParent(GameplayObj.transform);
             ZombieCount++;
             Index_Zombie_Speed++;
@@ -468,6 +473,7 @@ public class ZombieCreateManager : MonoBehaviour
 
             Zombies_Transparency[Index_Zombie_Transparency].GetComponentInChildren<ZombieMove>().HP = LevelHP;
             Zombies_Transparency[Index_Zombie_Transparency].GetComponentInChildren<ZombieMove>().AttackDamge = LevelDamage;
+            StartCoroutine(Zombies_Transparency[Index_Zombie_Transparency].GetComponentInChildren<ZombieMove>().ZombieFastMoving());
             //Zombies_Transparency[Index_Zombie_Transparency].transform.SetParent(GameplayObj.transform);
             ZombieCount++;
             Index_Zombie_Transparency++;
@@ -516,6 +522,7 @@ public class ZombieCreateManager : MonoBehaviour
 
             Zombies_Big[Index_Zombie_Big].GetComponentInChildren<ZombieMove_Big>().HP = LevelHP;
             Zombies_Big[Index_Zombie_Big].GetComponentInChildren<ZombieMove_Big>().AttackDamge = LevelDamage;
+            StartCoroutine(Zombies_Big[Index_Zombie_Big].GetComponentInChildren<ZombieMove_Big>().ZombieFastMoving());
             //Zombies_Big[Index_Zombie_Big].transform.SetParent(GameplayObj.transform);
             ZombieCount++;
             Index_Zombie_Big++;
