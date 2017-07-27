@@ -334,6 +334,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         allPlayers = GPGSManager.GetInstance.GetAllPlayers();
 
+        MultiGameModeState = GPGSManager.GetInstance.GetMultiGameModeState();//HY.MultiGameModeState.PVP;
+        #region MPGame Setting
 
         switch (MultiGameModeState)
         {
@@ -419,6 +421,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         MyPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(1);
                         OpponentPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(0);
                     }
+
+                    _multiplayerReady = true;
 
                     //for (int i = 0; i < allPlayers.Count; i++)
                     //{
@@ -715,13 +719,15 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         }
                     }
 
+                    _multiplayerReady = true;
 
-            
                 }
                 break;
         }
 
+        #endregion
 
+        
 
         /* 
         * 유니티 엔진 사용 시 입력을 하지 않으면 모바일 장치의 화면이 어두워지다가 잠기게 되는데,
@@ -739,7 +745,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         //Screen.SetResolution(Screen.width, Screen.width * 16 / 9,  true); // 16:9 로 개발시
 
-        _multiplayerReady = true;
+        
 
     }
 
@@ -2450,13 +2456,13 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
 
         // 현재 게임 상태에 따라 다르게 진행을 해준다.
-        MultiGameModeState = GPGSManager.GetInstance.GetMultiGameModeState();
+        //MultiGameModeState = GPGSManager.GetInstance.GetMultiGameModeState();
 
         switch (MultiGameModeState)
         {
             case HY.MultiGameModeState.NONE:
                 {
-                    NetText.text = "Net Info : 현재는 멀티 플레이 모드가 아닙니다.";
+                    NetText.text = "Net Info : 현재는 멀티 플레이 모드가 아닙니다.\nNet Mode : " + MultiGameModeState;
                 }
                 break;
 
@@ -2489,12 +2495,13 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     }
                     else
                     {
+                        NetText.text = "Net Info : " + MultiGameModeState;//GPGSManager.GetInstance.GetNetMessage().ToString();
                         PlayerName.text = "Player"; //GPGSManager.GetInstance.GetNameGPGS();
                         EnemyName.text = "Enemy";
 
                         MyInfoText.text = "Player Info : " + MyCharacter.transform.position;
                         EnemyInfoText.text = "Enemy Info : " + EnemyCharacter.transform.position;//EnemyCharacterPos.transform.position;
-                        NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
+                        //NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
                         ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
                     }
 
@@ -2542,12 +2549,13 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     }
                     else
                     {
+                        NetText.text = "Net Info : " + MultiGameModeState;//GPGSManager.GetInstance.GetNetMessage().ToString();
                         PlayerName.text = "Player"; //GPGSManager.GetInstance.GetNameGPGS();
                         EnemyName.text = "Enemy";
 
                         MyInfoText.text = "Player Info : " + MyCharacter.transform.position;
                         EnemyInfoText.text = "Enemy Info : " + EnemyCharacter.transform.position;//EnemyCharacterPos.transform.position;
-                        NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
+                        //NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
                         ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
                     }
 

@@ -402,11 +402,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                     // 최소 수용 인원
                     minimumOpponents = 1;
                     // 최대 수용 인원
-                    maximumOpponents = 7;
+                    maximumOpponents = 1;
                     // 게임 모드
                     gameVariation = 1;
 
-                    PlayGamesPlatform.Instance.RealTime.ShowWaitingRoomUI();
+                    //PlayGamesPlatform.Instance.RealTime.ShowWaitingRoomUI();
 
                     // 최소 수용 인원
                     // 최대 수용 인원

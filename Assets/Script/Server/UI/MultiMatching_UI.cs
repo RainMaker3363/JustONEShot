@@ -104,6 +104,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
             case HY.MultiGameModeState.PVP:
                 {
+
                     if (GPGSManager.GetInstance.IsConnected() == true)
                     {
                         Matching_Text.text = "Room Connect...\nCharNum : " + TitleManager.GetOpponentCharNumber();
