@@ -400,9 +400,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             case HY.MultiGameModeState.SURVIVAL:
                 {
                     // 최소 수용 인원
-                    minimumOpponents = 1;
+                    minimumOpponents = 3;
                     // 최대 수용 인원
-                    maximumOpponents = 1;
+                    maximumOpponents = 5;
                     // 게임 모드
                     gameVariation = 1;
 
@@ -2057,6 +2057,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
     public string GetOtherNameGPGS(int index)
     {
+        string UnknownStr;
 
         if (PlayGamesPlatform.Instance.RealTime.GetConnectedParticipants()[index] != null)
         {
@@ -2064,7 +2065,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         }
         else
         {
-            string UnknownStr = "UnKnown Player";
+            UnknownStr = "UnKnown Player";
 
             return UnknownStr;
         }

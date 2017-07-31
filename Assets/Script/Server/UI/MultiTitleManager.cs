@@ -116,7 +116,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     }
 
     // 
-    public int GetSurvivalOpoonentCharNumbers(int CurrentPlayerCount = 7)
+    public int GetSurvivalOpoonentCharNumbers()
     {
         int AlreadyChecker = 0;
 

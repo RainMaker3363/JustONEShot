@@ -31,6 +31,27 @@ public class MultiMatching_UI : MonoBehaviour {
 
         Debug.Log("MultiGameModeNumber : " + MultiGameModeNumber);
 
+        switch(MultiGameModeNumber)
+        {
+            case HY.MultiGameModeState.NONE:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    GPGSManager.GetInstance.ShowRoomUI();
+                }
+                break;
+        }
+
         GPGSManager.GetInstance.SignInAndStartMPGame();
 
         //StartCoroutine(StartMultiGame());
@@ -56,6 +77,7 @@ public class MultiMatching_UI : MonoBehaviour {
         GPGSManager.GetInstance.SignInAndStartMPGame();
     }
 
+
     IEnumerator StartMultiGame()
     {
         yield return new WaitForSeconds(0.2f);
@@ -79,7 +101,7 @@ public class MultiMatching_UI : MonoBehaviour {
             // HY.MultiGameModeState.SURVIVAL
             case HY.MultiGameModeState.SURVIVAL:
                 {
-                    AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
+                    AutoFade.LoadLevel("SurvivalScene", 0.1f, 0.1f, Color.black);
                 }
                 break;
         }
@@ -130,7 +152,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
-                    GPGSManager.GetInstance.ShowRoomUI();
+                    
 
                     if (GPGSManager.GetInstance.IsConnected() == true)
                     {
@@ -143,7 +165,7 @@ public class MultiMatching_UI : MonoBehaviour {
                             + "\nCharName[5] = " + GPGSManager.GetInstance.GetOtherNameGPGS(5)
                             + "\nCharName[6] = " + GPGSManager.GetInstance.GetOtherNameGPGS(6);
 
-                        if (TitleManager.GetSurvivalOpoonentCharNumbers() >= 7)
+                        if (TitleManager.GetSurvivalOpoonentCharNumbers() >= 3)
                         {
                             Matching_Text.text = "Join the Session.\nCharCount : " + TitleManager.GetOpponentCharNumber()
                             + "\nCharName[0] = " + GPGSManager.GetInstance.GetOtherNameGPGS(0)
