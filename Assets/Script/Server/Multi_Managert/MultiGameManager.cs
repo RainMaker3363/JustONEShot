@@ -349,6 +349,10 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 {
                     Debug.Log("MultiGameModeState : " + MultiGameModeState);
 
+                    Debug.Log("MultiGame Session 25% Settings");
+
+                    _opponentScripts = new Dictionary<string, EnemyMove>(allPlayers.Count - 1);
+
                     for (int i = 0; i < allPlayers.Count; i++)
                     {
                         string nextParticipantId = allPlayers[i].ParticipantId;
@@ -402,6 +406,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         }
                     }
 
+                    Debug.Log("MultiGame Session 75% Settings");
+
                     if (allPlayers[0].ParticipantId == _MyParticipantId)
                     {
                         MyCharacter.transform.position = MyCharacterPos.transform.position;
@@ -421,6 +427,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         MyPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(1);
                         OpponentPlayerNick = GPGSManager.GetInstance.GetOtherNameGPGS(0);
                     }
+
+                    Debug.Log("MultiGame Session 100% Settings");
 
                     _multiplayerReady = true;
 

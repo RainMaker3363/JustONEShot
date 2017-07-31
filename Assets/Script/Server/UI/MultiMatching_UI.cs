@@ -29,6 +29,8 @@ public class MultiMatching_UI : MonoBehaviour {
 
         Matching_Text.text = "Matching The Player...\nMode : " + MultiGameModeNumber.ToString();
 
+        Debug.Log("MultiGameModeNumber : " + MultiGameModeNumber);
+
         GPGSManager.GetInstance.SignInAndStartMPGame();
 
         //StartCoroutine(StartMultiGame());
@@ -128,14 +130,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
-                    Matching_Text.text = "Connect Testing...\nCharCount : " + TitleManager.GetOpponentCharNumber()
-    + "\nCharName[0] = " + GPGSManager.GetInstance.GetOtherNameGPGS(0)
-    + "\nCharName[1] = " + GPGSManager.GetInstance.GetOtherNameGPGS(1)
-    + "\nCharName[2] = " + GPGSManager.GetInstance.GetOtherNameGPGS(2)
-    + "\nCharName[3] = " + GPGSManager.GetInstance.GetOtherNameGPGS(3)
-    + "\nCharName[4] = " + GPGSManager.GetInstance.GetOtherNameGPGS(4)
-                    + "\nCharName[5] = " + GPGSManager.GetInstance.GetOtherNameGPGS(5)
-    + "\nCharName[6] = " + GPGSManager.GetInstance.GetOtherNameGPGS(6);
+                    GPGSManager.GetInstance.ShowRoomUI();
 
                     if (GPGSManager.GetInstance.IsConnected() == true)
                     {

@@ -70,7 +70,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     {
         NowMultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();
 
-        Debug.Log("MultiGameModeNumber : " + NowMultiGameModeNumber);
+        //Debug.Log("MultiGameModeNumber : " + NowMultiGameModeNumber);
     }
 
     //void OnGUI()
