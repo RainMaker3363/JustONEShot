@@ -165,7 +165,9 @@ public class MultiMatching_UI : MonoBehaviour {
                             + "\nCharName[5] = " + GPGSManager.GetInstance.GetOtherNameGPGS(5)
                             + "\nCharName[6] = " + GPGSManager.GetInstance.GetOtherNameGPGS(6);
 
-                        if (TitleManager.GetSurvivalOpoonentCharNumbers() >= 3)
+                        Debug.Log("Players Count : " + GPGSManager.GetInstance.GetAllPlayers().Count);
+
+                        if (TitleManager.GetSurvivalOpoonentCharNumbers() >= (GPGSManager.GetInstance.GetAllPlayers().Count - 1))
                         {
                             Matching_Text.text = "Join the Session.\nCharCount : " + TitleManager.GetOpponentCharNumber()
                             + "\nCharName[0] = " + GPGSManager.GetInstance.GetOtherNameGPGS(0)

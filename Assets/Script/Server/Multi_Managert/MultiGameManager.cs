@@ -280,7 +280,10 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 break;
         }
 
+        // 네트워크 초기화에 필요한 변수들
+        _MyParticipantId = GPGSManager.GetInstance.GetMyParticipantId();
 
+        allPlayers = GPGSManager.GetInstance.GetAllPlayers();
 
 
         // 네트워크 체크 변수들

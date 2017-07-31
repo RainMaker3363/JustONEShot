@@ -139,6 +139,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private List<byte> _BossDeadEventMessage;
     private List<byte> _BossHPStateMeesage;
 
+    // 현재 세션에 접속한 플레이어들의 정보들이다.
+    private List<Participant> allPlayers;
 
     // 현재 나의 캐릭터 정보를 가지고 있는다.
     // 기본값은 100이다.
