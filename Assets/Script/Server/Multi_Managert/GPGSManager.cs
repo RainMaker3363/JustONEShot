@@ -404,7 +404,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             case HY.MultiGameModeState.SURVIVAL:
                 {
                     // 최소 수용 인원
-                    minimumOpponents = 1;
+                    minimumOpponents = 2;
                     // 최대 수용 인원
                     maximumOpponents = 2;
                     // 게임 모드
@@ -1380,8 +1380,6 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
 
 
-                    Debug.Log("Character Number is : " + CharacterNumber);
-
                     ReceiveMessage = ByteToString(data);
 
                     if (LBListener != null)
@@ -1392,6 +1390,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                         {
                             case HY.MultiGameModeState.PVP:
                                 {
+
+                                    Debug.Log("Character Number is : " + CharacterNumber);
+
                                     OppenentCharNumber = CharacterNumber;
                                     //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
                                 }
@@ -1400,6 +1401,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                             case HY.MultiGameModeState.SURVIVAL:
                                 {
                                     SurvivalOpponentCharNumbers[senderId] = CharacterNumber;
+                                    Debug.Log("Survival Char ID : " + senderId);
+                                    Debug.Log("Survival Char Number : " + SurvivalOpponentCharNumbers[senderId]);
                                     //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
                                 }
                                 break;

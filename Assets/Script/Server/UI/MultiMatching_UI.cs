@@ -165,6 +165,16 @@ public class MultiMatching_UI : MonoBehaviour {
                         {
                             MultiLogChecker = true;
 
+                            Dictionary<string, int> PlayersInfo = GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers();
+                            IDictionaryEnumerator Iter = PlayersInfo.GetEnumerator();
+
+
+                            while(Iter.MoveNext())
+                            {
+                                Debug.Log("Player ID : " + Iter.Key);
+                                Debug.Log("Player Char Num : " + Iter.Value);
+                            }
+
                             Debug.Log("Players Count : " + GPGSManager.GetInstance.GetAllPlayers().Count);
                         }
 
@@ -197,15 +207,9 @@ public class MultiMatching_UI : MonoBehaviour {
                         {
                             MultiLogChecker = true;
 
-                            Dictionary<string, int> PlayersDiction = GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers();
-                            IDictionaryEnumerator Iter = PlayersDiction.GetEnumerator();
-
                             for (int i = 0; i < GPGSManager.GetInstance.GetAllPlayers().Count; i++)
                             {
-                                Debug.Log("Player[" + i + "]" + " : " + GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers()[Iter.Key.ToString()]);
-                                Debug.Log("Player[" + i + "]" + " : " + GPGSManager.GetInstance.GetOtherNameGPGS(i));
-
-                                Iter.MoveNext();
+                                Debug.Log("Player[" + i + "] Name" + " : " + GPGSManager.GetInstance.GetOtherNameGPGS(i));
                             }
 
                             Debug.Log("Players Count : " + GPGSManager.GetInstance.GetAllPlayers().Count);
@@ -214,10 +218,19 @@ public class MultiMatching_UI : MonoBehaviour {
 
                         if (TitleManager.GetSurvivalOpoonentCharNumbers() >= (GPGSManager.GetInstance.GetAllPlayers().Count - 1))
                         {
+
+
                             Matching_Text.text = "Join the Session.";
 
                             if (MultiStartChecker == false)
                             {
+                                Debug.Log("SurvivalOpponentCharNumber : " + TitleManager.GetSurvivalOpoonentCharNumbers());
+
+                                for (int i = 0; i < GPGSManager.GetInstance.GetAllPlayers().Count; i++)
+                                {
+                                    Debug.Log("Player[" + i + "] Name" + " : " + GPGSManager.GetInstance.GetOtherNameGPGS(i));
+                                }
+
                                 MultiStartChecker = true;
 
                                 StartCoroutine(StartMultiGame());

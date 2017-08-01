@@ -575,8 +575,10 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 {
                     Debug.Log("MultiGameModeState : " + MultiGameModeState);
 
+                    // 현재 남아있는 플레이어들의 수를 구한다.
                     LeftPlayerCount = allPlayers.Count - 1;
 
+                    // 서바이벌 모드에서 쓰일 정보들을 갱신 및 초기화
                     if (_SurvivalOpponentWeaponNumber == null)
                     {
                         _SurvivalOpponentWeaponNumber = new Dictionary<string, int>(allPlayers.Count - 1);
@@ -2492,16 +2494,19 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                             NetText.text = "Net Info : 상대방이 연결을 해제했습니다.";
                         }
 
-                        PlayerName.text = "PlayerNick : " + MyPlayerNick + " / PlayerGun : " + MyGunNumber + " / PlayerChar : " + GPGSManager.GetInstance.GetMyCharacterNumber();
-                        EnemyName.text = "OppentNick : " + OpponentPlayerNick + " / OppenentGun : " + OpponentGunNumber + " / OppenentChar : " + GPGSManager.GetInstance.GetPVPOpponentCharNumber();
+                        //PlayerName.text = "PlayerNick : " + MyPlayerNick + " / PlayerGun : " + MyGunNumber + " / PlayerChar : " + GPGSManager.GetInstance.GetMyCharacterNumber();
+                        //EnemyName.text = "OppentNick : " + OpponentPlayerNick + " / OppenentGun : " + OpponentGunNumber + " / OppenentChar : " + GPGSManager.GetInstance.GetPVPOpponentCharNumber();
 
-                        //MyInfoText.text = "Player Info : " + MyCharacterPos.GetComponent<CharMove>().m_DebugPlayerState;//MyCharacterPos.transform.position;
-                        //EnemyInfoText.text = "Enemy Info : " + EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
-                        MyInfoText.text = "MyCharacter Name : " + MyCharacter.transform.name + " / WaitSignal : " + WaitSignal + " / SelectSignal : " + SelectSignal;
+                        //MyInfoText.text = "MyCharacter Name : " + MyCharacter.transform.name + " / WaitSignal : " + WaitSignal + " / SelectSignal : " + SelectSignal;
+                        //EnemyInfoText.text = "Enemy Name : " + EnemyCharacter.transform.name + " / ReMatchingOn : " + ReMatchingOn + " / GameMode : " + MultiGameModeState;//EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
+                        //ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
 
-                        EnemyInfoText.text = "Enemy Name : " + EnemyCharacter.transform.name + " / ReMatchingOn : " + ReMatchingOn + " / GameMode : " + MultiGameModeState;//EnemyCharacterPos.GetComponent<EnemyMove>().m_DebugPlayerState;//EnemyCharacterPos.transform.position;
+                        PlayerName.text = "";
+                        EnemyName.text = "";
 
-                        ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
+                        MyInfoText.text = "";
+                        EnemyInfoText.text = "";
+                        ItemGetCount.text = "";
 
                     }
                     else
@@ -2547,15 +2552,17 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                             NetText.text = "Net Info : 상대방이 연결을 해제했습니다.";
                         }
                         PlayerName.text = "PlayerNick : " + MyPlayerNick + " / PlayerGun : " + MyGunNumber + " / PlayerChar : " + GPGSManager.GetInstance.GetMyCharacterNumber();
-                        EnemyName.text = "OppentNick[0] : " + allPlayers[0].ParticipantId + " / OppenentGun[0] : " + _SurvivalOpponentWeaponNumber[allPlayers[0].ParticipantId].ToString() + " / OppenentChar[0] : " + _SurvivalOpponentCharacterNumber[allPlayers[0].ParticipantId].ToString()
-                            + "\nOppentNick[1] : " + allPlayers[1].ParticipantId + " / OppenentGun[1] : " + _SurvivalOpponentWeaponNumber[allPlayers[1].ParticipantId].ToString() + " / OppenentChar[1] : " + _SurvivalOpponentCharacterNumber[allPlayers[1].ParticipantId].ToString()
-                            + "\nOppentNick[2] : " + allPlayers[2].ParticipantId + " / OppenentGun[2] : " + _SurvivalOpponentWeaponNumber[allPlayers[2].ParticipantId].ToString() + " / OppenentChar[2] : " + _SurvivalOpponentCharacterNumber[allPlayers[2].ParticipantId].ToString()
-                            + "\nOppentNick[3] : " + allPlayers[3].ParticipantId + " / OppenentGun[3] : " + _SurvivalOpponentWeaponNumber[allPlayers[3].ParticipantId].ToString() + " / OppenentChar[3] : " + _SurvivalOpponentCharacterNumber[allPlayers[3].ParticipantId].ToString()
-                            + "\nOppentNick[4] : " + allPlayers[4].ParticipantId + " / OppenentGun[4] : " + _SurvivalOpponentWeaponNumber[allPlayers[4].ParticipantId].ToString() + " / OppenentChar[4] : " + _SurvivalOpponentCharacterNumber[allPlayers[4].ParticipantId].ToString()
-                            + "\nOppentNick[5] : " + allPlayers[5].ParticipantId + " / OppenentGun[5] : " + _SurvivalOpponentWeaponNumber[allPlayers[5].ParticipantId].ToString() + " / OppenentChar[5] : " + _SurvivalOpponentCharacterNumber[allPlayers[5].ParticipantId].ToString()
-                            + "\nOppentNick[6] : " + allPlayers[6].ParticipantId + " / OppenentGun[6] : " + _SurvivalOpponentWeaponNumber[allPlayers[6].ParticipantId].ToString() + " / OppenentChar[6] : " + _SurvivalOpponentCharacterNumber[allPlayers[6].ParticipantId].ToString()
-                            + "\nOppentNick[7] : " + allPlayers[7].ParticipantId + " / OppenentGun[7] : " + _SurvivalOpponentWeaponNumber[allPlayers[7].ParticipantId].ToString() + " / OppenentChar[7] : " + _SurvivalOpponentCharacterNumber[allPlayers[7].ParticipantId].ToString();
-                            
+                        EnemyName.text = "Players Count : " + allPlayers.Count;
+
+                        //EnemyName.text = "OppentNick[0] : " + allPlayers[0].ParticipantId + " / OppenentGun[0] : " + _SurvivalOpponentWeaponNumber[allPlayers[0].ParticipantId].ToString() + " / OppenentChar[0] : " + _SurvivalOpponentCharacterNumber[allPlayers[0].ParticipantId].ToString()
+                        //    + "\nOppentNick[1] : " + allPlayers[1].ParticipantId + " / OppenentGun[1] : " + _SurvivalOpponentWeaponNumber[allPlayers[1].ParticipantId].ToString() + " / OppenentChar[1] : " + _SurvivalOpponentCharacterNumber[allPlayers[1].ParticipantId].ToString()
+                        //    + "\nOppentNick[2] : " + allPlayers[2].ParticipantId + " / OppenentGun[2] : " + _SurvivalOpponentWeaponNumber[allPlayers[2].ParticipantId].ToString() + " / OppenentChar[2] : " + _SurvivalOpponentCharacterNumber[allPlayers[2].ParticipantId].ToString()
+                        //    + "\nOppentNick[3] : " + allPlayers[3].ParticipantId + " / OppenentGun[3] : " + _SurvivalOpponentWeaponNumber[allPlayers[3].ParticipantId].ToString() + " / OppenentChar[3] : " + _SurvivalOpponentCharacterNumber[allPlayers[3].ParticipantId].ToString()
+                        //    + "\nOppentNick[4] : " + allPlayers[4].ParticipantId + " / OppenentGun[4] : " + _SurvivalOpponentWeaponNumber[allPlayers[4].ParticipantId].ToString() + " / OppenentChar[4] : " + _SurvivalOpponentCharacterNumber[allPlayers[4].ParticipantId].ToString()
+                        //    + "\nOppentNick[5] : " + allPlayers[5].ParticipantId + " / OppenentGun[5] : " + _SurvivalOpponentWeaponNumber[allPlayers[5].ParticipantId].ToString() + " / OppenentChar[5] : " + _SurvivalOpponentCharacterNumber[allPlayers[5].ParticipantId].ToString()
+                        //    + "\nOppentNick[6] : " + allPlayers[6].ParticipantId + " / OppenentGun[6] : " + _SurvivalOpponentWeaponNumber[allPlayers[6].ParticipantId].ToString() + " / OppenentChar[6] : " + _SurvivalOpponentCharacterNumber[allPlayers[6].ParticipantId].ToString()
+                        //    + "\nOppentNick[7] : " + allPlayers[7].ParticipantId + " / OppenentGun[7] : " + _SurvivalOpponentWeaponNumber[allPlayers[7].ParticipantId].ToString() + " / OppenentChar[7] : " + _SurvivalOpponentCharacterNumber[allPlayers[7].ParticipantId].ToString();
+
 
                     }
                     else
