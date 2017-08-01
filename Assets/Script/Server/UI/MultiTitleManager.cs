@@ -115,7 +115,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         return OpponentCharNumber;
     }
 
-    // 
+    // 현재 서바이벌 모드에 접속한 사람들의 캐릭터 정보(고유 번호)의 수를 반환한다.
     public int GetSurvivalOpoonentCharNumbers()
     {
         int AlreadyChecker = 0;

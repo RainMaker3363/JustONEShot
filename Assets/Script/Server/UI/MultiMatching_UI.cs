@@ -11,6 +11,7 @@ public class MultiMatching_UI : MonoBehaviour {
     private HY.MultiGameModeState MultiGameModeNumber;
     public MultiTitleManager TitleManager;
 
+    private bool MultiLogChecker;
     private bool MultiStartChecker;
 
     // Use this for initialization
@@ -18,6 +19,7 @@ public class MultiMatching_UI : MonoBehaviour {
         //Matching_Text.text = "Player Searching...";
 
         MultiStartChecker = false;
+        MultiLogChecker = false;
 
         MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();//MultiTitleManager.NowMultiGameModeNumber;
 
@@ -63,6 +65,7 @@ public class MultiMatching_UI : MonoBehaviour {
         //Matching_Text.text = "Player Searching...";
 
         MultiStartChecker = false;
+        MultiLogChecker = false;
 
         MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();//MultiTitleManager.NowMultiGameModeNumber;
 
@@ -73,6 +76,31 @@ public class MultiMatching_UI : MonoBehaviour {
         }
 
         Matching_Text.text = "Matching The Player...\nMode : " + MultiGameModeNumber.ToString();
+
+
+        Debug.Log("MultiGameModeNumber : " + MultiGameModeNumber);
+
+
+        switch (MultiGameModeNumber)
+        {
+            case HY.MultiGameModeState.NONE:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    GPGSManager.GetInstance.ShowRoomUI();
+                }
+                break;
+        }
 
         GPGSManager.GetInstance.SignInAndStartMPGame();
     }
@@ -133,6 +161,13 @@ public class MultiMatching_UI : MonoBehaviour {
                     {
                         Matching_Text.text = "Room Connect...\nCharNum : " + TitleManager.GetOpponentCharNumber();
 
+                        if (MultiLogChecker == false)
+                        {
+                            MultiLogChecker = true;
+
+                            Debug.Log("Players Count : " + GPGSManager.GetInstance.GetAllPlayers().Count);
+                        }
+
                         if (TitleManager.GetOpponentCharNumber() != 100)
                         {
                             Matching_Text.text = "Join the Session.\nCharNum : " + TitleManager.GetOpponentCharNumber();
@@ -156,27 +191,30 @@ public class MultiMatching_UI : MonoBehaviour {
 
                     if (GPGSManager.GetInstance.IsConnected() == true)
                     {
-                        Matching_Text.text = "Room Connect...\nCharCount : " + TitleManager.GetOpponentCharNumber()
-                            + "\nCharName[0] = " + GPGSManager.GetInstance.GetOtherNameGPGS(0)
-                            + "\nCharName[1] = " + GPGSManager.GetInstance.GetOtherNameGPGS(1)
-                            + "\nCharName[2] = " + GPGSManager.GetInstance.GetOtherNameGPGS(2)
-                            + "\nCharName[3] = " + GPGSManager.GetInstance.GetOtherNameGPGS(3)
-                            + "\nCharName[4] = " + GPGSManager.GetInstance.GetOtherNameGPGS(4)
-                            + "\nCharName[5] = " + GPGSManager.GetInstance.GetOtherNameGPGS(5)
-                            + "\nCharName[6] = " + GPGSManager.GetInstance.GetOtherNameGPGS(6);
+                        Matching_Text.text = "Survival Room Connect...";
+                        
+                        if(MultiLogChecker == false)
+                        {
+                            MultiLogChecker = true;
 
-                        Debug.Log("Players Count : " + GPGSManager.GetInstance.GetAllPlayers().Count);
+                            Dictionary<string, int> PlayersDiction = GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers();
+                            IDictionaryEnumerator Iter = PlayersDiction.GetEnumerator();
+
+                            for (int i = 0; i < GPGSManager.GetInstance.GetAllPlayers().Count; i++)
+                            {
+                                Debug.Log("Player[" + i + "]" + " : " + GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers()[Iter.Key.ToString()]);
+                                Debug.Log("Player[" + i + "]" + " : " + GPGSManager.GetInstance.GetOtherNameGPGS(i));
+
+                                Iter.MoveNext();
+                            }
+
+                            Debug.Log("Players Count : " + GPGSManager.GetInstance.GetAllPlayers().Count);
+                        }
+
 
                         if (TitleManager.GetSurvivalOpoonentCharNumbers() >= (GPGSManager.GetInstance.GetAllPlayers().Count - 1))
                         {
-                            Matching_Text.text = "Join the Session.\nCharCount : " + TitleManager.GetOpponentCharNumber()
-                            + "\nCharName[0] = " + GPGSManager.GetInstance.GetOtherNameGPGS(0)
-                            + "\nCharName[1] = " + GPGSManager.GetInstance.GetOtherNameGPGS(1)
-                            + "\nCharName[2] = " + GPGSManager.GetInstance.GetOtherNameGPGS(2)
-                            + "\nCharName[3] = " + GPGSManager.GetInstance.GetOtherNameGPGS(3)
-                            + "\nCharName[4] = " + GPGSManager.GetInstance.GetOtherNameGPGS(4)
-                            + "\nCharName[5] = " + GPGSManager.GetInstance.GetOtherNameGPGS(5)
-                            + "\nCharName[6] = " + GPGSManager.GetInstance.GetOtherNameGPGS(6);
+                            Matching_Text.text = "Join the Session.";
 
                             if (MultiStartChecker == false)
                             {
