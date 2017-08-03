@@ -88,10 +88,10 @@ class Char_03 : UseChar
 
     public Char_03()
     {
-        MaxStamina = Stamina = 850;
-        MaxHP = HP = 150;
-        Speed = 0.8f;
-        SteminaRecovery = 0.8f;
+        MaxStamina = Stamina = 1200;
+        MaxHP = HP = 120;
+        Speed = 0.9f;
+        SteminaRecovery = 0.9f;
     }
 
 }
@@ -221,8 +221,10 @@ public class CharMove : MonoBehaviour {
     {
         m_GunState = LSD.GunState.ShotGun; //현재는 고정 추후 받아오게함
         CharInit();
-        gameObject.SetActive(false);
         m_ZombieClear = false;
+        m_GunSelect = false;
+        gameObject.SetActive(false);
+       
     }
 
     // Use this for initialization

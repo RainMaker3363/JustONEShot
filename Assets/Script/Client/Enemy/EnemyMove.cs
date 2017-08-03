@@ -124,7 +124,8 @@ public class EnemyMove : MonoBehaviour {
         }
 
         PlayerPos = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter");
-        PlayerPos.GetComponent<CharMove>().EnemyPos = this.gameObject.transform;
+        if(PlayerPos != null)
+            PlayerPos.GetComponent<CharMove>().EnemyPos = this.gameObject.transform;
         //카메라 기본위치 설정
         // CamPos = cam.transform.position;
 
