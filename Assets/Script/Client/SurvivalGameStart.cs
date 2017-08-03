@@ -191,7 +191,21 @@ public class SurvivalGameStart : MonoBehaviour
 
             if (!CountDown.gameObject.activeSelf)
             {
-                if (EnemyMove.m_SelectGun != 100 && CharMove.m_GunSelect)//둘다 총을 골랐을경우
+                Dictionary<string, bool> temp = Mul_Manager.GetSurvivalOpponentSelectSignals();
+                IDictionaryEnumerator iter = Mul_Manager.GetSurvivalOpponentSelectSignals().GetEnumerator();
+                bool SelectComplete = true;
+                while (iter.MoveNext())
+                {
+                    if (!temp[iter.Key.ToString()])
+                    {
+                        SelectComplete = false;
+                        break;
+                    }
+
+                }
+                
+
+                if (SelectComplete && CharMove.m_GunSelect)//둘다 총을 골랐을경우
                 {
                     if (!CountDownBool)
                     {

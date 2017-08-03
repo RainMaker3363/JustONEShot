@@ -950,8 +950,18 @@ public class EnemyMove : MonoBehaviour {
 
     public bool SetEnemyGun()
     {
-        CharIndex = Mul_Manager.GetPVPOpponentCharNumber();
-        m_SelectGun = Mul_Manager.GetPVPOpponentGunNumber(); 
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene")
+        {
+            CharIndex = Mul_Manager.GetPVPOpponentCharNumber();
+            m_SelectGun = Mul_Manager.GetPVPOpponentGunNumber();
+        }
+
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Survival Scene")
+        {
+            //CharIndex = Mul_Manager.GetPVPOpponentCharNumber();
+            //m_SelectGun = Mul_Manager.GetPVPOpponentGunNumber();
+        }
+
         if (m_SelectGun != 100)
         {
             switch (m_SelectGun)
