@@ -576,7 +576,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     Debug.Log("MultiGameModeState : " + MultiGameModeState);
 
                     // 현재 남아있는 플레이어들의 수를 구한다.
-                    LeftPlayerCount = allPlayers.Count - 1;
+                    LeftPlayerCount = (allPlayers.Count - 1);
 
                     // 서바이벌 모드에서 쓰일 정보들을 갱신 및 초기화
                     if (_SurvivalOpponentWeaponNumber == null)
