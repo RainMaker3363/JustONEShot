@@ -824,77 +824,23 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     #region Survival Function
 
-    //// 현재 서바이벌 모드에서 적들의 캐릭터 번호를 가지고 온다
-    //// 디폴트 값은 0이다.
-    //public int GetSurvivalOpponentCharNumbersListIndex(int index = 0)
-    //{
-    //    if (index < 0)
-    //    {
-    //        return SurvivalOpponentCharNumbersList[0];
-    //    }
-    //    else if (index > SurvivalOpponentCharNumbersList.Count)
-    //    {
-    //        return SurvivalOpponentCharNumbersList[SurvivalOpponentCharNumbersList.Count - 1];
-    //    }
-    //    else
-    //    {
-    //        return SurvivalOpponentCharNumbersList[index];
-    //    }
-    //}
+    // 서바이벌 모드에서 사용하는 상대방의 Wait 신호 정보들..
+    public Dictionary<string, bool> GetSurvivalOpponentWaitSignals()
+    {
+        return _SurvivalOpponentWaitSignals;
+    }
 
-    //// 상대방 Select 시그널 정보에 대한 정보
-    //public bool GetSurvivalOpponenSelectSignalListIndex(int index = 0)
-    //{
+    // 서바이벌 모드에서 사용하는 상대방의 Select 신호 정보들..
+    public Dictionary<string, bool> GetSurvivalOpponentSelectSignals()
+    {
+        return _SurvivalOpponentSelectSignals;
+    }
 
-    //    if (index < 0)
-    //    {
-    //        return _SurvivalOpponentSelectSignalsList[0];
-    //    }
-    //    else if (index > _SurvivalOpponentSelectSignalsList.Count)
-    //    {
-    //        return _SurvivalOpponentSelectSignalsList[_SurvivalOpponentSelectSignalsList.Count - 1];
-    //    }
-    //    else
-    //    {
-    //        return _SurvivalOpponentSelectSignalsList[index];
-    //    }
-    //}
-
-    //// 상대방 Wait 시그널 정보에 대한 정보
-    //public bool GetSurvivalOpponentWaitSignalListIndex(int index = 0)
-    //{
-
-    //    if (index < 0)
-    //    {
-    //        return _SurvivalOpponentWaitSignalsList[0];
-    //    }
-    //    else if (index > _SurvivalOpponentWaitSignalsList.Count)
-    //    {
-    //        return _SurvivalOpponentWaitSignalsList[_SurvivalOpponentWaitSignalsList.Count - 1];
-    //    }
-    //    else
-    //    {
-    //        return _SurvivalOpponentWaitSignalsList[index];
-    //    }
-    //}
-
-    //// 상대방 무기 정보
-    //public int GetSurvivalOpponentWeaponNumberListIndex(int index = 0)
-    //{
-
-    //    if (index < 0)
-    //    {
-    //        return _SurvivalOpponentWeaponNumberList[0];
-    //    }
-    //    else if (index > _SurvivalOpponentWeaponNumberList.Count)
-    //    {
-    //        return _SurvivalOpponentWeaponNumberList[_SurvivalOpponentWeaponNumberList.Count - 1];
-    //    }
-    //    else
-    //    {
-    //        return _SurvivalOpponentWeaponNumberList[index];
-    //    }
-    //}
+    // 서바이벌 모드에서 사용하는 상대방의 무기 번호들
+    public Dictionary<string, int> GetSurvivalOpponentWeaponNumber()
+    {
+        return _SurvivalOpponentWeaponNumber;
+    }
 
     #endregion
 

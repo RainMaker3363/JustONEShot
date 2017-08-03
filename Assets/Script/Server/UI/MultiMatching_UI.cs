@@ -129,9 +129,9 @@ public class MultiMatching_UI : MonoBehaviour {
             // HY.MultiGameModeState.SURVIVAL
             case HY.MultiGameModeState.SURVIVAL:
                 {
-                    Debug.Log("Survival Game Mode Connect Test End");
+                    //Debug.Log("Survival Game Mode Connect Test End");
 
-                    //AutoFade.LoadLevel("SurvivalScene", 0.1f, 0.1f, Color.black);
+                    AutoFade.LoadLevel("Survival Scene", 0.1f, 0.1f, Color.black);
                 }
                 break;
         }
