@@ -338,6 +338,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         allPlayers = GPGSManager.GetInstance.GetAllPlayers();
 
         MultiGameModeState = GPGSManager.GetInstance.GetMultiGameModeState();//HY.MultiGameModeState.PVP;
+
         #region MPGame Setting
 
         switch (MultiGameModeState)
@@ -837,11 +838,119 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     }
 
     // 서바이벌 모드에서 사용하는 상대방의 무기 번호들
-    public Dictionary<string, int> GetSurvivalOpponentWeaponNumber()
+    public Dictionary<string, int> GetSurvivalOpponentWeaponNumbers()
     {
         return _SurvivalOpponentWeaponNumber;
     }
 
+    // 서바이벌 모드에서 사용하는 상대방의 캐릭터 번호들
+    public Dictionary<string, int> _SurvivalOpponentCharacterNumbers()
+    {
+        return _SurvivalOpponentCharacterNumber;
+    }
+
+    // 서바이벌 모드에서 사용하는 상대방의 Wait 신호 카운트를 불(Bool)형으로 반환해준다.
+    // 반환 여부에 따라 다른 플레이어들이 모두 준비 되었는지를 알 수 있다.
+    public bool GetSurvivalOpponentWaitSignals_Ready()
+    {
+        bool All_Wait_Ready = true;
+
+        Dictionary<string, bool> WaitDiction = _SurvivalOpponentWaitSignals;
+        IDictionaryEnumerator WaitIter = WaitDiction.GetEnumerator();
+
+        while(WaitIter.MoveNext())
+        {
+            if(WaitDiction[WaitIter.Key.ToString()] == false)
+            {
+                All_Wait_Ready = false;
+                break;
+            }
+        }
+
+        return All_Wait_Ready;
+    }
+
+    // 서바이벌 모드에서 사용하는 상대방의 Select 신호 카운트를 불(Bool)형으로 반환해준다.
+    // 반환 여부에 따라 다른 플레이어들이 모두 준비 되었는지를 알 수 있다.
+    public bool GetSurvivalOpponentSelectSignals_Ready()
+    {
+        bool All_Select_Ready = true;
+
+        Dictionary<string, bool> Select_Diction = _SurvivalOpponentSelectSignals;
+        IDictionaryEnumerator Select_Iter = Select_Diction.GetEnumerator();
+
+        while (Select_Iter.MoveNext())
+        {
+            if (Select_Diction[Select_Iter.Key.ToString()] == false)
+            {
+                All_Select_Ready = false;
+                break;
+            }
+        }
+
+        return All_Select_Ready;
+    }
+
+    /// <summary>
+    ///  서바이벌 모드에서 사용하는 상대방의 무기 번호를 정수형으로 반환 해준다.
+    ///  index 값에 따라서 현재 방 안에 존재하는 플레이어의 무기 번호를 알 수 있다.
+    ///  디폴트 값 0
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    public int GetSurvivalOpponentWeaponNumber(int index = 0)
+    {
+        int WeaponNumber = 0;
+
+        if(index >= (allPlayers.Count - 1))
+        {
+            index = (allPlayers.Count - 1);
+        }
+        else if(index <= 0)
+        {
+            index = 0;
+        }
+
+        WeaponNumber = _SurvivalOpponentWeaponNumber[allPlayers[index].ParticipantId];
+
+        return WeaponNumber;
+    }
+
+    /// <summary>
+    /// 서바이벌 모드에서 사용하는 상대방의 캐릭터 번호를 정수형으로 반환 해 준다.
+    /// index 값에 따라서 현재 방 안에 존재하는 플레이어의 캐릭터 번호를 알 수 있다.
+    /// 디폴트 값 0
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    public int GetSurvivalOpponentCharacterNumber(int index = 0)
+    {
+        int CharNumber = 0;
+
+        if (index >= (allPlayers.Count - 1))
+        {
+            index = (allPlayers.Count - 1);
+        }
+        else if (index <= 0)
+        {
+            index = 0;
+        }
+
+        CharNumber = _SurvivalOpponentCharacterNumber[allPlayers[index].ParticipantId];
+
+        return CharNumber;
+    }
+
+    /// <summary>
+    /// 서바이벌 모드에 접속해 있는 플레이어들의 수를 알 수 있다.
+    /// 자기 자신을 제외한 수를 의미한다.
+    /// </summary>
+    /// <returns></returns>
+    public int GetSurvivalPlayers_Count()
+    {
+        return (allPlayers.Count - 1);
+
+    }
     #endregion
 
     //void OnGUI()
