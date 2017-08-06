@@ -579,6 +579,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     // 현재 남아있는 플레이어들의 수를 구한다.
                     LeftPlayerCount = (allPlayers.Count - 1);
 
+                    Debug.Log("LeftPlayerCount : " + LeftPlayerCount);
+
                     // 서바이벌 모드에서 쓰일 정보들을 갱신 및 초기화
                     if (_SurvivalOpponentWeaponNumber == null)
                     {
@@ -619,71 +621,80 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     {
                         string nextParticipantId = allPlayers[i].ParticipantId;
                         PlayerCharacters_Nick[nextParticipantId] = allPlayers[i].DisplayName;
-                        Debug.Log("Setting up for " + nextParticipantId);
 
+                        Debug.Log("Setting up for " + nextParticipantId);
+                        Debug.Log("Player[" + i + "] Nick : " + PlayerCharacters_Nick[nextParticipantId]);
 
                         // 나의 식별 ID일때...
                         if (nextParticipantId == _MyParticipantId)
                         {
-                            // 4
-                            if (MyCharacter == null)
-                            {
-                                //MyCharacter = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
-                                PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
-                                PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find("StartPos_Player").gameObject.transform.position;
-                            }
-                            else
-                            {
+                            //// 4
+                            //if (MyCharacter == null)
+                            //{
+                            //    //MyCharacter = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
+                            //    PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
+                            //    PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find("StartPos_Player").gameObject.transform.position;
+                            //}
+                            //else
+                            //{
 
-                                //MyCharacter = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
-                                PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
-                                PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find("StartPos_Player").gameObject.transform.position;
-                            }
+
+                            //}
+                            //MyCharacter = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
+                            PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
+                            PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find("StartPos_Player").gameObject.transform.position;
                         }
                         else
                         {
-                            if (EnemyCharacter == null)
-                            {
-                                //EnemyCharacter = GameObject.Find("Enemy_Character");
+                            string OpponentObjectName = ("EnemyCharacter" + i).ToString();
+                            string OpponentPosObjectName = ("StartPos_Enemy" + i).ToString();
 
-                                //EnemyCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").gameObject;
+                            PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).gameObject;
+                            PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
+                            _opponentScripts[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).GetComponent<EnemyMove>();
 
-                                string OpponentObjectName = ("EnemyCharacter" + i).ToString();
-                                string OpponentPosObjectName = ("StartPos_Enemy" + i).ToString();
+                            //if (EnemyCharacter == null)
+                            //{
+                            //    //EnemyCharacter = GameObject.Find("Enemy_Character");
 
-                                PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).gameObject;
-                                PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
-                                _opponentScripts[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).GetComponent<EnemyMove>();
+                            //    //EnemyCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").gameObject;
 
+                            //    string OpponentObjectName = ("EnemyCharacter" + i).ToString();
+                            //    string OpponentPosObjectName = ("StartPos_Enemy" + i).ToString();
 
-                                //OpponentPlayerCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
-                                //MyCharacterPos.transform.position = EnemyCharacter.transform.position;
-
-                                //EnemyCharacter.transform.position = EnemyCharacterPos.transform.position;
-
-                                //EnemyMove opponentScript = OpponentPlayerCharacter;//EnemyCharacter.GetComponent<EnemyMove>();
-                                //_EnemyParticipantId = nextParticipantId;
+                            //    PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).gameObject;
+                            //    PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
+                            //    _opponentScripts[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).GetComponent<EnemyMove>();
 
 
-                            }
-                            else
-                            {
-                                string OpponentObjectName = ("EnemyCharacter" + i).ToString();
-                                string OpponentPosObjectName = ("StartPos_Enemy" + i).ToString();
+                            //    //OpponentPlayerCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
+                            //    //MyCharacterPos.transform.position = EnemyCharacter.transform.position;
 
-                                PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).gameObject;
-                                PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
-                                _opponentScripts[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).GetComponent<EnemyMove>();
+                            //    //EnemyCharacter.transform.position = EnemyCharacterPos.transform.position;
 
-                                ////EnemyCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").gameObject;
-                                //PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").gameObject;
-                                //OpponentPlayerCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
-                                ////MyCharacterPos.transform.position = EnemyCharacter.transform.position;
+                            //    //EnemyMove opponentScript = OpponentPlayerCharacter;//EnemyCharacter.GetComponent<EnemyMove>();
+                            //    //_EnemyParticipantId = nextParticipantId;
 
-                                //EnemyMove opponentScript = OpponentPlayerCharacter;//EnemyCharacter.GetComponent<EnemyMove>();
-                                //_EnemyParticipantId = nextParticipantId;
-                                //_opponentScripts[nextParticipantId] = opponentScript;
-                            }
+
+                            //}
+                            //else
+                            //{
+                            //    string OpponentObjectName = ("EnemyCharacter" + i).ToString();
+                            //    string OpponentPosObjectName = ("StartPos_Enemy" + i).ToString();
+
+                            //    PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).gameObject;
+                            //    PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
+                            //    _opponentScripts[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).GetComponent<EnemyMove>();
+
+                            //    ////EnemyCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").gameObject;
+                            //    //PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").gameObject;
+                            //    //OpponentPlayerCharacter = GameObject.Find("GamePlayObj").transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
+                            //    ////MyCharacterPos.transform.position = EnemyCharacter.transform.position;
+
+                            //    //EnemyMove opponentScript = OpponentPlayerCharacter;//EnemyCharacter.GetComponent<EnemyMove>();
+                            //    //_EnemyParticipantId = nextParticipantId;
+                            //    //_opponentScripts[nextParticipantId] = opponentScript;
+                            //}
 
                             // 5
                             //GameObject opponentCar = (Instantiate(opponentPrefab, carStartPoint, Quaternion.identity) as GameObject);
@@ -828,24 +839,32 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 서바이벌 모드에서 사용하는 상대방의 Wait 신호 정보들..
     public Dictionary<string, bool> GetSurvivalOpponentWaitSignals()
     {
+        Debug.Log("Survival Wait Map Count : " + _SurvivalOpponentWaitSignals.Count);
+
         return _SurvivalOpponentWaitSignals;
     }
 
     // 서바이벌 모드에서 사용하는 상대방의 Select 신호 정보들..
     public Dictionary<string, bool> GetSurvivalOpponentSelectSignals()
     {
+        Debug.Log("Survival Select Map Count : " + _SurvivalOpponentSelectSignals.Count);
+
         return _SurvivalOpponentSelectSignals;
     }
 
     // 서바이벌 모드에서 사용하는 상대방의 무기 번호들
     public Dictionary<string, int> GetSurvivalOpponentWeaponNumbers()
     {
+        Debug.Log("Survival Weapon Map Count : " + _SurvivalOpponentWeaponNumber.Count);
+
         return _SurvivalOpponentWeaponNumber;
     }
 
     // 서바이벌 모드에서 사용하는 상대방의 캐릭터 번호들
     public Dictionary<string, int> _SurvivalOpponentCharacterNumbers()
     {
+        Debug.Log("Survival Char Map Count : " + _SurvivalOpponentCharacterNumber.Count);
+
         return _SurvivalOpponentCharacterNumber;
     }
 
@@ -867,6 +886,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             }
         }
 
+        if (All_Wait_Ready)
+        {
+            Debug.Log("Survival Wait Signals Ready : " + All_Wait_Ready);
+        }
+
+
         return All_Wait_Ready;
     }
 
@@ -887,6 +912,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 break;
             }
         }
+
+        if(All_Select_Ready)
+        {
+            Debug.Log("Survival Select Signals Ready : " + All_Select_Ready);
+        }
+        
 
         return All_Select_Ready;
     }
@@ -913,6 +944,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         WeaponNumber = _SurvivalOpponentWeaponNumber[allPlayers[index].ParticipantId];
 
+        Debug.Log("Survival Weapon " + index + " Num : " + WeaponNumber);
+
         return WeaponNumber;
     }
 
@@ -938,6 +971,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         CharNumber = _SurvivalOpponentCharacterNumber[allPlayers[index].ParticipantId];
 
+        Debug.Log("Survival Char " + index + " Num : " + CharNumber);
+
         return CharNumber;
     }
 
@@ -948,6 +983,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     /// <returns></returns>
     public int GetSurvivalPlayers_Count()
     {
+        Debug.Log("Player Count : " + allPlayers.Count);
+
         return (allPlayers.Count - 1);
 
     }
