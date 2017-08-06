@@ -191,41 +191,47 @@ public class SurvivalGameStart : MonoBehaviour
 
             if (!CountDown.gameObject.activeSelf)
             {
-                Dictionary<string, bool> temp = Mul_Manager.GetSurvivalOpponentSelectSignals();
-                IDictionaryEnumerator iter = Mul_Manager.GetSurvivalOpponentSelectSignals().GetEnumerator();
-                bool SelectComplete = true;
-                while (iter.MoveNext())
+                if (CharMove.m_GunSelect)
                 {
-                    if (!temp[iter.Key.ToString()])
+                    if (GPGSManager.GetInstance.IsAuthenticated())
                     {
-                        SelectComplete = false;
-                        break;
-                    }
-
-                }
-                
-
-                if (SelectComplete && CharMove.m_GunSelect)//둘다 총을 골랐을경우
-                {
-                    if (!CountDownBool)
-                    {
-                        Waiting.SetActive(false);
-                        CountDownBool = true;
-                        StartCoroutine(CountDownStart());
-                    }
-                }
-                else if (CharMove.m_GunSelect)   //플레이어는 총을 골랐지만 상대가 고르지 않은경우
-                {
-                    if (!Waiting.activeSelf)
-                    {
-                        if (Selectanim.GetBool("PlayEnd"))
+                        if (Mul_Manager.GetSurvivalOpponentWaitSignals_Ready()) //전부 총을 골랐을경우
                         {
-                            Waiting.SetActive(true);
+                            for (int i = 0; i <= Mul_Manager.GetSurvivalPlayers_Count(); i++)
+                            {
+                                int GunNumber = 0;
+                                GunNumber = Mul_Manager.GetSurvivalOpponentWeaponNumber(i);
+
+                                if (GunNumber == 100)
+                                {
+                                    break;
+                                    // 아직 무기 선택이 안됬거나 신호를 못 받음
+                                }
+                                else
+                                {
+                                    // 무기 번호를 받음
+                                    int CharNumber = Mul_Manager.GetSurvivalOpponentCharacterNumber(i);
+                                    Enemy[i].SetSurvivalEnemyGun(CharNumber, GunNumber);
+                                }
+                            }
+
+
+                            if (!CountDownBool)
+                            {
+                                Waiting.SetActive(false);
+                                CountDownBool = true;
+                                StartCoroutine(CountDownStart());
+                            }
+                        }
+                        else if (!Waiting.activeSelf)   //플레이어는 총을 골랐지만 상대가 고르지 않은경우
+                        {
+                            if (Selectanim.GetBool("PlayEnd"))
+                            {
+                                Waiting.SetActive(true);
+                            }
                         }
                     }
-
-                    //Waiting.SetActive(true); //현재 애니메이션에서 켜줍니다.
-                }
+                }                
             }
 
             if (CountDown.gameObject.activeSelf)

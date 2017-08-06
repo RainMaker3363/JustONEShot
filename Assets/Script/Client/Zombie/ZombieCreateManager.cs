@@ -40,6 +40,8 @@ public class ZombieCreateManager : MonoBehaviour
     int[,] ZombieStagearr;
 
     int ZombeCreateCode;
+    [SerializeField]
+    int ZombeInfinityCreateIndex = 0;
 
     [SerializeField]
     Transform[] ZombiePoint;
@@ -51,9 +53,11 @@ public class ZombieCreateManager : MonoBehaviour
     int Level = 0;
     int LevelDamage = 0;
     int LevelHP = 0;
+    int ZombieStatUP = 0;
 
     bool StageInit;
     bool LevelUPStatSelect;
+    bool Infinity;
 
     public TMPro.TextMeshProUGUI UI_Stage;  //남은 좀비와 스테이지 현황표시
     public GameObject LevelUP_UI;
@@ -120,6 +124,10 @@ public class ZombieCreateManager : MonoBehaviour
     public void SelectLevel(int SelectLevel)
     {
         Level = SelectLevel;
+    }
+    public void SelectMode(bool Selectmode)
+    {
+        Infinity = Selectmode;
     }
 
     void BulletUP()
@@ -274,9 +282,26 @@ public class ZombieCreateManager : MonoBehaviour
                     break;
             }
 
+            if (Infinity)
+            {
+                float HP = LevelHP;
+                float Damage = LevelDamage;
+
+                for (int j = 0; j < ZombieStatUP; j++)
+                {
+                    HP *=  1.25f;
+                    Damage *= 1.25f;
+
+                }
+                LevelHP = (int)HP;
+                LevelDamage = (int)Damage;
+            }
+
             Zombies[Index_Zombie].GetComponentInChildren<ZombieMove>().HP = LevelHP;
             Zombies[Index_Zombie].GetComponentInChildren<ZombieMove>().AttackDamge = LevelDamage;
             StartCoroutine(Zombies[Index_Zombie].GetComponentInChildren<ZombieMove>().ZombieFastMoving());
+
+           
 
             //Zombies[Index_Zombie].transform.SetParent(GameplayObj.transform);
             ZombieCount++;
@@ -546,6 +571,7 @@ public class ZombieCreateManager : MonoBehaviour
             else
             {
                 Stage++;
+                ZombeInfinityCreateIndex++;
                 LevelUPStatSelect = false;
 
                 //Debug.Log("Zombie");
@@ -556,9 +582,27 @@ public class ZombieCreateManager : MonoBehaviour
             {
                 if (StageInit)
                 {
-                    
-                        //Debug.Log("ZombieCode : " + ZombieStagearr[Stage, Order]);\
-                        int ZombieCode=0;
+
+                    //Debug.Log("ZombieCode : " + ZombieStagearr[Stage, Order]);\
+                    if (Infinity)
+                    {
+                        if(ZombeInfinityCreateIndex>10)
+                        {
+                            ZombeInfinityCreateIndex = 5;
+                            ZombieStatUP++;
+                        }
+                        for (int i = 0; i < ZombeInfinityCreateIndex; i++)
+                        {
+                            ZombieStageCreate(14);
+                            yield return new WaitForSeconds(2);
+                        }
+
+                        StageInit = false;
+                        ZombieIndexInit();//생성이 완료됬으니 인덱스 초기화
+                    }
+                    else
+                    {
+                        int ZombieCode = 0;
                         if (Order < 13)
                         {
                             ZombieCode = ZombieStagearr[Stage - 1, Order];
@@ -577,6 +621,9 @@ public class ZombieCreateManager : MonoBehaviour
                             ZombieIndexInit();//생성이 완료됬으니 인덱스 초기화
                         }
 
+                    }
+                    
+
                     //}
                     
 
@@ -584,7 +631,7 @@ public class ZombieCreateManager : MonoBehaviour
                 else if (ZombieCount <= 0 && !StageInit)
                 {
                     StageInit = true;
-                    if (Stage < 20)
+                    if (Stage < 20 || Infinity)
                     {
                         LevelUP_UI.SetActive(true);
                         Main_UI.SetActive(false);

@@ -956,11 +956,11 @@ public class EnemyMove : MonoBehaviour {
             m_SelectGun = Mul_Manager.GetPVPOpponentGunNumber();
         }
 
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Survival Scene")
-        {
-            //CharIndex = Mul_Manager.GetPVPOpponentCharNumber();
-            //m_SelectGun = Mul_Manager.GetPVPOpponentGunNumber();
-        }
+        //if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Survival Scene")
+        //{
+        //    CharIndex = Mul_Manager.GetSurvivalOpponentCharacterNumber();
+        //    m_SelectGun = Mul_Manager.GetSurvivalOpponentWeaponNumber();
+        //}
 
         if (m_SelectGun != 100)
         {
@@ -989,7 +989,32 @@ public class EnemyMove : MonoBehaviour {
    
         return false;
     }
-
+    public void SetSurvivalEnemyGun(int charindex, int selectgun)
+    {
+        CharIndex = charindex;
+        m_SelectGun = selectgun;
+            switch (m_SelectGun)
+            {
+                case 0:
+                    {
+                        SelectGun_Revolver();
+                        break;
+                    }
+                case 1:
+                    {
+                        SelectGun_ShotGun();
+                        break;
+                    }
+                case 2:
+                    {
+                        SelectGun_Musket();
+                        break;
+                    }
+                default:
+                    break;
+            }
+ 
+    }
     public void SelectGun_Revolver()
     {
         m_GunState = LSD.GunState.Revolver;

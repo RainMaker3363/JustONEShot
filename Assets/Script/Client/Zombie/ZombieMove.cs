@@ -241,14 +241,14 @@ public class ZombieMove : Zombie
         float speed = NvAgent.speed;
 
         NvAgent.speed = FastMoveSpeed;
-        Debug.Log("FastMoveDistance" + Distance);
+       // Debug.Log("FastMoveDistance" + Distance);
         while (!ZombieFastMoveCheck(Distance))
         {
-            Debug.Log("FastMove!");
+            //Debug.Log("FastMove!");
             yield return new WaitForEndOfFrame();
         }
 
-        Debug.Log("FastMoveEnd");
+       // Debug.Log("FastMoveEnd");
         NvAgent.speed = speed;
         
        // yield return null;

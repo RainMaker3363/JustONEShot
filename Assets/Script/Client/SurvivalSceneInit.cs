@@ -110,7 +110,7 @@ public class SurvivalSceneInit : MonoBehaviour
         Dictionary<string, int> Diction = GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers();
         IDictionaryEnumerator iter = GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers().GetEnumerator();
 
-        m_Enemy = new GameObject[GPGSManager.GetInstance.GetAllPlayers().Count];
+        m_Enemy = new GameObject[GPGSManager.GetInstance.GetAllPlayers().Count-1];
 
         int j = 0;
         while (j < GPGSManager.GetInstance.GetAllPlayers().Count - 1)
