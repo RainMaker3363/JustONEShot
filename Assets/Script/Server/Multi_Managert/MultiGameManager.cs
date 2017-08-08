@@ -953,7 +953,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     /// <summary>
     ///  서바이벌 모드에서 사용하는 상대방의 무기 번호를 정수형으로 반환 해준다.
-    ///  index 값에 따라서 현재 방 안에 존재하는 플레이어의 무기 번호를 알 수 있다.
+    ///  index 값에 따라서 현재 방 안에 존재하는 플레이어(자기자신을 제외한)의 무기 번호를 알 수 있다.
     ///  디폴트 값 0
     /// </summary>
     /// <param name="index"></param>
@@ -962,9 +962,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         int WeaponNumber = 0;
 
-        if(index >= (allPlayers.Count))
+        if(index >= (allPlayers.Count-1))
         {
-            index = (allPlayers.Count);
+            index = (allPlayers.Count-1);
         }
         else if(index <= 0)
         {
@@ -980,7 +980,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     /// <summary>
     /// 서바이벌 모드에서 사용하는 상대방의 캐릭터 번호를 정수형으로 반환 해 준다.
-    /// index 값에 따라서 현재 방 안에 존재하는 플레이어의 캐릭터 번호를 알 수 있다.
+    /// index 값에 따라서 현재 방 안에 존재하는 플레이어(자기자신을 제외한)의 캐릭터 번호를 알 수 있다.
     /// 디폴트 값 0
     /// </summary>
     /// <param name="index"></param>
@@ -989,9 +989,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         int CharNumber = 0;
 
-        if (index >= (allPlayers.Count))
+        if (index >= (allPlayers.Count-1))
         {
-            index = (allPlayers.Count);
+            index = (allPlayers.Count-1);
         }
         else if (index <= 0)
         {
