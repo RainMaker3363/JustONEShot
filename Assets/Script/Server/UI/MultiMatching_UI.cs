@@ -161,7 +161,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
                     if (GPGSManager.GetInstance.IsConnected() == true)
                     {
-                        Matching_Text.text = "Room Connect...\nCharNum : " + TitleManager.GetOpponentCharNumber();
+                        Matching_Text.text = "PVP Room Connect...";//\nCharNum : " + TitleManager.GetOpponentCharNumber();
 
                         if (MultiLogChecker == false)
                         {
@@ -182,7 +182,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
                         if (TitleManager.GetOpponentCharNumber() != 100)
                         {
-                            Matching_Text.text = "Join the Session.\nCharNum : " + TitleManager.GetOpponentCharNumber();
+                            Matching_Text.text = "Join the PVP Session.";//\nCharNum : " + TitleManager.GetOpponentCharNumber();
 
                             if (MultiStartChecker == false)
                             {
@@ -222,7 +222,7 @@ public class MultiMatching_UI : MonoBehaviour {
                         {
 
 
-                            Matching_Text.text = "Join the Session.";
+                            Matching_Text.text = "Join the Survival Session.";
 
                             if (MultiStartChecker == false)
                             {

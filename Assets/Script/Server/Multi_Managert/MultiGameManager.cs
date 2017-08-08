@@ -962,9 +962,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         int WeaponNumber = 0;
 
-        if(index >= (allPlayers.Count - 1))
+        if(index >= (allPlayers.Count))
         {
-            index = (allPlayers.Count - 1);
+            index = (allPlayers.Count);
         }
         else if(index <= 0)
         {
@@ -989,9 +989,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         int CharNumber = 0;
 
-        if (index >= (allPlayers.Count - 1))
+        if (index >= (allPlayers.Count))
         {
-            index = (allPlayers.Count - 1);
+            index = (allPlayers.Count);
         }
         else if (index <= 0)
         {
@@ -1007,14 +1007,14 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     /// <summary>
     /// 서바이벌 모드에 접속해 있는 플레이어들의 수를 알 수 있다.
-    /// 자기 자신을 제외한 수를 의미한다.
+    /// 자기 자신을 포함한 수이다.
     /// </summary>
     /// <returns></returns>
     public int GetSurvivalPlayers_Count()
     {
         Debug.Log("Player Count : " + allPlayers.Count);
 
-        return (allPlayers.Count - 1);
+        return (allPlayers.Count);
 
     }
 
@@ -1026,6 +1026,16 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public string GetSurvivalPlayersID(int index = 0)
     {
         string ID = "";
+
+        if (index >= allPlayers.Count)
+        {
+            index = allPlayers.Count;
+        }
+        else if(index <= 0)
+        {
+            index = 0;
+        }
+
 
         ID = _SurvivalPlayersID[index];
 
@@ -1040,7 +1050,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     /// <returns></returns>
     public int GetSurvivalPlayersID_Number(string ID)
     {
-        int Number = 0;
+        int Number = -1;
 
         Dictionary<int, string> PlayerID_Diction = _SurvivalPlayersID;
         IDictionaryEnumerator PlayerID_Iter = PlayerID_Diction.GetEnumerator();
