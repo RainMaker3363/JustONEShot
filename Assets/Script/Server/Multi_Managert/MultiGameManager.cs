@@ -55,6 +55,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     private Dictionary<string, bool> _SurvivalOpponentSelectSignals;
     private Dictionary<string, int> _SurvivalOpponentCharacterNumber;
     private Dictionary<string, int> _SurvivalOpponentWeaponNumber;
+    private Dictionary<int, string> _SurvivalPlayersID;
 
     // 서바이벌 모드에서 쓰일 여러 이벤트 및 값들
     public bool BossEvent;
@@ -70,6 +71,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     public bool _multiplayerReady = false;
     private string _MyParticipantId;
+    private int _MyParticipantId_Index;
     private string _EnemyParticipantId;
     private Vector2 _startingPoint;
 
@@ -612,15 +614,25 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         _SurvivalOpponentSelectSignals.Clear();
                     }
 
+                    if(_SurvivalPlayersID == null)
+                    {
+                        _SurvivalPlayersID = new Dictionary<int, string>(allPlayers.Count);
+                    }
+                    else
+                    {
+                        _SurvivalPlayersID.Clear();
+                    }
+
                     _opponentScripts = new Dictionary<string, EnemyMove>(allPlayers.Count - 1);
-                    PlayerCharacters = new Dictionary<string, GameObject>(allPlayers.Count - 1);
-                    PlayerCharacters_Nick = new Dictionary<string, string>(allPlayers.Count - 1);
-                    PlayerCharacters_Pos = new List<Vector3>(allPlayers.Count - 1);
+                    PlayerCharacters = new Dictionary<string, GameObject>(allPlayers.Count);
+                    PlayerCharacters_Nick = new Dictionary<string, string>(allPlayers.Count);
+                    PlayerCharacters_Pos = new List<Vector3>(allPlayers.Count);
 
                     for (int i = 0; i < allPlayers.Count; i++)
                     {
                         string nextParticipantId = allPlayers[i].ParticipantId;
                         PlayerCharacters_Nick[nextParticipantId] = allPlayers[i].DisplayName;
+                        _SurvivalPlayersID[i] = allPlayers[i].ParticipantId;
 
                         Debug.Log("Setting up for " + nextParticipantId);
                         Debug.Log("Player[" + i + "] Nick : " + PlayerCharacters_Nick[nextParticipantId]);
@@ -641,6 +653,10 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                             //}
                             //MyCharacter = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
+                            
+                            // 자기자신의 아이디 순차를 저장한다.
+                            _MyParticipantId_Index = i;
+
                             PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
                             PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find("StartPos_Player").gameObject.transform.position;
                         }
@@ -730,21 +746,28 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     //guiObject.SetLaps(_lapsRemaining);
                     //guiObject.SetTime(_timePlayed);
 
+                    Debug.Log("Init Player Count : " + PlayerCharacters.Count);
+                    Debug.Log("Init Players ID Count : " + _SurvivalPlayersID.Count);
+
                     for(int i =0; i<PlayerCharacters.Count; i++)
                     {
                         if (allPlayers[i].ParticipantId == _MyParticipantId)
                         {
-                            //MyCharacter.transform.position = PlayerCharacters_Pos[i];
+
                             PlayerCharacters[_MyParticipantId].transform.position = PlayerCharacters_Pos[i];
+                            Debug.Log("Player ID : " + allPlayers[i].ParticipantId);
                         }
                         else
                         {
                             //MyCharacter.transform.position = EnemyCharacterPos.transform.position;
                             PlayerCharacters[allPlayers[i].ParticipantId].transform.position = PlayerCharacters_Pos[i];
+                            Debug.Log("Player ID : " + allPlayers[i].ParticipantId);
                         }
                     }
 
                     _multiplayerReady = true;
+
+                    
 
                 }
                 break;
@@ -752,7 +775,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         #endregion
 
-        
+        Debug.Log("Init Multi Ready : " + _multiplayerReady);
 
         /* 
         * 유니티 엔진 사용 시 입력을 하지 않으면 모바일 장치의 화면이 어두워지다가 잠기게 되는데,
@@ -866,6 +889,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         Debug.Log("Survival Char Map Count : " + _SurvivalOpponentCharacterNumber.Count);
 
         return _SurvivalOpponentCharacterNumber;
+    }
+
+    // 서바이벌 모드에서 사용하는 모든 플레이어들의 ID를 반환
+    public Dictionary<int, string> __SurvivalPlayersID_Dictionary()
+    {
+        return _SurvivalPlayersID;
     }
 
     // 서바이벌 모드에서 사용하는 상대방의 Wait 신호 카운트를 불(Bool)형으로 반환해준다.
@@ -988,6 +1017,56 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         return (allPlayers.Count - 1);
 
     }
+
+    /// <summary>
+    /// 서바이벌 모드에 접속해 있는 플레이어들의 ID 값을 알 수 있다.
+    /// 매개변수는 순차번호 간의 ID값을 반환해준다.
+    /// </summary>
+    /// <returns></returns>
+    public string GetSurvivalPlayersID(int index = 0)
+    {
+        string ID = "";
+
+        ID = _SurvivalPlayersID[index];
+
+        return ID;
+    }
+
+    /// <summary>
+    /// 서바이벌 모드에 접속해 있는 플레이어들의 고유번호를 알 수 있다.
+    /// 매개변수는 해당 플레이어의 ID값을 기반으로 고유 번호를 반환한다.
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <returns></returns>
+    public int GetSurvivalPlayersID_Number(string ID)
+    {
+        int Number = 0;
+
+        Dictionary<int, string> PlayerID_Diction = _SurvivalPlayersID;
+        IDictionaryEnumerator PlayerID_Iter = PlayerID_Diction.GetEnumerator();
+
+        while (PlayerID_Iter.MoveNext())
+        {
+            if(PlayerID_Iter.Value.Equals(ID))
+            {
+                Number = (int)PlayerID_Iter.Key;
+                break;
+            }
+        }
+
+
+        return Number;
+    }
+
+    /// <summary>
+    /// 서바이벌 모드에 접속한 나의 고유 번호를 반환해준다.
+    /// </summary>
+    /// <returns></returns>
+    public int GetMyPlayerIDNumber()
+    {
+        return _MyParticipantId_Index;
+    }
+
     #endregion
 
     //void OnGUI()
@@ -1424,7 +1503,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     {
                         _SurvivalOpponentWeaponNumber[participantId] = WeaponNumber;
 
-                        ItemCount++;
+                        //ItemCount++;
                     }
                 }
                 break;
@@ -1496,7 +1575,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         if (ThisGameIsEnd == false)
                         {
 
-                            ThisGameIsEnd = GameOver;
+                            //ThisGameIsEnd = GameOver;
 
                             EnemyMove opponent = _opponentScripts[participantId];
 
@@ -1558,7 +1637,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                             opponent.SetTransformInformation(messageNum, posX, posY, posZ, rotY);
                         }
 
-                        ItemCount++;
+                        //ItemCount++;
                     }
                 }
                 break;
@@ -1693,17 +1772,17 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
-                    if (_multiplayerReady)
-                    {
-                        _DeadEyeChecker = DeadEyeActive;
+                    //if (_multiplayerReady)
+                    //{
+                    //    _DeadEyeChecker = DeadEyeActive;
 
-                        EnemyMove opponent = _opponentScripts[participantId];
+                    //    EnemyMove opponent = _opponentScripts[participantId];
 
-                        if (opponent != null)
-                        {
-                            opponent.SetDeadEyeStateReceived(_DeadEyeChecker);
-                        }
-                    }
+                    //    if (opponent != null)
+                    //    {
+                    //        opponent.SetDeadEyeStateReceived(_DeadEyeChecker);
+                    //    }
+                    //}
                 }
                 break;
         }
@@ -1740,17 +1819,17 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
-                    if (_multiplayerReady)
-                    {
-                        _DeadEyeTimer = DeadEyeTimer;
+                    //if (_multiplayerReady)
+                    //{
+                    //    _DeadEyeTimer = DeadEyeTimer;
 
-                        EnemyMove opponent = _opponentScripts[participantId];
+                    //    EnemyMove opponent = _opponentScripts[participantId];
 
-                        if (opponent != null)
-                        {
-                            opponent.SetDeadEyeTimerReceived(_DeadEyeTimer);
-                        }
-                    }
+                    //    if (opponent != null)
+                    //    {
+                    //        opponent.SetDeadEyeTimerReceived(_DeadEyeTimer);
+                    //    }
+                    //}
                 }
                 break;
         }
@@ -2166,6 +2245,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         //GPGSManager.GetInstance.updateListener = null;
 
         //AutoFade.LoadLevel("WaitingRoom", 0.2f, 0.2f, Color.black);
+
+        
         switch (MultiGameModeState)
         {
             case HY.MultiGameModeState.NONE:
@@ -2182,14 +2263,18 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
-                    if(LeftPlayerCount > 0)
-                    {
-                        LeftPlayerCount--;
-                    }
-                    else
-                    {
-                        ThisGameIsEnd = true;
-                    }
+                    //if(LeftPlayerCount > 0)
+                    //{
+                    //    LeftPlayerCount--;
+                    //}
+                    //else
+                    //{
+                    //    ThisGameIsEnd = true;
+                    //}
+
+                    Debug.Log("Player Left Room");
+
+                    ThisGameIsEnd = true;
                 }
                 break;
         }
@@ -2250,6 +2335,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         if (opponent != null)
                         {
                             opponent.GameOutInformation();
+                            Debug.Log("Player ID : " + participantId + " Left Game");
                         }
 
                     }
@@ -2258,19 +2344,34 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
+
+
                     if (_multiplayerReady)
                     {
-
-                        ThisGameIsEnd = true;
-
                         EnemyMove opponent = _opponentScripts[participantId];
 
                         if (opponent != null)
                         {
                             opponent.GameOutInformation();
+                            Debug.Log("Player ID : " + participantId + " Left Game");
                         }
 
+
+                        if (LeftPlayerCount > 0)
+                        {
+                            LeftPlayerCount--;
+                            Debug.Log("Now Player Count : " + LeftPlayerCount);
+                        }
+                        else
+                        {
+                            ThisGameIsEnd = true;
+                        }
+
+                        //ThisGameIsEnd = true;
                     }
+
+
+
                 }
                 break;
         }
@@ -2643,8 +2744,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         {
                             NetText.text = "Net Info : 상대방이 연결을 해제했습니다.";
                         }
-                        PlayerName.text = "PlayerNick : " + MyPlayerNick + " / PlayerGun : " + MyGunNumber + " / PlayerChar : " + GPGSManager.GetInstance.GetMyCharacterNumber();
-                        EnemyName.text = "Players Count : " + allPlayers.Count;
+
+                        //PlayerName.text = "PlayerNick : " + MyPlayerNick + " / PlayerGun : " + MyGunNumber + " / PlayerChar : " + GPGSManager.GetInstance.GetMyCharacterNumber();
+                        //EnemyName.text = "Players Count : " + allPlayers.Count;
+
+                        PlayerName.text = "";
+                        EnemyName.text = "";
 
                         //EnemyName.text = "OppentNick[0] : " + allPlayers[0].ParticipantId + " / OppenentGun[0] : " + _SurvivalOpponentWeaponNumber[allPlayers[0].ParticipantId].ToString() + " / OppenentChar[0] : " + _SurvivalOpponentCharacterNumber[allPlayers[0].ParticipantId].ToString()
                         //    + "\nOppentNick[1] : " + allPlayers[1].ParticipantId + " / OppenentGun[1] : " + _SurvivalOpponentWeaponNumber[allPlayers[1].ParticipantId].ToString() + " / OppenentChar[1] : " + _SurvivalOpponentCharacterNumber[allPlayers[1].ParticipantId].ToString()
@@ -2659,14 +2764,23 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     }
                     else
                     {
-                        NetText.text = "Net Info : " + MultiGameModeState;//GPGSManager.GetInstance.GetNetMessage().ToString();
-                        PlayerName.text = "Player"; //GPGSManager.GetInstance.GetNameGPGS();
-                        EnemyName.text = "Enemy";
+                        //NetText.text = "Net Info : " + MultiGameModeState;//GPGSManager.GetInstance.GetNetMessage().ToString();
+                        //PlayerName.text = "Player"; //GPGSManager.GetInstance.GetNameGPGS();
+                        //EnemyName.text = "Enemy";
 
-                        MyInfoText.text = "Player Info : " + MyCharacter.transform.position;
-                        EnemyInfoText.text = "Enemy Info : " + EnemyCharacter.transform.position;//EnemyCharacterPos.transform.position;
+                        //MyInfoText.text = "Player Info : " + MyCharacter.transform.position;
+                        //EnemyInfoText.text = "Enemy Info : " + EnemyCharacter.transform.position;//EnemyCharacterPos.transform.position;
+                        ////NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
+                        //ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
+
+                        NetText.text = "";
+                        PlayerName.text = "";
+                        EnemyName.text = "";
+
+                        MyInfoText.text = "";
+                        EnemyInfoText.text = "";
                         //NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
-                        ItemGetCount.text = "MessageCount : " + ItemCount + " / EndMsg : " + ThisGameIsEnd + " / Index : " + _DeadEyeRespawnIndex;
+                        ItemGetCount.text = "";
                     }
 
                     // 적의 타임아웃 체크
