@@ -191,7 +191,7 @@ public class SurvivalGameStart : MonoBehaviour
 
             if (!CountDown.gameObject.activeSelf)
             {
-                if (CharMove.m_GunSelect)
+                if (CharMove.m_GunSelect && !CountDownBool)
                 {
                     if (GPGSManager.GetInstance.IsAuthenticated())
                     {
