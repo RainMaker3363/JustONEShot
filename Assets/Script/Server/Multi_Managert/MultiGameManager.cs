@@ -1594,6 +1594,15 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                                 opponent.SetEndGameInformation(GameOver);
                             }
 
+                            if(LeftPlayerCount <= 0)
+                            {
+                                ThisGameIsEnd = true;
+                            }
+                            else
+                            {
+                                LeftPlayerCount--;
+                            }
+
                         }
 
                     }
