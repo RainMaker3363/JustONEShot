@@ -55,7 +55,7 @@ public class SurvivalGameStart : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Update" + CharMove.m_GunSelect);
+        //Debug.Log("Update" + CharMove.m_GunSelect);
         if (Char == null)
         {
             Char = GamePlayObj.transform.Find("PlayerCharacter").GetComponent<CharMove>();

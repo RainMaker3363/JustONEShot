@@ -627,7 +627,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     _opponentScripts = new Dictionary<string, EnemyMove>(allPlayers.Count - 1);
                     PlayerCharacters = new Dictionary<string, GameObject>(allPlayers.Count);
                     PlayerCharacters_Nick = new Dictionary<string, string>(allPlayers.Count);
-                    PlayerCharacters_Pos = new List<Vector3>(allPlayers.Count);
+                    PlayerCharacters_Pos = new List<Vector3>();
 
                     for (int i = 0; i < allPlayers.Count; i++)
                     {
@@ -642,17 +642,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]] = false;
                         _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]] = false;
 
-                        Debug.logger.Log("SVM", "Survival Wait Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]]);
-                        Debug.logger.Log("SVM", "Survival Select Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]]);
-                        Debug.logger.Log("SVM", "Survival Weapon Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]]);
-                        Debug.logger.Log("SVM", "Survival Char Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentCharacterNumber[_SurvivalPlayersID[i]]);
-
-                        Debug.Log("Survival Wait Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]]);
-                        Debug.Log("Survival Select Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]]);
-                        Debug.Log("Survival Weapon Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]]);
-                        Debug.Log("Survival Char Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentCharacterNumber[_SurvivalPlayersID[i]]);
-
+                        // 위치값을 하나씩 받아온다.
                         string OpponentPosObjectName = ("StartPos" + i).ToString();
+
+                        PlayerCharacters_Pos.Add((GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position));
+
+
 
                         Debug.logger.Log("SVM", "Setting up for " + nextParticipantId);
                         Debug.logger.Log("SVM", "Player[" + i + "] Nick : " + PlayerCharacters_Nick[nextParticipantId]);
@@ -681,7 +676,17 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                             _MyParticipantId_Index = i;
 
                             PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
-                            PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
+                            //PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
+
+                            Debug.logger.Log("SVM", "Survival Wait Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]]);
+                            Debug.logger.Log("SVM", "Survival Select Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]]);
+                            Debug.logger.Log("SVM", "Survival Weapon Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]]);
+                            Debug.logger.Log("SVM", "Survival Char Map ID : " + allPlayers[i].ParticipantId + " Value : " + MyCharNumber);
+
+                            Debug.Log("Survival Wait Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]]);
+                            Debug.Log("Survival Select Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]]);
+                            Debug.Log("Survival Weapon Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]]);
+                            Debug.Log("Survival Char Map ID : " + allPlayers[i].ParticipantId + " Value : " + MyCharNumber);
                         }
                         else
                         {
@@ -690,9 +695,18 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                             
 
                             PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).gameObject;
-                            PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
+                            //PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
                             _opponentScripts[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).GetComponent<EnemyMove>();
 
+                            Debug.logger.Log("SVM", "Survival Wait Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]]);
+                            Debug.logger.Log("SVM", "Survival Select Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]]);
+                            Debug.logger.Log("SVM", "Survival Weapon Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]]);
+                            Debug.logger.Log("SVM", "Survival Char Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentCharacterNumber[_SurvivalPlayersID[i]]);
+
+                            Debug.Log("Survival Wait Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]]);
+                            Debug.Log("Survival Select Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]]);
+                            Debug.Log("Survival Weapon Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]]);
+                            Debug.Log("Survival Char Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentCharacterNumber[_SurvivalPlayersID[i]]);
                             //if (EnemyCharacter == null)
                             //{
                             //    //EnemyCharacter = GameObject.Find("Enemy_Character");
@@ -2842,6 +2856,25 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         //    + "\nOppentNick[7] : " + allPlayers[7].ParticipantId + " / OppenentGun[7] : " + _SurvivalOpponentWeaponNumber[allPlayers[7].ParticipantId].ToString() + " / OppenentChar[7] : " + _SurvivalOpponentCharacterNumber[allPlayers[7].ParticipantId].ToString();
 
 
+                        // 적의 타임아웃 체크
+                        if (ThisGameIsEnd == false)
+                        {
+                            if (Time.time > _nextTimeoutCheck)
+                            {
+
+                                CheckForTimeOuts();
+                                _nextTimeoutCheck = Time.time + _timeOutCheckInterval;
+                            }
+                        }
+
+                        // 플레이어의 위치 동기화
+                        SendMyPositionUpdate();
+
+                        // 보스가 출현했다면 보스의 위치도 동기화 시켜준다.
+                        if (BossEvent == true)
+                        {
+                            //SendBossPositionUpdate();
+                        }
                     }
                     else
                     {
@@ -2862,27 +2895,11 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         EnemyInfoText.text = "";
                         //NetText.text = "Net Info : " + GPGSManager.GetInstance.GetNetMessage().ToString();
                         ItemGetCount.text = "";
+
+
                     }
 
-                    // 적의 타임아웃 체크
-                    if (ThisGameIsEnd == false)
-                    {
-                        if (Time.time > _nextTimeoutCheck)
-                        {
 
-                            CheckForTimeOuts();
-                            _nextTimeoutCheck = Time.time + _timeOutCheckInterval;
-                        }
-                    }
-
-                    // 플레이어의 위치 동기화
-                    SendMyPositionUpdate();
-
-                    // 보스가 출현했다면 보스의 위치도 동기화 시켜준다.
-                    if(BossEvent == true)
-                    {
-                        //SendBossPositionUpdate();
-                    }
                 }
                 break;
         }
