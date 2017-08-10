@@ -79,6 +79,8 @@ public class EnemyMove : MonoBehaviour {
     public UnityEngine.UI.Image Hp_Bar;
     private Vector3 HP_BarPos;
 
+    public int PlayerNumber;
+
     MultiGameManager Mul_Manager;
 
     /// //////////////////////////////////////////////////////////////////////////////////<summary>
@@ -106,7 +108,10 @@ public class EnemyMove : MonoBehaviour {
     {
         m_GunState = LSD.GunState.Revolver; //현재는 고정 추후 받아오게함
         Mul_Manager = GameObject.Find("MultiGameMananger").GetComponent<MultiGameManager>();
-        Mul_Manager.EnemyCharacter = this.gameObject;
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene")
+        {
+            Mul_Manager.EnemyCharacter = this.gameObject;
+        }
         //if (GPGSManager.GetInstance.IsAuthenticated())  //접속중일때
         //{            
         //    CharIndex = Mul_Manager.GetPVPOpponentCharNumber();
@@ -118,7 +123,7 @@ public class EnemyMove : MonoBehaviour {
     {
         m_CharCtr = GetComponent<CharacterController>();
 
-        if (GPGSManager.GetInstance.IsAuthenticated())  //접속중일때
+        if (GPGSManager.GetInstance.IsAuthenticated() && UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene")  //접속중일때
         {
             StartCoroutine(WaitSelectEnemyGun());
         }

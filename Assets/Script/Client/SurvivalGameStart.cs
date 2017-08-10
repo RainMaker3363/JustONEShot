@@ -42,7 +42,7 @@ public class SurvivalGameStart : MonoBehaviour
             }
         }
 #else
-        for (int i = 0; i < GPGSManager.GetInstance.GetAllPlayers().Count - 1; i++)
+        for (int i = 0; i < GPGSManager.GetInstance.GetAllPlayers().Count; i++)
         {
             if (Enemy[i] == null)
             {
@@ -197,21 +197,22 @@ public class SurvivalGameStart : MonoBehaviour
                     {
                         if (Mul_Manager.GetSurvivalOpponentWaitSignals_Ready()) //전부 총을 골랐을경우
                         {
-                            for (int i = 0; i <= Mul_Manager.GetSurvivalPlayers_Count(); i++)
+                            int MyIDNumber = Mul_Manager.GetMyPlayerIDNumber();
+                            for (int i = 0; i < Mul_Manager.GetSurvivalPlayers_Count(); i++)
                             {
                                 int GunNumber = 0;
                                 GunNumber = Mul_Manager.GetSurvivalOpponentWeaponNumber(i);
 
-                                if (GunNumber == 100)
+                                if (i == MyIDNumber)//i가 내IDNumber와 같을경우
                                 {
-                                    break;
-                                    // 아직 무기 선택이 안됬거나 신호를 못 받음
+                                    Enemy[i].gameObject.SetActive(false);
                                 }
                                 else
                                 {
-                                    // 무기 번호를 받음
+                                    // 무기 번호를 받음(적들)
                                     int CharNumber = Mul_Manager.GetSurvivalOpponentCharacterNumber(i);
                                     Enemy[i].SetSurvivalEnemyGun(CharNumber, GunNumber);
+                                    Enemy[i].PlayerNumber = i;
                                 }
                             }
 
