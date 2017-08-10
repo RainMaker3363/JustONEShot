@@ -632,7 +632,21 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     {
                         string nextParticipantId = allPlayers[i].ParticipantId;
                         PlayerCharacters_Nick[nextParticipantId] = allPlayers[i].DisplayName;
+
                         _SurvivalPlayersID[i] = allPlayers[i].ParticipantId;
+
+                        // Dictionary안에 있는 값들을 초기화 해준다.
+                        _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]] = 0;
+                        _SurvivalOpponentCharacterNumber[_SurvivalPlayersID[i]] = 0;
+                        _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]] = false;
+                        _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]] = false;
+
+                        Debug.Log("Survival Wait Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]]);
+                        Debug.Log("Survival Select Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]]);
+                        Debug.Log("Survival Weapon Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]]);
+                        Debug.Log("Survival Char Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentCharacterNumber[_SurvivalPlayersID[i]]);
+
+                        string OpponentPosObjectName = ("StartPos" + i).ToString();
 
                         Debug.Log("Setting up for " + nextParticipantId);
                         Debug.Log("Player[" + i + "] Nick : " + PlayerCharacters_Nick[nextParticipantId]);
@@ -658,12 +672,13 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                             _MyParticipantId_Index = i;
 
                             PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
-                            PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find("StartPos_Player").gameObject.transform.position;
+                            PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
                         }
                         else
                         {
+
                             string OpponentObjectName = ("EnemyCharacter" + i).ToString();
-                            string OpponentPosObjectName = ("StartPos_Enemy" + i).ToString();
+                            
 
                             PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).gameObject;
                             PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
@@ -717,6 +732,11 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                         }
                     }
+
+                    Debug.Log("Survival Wait Map Count : " + _SurvivalOpponentWaitSignals.Count);
+                    Debug.Log("Survival Select Map Count : " + _SurvivalOpponentSelectSignals.Count);
+                    Debug.Log("Survival Weapon Map Count : " + _SurvivalOpponentWeaponNumber.Count);
+                    Debug.Log("Survival Char Map Count : " + _SurvivalOpponentCharacterNumber.Count);
 
                     //for (int i = 0; i < allPlayers.Count; i++)
                     //{
@@ -971,7 +991,15 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             index = 0;
         }
 
-        WeaponNumber = _SurvivalOpponentWeaponNumber[allPlayers[index].ParticipantId];
+        if(_SurvivalOpponentWeaponNumber.ContainsKey(allPlayers[index].ParticipantId))
+        {
+            WeaponNumber = _SurvivalOpponentWeaponNumber[allPlayers[index].ParticipantId];
+        }
+        else
+        {
+            WeaponNumber = 0;
+        }
+        
 
         Debug.Log("Survival Weapon " + index + " Num : " + WeaponNumber);
 
@@ -998,7 +1026,14 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             index = 0;
         }
 
-        CharNumber = _SurvivalOpponentCharacterNumber[allPlayers[index].ParticipantId];
+        if (_SurvivalOpponentCharacterNumber.ContainsKey(allPlayers[index].ParticipantId))
+        {
+            CharNumber = _SurvivalOpponentCharacterNumber[allPlayers[index].ParticipantId];
+        }
+        else
+        {
+            CharNumber = 0;
+        }
 
         Debug.Log("Survival Char " + index + " Num : " + CharNumber);
 
@@ -1012,7 +1047,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     /// <returns></returns>
     public int GetSurvivalPlayers_Count()
     {
-        Debug.Log("Player Count : " + allPlayers.Count);
+        //Debug.Log("Player Count : " + allPlayers.Count);
 
         return (allPlayers.Count);
 
@@ -1513,6 +1548,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     {
                         _SurvivalOpponentWeaponNumber[participantId] = WeaponNumber;
 
+                        Debug.Log("Survival ID : " + participantId + " Weapon : " + _SurvivalOpponentWeaponNumber[participantId]);
                         //ItemCount++;
                     }
                 }
