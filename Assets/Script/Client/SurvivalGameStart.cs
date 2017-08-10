@@ -20,7 +20,7 @@ public class SurvivalGameStart : MonoBehaviour
     public GameObject GamePlayObj;
 
     private float WaitOverTime;
-    private float WaitTime = 10;
+    private float WaitTime = 20;
 
     void Awake()
     {

@@ -192,7 +192,7 @@ public class EnemyMove : MonoBehaviour {
         //클라
         m_DebugPlayerState = (int)m_PlayerState;
         // Debug.Log("VectorForce: " + m_MoveJoyStickControl.GetVectorForce());
-        Debug.Log("PlayerState: " + m_PlayerState);
+        //Debug.Log("PlayerState: " + m_PlayerState);
 
         if (m_PlayerBeforeState != m_PlayerState)
         {
