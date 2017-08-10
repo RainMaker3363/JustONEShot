@@ -581,6 +581,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     // 현재 남아있는 플레이어들의 수를 구한다.
                     LeftPlayerCount = (allPlayers.Count - 1);
 
+                    Debug.logger.Log("SVM", "Left Player Count : " + LeftPlayerCount);
                     Debug.Log("LeftPlayerCount : " + LeftPlayerCount);
 
                     // 서바이벌 모드에서 쓰일 정보들을 갱신 및 초기화
@@ -637,16 +638,24 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                         // Dictionary안에 있는 값들을 초기화 해준다.
                         _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]] = 0;
-                        _SurvivalOpponentCharacterNumber[_SurvivalPlayersID[i]] = 0;
+                        //_SurvivalOpponentCharacterNumber[_SurvivalPlayersID[i]] = 0;
                         _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]] = false;
                         _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]] = false;
 
-                        Debug.Log("Survival Wait Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]]);
+                        Debug.logger.Log("SVM", "Survival Wait Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]]);
+                        Debug.logger.Log("SVM", "Survival Select Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]]);
+                        Debug.logger.Log("SVM", "Survival Weapon Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]]);
+                        Debug.logger.Log("SVM", "Survival Char Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentCharacterNumber[_SurvivalPlayersID[i]]);
+
+                        Debug.Log("Survival Wait Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]]);
                         Debug.Log("Survival Select Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]]);
                         Debug.Log("Survival Weapon Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]]);
                         Debug.Log("Survival Char Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentCharacterNumber[_SurvivalPlayersID[i]]);
 
                         string OpponentPosObjectName = ("StartPos" + i).ToString();
+
+                        Debug.logger.Log("SVM", "Setting up for " + nextParticipantId);
+                        Debug.logger.Log("SVM", "Player[" + i + "] Nick : " + PlayerCharacters_Nick[nextParticipantId]);
 
                         Debug.Log("Setting up for " + nextParticipantId);
                         Debug.Log("Player[" + i + "] Nick : " + PlayerCharacters_Nick[nextParticipantId]);
@@ -733,6 +742,11 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         }
                     }
 
+                    Debug.logger.Log("SVM", "Survival Wait Map Count: " + _SurvivalOpponentWaitSignals.Count);
+                    Debug.logger.Log("SVM", "Survival Select Map Count: " + _SurvivalOpponentSelectSignals.Count);
+                    Debug.logger.Log("SVM", "Survival Weapon Map Count: " + _SurvivalOpponentWeaponNumber.Count);
+                    Debug.logger.Log("SVM", "Survival Char Map Count: " + _SurvivalOpponentCharacterNumber.Count);
+
                     Debug.Log("Survival Wait Map Count : " + _SurvivalOpponentWaitSignals.Count);
                     Debug.Log("Survival Select Map Count : " + _SurvivalOpponentSelectSignals.Count);
                     Debug.Log("Survival Weapon Map Count : " + _SurvivalOpponentWeaponNumber.Count);
@@ -766,8 +780,10 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     //guiObject.SetLaps(_lapsRemaining);
                     //guiObject.SetTime(_timePlayed);
 
-                    Debug.Log("Init Player Count : " + PlayerCharacters.Count);
-                    Debug.Log("Init Players ID Count : " + _SurvivalPlayersID.Count);
+                    Debug.logger.Log("SVM", "Init Player Count : " + PlayerCharacters.Count);
+                    Debug.logger.Log("SVM", "Init Players ID Count : " + _SurvivalPlayersID.Count);
+                    Debug.Log("SVM Init Player Count : " + PlayerCharacters.Count);
+                    Debug.Log("SVM Init Players ID Count : " + _SurvivalPlayersID.Count);
 
                     for(int i =0; i<PlayerCharacters.Count; i++)
                     {
@@ -775,13 +791,15 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         {
 
                             PlayerCharacters[_MyParticipantId].transform.position = PlayerCharacters_Pos[i];
-                            Debug.Log("Player ID : " + allPlayers[i].ParticipantId);
+                            Debug.logger.Log("SVM", "Player ID : " + allPlayers[i].ParticipantId);
+                            Debug.Log("SVM Player ID : " + allPlayers[i].ParticipantId);
                         }
                         else
                         {
                             //MyCharacter.transform.position = EnemyCharacterPos.transform.position;
                             PlayerCharacters[allPlayers[i].ParticipantId].transform.position = PlayerCharacters_Pos[i];
-                            Debug.Log("Player ID : " + allPlayers[i].ParticipantId);
+                            Debug.logger.Log("SVM", "Player ID : " + allPlayers[i].ParticipantId);
+                            Debug.Log("SVM Player ID : " + allPlayers[i].ParticipantId);
                         }
                     }
 
@@ -882,7 +900,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 서바이벌 모드에서 사용하는 상대방의 Wait 신호 정보들..
     public Dictionary<string, bool> GetSurvivalOpponentWaitSignals()
     {
-        Debug.Log("Survival Wait Map Count : " + _SurvivalOpponentWaitSignals.Count);
+        Debug.logger.Log("SVM", "Survival Wait Map Count : " + _SurvivalOpponentWaitSignals.Count);
+        Debug.Log("SVM Survival Wait Map Count : " + _SurvivalOpponentWaitSignals.Count);
 
         return _SurvivalOpponentWaitSignals;
     }
@@ -890,7 +909,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 서바이벌 모드에서 사용하는 상대방의 Select 신호 정보들..
     public Dictionary<string, bool> GetSurvivalOpponentSelectSignals()
     {
-        Debug.Log("Survival Select Map Count : " + _SurvivalOpponentSelectSignals.Count);
+        Debug.logger.Log("SVM", "Survival Select Map Count : " + _SurvivalOpponentSelectSignals.Count);
+        Debug.Log("SVM Survival Select Map Count : " + _SurvivalOpponentSelectSignals.Count);
 
         return _SurvivalOpponentSelectSignals;
     }
@@ -898,6 +918,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 서바이벌 모드에서 사용하는 상대방의 무기 번호들
     public Dictionary<string, int> GetSurvivalOpponentWeaponNumbers()
     {
+        Debug.logger.Log("SVM", "Survival Weapon Map Count : " + _SurvivalOpponentWeaponNumber.Count);
         Debug.Log("Survival Weapon Map Count : " + _SurvivalOpponentWeaponNumber.Count);
 
         return _SurvivalOpponentWeaponNumber;
@@ -906,6 +927,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 서바이벌 모드에서 사용하는 상대방의 캐릭터 번호들
     public Dictionary<string, int> _SurvivalOpponentCharacterNumbers()
     {
+        Debug.logger.Log("SVM", "Survival Char Map Count : " + _SurvivalOpponentCharacterNumber.Count);
         Debug.Log("Survival Char Map Count : " + _SurvivalOpponentCharacterNumber.Count);
 
         return _SurvivalOpponentCharacterNumber;
@@ -937,6 +959,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         if (All_Wait_Ready)
         {
+            Debug.logger.Log("SVM", "Survival Wait Signals Ready : " + All_Wait_Ready);
             Debug.Log("Survival Wait Signals Ready : " + All_Wait_Ready);
         }
 
@@ -964,6 +987,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         if(All_Select_Ready)
         {
+            Debug.logger.Log("SVM", "Survival Select Signals Ready: " + All_Select_Ready);
             Debug.Log("Survival Select Signals Ready : " + All_Select_Ready);
         }
         
@@ -999,8 +1023,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         {
             WeaponNumber = 0;
         }
-        
 
+        Debug.logger.Log("SVM", "Survival Weapon " + index + " Num: " + WeaponNumber);
         Debug.Log("Survival Weapon " + index + " Num : " + WeaponNumber);
 
         return WeaponNumber;
@@ -1035,7 +1059,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             CharNumber = 0;
         }
 
-        Debug.Log("Survival Char " + index + " Num : " + CharNumber);
+        Debug.logger.Log("SVM", "Survival Char " + index + " Num : " + CharNumber);
+        Debug.Log("SVM Survival Char " + index + " Num : " + CharNumber);
 
         return CharNumber;
     }
@@ -1548,7 +1573,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     {
                         _SurvivalOpponentWeaponNumber[participantId] = WeaponNumber;
 
-                        Debug.Log("Survival ID : " + participantId + " Weapon : " + _SurvivalOpponentWeaponNumber[participantId]);
+                        Debug.logger.Log("SVM", "Survival ID : " + participantId + " Weapon : " + _SurvivalOpponentWeaponNumber[participantId]);
+                        Debug.Log("SVM Survival ID : " + participantId + " Weapon : " + _SurvivalOpponentWeaponNumber[participantId]);
                         //ItemCount++;
                     }
                 }
