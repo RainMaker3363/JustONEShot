@@ -233,6 +233,7 @@ public class SurvivalGameStart : MonoBehaviour
                             if (Selectanim.GetBool("PlayEnd"))
                             {
                                 Waiting.SetActive(true);
+                                Mul_Manager.SendMultiWaitStateMessage(true);
                             }
                         }
                     }

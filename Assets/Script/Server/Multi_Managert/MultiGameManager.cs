@@ -61,6 +61,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public bool BossEvent;
     private int LeftPlayerCount;
     private bool bPaused; // 어플리케이션이 내려진 상태인지 아닌지의 스테이트를 저장하기 위한 변수
+    private int EnemyIndexChecker;
 
     //private List<int> SurvivalOpponentCharNumbersList;
     //private List<bool> _SurvivalOpponentSelectSignalsList;
@@ -293,6 +294,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         // 네트워크 체크 변수들
         ThisGameIsEnd = false;
         LeftPlayerCount = 0;
+        EnemyIndexChecker = 0;
         ItemCount = 0;
 
         _DeadEyeTimer = 0.0f;
@@ -638,14 +640,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                         _SurvivalPlayersID[i] = allPlayers[i].ParticipantId;
 
-                        // Dictionary안에 있는 값들을 초기화 해준다.
-                        _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]] = 0;
-                        //_SurvivalOpponentCharacterNumber[_SurvivalPlayersID[i]] = 0;
-                        _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]] = false;
-                        _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]] = false;
+
 
                         // 위치값을 하나씩 받아온다.
                         string OpponentPosObjectName = ("StartPos" + i).ToString();
+
+
 
                         PlayerCharacters_Pos.Add((GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position));
 
@@ -676,25 +676,29 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                             
                             // 자기자신의 아이디 순차를 저장한다.
                             _MyParticipantId_Index = i;
+                            EnemyIndexChecker = 1;
 
                             PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
                             //PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
 
-                            Debug.logger.Log("SVM", "Survival Wait Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]]);
-                            Debug.logger.Log("SVM", "Survival Select Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]]);
-                            Debug.logger.Log("SVM", "Survival Weapon Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]]);
-                            Debug.logger.Log("SVM", "Survival Char Map ID : " + allPlayers[i].ParticipantId + " Value : " + MyCharNumber);
+                            //Debug.logger.Log("SVM", "Survival Wait Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]]);
+                            //Debug.logger.Log("SVM", "Survival Select Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]]);
+                            //Debug.logger.Log("SVM", "Survival Weapon Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]]);
+                            //Debug.logger.Log("SVM", "Survival Char Map ID : " + allPlayers[i].ParticipantId + " Value : " + MyCharNumber);
 
-                            Debug.Log("Survival Wait Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]]);
-                            Debug.Log("Survival Select Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]]);
-                            Debug.Log("Survival Weapon Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]]);
+                            //Debug.Log("Survival Wait Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]]);
+                            //Debug.Log("Survival Select Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]]);
+                            //Debug.Log("Survival Weapon Map ID : " + allPlayers[i].ParticipantId + " Value : " + _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]]);
                             Debug.Log("Survival Char Map ID : " + allPlayers[i].ParticipantId + " Value : " + MyCharNumber);
                         }
                         else
                         {
+                            // Dictionary안에 있는 값들을 초기화 해준다.
+                            _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]] = 0;
+                            _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]] = false;
+                            _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]] = false;
 
-                            string OpponentObjectName = ("EnemyCharacter" + i).ToString();
-                            
+                            string OpponentObjectName = ("EnemyCharacter" + (i - EnemyIndexChecker)).ToString();
 
                             PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find(OpponentObjectName).gameObject;
                             //PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
