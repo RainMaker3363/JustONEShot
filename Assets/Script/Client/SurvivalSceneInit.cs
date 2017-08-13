@@ -108,15 +108,27 @@ public class SurvivalSceneInit : MonoBehaviour
             CharEnemyPoster[i].sprite = null;
         }
         Dictionary<string, int> Diction = GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers();
-        IDictionaryEnumerator iter = GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers().GetEnumerator();
+        IDictionaryEnumerator iter = Diction.GetEnumerator();
 
-        m_Enemy = new GameObject[GPGSManager.GetInstance.GetAllPlayers().Count];
+        m_Enemy = new GameObject[GPGSManager.GetInstance.GetAllPlayers().Count-1];
 
         int j = 0;
-        while (iter.MoveNext())
+
+        while(iter.MoveNext())
         {
+            Debug.Log("iter.key : "+ iter.Key + "iter.value : " + iter.Value);
+            //iter.MoveNext();
+        }
+
+        iter = Diction.GetEnumerator();
+        iter.MoveNext();
+
+        while (j < GPGSManager.GetInstance.GetAllPlayers().Count-1)
+        {
+  
             if (m_Enemy[j] == null)// && Mul_Manager.GetPVPOpponentCharNumber() != 100)
             {
+                Debug.Log("EnemyIndex j " + j);
                 m_Enemy[j] = Instantiate(EnemyObj[Diction[iter.Key.ToString()]]);
                 m_Enemy[j].transform.position = EnemyStartPos[j].position;
                 m_Enemy[j].name = "EnemyCharacter" + j;
@@ -125,6 +137,7 @@ public class SurvivalSceneInit : MonoBehaviour
 
 
             CharEnemyPoster[j].sprite = Poster[Diction[iter.Key.ToString()]];
+            iter.MoveNext();
             j++;
         }
 

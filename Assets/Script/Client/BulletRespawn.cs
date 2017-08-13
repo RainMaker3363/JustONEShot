@@ -28,6 +28,8 @@ public class BulletRespawn : MonoBehaviour {
     public B_RespawnManager m_B_RespawnManager;
 
     public GameObject GamePlayObj;
+
+    Collider m_Col;
     // Use this for initialization
 
     void Awake()
@@ -49,6 +51,9 @@ public class BulletRespawn : MonoBehaviour {
 
         if (SceneManager.GetActiveScene().name != "GameScene")
             E_CharPos = GamePlayObj.transform.Find("EnemyCharacter");
+
+        m_Col = gameObject.GetComponent<SphereCollider>();
+        m_Col.enabled = false;
     }
 	
 	// Update is called once per frame
@@ -82,45 +87,65 @@ public class BulletRespawn : MonoBehaviour {
         if (CreateAble)// &&(P_CharPos!=null&& E_CharPos != null)) //생성이 가능할경우
         {
             P_Distance = Vector3.Distance(P_CharPos.position, this.transform.position);
-            if(E_CharPos!=null)
-             E_Distance = Vector3.Distance(E_CharPos.position, this.transform.position);
+            //if(E_CharPos!=null)
+            // E_Distance = Vector3.Distance(E_CharPos.position, this.transform.position);
 
             if (P_Distance < 11 && BulletIndex == -1) //거리가 11이하고 총알인덱스를 배정받지않았을떄(생성 전)
             {
                 BulletIndex = m_B_RespawnManager.CreateItemBullet(this.transform);
+                m_Col.enabled = true;
             }
 
             if (BulletIndex > -1 && P_Distance >= 11)   //생성을 했지만 거리가 벗어난경우
             {
                 m_B_RespawnManager.DeleteItemBullet(BulletIndex);// 총알 아이템 제거
                 BulletIndex = -1;   //인덱스 초기화
+                m_Col.enabled = false;
             }
 
 
-            if (BulletIndex > -1) //생성을 했고 캐릭터가 근처에 왔을경우
-            {
-                //if(!B_RespawnManager.GetInstance().Item_Bullets[BulletIndex].activeSelf)
-                //{
-                //    B_RespawnManager.GetInstance().Item_Bullets[BulletIndex].SetActive(true);
-                //}
+            //if (BulletIndex > -1) //생성을 했고 캐릭터가 근처에 왔을경우
+            //{
+            //    //if(!B_RespawnManager.GetInstance().Item_Bullets[BulletIndex].activeSelf)
+            //    //{
+            //    //    B_RespawnManager.GetInstance().Item_Bullets[BulletIndex].SetActive(true);
+            //    //}
 
-                if (P_Distance < 1) //가까이온게 플레이어일경우
-                {
-                    CharMove.m_UseGun.GetBullet();  //캐릭터 총알갯수 추가
-                    m_B_RespawnManager.DeleteItemBullet(BulletIndex); // 총알 아이템 제거
-                    BulletIndex = -1; //인덱스 초기화
-                    StartCoroutine(BulletCreateDelay());    //재생성 쿨타임 시작
-                }
-                else if(E_Distance<1 && E_CharPos != null)   //가까이온게 적 플레인경우
-                {
-                    m_B_RespawnManager.DeleteItemBullet(BulletIndex); // 총알 아이템 제거
-                    BulletIndex = -1; //인덱스 초기화
-                    StartCoroutine(BulletCreateDelay());    //재생성 쿨타임 시작
-                }
-            }
+            //    if (P_Distance < 1) //가까이온게 플레이어일경우
+            //    {
+            //        CharMove.m_UseGun.GetBullet();  //캐릭터 총알갯수 추가
+            //        m_B_RespawnManager.DeleteItemBullet(BulletIndex); // 총알 아이템 제거
+            //        BulletIndex = -1; //인덱스 초기화
+            //        StartCoroutine(BulletCreateDelay());    //재생성 쿨타임 시작
+            //    }
+            //    else if(E_Distance<1 && E_CharPos != null)   //가까이온게 적 플레인경우
+            //    {
+            //        m_B_RespawnManager.DeleteItemBullet(BulletIndex); // 총알 아이템 제거
+            //        BulletIndex = -1; //인덱스 초기화
+            //        StartCoroutine(BulletCreateDelay());    //재생성 쿨타임 시작
+            //    }
+            //}
         }
     }
 
+    void OnTriggerEnter(Collider col)
+    {
+        if (col.tag == "Player")
+        {
+            CharMove.m_UseGun.GetBullet();  //캐릭터 총알갯수 추가
+            m_B_RespawnManager.DeleteItemBullet(BulletIndex); // 총알 아이템 제거
+            BulletIndex = -1; //인덱스 초기화
+            m_Col.enabled = false;
+            StartCoroutine(BulletCreateDelay());    //재생성 쿨타임 시작
+        }
+        else if (col.tag == "Enemy")
+        {
+            m_B_RespawnManager.DeleteItemBullet(BulletIndex); // 총알 아이템 제거
+            BulletIndex = -1; //인덱스 초기화
+            m_Col.enabled = false;
+            StartCoroutine(BulletCreateDelay());    //재생성 쿨타임 시작
+        }
+    }
     IEnumerator BulletCreateDelay()
     {
         CreateAble = false;

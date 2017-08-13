@@ -20,7 +20,7 @@ public class SurvivalGameStart : MonoBehaviour
     public GameObject GamePlayObj;
 
     private float WaitOverTime;
-    private float WaitTime = 20;
+    private float WaitTime = 10;
 
     void Awake()
     {
@@ -198,6 +198,7 @@ public class SurvivalGameStart : MonoBehaviour
                         if (Mul_Manager.GetSurvivalOpponentWaitSignals_Ready()) //전부 총을 골랐을경우
                         {
                             int MyIDNumber = Mul_Manager.GetMyPlayerIDNumber();
+                            int MyIDCheck = 0;  //i 가 ,PlayerIDNumber와 같을경우 보정
                             for (int i = 0; i < Mul_Manager.GetSurvivalPlayers_Count(); i++)
                             {
                                 int GunNumber = 0;
@@ -205,14 +206,15 @@ public class SurvivalGameStart : MonoBehaviour
 
                                 if (i == MyIDNumber)//i가 내IDNumber와 같을경우
                                 {
-                                    Enemy[i].gameObject.SetActive(false);
+                                    //Enemy[i].gameObject.SetActive(false);
+                                    MyIDCheck++;
                                 }
                                 else
                                 {
                                     // 무기 번호를 받음(적들)
                                     int CharNumber = Mul_Manager.GetSurvivalOpponentCharacterNumber(i);
-                                    Enemy[i].SetSurvivalEnemyGun(CharNumber, GunNumber);
-                                    Enemy[i].PlayerNumber = i;
+                                    Enemy[i - MyIDCheck].SetSurvivalEnemyGun(CharNumber, GunNumber);
+                                    Enemy[i - MyIDCheck].PlayerNumber = i;
                                 }
                             }
 
