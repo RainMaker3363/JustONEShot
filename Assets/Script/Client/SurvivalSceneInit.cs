@@ -29,6 +29,7 @@ public class SurvivalSceneInit : MonoBehaviour
 
     public GameObject GamePlayObj;  //게임에 필요한것들은 이 오브젝트 하위에 생성됩니다
 
+    int EditorIndex = 4;
     // Use this for initialization
     void Awake()
     {
@@ -65,8 +66,12 @@ public class SurvivalSceneInit : MonoBehaviour
         Char1.sprite = Poster[3];
 
         //CharEnemyPoster = new SpriteRenderer[7];
-        m_Enemy = new GameObject[7];
         for (int i = 0; i < 7; i++)
+        {
+            CharEnemyPoster[i].sprite = null;
+        }
+        m_Enemy = new GameObject[EditorIndex];
+        for (int i = 0; i < EditorIndex; i++)
         {
             if (m_Enemy[i] == null)
             {

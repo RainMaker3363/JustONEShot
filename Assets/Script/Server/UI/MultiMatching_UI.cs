@@ -186,17 +186,17 @@ public class MultiMatching_UI : MonoBehaviour {
 
             case HY.MultiGameModeState.PVP:
                 {
-                    if(TimeOutChecker > 0.0f)
-                    {
-                        TimeOutChecker -= Time.deltaTime;
-                    }
-                    else
-                    {
-                        if(MultiMatching_Cancel_Button_obj != null)
-                        {
-                            MultiMatching_Cancel_Button_obj.MultiMatching_Cancel();
-                        }
-                    }
+                    //if(TimeOutChecker > 0.0f)
+                    //{
+                    //    TimeOutChecker -= Time.deltaTime;
+                    //}
+                    //else
+                    //{
+                    //    if(MultiMatching_Cancel_Button_obj != null)
+                    //    {
+                    //        MultiMatching_Cancel_Button_obj.MultiMatching_Cancel();
+                    //    }
+                    //}
 
                     if (GPGSManager.GetInstance.IsConnected() == true)
                     {
@@ -239,17 +239,17 @@ public class MultiMatching_UI : MonoBehaviour {
             case HY.MultiGameModeState.SURVIVAL:
                 {
 
-                    if (TimeOutChecker > 0.0f)
-                    {
-                        TimeOutChecker -= Time.deltaTime;
-                    }
-                    else
-                    {
-                        if (MultiMatching_Cancel_Button_obj != null)
-                        {
-                            MultiMatching_Cancel_Button_obj.MultiMatching_Cancel();
-                        }
-                    }
+                    //if (TimeOutChecker > 0.0f)
+                    //{
+                    //    TimeOutChecker -= Time.deltaTime;
+                    //}
+                    //else
+                    //{
+                    //    if (MultiMatching_Cancel_Button_obj != null)
+                    //    {
+                    //        MultiMatching_Cancel_Button_obj.MultiMatching_Cancel();
+                    //    }
+                    //}
 
                     if (GPGSManager.GetInstance.IsConnected() == true)
                     {

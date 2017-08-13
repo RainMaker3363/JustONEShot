@@ -22,6 +22,8 @@ public class SurvivalGameStart : MonoBehaviour
     private float WaitOverTime;
     private float WaitTime = 10;
 
+    int EditorIndex = 4;
+
     void Awake()
     {
         
@@ -34,7 +36,7 @@ public class SurvivalGameStart : MonoBehaviour
         Char = GamePlayObj.transform.Find("PlayerCharacter").GetComponent<CharMove>();
 #if UNITY_EDITOR
 
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < EditorIndex; i++)
         {
             if (Enemy[i] == null)
             {
@@ -42,7 +44,7 @@ public class SurvivalGameStart : MonoBehaviour
             }
         }
 #else
-        for (int i = 0; i < GPGSManager.GetInstance.GetAllPlayers().Count; i++)
+        for (int i = 0; i < GPGSManager.GetInstance.GetAllPlayers().Count-1; i++)
         {
             if (Enemy[i] == null)
             {
@@ -63,7 +65,7 @@ public class SurvivalGameStart : MonoBehaviour
 
 #if UNITY_EDITOR
 
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < EditorIndex; i++)
         {
             if (Enemy[i] == null)
             {
