@@ -10,9 +10,13 @@ public class MultiMatching_UI : MonoBehaviour {
 
     private HY.MultiGameModeState MultiGameModeNumber;
     public MultiTitleManager TitleManager;
+    public MultiMatching_Cancel_Button MultiMatching_Cancel_Button_obj;
 
     private bool MultiLogChecker;
     private bool MultiStartChecker;
+
+    // 매칭시 타임아웃을 체크한다.
+    private float TimeOutChecker;
 
     // Use this for initialization
     void Start () {
@@ -21,8 +25,20 @@ public class MultiMatching_UI : MonoBehaviour {
         MultiStartChecker = false;
         MultiLogChecker = false;
 
+        // 매칭 시 타임아웃을 체크할 시간
+        TimeOutChecker = 60.0f;
+
         MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();//MultiTitleManager.NowMultiGameModeNumber;
 
+        if (MultiMatching_Cancel_Button_obj != null)
+        {
+            MultiMatching_Cancel_Button_obj.Initialize();
+        }
+        else
+        {
+            MultiMatching_Cancel_Button_obj = GameObject.Find("Cancel_Button").GetComponent<MultiMatching_Cancel_Button>();
+            MultiMatching_Cancel_Button_obj.Initialize();
+        }
 
         if (TitleManager == null)
         {
@@ -67,8 +83,20 @@ public class MultiMatching_UI : MonoBehaviour {
         MultiStartChecker = false;
         MultiLogChecker = false;
 
+        // 매칭 시 타임아웃을 체크할 시간
+        TimeOutChecker = 60.0f;
+
         MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();//MultiTitleManager.NowMultiGameModeNumber;
 
+        if(MultiMatching_Cancel_Button_obj != null)
+        {
+            MultiMatching_Cancel_Button_obj.Initialize();
+        }
+        else
+        {
+            MultiMatching_Cancel_Button_obj = GameObject.Find("Cancel_Button").GetComponent<MultiMatching_Cancel_Button>();
+            MultiMatching_Cancel_Button_obj.Initialize();
+        }
 
         if (TitleManager == null)
         {
@@ -158,6 +186,17 @@ public class MultiMatching_UI : MonoBehaviour {
 
             case HY.MultiGameModeState.PVP:
                 {
+                    if(TimeOutChecker > 0.0f)
+                    {
+                        TimeOutChecker -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        if(MultiMatching_Cancel_Button_obj != null)
+                        {
+                            MultiMatching_Cancel_Button_obj.MultiMatching_Cancel();
+                        }
+                    }
 
                     if (GPGSManager.GetInstance.IsConnected() == true)
                     {
@@ -167,15 +206,15 @@ public class MultiMatching_UI : MonoBehaviour {
                         {
                             MultiLogChecker = true;
 
-                            Dictionary<string, int> PlayersInfo = GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers();
-                            IDictionaryEnumerator Iter = PlayersInfo.GetEnumerator();
+                            //Dictionary<string, int> PlayersInfo = GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers();
+                            //IDictionaryEnumerator Iter = PlayersInfo.GetEnumerator();
 
 
-                            while(Iter.MoveNext())
-                            {
-                                Debug.Log("Player ID : " + Iter.Key);
-                                Debug.Log("Player Char Num : " + Iter.Value);
-                            }
+                            //while(Iter.MoveNext())
+                            //{
+                            //    Debug.Log("Player ID : " + Iter.Key);
+                            //    Debug.Log("Player Char Num : " + Iter.Value);
+                            //}
 
                             Debug.Log("Players Count : " + GPGSManager.GetInstance.GetAllPlayers().Count);
                         }
@@ -199,7 +238,18 @@ public class MultiMatching_UI : MonoBehaviour {
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
-                    
+
+                    if (TimeOutChecker > 0.0f)
+                    {
+                        TimeOutChecker -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        if (MultiMatching_Cancel_Button_obj != null)
+                        {
+                            MultiMatching_Cancel_Button_obj.MultiMatching_Cancel();
+                        }
+                    }
 
                     if (GPGSManager.GetInstance.IsConnected() == true)
                     {
@@ -211,7 +261,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
                             for (int i = 0; i < GPGSManager.GetInstance.GetAllPlayers().Count; i++)
                             {
-                                Debug.Log("Player[" + i + "] Name" + " : " + GPGSManager.GetInstance.GetOtherNameGPGS(i));
+                                Debug.Log("Survival Ready Player[" + i + "] Name" + " : " + GPGSManager.GetInstance.GetOtherNameGPGS(i));
                             }
 
                             Debug.Log("Players Count : " + GPGSManager.GetInstance.GetAllPlayers().Count);
@@ -228,10 +278,27 @@ public class MultiMatching_UI : MonoBehaviour {
                             {
                                 Debug.Log("SurvivalOpponentCharNumber : " + TitleManager.GetSurvivalOpoonentCharNumbers());
 
-                                for (int i = 0; i < GPGSManager.GetInstance.GetAllPlayers().Count; i++)
+                                Dictionary<string, int> Diction = TitleManager.GetSurvivalOpponentCharNumber();
+                                IDictionaryEnumerator Iter = Diction.GetEnumerator();
+
+                                int Counter = 0;
+
+                                while(Iter.MoveNext())
                                 {
-                                    Debug.Log("Player[" + i + "] Name" + " : " + GPGSManager.GetInstance.GetOtherNameGPGS(i));
+                                    if (Diction.ContainsKey(Iter.Key.ToString()))
+                                    {
+                                        Debug.Log("Session Player[" + Counter + "] ID : " + Iter.Key + " Char : " + Iter.Value);
+                                        Counter++;
+                                    }
+
+                                    
                                 }
+                                
+
+                                //for (int i = 0; i < GPGSManager.GetInstance.GetAllPlayers().Count; i++)
+                                //{
+                                //    Debug.Log("Session Player[" + i + "] Name : " GPGSManager.GetInstance.GetOtherNameGPGS(i) + " Char : ");
+                                //}
 
                                 MultiStartChecker = true;
 

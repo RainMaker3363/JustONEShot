@@ -60,6 +60,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 서바이벌 모드에서 쓰일 여러 이벤트 및 값들
     public bool BossEvent;
     private int LeftPlayerCount;
+    private bool bPaused; // 어플리케이션이 내려진 상태인지 아닌지의 스테이트를 저장하기 위한 변수
 
     //private List<int> SurvivalOpponentCharNumbersList;
     //private List<bool> _SurvivalOpponentSelectSignalsList;
@@ -117,6 +118,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         GPGSManager.GetInstance.updateListener = this;
         MultiGameModeState = GPGSManager.GetInstance.GetMultiGameModeState();
 
+        bPaused = false;
         //if (SurvivalOpponentCharNumbers == null)
         //{
         //    SurvivalOpponentCharNumbers = new List<int>(8);
@@ -849,6 +851,19 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     }
 
+    // 어플리케이션이 Home 키가 눌려졌을때의 콜백되는 함수
+    void OnApplicationPause(bool pause)
+    {
+        if (pause)
+        {
+            bPaused = true;
+
+            ThisGameIsEnd = true;
+
+            EndGameAndLeaveRoom(0.5f);
+        }
+    }
+
     // 현재 PVP 모드에서 적의 캐릭터 번호를 가지고 온다
     public int GetPVPOpponentCharNumber()
     {
@@ -1192,6 +1207,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             MultiStartChecker = true;
 
             GPGSManager.GetInstance.LeaveGame();
+            //GPGSManager.GetInstance.LeftRoomInit();
             GPGSManager.GetInstance.updateListener = null;
             GPGSManager.GetInstance.LBListener = null;
 
@@ -1201,11 +1217,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             {
                 case HY.MultiGameModeState.NONE:
                     {
-                        GPGSManager.GetInstance.ReMatchingInit(0);
+                        //GPGSManager.GetInstance.ReMatchingInit(0);
+                        
 
-                        if (dTime <= 1.5f)
+                        if (dTime <= 0.5f)
                         {
-                            Invoke("StartLobbyScene", 1.5f);
+                            Invoke("StartLobbyScene", 0.5f);
                         }
                         else if (dTime >= 5.0f)
                         {
@@ -1220,11 +1237,11 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                 case HY.MultiGameModeState.PVP:
                     {
-                        GPGSManager.GetInstance.ReMatchingInit(1);
+                        //GPGSManager.GetInstance.ReMatchingInit(1);
 
-                        if (dTime <= 1.5f)
+                        if (dTime <= 0.5f)
                         {
-                            Invoke("StartLobbyScene", 1.5f);
+                            Invoke("StartLobbyScene", 0.5f);
                         }
                         else if (dTime >= 5.0f)
                         {
@@ -1239,11 +1256,11 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                 case HY.MultiGameModeState.SURVIVAL:
                     {
-                        GPGSManager.GetInstance.ReMatchingInit(2);
+                        //GPGSManager.GetInstance.ReMatchingInit(2);
 
                         if (dTime <= 1.5f)
                         {
-                            Invoke("StartLobbyScene", 1.5f);
+                            Invoke("StartLobbyScene", 0.5f);
                         }
                         else if (dTime >= 5.0f)
                         {
@@ -2353,6 +2370,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             case HY.MultiGameModeState.PVP:
                 {
                     ThisGameIsEnd = true;
+                    GPGSManager.GetInstance.updateListener = null;
                 }
                 break;
 
@@ -2369,7 +2387,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                     Debug.Log("Player Left Room");
 
-                    ThisGameIsEnd = true;
+                    //ThisGameIsEnd = true;
+                    SendEndGameMssage(true);
+                    GPGSManager.GetInstance.updateListener = null;
                 }
                 break;
         }
@@ -2576,13 +2596,37 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public void SendEndGameMssage(bool GameEnd)
     {
 
-
-        if (ThisGameIsEnd == false)
+        switch (MultiGameModeState)
         {
-            ThisGameIsEnd = GameEnd;
+            case HY.MultiGameModeState.NONE:
+                {
 
-            GPGSManager.GetInstance.SendFinishMessage(ThisGameIsEnd);
+                }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+                    if (ThisGameIsEnd == false)
+                    {
+                        ThisGameIsEnd = GameEnd;
+
+                        GPGSManager.GetInstance.SendFinishMessage(ThisGameIsEnd);
+                    }
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    if (ThisGameIsEnd == false)
+                    {
+                        //ThisGameIsEnd = GameEnd;
+
+                        GPGSManager.GetInstance.SendFinishMessage(ThisGameIsEnd);
+                    }
+                }
+                break;
         }
+
         
 
 

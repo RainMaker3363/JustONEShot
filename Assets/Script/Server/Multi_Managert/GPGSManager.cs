@@ -158,6 +158,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
 
     private bool IsConnectedOn = false;
+    private bool IsMatchingNow = false;
     private bool showingWaitingRoom = false;
     private static bool IsInitEnd = false;
 
@@ -181,6 +182,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     {
         bLogin = false;
         IsConnectedOn = false;
+        IsMatchingNow = false;
 
         MyCharacterNumber = 100;
         OppenentCharNumber = 100;
@@ -451,6 +453,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         return IsConnectedOn;
     }
 
+    public bool IsMatching()
+    {
+        return IsMatchingNow;
+    }
+
     public string GetNetMessage()
     {
         return NetMessage;
@@ -702,6 +709,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     {
         ShowMPStatus("We are " + percent + "% done with setup");
 
+        IsMatchingNow = true;
+
         if (!showingWaitingRoom)
         {
             showingWaitingRoom = true;
@@ -716,12 +725,14 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             ShowMPStatus("We are connected to the room! I would probably start our game now.");
             IsConnectedOn = true;
+            //IsMatchingNow = true;
             _myMessageNum = 0;
         }
         else
         {
             ShowMPStatus("Uh-oh. Encountered some error connecting to the room.");
             IsConnectedOn = false;
+            IsMatchingNow = false;
         }
     }
 
@@ -742,6 +753,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if (updateListener != null)
         {
             updateListener.LeftRoomConfirmed();
+        }
+        
+        if(LBListener != null)
+        {
+            LBListener.LeftRoomConfirmed();
         }
 
         showingWaitingRoom = false;
@@ -1897,6 +1913,17 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                 }
                 break;
         }
+    }
+
+    public void LeftRoomInit()
+    {
+        bLogin = false;
+        IsConnectedOn = false;
+
+        NowMultiGameMode = HY.MultiGameModeState.NONE;
+
+        _myMessageNum = 0;
+
     }
 
 
