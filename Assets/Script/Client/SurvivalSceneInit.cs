@@ -15,7 +15,7 @@ public class SurvivalSceneInit : MonoBehaviour
     public GameObject[] EnemyObj;
     [SerializeField]
     public Transform[] EnemyStartPos;
-    public MultiGameManager Mul_Manager;
+    //public MultiGameManager Mul_Manager;
     GameObject m_Player;
     [SerializeField]
     GameObject[] m_Enemy;
@@ -90,7 +90,7 @@ public class SurvivalSceneInit : MonoBehaviour
 
         if (m_Player == null)
         {
-           // Mul_Manager.SendCharacterNumberMessage(Mul_Manager.GetMyCharNumber());
+            // Mul_Manager.SendCharacterNumberMessage(Mul_Manager.GetMyCharNumber());
 
             m_Player = Instantiate(PlayerObj[GPGSManager.GetInstance.GetMyCharacterNumber()]);
             m_Player.transform.position = PlayerStartPos.position;
@@ -108,51 +108,62 @@ public class SurvivalSceneInit : MonoBehaviour
         //    }
         //}
         //Debug.Log(Mul_Manager.GetPVPOpponentCharNumber());
-        for(int i = 0; i<7;i++)
+        for (int i = 0; i < 7; i++)
         {
             CharEnemyPoster[i].sprite = null;
         }
-        Dictionary<string, int> Diction = GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers();
-        IDictionaryEnumerator iter = Diction.GetEnumerator();
+        //Dictionary<string, int> Diction = GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers();
+        //IDictionaryEnumerator iter = Diction.GetEnumerator();
 
-        m_Enemy = new GameObject[GPGSManager.GetInstance.GetAllPlayers().Count-1];
+        m_Enemy = new GameObject[GPGSManager.GetInstance.GetAllPlayers().Count - 1];
 
         int j = 0;
 
-        while(iter.MoveNext())
-        {
-            Debug.Log("iter.key : "+ iter.Key + "iter.value : " + iter.Value);
-            //iter.MoveNext();
-        }
+        //while(iter.MoveNext())
+        //{
+        //    Debug.Log("iter.key : "+ iter.Key + "iter.value : " + iter.Value);
+        //    //iter.MoveNext();
+        //}
 
-        iter = Diction.GetEnumerator();
-        iter.MoveNext();
-
-        while (j < GPGSManager.GetInstance.GetAllPlayers().Count-1)
+        //iter = Diction.GetEnumerator();
+        //iter.MoveNext();
+        string EnemyID;
+        int MyIDNumber = GPGSManager.GetInstance.GetMySurvival_ID_Index();
+        int MyIDCheck = 0;  //i 가 ,PlayerIDNumber와 같을경우 보정
+        int CharCode = 0;
+        while (j < GPGSManager.GetInstance.GetAllPlayers().Count)
         {
-  
+
             if (m_Enemy[j] == null)// && Mul_Manager.GetPVPOpponentCharNumber() != 100)
             {
-                Debug.Log("EnemyIndex j " + j);
-                m_Enemy[j] = Instantiate(EnemyObj[Diction[iter.Key.ToString()]]);
-                m_Enemy[j].transform.position = EnemyStartPos[j].position;
-                m_Enemy[j].name = "EnemyCharacter" + j;
-                m_Enemy[j].transform.SetParent(GamePlayObj.transform);
+                //Debug.Log("EnemyIndex j " + j);
+                if (MyIDNumber == j)
+                {
+                    //iter.MoveNext();
+                    j++;
+                    MyIDCheck++;
+                    continue;
+                }
+                else
+                {
+                    EnemyID = GPGSManager.GetInstance.GetSurvivalAllPlayerCharacterID(j);
+                    CharCode = GPGSManager.GetInstance.GetSurvivalAllPlayerCharacterNumber(EnemyID);
+                }
+                int index = j - MyIDCheck;
+                m_Enemy[index] = Instantiate(EnemyObj[CharCode]);
+                m_Enemy[index].transform.position = EnemyStartPos[index].position;
+                m_Enemy[index].name = "EnemyCharacter" + index;
+                m_Enemy[index].transform.SetParent(GamePlayObj.transform);
             }
 
 
-            CharEnemyPoster[j].sprite = Poster[Diction[iter.Key.ToString()]];
-            iter.MoveNext();
+            CharEnemyPoster[j].sprite = Poster[CharCode];
+            //iter.MoveNext();
             j++;
         }
 
         Char1.sprite = Poster[GPGSManager.GetInstance.GetMyCharacterNumber()];
 #endif
-
-
     }
-
-
-
 }
 

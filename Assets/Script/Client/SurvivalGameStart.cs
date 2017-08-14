@@ -98,6 +98,7 @@ public class SurvivalGameStart : MonoBehaviour
                                 {
                                     Mul_Manager.SendWeaponNumberMessage(0);
                                     Mul_Manager.SendMultiSelectStateMessage(true);
+                                    Mul_Manager.SendMultiWaitStateMessage(true);
                                 }
 
                                 Select.SetActive(false);
@@ -113,6 +114,7 @@ public class SurvivalGameStart : MonoBehaviour
                                 {
                                     Mul_Manager.SendWeaponNumberMessage(1);
                                     Mul_Manager.SendMultiSelectStateMessage(true);
+                                    Mul_Manager.SendMultiWaitStateMessage(true);
                                 }
                                 Select.SetActive(false);
                                 //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
@@ -126,6 +128,7 @@ public class SurvivalGameStart : MonoBehaviour
                                 {
                                     Mul_Manager.SendWeaponNumberMessage(2);
                                     Mul_Manager.SendMultiSelectStateMessage(true);
+                                    Mul_Manager.SendMultiWaitStateMessage(true);
                                 }
                                 Select.SetActive(false);
                                 //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
@@ -155,6 +158,7 @@ public class SurvivalGameStart : MonoBehaviour
                             {
                                 Mul_Manager.SendWeaponNumberMessage(0);
                                 Mul_Manager.SendMultiSelectStateMessage(true);
+                                Mul_Manager.SendMultiWaitStateMessage(true);
                             }
                             Select.SetActive(false);
                             //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
@@ -168,6 +172,7 @@ public class SurvivalGameStart : MonoBehaviour
                             {
                                 Mul_Manager.SendWeaponNumberMessage(1);
                                 Mul_Manager.SendMultiSelectStateMessage(true);
+                                Mul_Manager.SendMultiWaitStateMessage(true);
                             }
                             Select.SetActive(false);
                             //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
@@ -181,6 +186,7 @@ public class SurvivalGameStart : MonoBehaviour
                             {
                                 Mul_Manager.SendWeaponNumberMessage(2);
                                 Mul_Manager.SendMultiSelectStateMessage(true);
+                                Mul_Manager.SendMultiWaitStateMessage(true);
                             }
                             Select.SetActive(false);
                             //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
@@ -232,8 +238,7 @@ public class SurvivalGameStart : MonoBehaviour
                         {
                             if (Selectanim.GetBool("PlayEnd"))
                             {
-                                Waiting.SetActive(true);
-                                Mul_Manager.SendMultiWaitStateMessage(true);
+                                Waiting.SetActive(true);                                
                             }
                         }
                     }
