@@ -211,7 +211,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             PlayerCharacters_Number.Clear();
         }
 
-        MySurvival_ID_Index = -1;
+        MySurvival_ID_Index = 0;
 
         if (IsInitEnd == false)
         {

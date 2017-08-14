@@ -153,7 +153,10 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
+                    
                     __SurvivalOpponentCharNumbers[participantId] = characterNumber;
+
+                    Debug.Log("ID : " + participantId + " Number : " + __SurvivalOpponentCharNumbers[participantId]);
                 }
                 break;
 
