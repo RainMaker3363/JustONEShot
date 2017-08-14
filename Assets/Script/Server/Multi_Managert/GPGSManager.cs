@@ -140,7 +140,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private List<byte> _BossHPStateMeesage;
 
     // 현재 세션에 접속한 플레이어들의 정보들이다.
-    private List<Participant> allPlayers;
+    //private List<Participant> allPlayers;
 
     // 현재 나의 캐릭터 정보를 가지고 있는다.
     // 기본값은 100이다.
@@ -150,6 +150,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // PVP용으로써 서바이벌 모드에선 다른 로직을...
     // 기본값은 100이다.
     private Dictionary<string, int> SurvivalOpponentCharNumbers;
+    // 나를 포함한 모든 플레이어들의 캐릭터 번호를 가지고 있는다.
+    private Dictionary<string, int> PlayerCharacters_Number;
+    // 서바이벌 모드에서 사용하는 나의 인덱스 번호
+    private int MySurvival_ID_Index;
     private int OppenentCharNumber = 100;
 
     // 난수 발생시 동기화를 위한 변수
@@ -197,6 +201,17 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             SurvivalOpponentCharNumbers.Clear();
         }
+
+        if(PlayerCharacters_Number == null)
+        {
+            PlayerCharacters_Number = new Dictionary<string, int>(8);
+        }
+        else
+        {
+            PlayerCharacters_Number.Clear();
+        }
+
+        MySurvival_ID_Index = -1;
 
         if (IsInitEnd == false)
         {
@@ -496,10 +511,63 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         return SurvivalOpponentCharNumbers;
     }
 
+    // 서바이벌 모드에서 나의 인덱스 번호를 알 수 있다.
+    public int GetMySurvival_ID_Index()
+    {
+        //allPlayers = GetAllPlayers();
+        string My_ID = GetMyParticipantId();
+
+        for (int i =0; i < GetAllPlayers().Count; i++)
+        {
+            if(GetAllPlayers()[i].ParticipantId.Equals(My_ID))
+            {
+                MySurvival_ID_Index = i;
+                break;
+            }
+        }
+
+        return MySurvival_ID_Index;
+    }
+
+    // 서바이벌 모드에서 모든 플레이어들의 캐릭터 번호를 알 수 있습니다.
+    public int GetSurvivalAllPlayerCharacterNumber(string ID)
+    {
+        int Character_Number = 0;
+        IDictionaryEnumerator Iter = PlayerCharacters_Number.GetEnumerator();
+
+        while(Iter.MoveNext())
+        {
+            if(Iter.Key.Equals(ID))
+            {
+                Character_Number = (int)Iter.Value;
+                break;
+            }
+        }
+
+        return Character_Number;
+    }
+
+    // 서바이벌 모드에서 모든 플레이어들의 ID값을 알아낸다.
+    public string GetSurvivalAllPlayerCharacterID(int index = 0)
+    {
+        //allPlayers = GetAllPlayers();
+
+        if (index <= 0)
+        {
+            index = 0;
+        }
+        else if(index >= GetAllPlayers().Count)
+        {
+            index = GetAllPlayers().Count;
+        }
+
+        return GetAllPlayers()[index].ParticipantId;
+    }
+
     //// 서바이벌 모드에서 적들의 캐릭터 번호를 설정할 때 사용합니다.
-    //public void SetSurvivalOpponentCharNumbers(string PlayerID, int CharNumber)
+    //public void SetPlayerCharacters_Number(int CharNumber = 0)
     //{
-    //    SurvivalOpponentCharNumbers[PlayerID] = CharNumber;
+    //    PlayerCharacters_Number[GetMyParticipantId()] = CharNumber;
     //}
 
     // 현재 내가 선택한 캐릭터에 대한 정보를 설정해준다.
@@ -518,7 +586,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             MyCharacterNumber = number;
         }
-        
+
+        PlayerCharacters_Number[GetMyParticipantId()] = number;
     }
 
     // 현재 내가 선택한 캐릭터에 대한 정보를 반환시켜준다.
@@ -1216,7 +1285,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                     float posZ = System.BitConverter.ToSingle(data, 14);
                     float rotY = System.BitConverter.ToSingle(data, 18);
                     //float rotZ = System.BitConverter.ToSingle(data, 18);
-                    Debug.Log("Player " + senderId + " is at (" + posX + ", " + posY + ") rotation " + rotY);
+                    //Debug.Log("Player " + senderId + " is at (" + posX + ", " + posY + ") rotation " + rotY);
 
                     ReceiveMessage = ByteToString(data);
                     // We'd better tell our GameController about this.
@@ -1330,7 +1399,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                 {
                     int AniStateNumber = System.BitConverter.ToInt32(data, 2);
 
-                    Debug.Log("AniState Get");
+                    //Debug.Log("AniState Get");
 
                     ReceiveMessage = ByteToString(data);
 
@@ -1417,6 +1486,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                             case HY.MultiGameModeState.SURVIVAL:
                                 {
                                     SurvivalOpponentCharNumbers[senderId] = CharacterNumber;
+                                    PlayerCharacters_Number[senderId] = CharacterNumber;
                                     Debug.Log("Survival Char ID : " + senderId);
                                     Debug.Log("Survival Char Number : " + SurvivalOpponentCharNumbers[senderId]);
                                     //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);

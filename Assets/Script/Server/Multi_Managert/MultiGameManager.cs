@@ -311,7 +311,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         _nextBroadcastTime = 0;
 
         // 타임 아웃 정보 초기화
-        timeOutThreshold = 20.0f;
+        timeOutThreshold = 30.0f;
         _timeOutCheckInterval = 1.0f;
         _nextTimeoutCheck = 0.0f;
 
@@ -1110,7 +1110,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         return (allPlayers.Count);
 
     }
-
+    
     /// <summary>
     /// 서바이벌 모드에 접속해 있는 플레이어들의 ID 값을 알 수 있다.
     /// 매개변수는 순차번호 간의 ID값을 반환해준다.
@@ -1700,6 +1700,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                                 LeftPlayerCount--;
                             }
 
+                            Debug.Log("Now Player Count : " + LeftPlayerCount);
                         }
 
                     }
@@ -2479,12 +2480,14 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         if (LeftPlayerCount > 0)
                         {
                             LeftPlayerCount--;
-                            Debug.Log("Now Player Count : " + LeftPlayerCount);
+
                         }
                         else
                         {
                             ThisGameIsEnd = true;
                         }
+
+                        Debug.Log("Now Player Count : " + LeftPlayerCount);
 
                         //ThisGameIsEnd = true;
                     }
