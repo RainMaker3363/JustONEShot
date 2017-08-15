@@ -585,9 +585,29 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         else
         {
             MyCharacterNumber = number;
+
         }
 
-        PlayerCharacters_Number[GetMyParticipantId()] = number;
+        switch(NowMultiGameMode)
+        {
+            case HY.MultiGameModeState.NONE:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    PlayerCharacters_Number[GetMyParticipantId()] = MyCharacterNumber;
+                }
+                break;
+        }
     }
 
     // 현재 내가 선택한 캐릭터에 대한 정보를 반환시켜준다.
@@ -1486,7 +1506,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                             case HY.MultiGameModeState.SURVIVAL:
                                 {
                                     SurvivalOpponentCharNumbers[senderId] = CharacterNumber;
-                                    PlayerCharacters_Number[senderId] = CharacterNumber;
+                                    //PlayerCharacters_Number[senderId] = CharacterNumber;
                                     Debug.Log("Survival Char ID : " + senderId);
                                     Debug.Log("Survival Char Number : " + SurvivalOpponentCharNumbers[senderId]);
                                     //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
