@@ -63,6 +63,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     private bool bPaused; // 어플리케이션이 내려진 상태인지 아닌지의 스테이트를 저장하기 위한 변수
     private int EnemyIndexChecker;
 
+
     //private List<int> SurvivalOpponentCharNumbersList;
     //private List<bool> _SurvivalOpponentSelectSignalsList;
     //private List<bool> _SurvivalOpponentWaitSignalsList;
@@ -108,6 +109,11 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     private bool _DeadEyeChecker;
     private int _DeadEyeRespawnIndex;
 
+    // PVP에서 사용하는 맨 처음 데드 아이 총알의 위치 관련 변수들
+    private int DeadEyeStartIndex;
+    private int _OpponentDeadEyeStartIndex;
+    private int My_DeadEYeSTartIndex;
+
     // Use this for initialization
     void Awake()
     {
@@ -118,8 +124,10 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         GPGSManager.GetInstance.updateListener = this;
         MultiGameModeState = GPGSManager.GetInstance.GetMultiGameModeState();
+        GPGSManager.GetInstance.SetMultiGameStart(true);
 
         bPaused = false;
+
         //if (SurvivalOpponentCharNumbers == null)
         //{
         //    SurvivalOpponentCharNumbers = new List<int>(8);
@@ -157,6 +165,10 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                     OppenentCharNumber = GPGSManager.GetInstance.GetPVPOpponentCharNumber();
 
+                    // PVP에서 사용할 데드아이 총알 초기 위치
+                    My_DeadEYeSTartIndex = Random.Range(1, 4);
+                    _OpponentDeadEyeStartIndex = 1;
+                    SendDeadEyeRespawnIndexMessage();
 
                 }
                 break;
@@ -858,14 +870,25 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 어플리케이션이 Home 키가 눌려졌을때의 콜백되는 함수
     void OnApplicationPause(bool pause)
     {
+        
         if (pause)
         {
             bPaused = true;
+            Debug.Log("OnApplicationPause : " + pause);
 
             ThisGameIsEnd = true;
 
             EndGameAndLeaveRoom(0.5f);
         }
+    }
+
+    // PVP에서 사용하는 데드아이 총알의 시작 위치를 결정해준다.
+    public int GetPVPDeadEyeStartIndex()
+    {
+        DeadEyeStartIndex = ((My_DeadEYeSTartIndex + _OpponentDeadEyeStartIndex) / 2);
+
+        Debug.Log("DeadEyeStartIndex : " + DeadEyeStartIndex);
+        return DeadEyeStartIndex;
     }
 
     // 현재 PVP 모드에서 적의 캐릭터 번호를 가지고 온다
@@ -1861,7 +1884,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 현재 데드아이 상태를 업데이트 해준다.
     // true면 데드 아이 발동을 의미
     // false면 데드 아이 발동이 끝남 혹은 안됨..
-    public void DeadEyeStateReceived(string participantId, bool DeadEyeActive)
+    public void DeadEyeStateReceived(string participantId, bool DeadEyeActive, int DeadEyeRespawnIndex)
     {
         switch (MultiGameModeState)
         {
@@ -1876,6 +1899,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     if (_multiplayerReady)
                     {
                         _DeadEyeChecker = DeadEyeActive;
+                        _DeadEyeRespawnIndex = DeadEyeRespawnIndex;
 
                         EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
 
@@ -1970,7 +1994,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 {
                     if (_multiplayerReady)
                     {
-                        _DeadEyeRespawnIndex = index;
+                        //_DeadEyeRespawnIndex = index;
+                        //_DeadEyeStartIndexMap[participantId] = index;
+                        _OpponentDeadEyeStartIndex = index;
                     }
                 }
                 break;
@@ -2392,9 +2418,10 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                     Debug.Log("Player Left Room");
 
-                    //ThisGameIsEnd = true;
                     SendEndGameMssage(true);
+
                     GPGSManager.GetInstance.updateListener = null;
+
                 }
                 break;
         }
@@ -2663,9 +2690,11 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     // 데드 아이 아이템을 먹을 경우 메시지를 보낸다.
     // 다시 리스폰 되는 위치를 서버쪽에서 난수로 지정해준다.
-    public void SendDeadEyeRespawnIndexMessage()
+    // 현재는 임시로 사용하지 않음
+    private void SendDeadEyeRespawnIndexMessage()
     {
-        GPGSManager.GetInstance.SendDeadEyeIndexMessage();
+        int index = Random.Range(1, 4);
+        GPGSManager.GetInstance.SendDeadEyeIndexMessage(index);
     }
 
     // 애니메이션 값을 넣어준다.

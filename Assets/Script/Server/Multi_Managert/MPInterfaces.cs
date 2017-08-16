@@ -9,7 +9,7 @@
     void ItemStateReceived(string participantId, int Index, bool GetItem);
     void ShootStateReceived(string participantId, bool ShootSuccess);
     void ShootVectorReceived(string participantId, float x, float y, float z);
-    void DeadEyeStateReceived(string participantId, bool DeadEyeActive);
+    void DeadEyeStateReceived(string participantId, bool DeadEyeActive, int DeadEyeRespawnIndex);
     void DeadEyeTimerStateReceived(string participantId, float DeadEyeTimer);
     void DeadEyeRespawnIndexReceived(string participantId, int index);
 

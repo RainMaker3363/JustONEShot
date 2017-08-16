@@ -80,10 +80,12 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private int _shootMessageLength = 3;
     // Byte + Byte + 1 Float
     private int _deadeyeTimerMessageLength = 6;
-    // Byte + Byte + 1 Boolean
-    private int _deadeyeMessageLength = 3;
+    // Byte + Byte + 1 Boolean + Interger
+    private int _deadeyeMessageLength = 7;
     // Byte + Byte + 1 Interger
-    private int _deadeyeRespawnMessageLength = 6;
+    //private int _deadeyeRespawnMessageLength = 6;
+    // Byte + Byte + 1 Interger
+    private int _deadEyeRespawnMessageLength = 6;
     // Byte + Byte + 1 Interger
     private int _animMessageLength = 6;
     // Byte + Byte + 1 Interget
@@ -164,6 +166,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private bool IsConnectedOn = false;
     private bool IsMatchingNow = false;
     private bool showingWaitingRoom = false;
+    private bool IsMultiGameStart = false;
     private static bool IsInitEnd = false;
 
     private string ReceiveMessage = " ";
@@ -187,6 +190,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         bLogin = false;
         IsConnectedOn = false;
         IsMatchingNow = false;
+        IsMultiGameStart = false;
 
         MyCharacterNumber = 100;
         OppenentCharNumber = 100;
@@ -232,10 +236,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _shootMessageLength = 3;
             // Byte + Byte + 1 Float
             _deadeyeTimerMessageLength = 6;
-            // Byte + Byte + 1 Boolean
-            _deadeyeMessageLength = 3;
-             // Byte + Byte + 1 Interger
-             _deadeyeRespawnMessageLength = 6;
+            // Byte + Byte + 1 Boolean + 1 Interger
+            _deadeyeMessageLength = 7;
+            // Byte + Byte + 1 Interger
+            _deadEyeRespawnMessageLength = 6;
             // Byte + Byte + 1 Interger
             _animMessageLength = 6;
             // Byte + Byte + 1 Interget
@@ -309,9 +313,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _DeadEyeTimerMessage = new List<byte>(_deadeyeTimerMessageLength);
         }
 
-        if(_DeadEyeRespawnMessage == null)
+        if (_DeadEyeRespawnMessage == null)
         {
-            _DeadEyeRespawnMessage = new List<byte>(_deadeyeRespawnMessageLength);
+            _DeadEyeRespawnMessage = new List<byte>(_deadEyeRespawnMessageLength);
         }
 
 
@@ -471,6 +475,17 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     public bool IsMatching()
     {
         return IsMatchingNow;
+    }
+
+    // 현재 게임을 진행중인지 아닌지의 여부
+    public bool IsMultiGameStartNow()
+    {
+        return IsMultiGameStart;
+    }
+
+    public void SetMultiGameStart(bool MPStart = false)
+    {
+        IsMultiGameStart = MPStart;
     }
 
     public string GetNetMessage()
@@ -717,10 +732,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _DeadEyeTimerMessage = new List<byte>(_deadeyeTimerMessageLength);
         }
 
-        if (_DeadEyeRespawnMessage == null)
-        {
-            _DeadEyeRespawnMessage = new List<byte>(_deadeyeRespawnMessageLength);
-        }
+        //if (_DeadEyeRespawnMessage == null)
+        //{
+        //    _DeadEyeRespawnMessage = new List<byte>(_deadeyeRespawnMessageLength);
+        //}
 
         if (_AnimMessage == null)
         {
@@ -821,7 +836,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             ShowMPStatus("We are connected to the room! I would probably start our game now.");
             IsConnectedOn = true;
-            //IsMatchingNow = true;
+            IsMatchingNow = false;
             _myMessageNum = 0;
         }
         else
@@ -850,11 +865,16 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             updateListener.LeftRoomConfirmed();
         }
-        
-        if(LBListener != null)
+
+        if(IsMultiGameStart == false)
         {
-            LBListener.LeftRoomConfirmed();
+            if (LBListener != null)
+            {
+                LBListener.LeftRoomConfirmed();
+            }
         }
+        
+
 
         showingWaitingRoom = false;
     }
@@ -1143,16 +1163,13 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
     // 데드아이 리스폰 위치를 보내는 메시지
     // 데드아이의 위치를 난수를 보내준다.
-    public void SendDeadEyeIndexMessage()
+    public void SendDeadEyeIndexMessage(int RespawnIndex = 1)
     {
         _DeadEyeRespawnMessage.Clear();
         _DeadEyeRespawnMessage.Add(_protocolVersion);
         _DeadEyeRespawnMessage.Add((byte)'I');
 
-        int index = UnityEngine.Random.Range(0, 5);
-
-
-        _DeadEyeRespawnMessage.AddRange(System.BitConverter.GetBytes(index));
+        _DeadEyeRespawnMessage.AddRange(System.BitConverter.GetBytes(RespawnIndex));
 
         byte[] DeadEyeMessageToSend = _DeadEyeRespawnMessage.ToArray();
 
@@ -1167,6 +1184,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         _DeadEyeMessage.Add(_protocolVersion);
         _DeadEyeMessage.Add((byte)'D');
         _DeadEyeMessage.AddRange(System.BitConverter.GetBytes(DeadEyeSet));
+
+        // 그 후 다음 생성될 데드아이 아이템 위치를 전송해준다.
+        int index = UnityEngine.Random.Range(0, 5);
+
+        _DeadEyeMessage.AddRange(System.BitConverter.GetBytes(index));
 
         byte[] DeadEyeMessageToSend = _DeadEyeMessage.ToArray();
 
@@ -1347,7 +1369,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
                     if (updateListener != null)
                     {
-                        //switch(MultiGameMode)
+                        //switch (MultiGameMode)
                         //{
                         //    case HY.MultiGameModeState.NONE:
                         //        {
@@ -1357,7 +1379,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
                         //    case HY.MultiGameModeState.PVP:
                         //        {
-                        //            updateListener.DeadEyeRespawnIndexReceived(index);
+                        //            updateListener.DeadEyeRespawnIndexReceived(senderId, index);
                         //        }
                         //        break;
 
@@ -1392,6 +1414,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             case 'D':
                 {
                     bool DeadEyeActive = System.BitConverter.ToBoolean(data, 2);
+                    int DeadEyeRespawnIndex = System.BitConverter.ToInt32(data, 3);
 
                     Debug.Log("DeadEye Message!");
 
@@ -1401,7 +1424,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                     if (updateListener != null)
                     {
                         //updateListener.ItemStateReceived(Index, ItemGet);
-                        updateListener.DeadEyeStateReceived(senderId, DeadEyeActive);
+                        updateListener.DeadEyeStateReceived(senderId, DeadEyeActive, DeadEyeRespawnIndex);
                     }
                 }
                 break;
