@@ -46,7 +46,7 @@ public class DB_CreateManager : MonoBehaviour {
         
         if (Request)   //생성이 안되어있는경우
         {
-            Mul_Manager.SendDeadEyeRespawnIndexMessage();//서버에 난수를 요청한다
+            //Mul_Manager.SendDeadEyeRespawnIndexMessage();//서버에 난수를 요청한다
             Request = false;
         }
 
@@ -73,7 +73,7 @@ public class DB_CreateManager : MonoBehaviour {
             else // 데스존에 잠겨있다면
             {
                 BulletCreate = false;
-                Mul_Manager.SendDeadEyeRespawnIndexMessage();//서버에 난수 재생성 요구
+                //Mul_Manager.SendDeadEyeRespawnIndexMessage();//서버에 난수 재생성 요구
             }
         }
     }

@@ -78,7 +78,7 @@ public class DeadEyeUI : MonoBehaviour {
 
         DeadEyeStartTime = Time.time;
         DeadEyeComplete = false;
-     // m_ScreenShot.SetActive(true);
+      m_ScreenShot.SetActive(true);
      //maincam.gameObject.SetActive(false);
     }
 

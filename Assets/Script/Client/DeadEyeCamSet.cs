@@ -5,6 +5,13 @@ using UnityEngine;
 public class DeadEyeCamSet : MonoBehaviour {
 
     public GameObject cam;
+    public Transform camPos;
+
+
+    void Update()
+    {
+        cam.transform.position = camPos.position;
+    }
 
     void OnDisable()    //비활성화될때
     {
