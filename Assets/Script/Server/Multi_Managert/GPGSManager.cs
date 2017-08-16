@@ -526,6 +526,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             }
         }
 
+        Debug.Log("MySurvival_ID_Index : " + MySurvival_ID_Index);
         return MySurvival_ID_Index;
     }
 
@@ -544,6 +545,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             }
         }
 
+        Debug.Log("Test Opponent CharNum : " + Character_Number + " ID : " + PlayerCharacters_Number[ID]);
         return Character_Number;
     }
 
@@ -560,6 +562,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             index = GetAllPlayers().Count;
         }
+
+        Debug.Log("Test ID :" + GetAllPlayers()[index].ParticipantId + " Nick : " + GetAllPlayers()[index].DisplayName); 
 
         return GetAllPlayers()[index].ParticipantId;
     }
@@ -604,7 +608,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
+                    
                     PlayerCharacters_Number[GetMyParticipantId()] = MyCharacterNumber;
+
+                    Debug.Log("Test Char Num :" + PlayerCharacters_Number[GetMyParticipantId()]);
                 }
                 break;
         }
@@ -1506,7 +1513,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                             case HY.MultiGameModeState.SURVIVAL:
                                 {
                                     SurvivalOpponentCharNumbers[senderId] = CharacterNumber;
-                                    //PlayerCharacters_Number[senderId] = CharacterNumber;
+                                    PlayerCharacters_Number[senderId] = CharacterNumber;
                                     Debug.Log("Survival Char ID : " + senderId);
                                     Debug.Log("Survival Char Number : " + SurvivalOpponentCharNumbers[senderId]);
                                     //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);

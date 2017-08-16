@@ -11,8 +11,12 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
     //private bool ButtonChecker;
     //private bool MultiStartChecker;
+
+
     private int OpponentCharNumber;
     private bool bPaused = false;  // 어플리케이션이 내려진 상태인지 아닌지의 스테이트를 저장하기 위한 변수
+    private float LogCheckTimer;
+
     private Dictionary<string, int> __SurvivalOpponentCharNumbers;
     private IDictionaryEnumerator __SurvivalOpoonentCharNumbers_Iter;
 
@@ -22,6 +26,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     // Use this for initialization
     void Awake () {
         OpponentCharNumber = 100;
+        LogCheckTimer = 3.0f;
 
         GPGSManager.GetInstance.InitializeGPGS(); // 초기화
 
@@ -69,6 +74,15 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
     void Update()
     {
+        if(LogCheckTimer >= 0.0f)
+        {
+            LogCheckTimer -= Time.deltaTime;
+        }
+        else
+        {
+            LogCheckTimer = 3.0f;
+        }
+
         NowMultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();
 
         //Debug.Log("MultiGameModeNumber : " + NowMultiGameModeNumber);
@@ -131,6 +145,11 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
             }
         }
 
+        if(LogCheckTimer >= 3.0f)
+        {
+            Debug.Log("AlreadyChecker : " + AlreadyChecker);
+        }
+        
         return AlreadyChecker;
     }
 
