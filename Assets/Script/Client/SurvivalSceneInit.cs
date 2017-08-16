@@ -133,14 +133,15 @@ public class SurvivalSceneInit : MonoBehaviour
         int CharCode = 0;
         while (j < GPGSManager.GetInstance.GetAllPlayers().Count)
         {
-
-            if (m_Enemy[j] == null)// && Mul_Manager.GetPVPOpponentCharNumber() != 100)
+            int index = j - MyIDCheck;
+            if (m_Enemy[index] == null)// && Mul_Manager.GetPVPOpponentCharNumber() != 100)
             {
                 //Debug.Log("EnemyIndex j " + j);
-                if (MyIDNumber == j)
+        
+                if ((MyIDNumber == j) && (MyIDCheck<1))
                 {
                     //iter.MoveNext();
-                    j++;
+                    j++;                   
                     MyIDCheck++;
                     continue;
                 }
@@ -149,7 +150,7 @@ public class SurvivalSceneInit : MonoBehaviour
                     EnemyID = GPGSManager.GetInstance.GetSurvivalAllPlayerCharacterID(j);
                     CharCode = GPGSManager.GetInstance.GetSurvivalAllPlayerCharacterNumber(EnemyID);
                 }
-                int index = j - MyIDCheck;
+                
                 m_Enemy[index] = Instantiate(EnemyObj[CharCode]);
                 m_Enemy[index].transform.position = EnemyStartPos[index].position;
                 m_Enemy[index].name = "EnemyCharacter" + index;
@@ -157,7 +158,7 @@ public class SurvivalSceneInit : MonoBehaviour
             }
 
 
-            CharEnemyPoster[j].sprite = Poster[CharCode];
+            CharEnemyPoster[index].sprite = Poster[CharCode];
             //iter.MoveNext();
             j++;
         }
