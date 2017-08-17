@@ -894,13 +894,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             bPaused = true;
             Debug.Log("OnApplicationPause : " + pause);
 
-            if(ThisGameIsEnd == false)
-            {
-                ThisGameIsEnd = true;
+            ThisGameIsEnd = true;
 
-                EndGameAndLeaveRoom(0.5f);
-            }
-            
+            EndGameAndLeaveRoom(0.5f);
         }
     }
 
