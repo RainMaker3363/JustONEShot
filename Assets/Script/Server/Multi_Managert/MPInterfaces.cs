@@ -23,6 +23,7 @@
     void MultiStateSelectReceived(string participantId, bool Select);
 
     //void CharacterSelectStateReceived(int CharacterNumber);
+    void SurvivalRankMessageReceived(string participantId, int RankNumber);
     void WeaponSelectStateReceived(string participantId, int WeaponNumber);
     void BossRaidAlarmReceived(bool Alarm);
     void BossHPStateReceived(int HPState);

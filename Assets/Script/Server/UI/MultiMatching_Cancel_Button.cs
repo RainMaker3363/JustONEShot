@@ -32,7 +32,7 @@ public class MultiMatching_Cancel_Button : MonoBehaviour, IPointerDownHandler
 
     private void Update()
     {
-        //this.gameObject.SetActive(GPGSManager.GetInstance.IsMatching());
+        this.gameObject.SetActive(GPGSManager.GetInstance.IsMatching());
     }
 
     // 멀티를 취소할때 사용하는 함수

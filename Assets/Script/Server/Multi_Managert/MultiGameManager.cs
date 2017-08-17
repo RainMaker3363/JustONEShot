@@ -56,12 +56,14 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     private Dictionary<string, int> _SurvivalOpponentCharacterNumber;
     private Dictionary<string, int> _SurvivalOpponentWeaponNumber;
     private Dictionary<int, string> _SurvivalPlayersID;
+    private Dictionary<string, int> _SurvivalPlayersRank;
 
     // 서바이벌 모드에서 쓰일 여러 이벤트 및 값들
     public bool BossEvent;
     private int LeftPlayerCount;
     private bool bPaused; // 어플리케이션이 내려진 상태인지 아닌지의 스테이트를 저장하기 위한 변수
     private int EnemyIndexChecker;
+    private int MySurvivalRank;
 
 
     //private List<int> SurvivalOpponentCharNumbersList;
@@ -177,6 +179,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 {
                     Debug.Log("MultiGameModeState : " + MultiGameModeState);
 
+                    MySurvivalRank = 1;
                     MyCharNumber = GPGSManager.GetInstance.GetMyCharacterNumber();
 
                     #region OpoonentInfoMap
@@ -640,6 +643,15 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         _SurvivalPlayersID.Clear();
                     }
 
+                    if(_SurvivalPlayersRank == null)
+                    {
+                        _SurvivalPlayersRank = new Dictionary<string, int>(allPlayers.Count);
+                    }
+                    else
+                    {
+                        _SurvivalPlayersRank.Clear();
+                    }
+
                     _opponentScripts = new Dictionary<string, EnemyMove>(allPlayers.Count - 1);
                     PlayerCharacters = new Dictionary<string, GameObject>(allPlayers.Count);
                     PlayerCharacters_Nick = new Dictionary<string, string>(allPlayers.Count);
@@ -690,6 +702,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                             _MyParticipantId_Index = i;
                             EnemyIndexChecker = 1;
 
+                            _SurvivalPlayersRank[nextParticipantId] = (allPlayers.Count);
                             PlayerCharacters[nextParticipantId] = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
                             //PlayerCharacters_Pos[i] = GameObject.Find("SceneInit").transform.Find(OpponentPosObjectName).gameObject.transform.position;
 
@@ -709,6 +722,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                             _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]] = 0;
                             _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]] = false;
                             _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]] = false;
+                            _SurvivalPlayersRank[nextParticipantId] = (allPlayers.Count);
 
                             string OpponentObjectName = ("EnemyCharacter" + (i - EnemyIndexChecker)).ToString();
 
@@ -921,6 +935,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         
     }
 
+    // 현재 서바이벌 모드에서 나의 랭크
+    public int GetMySurvivalRankNumber()
+    {
+        return MySurvivalRank;
+    }
+    
     // 내 자신의 캐릭터 고유 번호를 반환
     public int GetMyCharNumber()
     {
@@ -993,6 +1013,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public Dictionary<int, string> __SurvivalPlayersID_Dictionary()
     {
         return _SurvivalPlayersID;
+    }
+
+    // 서바이벌 모드에서 사용하는 모든 플레이어들의 랭크 정보를 반환
+    public Dictionary<string, int> _SurvivalPlayers_Rank_Number()
+    {
+        return _SurvivalPlayersRank;
     }
 
     // 서바이벌 모드에서 사용하는 상대방의 Wait 신호 카운트를 불(Bool)형으로 반환해준다.
@@ -1119,6 +1145,22 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         Debug.Log("SVM Survival Char " + index + " Num : " + CharNumber);
 
         return CharNumber;
+    }
+
+    // 서바이벌 모드에서 사용하는 랭킹 번호를 반환한다.
+    // ID를 입력하면 해당하는 플레이어의 번호 정보를 저장한다.
+    public int GetSurvivalPlayersRankNumber(string ID)
+    {
+        int RankNumber = 0;
+
+        if (_SurvivalPlayersRank.ContainsKey(ID))
+        {
+            RankNumber = _SurvivalOpponentCharacterNumber[ID];
+            Debug.Log("Players Rank ID : " + ID + " Num : " + RankNumber);
+        }
+
+
+        return RankNumber;
     }
 
     /// <summary>
@@ -2011,6 +2053,38 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     }
 
+    // 서바이벌 모드 랭크 번호를 받는 콜백 메시지 
+    public void SurvivalRankMessageReceived(string participantId, int RankNumber)
+    {
+        switch (MultiGameModeState)
+        {
+            case HY.MultiGameModeState.NONE:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+                    if (_multiplayerReady)
+                    {
+
+                    }
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    if (_multiplayerReady)
+                    {
+                        _SurvivalPlayersRank[participantId] = RankNumber;
+                        Debug.Log("Now Rank Received ID : " + participantId + " Num : " + RankNumber);
+                    }
+                }
+                break;
+        }
+    }
+
     #region Survival Boss Received Callback
 
     // 서바이벌 모드에서 쓰일 보스 이벤트 리시버
@@ -2717,6 +2791,33 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         
     }
 
+    // 서바이벌에서 사용하는 나의 랭크 번호를 전송한다.
+    public void SendMyRankNumberMessage()
+    {
+        switch(MultiGameModeState)
+        {
+            case HY.MultiGameModeState.NONE:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    MySurvivalRank = ((allPlayers.Count) - (LeftPlayerCount));
+                    GPGSManager.GetInstance.SendSurvivalMyRankNumber(MySurvivalRank);
+                }
+                break;
+        }
+        
+    }
+
     #region Survival Boss Send Event
 
     // 서바이벌 모드에서 보스 이벤트를 발동 시킬때 사용한다.
@@ -2946,6 +3047,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                                 _nextTimeoutCheck = Time.time + _timeOutCheckInterval;
                             }
                         }
+
+                        // 나의 랭크를 지속적으로 체크한다.
+                        MySurvivalRank = ((allPlayers.Count) - (LeftPlayerCount));
 
                         // 플레이어의 위치 동기화
                         SendMyPositionUpdate();

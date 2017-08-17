@@ -101,6 +101,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // Byte + Byte + 1 Vector
     private int _shootVectorMesageLength = 14;
 
+    // Byte + Byte + 1 Interger
+    private int _SurvivalRankedMessageLength = 6;
+
     // Byte + Byte + Byte + 3 floats for position  + 1 float for rotY + 1 Interget for MessageNumber
     private int _BossAlarmMesageLength = 23;
     // Byte + Byte + Byte + 1 Boolean
@@ -133,6 +136,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private List<byte> _DeadEyeRespawnMessage;
     private List<byte> _AnimMessage;
     private List<byte> _HealthMessage;
+
+    // 서바이벌 모드에서 사용할 랭킹 메시지
+    private List<byte> _SurvivalRankedMessage;
 
     // 보스 이벤트
     private List<byte> _BossAlarmMessage;
@@ -254,8 +260,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _WeaponSelectMessageLength = 6;
              // Byte + Byte + 1 Vector
             _shootVectorMesageLength = 14;
-            
-            
+
+            // Byte + Byte + 1 Interger
+            _SurvivalRankedMessageLength = 6;
+
+
             // Byte + Byte + Byte + 3 floats for position  + 1 float for rotY + 1 Interget for MessageNumber
             _BossAlarmMesageLength = 23;
             // Byte + Byte + Byte + 1 Boolean
@@ -347,6 +356,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if (_CharacterSelectMessage == null)
         {
             _CharacterSelectMessage = new List<byte>(_CharacterSelectMessageLength);
+        }
+
+        if(_SurvivalRankedMessage == null)
+        {
+            _SurvivalRankedMessage = new List<byte>(_SurvivalRankedMessageLength);
         }
 
         // 보스 이벤트
@@ -765,6 +779,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if (_CharacterSelectMessage == null)
         {
             _CharacterSelectMessage = new List<byte>(_CharacterSelectMessageLength);
+        }
+
+        if (_SurvivalRankedMessage == null)
+        {
+            _SurvivalRankedMessage = new List<byte>(_SurvivalRankedMessageLength);
         }
 
         // 보스 이벤트
@@ -1235,6 +1254,19 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, WeaponSelectMessageToSend);
     }
 
+    // 서바이벌 모드에서 사용할 랭크를 매길때 사용하는 메시지
+    public void SendSurvivalMyRankNumber(int MyRank = 100)
+    {
+        _SurvivalRankedMessage.Clear();
+        _SurvivalRankedMessage.Add(_protocolVersion);
+        _SurvivalRankedMessage.Add((byte)'R');
+        _SurvivalRankedMessage.AddRange(System.BitConverter.GetBytes(MyRank));
+
+        byte[] SurvivalRankedMessageToSend = _SurvivalRankedMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, SurvivalRankedMessageToSend);
+    }
+
     // 서바이벌 모드에서 보스 레이드 이벤트를 보내는 메시지
     public void SendBossAlertEvent(bool Alarm)
     {
@@ -1561,6 +1593,22 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                     //    //updateListener.ItemStateReceived(Index, ItemGet);
                     //    updateListener.CharacterSelectStateReceived(CharacterNumber);
                     //}
+                }
+                break;
+
+            case 'R':
+                {
+                    int RankNumber = System.BitConverter.ToInt32(data, 2);
+
+                    Debug.Log("Now Rank Message Number : " + RankNumber);
+
+                    ReceiveMessage = ByteToString(data);
+
+                    if (updateListener != null)
+                    {
+                        //updateListener.ItemStateReceived(Index, ItemGet);
+                        updateListener.SurvivalRankMessageReceived(senderId, RankNumber);
+                    }
                 }
                 break;
 
