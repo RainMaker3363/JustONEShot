@@ -116,6 +116,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     private int _OpponentDeadEyeStartIndex;
     private int My_DeadEYeSTartIndex;
 
+    // 서바이벌 모드에서 현재 남은 플레이어의 수를 체크한다.
+    private float LeftPlayerCountTimer;
+
     // Use this for initialization
     void Awake()
     {
@@ -128,6 +131,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         MultiGameModeState = GPGSManager.GetInstance.GetMultiGameModeState();
         GPGSManager.GetInstance.SetMultiGameStart(true);
 
+        LeftPlayerCountTimer = 1.5f;
         bPaused = false;
 
         //if (SurvivalOpponentCharNumbers == null)
@@ -890,9 +894,13 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             bPaused = true;
             Debug.Log("OnApplicationPause : " + pause);
 
-            ThisGameIsEnd = true;
+            if(ThisGameIsEnd == false)
+            {
+                ThisGameIsEnd = true;
 
-            EndGameAndLeaveRoom(0.5f);
+                EndGameAndLeaveRoom(0.5f);
+            }
+            
         }
     }
 
@@ -1020,6 +1028,14 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         return _SurvivalPlayersRank;
     }
+
+    // 서바이벌 모드에서 사용하는 모든 플레이어들의 닉네임
+    public Dictionary<string, string> _SurvivalPlayer_Nick()
+    {
+        return PlayerCharacters_Nick;
+    }
+
+
 
     // 서바이벌 모드에서 사용하는 상대방의 Wait 신호 카운트를 불(Bool)형으로 반환해준다.
     // 반환 여부에 따라 다른 플레이어들이 모두 준비 되었는지를 알 수 있다.
@@ -1161,6 +1177,20 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
 
         return RankNumber;
+    }
+
+    // 서바이벌 모드에서 ID에 해당하는 플레이어의 닉네임을 알 수 있다.
+    public string GetSurvivalPlayerCharacters_Nick(string ID)
+    {
+        string Nick = "";
+
+        if(PlayerCharacters_Nick.ContainsKey(ID))
+        {
+            Nick = PlayerCharacters_Nick[ID];
+            Debug.Log("Players Nick ID : " + ID + " Num : " + Nick);
+        }
+
+        return Nick;
     }
 
     /// <summary>
@@ -2494,7 +2524,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                     SendEndGameMssage(true);
 
-                    GPGSManager.GetInstance.updateListener = null;
+                    ThisGameIsEnd = true;
+
+                    //GPGSManager.GetInstance.updateListener = null;
 
                 }
                 break;
@@ -2727,7 +2759,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 {
                     if (ThisGameIsEnd == false)
                     {
-                        //ThisGameIsEnd = GameEnd;
+                        ThisGameIsEnd = GameEnd;
 
                         GPGSManager.GetInstance.SendFinishMessage(ThisGameIsEnd);
                     }
@@ -3036,6 +3068,16 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         //    + "\nOppentNick[6] : " + allPlayers[6].ParticipantId + " / OppenentGun[6] : " + _SurvivalOpponentWeaponNumber[allPlayers[6].ParticipantId].ToString() + " / OppenentChar[6] : " + _SurvivalOpponentCharacterNumber[allPlayers[6].ParticipantId].ToString()
                         //    + "\nOppentNick[7] : " + allPlayers[7].ParticipantId + " / OppenentGun[7] : " + _SurvivalOpponentWeaponNumber[allPlayers[7].ParticipantId].ToString() + " / OppenentChar[7] : " + _SurvivalOpponentCharacterNumber[allPlayers[7].ParticipantId].ToString();
 
+                        // 남은 플레이어 체크
+                        if(LeftPlayerCountTimer <= 0.0f)
+                        {
+                            LeftPlayerCountTimer = 1.5f;
+                            Debug.Log("Now LeftPlayerCount : " + LeftPlayerCount);
+                        }
+                        else
+                        {
+                            LeftPlayerCountTimer -= Time.deltaTime;
+                        }
 
                         // 적의 타임아웃 체크
                         if (ThisGameIsEnd == false)
