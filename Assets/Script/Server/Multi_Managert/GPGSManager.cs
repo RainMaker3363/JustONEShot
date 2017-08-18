@@ -862,7 +862,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             ShowMPStatus("Uh-oh. Encountered some error connecting to the room.");
             IsConnectedOn = false;
-            IsMatchingNow = false;
+            IsMatchingNow = true;
         }
     }
 
@@ -889,6 +889,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             if (LBListener != null)
             {
+                Debug.Log("LBListener Has been null");
+
                 LBListener.LeftRoomConfirmed();
             }
         }
@@ -903,6 +905,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     {
         foreach (string participantID in participantIds)
         {
+            Debug.Log("Player ID : " + participantID + " has Joined");
+
             ShowMPStatus("Player " + participantID + " has joined.");
         }
     }
@@ -917,6 +921,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
         foreach (string participantID in participantIds)
         {
+            Debug.Log("Player ID : " + participantID + " has Left");
+
             ShowMPStatus("Player " + participantID + " has left.");
 
             if (updateListener != null)

@@ -2518,9 +2518,14 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                     Debug.Log("Player Left Room");
 
-                    SendEndGameMssage(true);
+                    if(ThisGameIsEnd == false)
+                    {
+                        ThisGameIsEnd = true;
 
-                    ThisGameIsEnd = true;
+                        SendEndGameMssage(true);
+                        
+                    }
+                    
 
                     //GPGSManager.GetInstance.updateListener = null;
 
@@ -2838,7 +2843,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
-                    MySurvivalRank = ((allPlayers.Count) - (LeftPlayerCount));
+                    MySurvivalRank = ((allPlayers.Count) - ((allPlayers.Count) - (LeftPlayerCount)));
                     GPGSManager.GetInstance.SendSurvivalMyRankNumber(MySurvivalRank);
                 }
                 break;
@@ -3087,7 +3092,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         }
 
                         // 나의 랭크를 지속적으로 체크한다.
-                        MySurvivalRank = ((allPlayers.Count) - (LeftPlayerCount));
+                        MySurvivalRank = ((allPlayers.Count) - ((allPlayers.Count) - (LeftPlayerCount)));
 
                         // 플레이어의 위치 동기화
                         SendMyPositionUpdate();
