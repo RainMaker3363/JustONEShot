@@ -30,6 +30,21 @@ public class MultiTitleGameStartButton : MonoBehaviour, IDragHandler, IPointerUp
         PVP_Matching_UI.SetActive(false);
 
         //MultiStartChecker = false;
+        Debug.Log("MultiTitleGameStartButton Start");
+    }
+
+    private void OnEnable()
+    {
+        ButtonChecker = false;
+
+        if (PVP_Multi_Readey == null)
+        {
+            PVP_Multi_Readey = GameObject.Find("UI_Ready");
+        }
+
+        PVP_Matching_UI.SetActive(false);
+
+        Debug.Log("MultiTitleGameStartButton OnEnable");
     }
 
     IEnumerator StartMultiGame()
@@ -108,6 +123,9 @@ public class MultiTitleGameStartButton : MonoBehaviour, IDragHandler, IPointerUp
                 //GPGSManager.GetInstance.SetMultiGameModeState(1);
                 GPGSManager.GetInstance.SetMultiGameModeState(HY.MultiGameModeState.PVP);
 
+                PVP_Matching_UI.GetComponent<MultiMatching_UI>().StartMatchingRestart();
+
+                Debug.Log("You Selected Game Mode : " + GPGSManager.GetInstance.GetMultiGameModeState());
 
 
             }

@@ -93,11 +93,11 @@ public class MultiMatching_Cancel_Button : MonoBehaviour, IPointerDownHandler
                     MultiMatching_UI_Ready_Obj.SetActive(false);
                     MultiMatching_UI_Obj.SetActive(false);
 
-                    // Survival 모드로 세팅해준다.
-                    GPGSManager.GetInstance.SetMultiGameModeState(HY.MultiGameModeState.NONE);
+                    // NONE 모드로 세팅해준다.
+                    //GPGSManager.GetInstance.SetMultiGameModeState(HY.MultiGameModeState.NONE);
 
                     // 방을 나간다.
-                    GPGSManager.GetInstance.OnRoomConnected(false);
+                    GPGSManager.GetInstance.LeaveRoom();
 
                     // 초기화를 다시 시켜준다.
                     _MultiTitleManager.MultiMatching_Cancel_Initilize();

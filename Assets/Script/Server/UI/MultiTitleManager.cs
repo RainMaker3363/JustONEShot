@@ -16,6 +16,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     private int OpponentCharNumber;
     private bool bPaused = false;  // 어플리케이션이 내려진 상태인지 아닌지의 스테이트를 저장하기 위한 변수
     private float LogCheckTimer;
+    private int MyCharacterNumberBackup;
 
     private Dictionary<string, int> __SurvivalOpponentCharNumbers;
     private IDictionaryEnumerator __SurvivalOpoonentCharNumbers_Iter;
@@ -25,6 +26,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
     // Use this for initialization
     void Awake () {
+        MyCharacterNumberBackup = 0;
         OpponentCharNumber = 100;
         LogCheckTimer = 3.0f;
 
@@ -167,6 +169,8 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
             case HY.MultiGameModeState.PVP:
                 {
                     OpponentCharNumber = characterNumber;
+
+                    Debug.Log("ID : " + participantId + " Number : " + OpponentCharNumber);
                 }
                 break;
 
@@ -195,6 +199,8 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
             bPaused = true;
 
             GPGSManager.GetInstance.OnRoomConnected(false);
+
+            MultiMatching_Cancel_Initilize();
         }
     }
 
@@ -202,6 +208,12 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     public void MultiMatching_Cancel_Initilize()
     {
         Debug.Log("Multi Game Matching Cancel");
+
+        MyCharacterNumberBackup = GPGSManager.GetInstance.GetMyCharacterNumber();
+        Debug.Log("MyCharacterNumberBackUp : " + MyCharacterNumberBackup);
+
+        OpponentCharNumber = 100;
+        LogCheckTimer = 3.0f;
 
         GPGSManager.GetInstance.LBListener = null;
 
@@ -224,6 +236,9 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         {
             __SurvivalOpponentCharNumbers.Clear();
         }
+
+        // 캐릭터 선택을 백업해준다.
+        GPGSManager.GetInstance.SetMyCharacterNumber(MyCharacterNumberBackup);
 
         /* 
         * 유니티 엔진 사용 시 입력을 하지 않으면 모바일 장치의 화면이 어두워지다가 잠기게 되는데,

@@ -73,13 +73,70 @@ public class MultiMatching_UI : MonoBehaviour {
         GPGSManager.GetInstance.SignInAndStartMPGame();
 
         //StartCoroutine(StartMultiGame());
-
+        //Debug.Log("MultiMatching_UI Start");
     }
 
     private void OnEnable()
     {
         //Matching_Text.text = "Player Searching...";
 
+        //MultiStartChecker = false;
+        //MultiLogChecker = false;
+
+        //// 매칭 시 타임아웃을 체크할 시간
+        //TimeOutChecker = 60.0f;
+
+        //MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();//MultiTitleManager.NowMultiGameModeNumber;
+
+        //if(MultiMatching_Cancel_Button_obj != null)
+        //{
+        //    MultiMatching_Cancel_Button_obj.Initialize();
+        //}
+        //else
+        //{
+        //    MultiMatching_Cancel_Button_obj = GameObject.Find("Cancel_Button").GetComponent<MultiMatching_Cancel_Button>();
+        //    MultiMatching_Cancel_Button_obj.Initialize();
+        //}
+
+        //if (TitleManager == null)
+        //{
+        //    TitleManager = GameObject.Find("MultiTitleManager").GetComponent<MultiTitleManager>();
+        //}
+
+        //Matching_Text.text = "Matching The Player...\nMode : " + MultiGameModeNumber.ToString();
+
+
+        //Debug.Log("MultiGameModeNumber : " + MultiGameModeNumber);
+
+
+        //switch (MultiGameModeNumber)
+        //{
+        //    case HY.MultiGameModeState.NONE:
+        //        {
+
+        //        }
+        //        break;
+
+        //    case HY.MultiGameModeState.PVP:
+        //        {
+
+        //        }
+        //        break;
+
+        //    case HY.MultiGameModeState.SURVIVAL:
+        //        {
+        //            //GPGSManager.GetInstance.ShowRoomUI();
+        //        }
+        //        break;
+        //}
+
+        //GPGSManager.GetInstance.SignInAndStartMPGame();
+
+        //Debug.Log("MultiMatching_UI OnEnable");
+    }
+
+    public void StartMatchingRestart()
+    {
         MultiStartChecker = false;
         MultiLogChecker = false;
 
@@ -88,7 +145,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
         MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();//MultiTitleManager.NowMultiGameModeNumber;
 
-        if(MultiMatching_Cancel_Button_obj != null)
+        if (MultiMatching_Cancel_Button_obj != null)
         {
             MultiMatching_Cancel_Button_obj.Initialize();
         }
@@ -105,9 +162,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
         Matching_Text.text = "Matching The Player...\nMode : " + MultiGameModeNumber.ToString();
 
-
         Debug.Log("MultiGameModeNumber : " + MultiGameModeNumber);
-
 
         switch (MultiGameModeNumber)
         {

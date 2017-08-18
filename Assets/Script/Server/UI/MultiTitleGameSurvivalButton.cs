@@ -33,6 +33,18 @@ public class MultiTitleGameSurvivalButton : MonoBehaviour, IDragHandler, IPointe
         //MultiStartChecker = false;
     }
 
+    private void OnEnable()
+    {
+        ButtonChecker = false;
+
+        if (Survival_Multi_Readey == null)
+        {
+            Survival_Multi_Readey = GameObject.Find("UI_Ready");
+        }
+
+        Survival_Matching_UI.SetActive(false);
+    }
+
     IEnumerator StartMultiGame()
     {
         yield return new WaitForSeconds(1.0f);
@@ -110,7 +122,9 @@ public class MultiTitleGameSurvivalButton : MonoBehaviour, IDragHandler, IPointe
                 // Survival 모드로 세팅해준다.
                 GPGSManager.GetInstance.SetMultiGameModeState(HY.MultiGameModeState.SURVIVAL);
 
+                Survival_Matching_UI.GetComponent<MultiMatching_UI>().StartMatchingRestart();
 
+                Debug.Log("You Selected Game Mode : " + GPGSManager.GetInstance.GetMultiGameModeState());
 
             }
 
