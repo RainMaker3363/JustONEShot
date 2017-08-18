@@ -49,7 +49,7 @@ class Gun_Revolver : UseGun
         Bullet_Use = 1;
         Damage = 25;
         NowUseGun = 0;
-        Sight = new Vector3(0, 6.6f, -3.9f);
+        Sight = new Vector3(0, 7.2f, -4.2f);
     }
 
     public override void UseBullet()
@@ -70,7 +70,7 @@ class Gun_ShotGun : UseGun
         Bullet_Use = 2;
         Damage = 45;
         NowUseGun = 1;
-        Sight = new Vector3(0, 5.1f, -3);
+        Sight = new Vector3(0, 6f, -3.5f);
     }
 
     public override void UseBullet()

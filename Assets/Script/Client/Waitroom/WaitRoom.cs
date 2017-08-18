@@ -37,6 +37,9 @@ public class WaitRoom : MonoBehaviour {
 
     public Button Zombie_Button;
 
+    [SerializeField]
+    GameObject[] CharInfo;
+
     void Awake()
     {
         QualitySettings.vSyncCount = 0;
@@ -123,5 +126,10 @@ public class WaitRoom : MonoBehaviour {
                 GameInfoManager.GetInstance().SelectIndex = SelectIndex;
             }
         }
+    }
+
+    public void CharInformation(bool set)
+    {
+        CharInfo[SelectIndex].SetActive(set);
     }
 }

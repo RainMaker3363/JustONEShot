@@ -26,7 +26,7 @@ namespace LSD
     //총 상태(추후 추가)
     enum GunState
     {
-        Revolver=0,
+        Revolver = 0,
         ShotGun,
         Musket
 
@@ -38,21 +38,21 @@ abstract public class UseChar
     public float MaxStamina;
     public float Stamina;
     public int MaxHP;
-    public int HP;    
+    public int HP;
     public float Speed;  //퍼센트기준 1==100%
     public float SteminaRecovery; //퍼센트기준 1==100%
 
 }
 
- class Char_00 : UseChar
+class Char_00 : UseChar
 {
 
     public Char_00()
     {
-       MaxStamina = Stamina = 1000;
-       MaxHP = HP = 100;
-       Speed = 1;
-       SteminaRecovery = 1;
+        MaxStamina = Stamina = 1000;
+        MaxHP = HP = 100;
+        Speed = 1;
+        SteminaRecovery = 1;
     }
 
 }
@@ -96,7 +96,8 @@ class Char_03 : UseChar
 
 }
 
-public class CharMove : MonoBehaviour {
+public class CharMove : MonoBehaviour
+{
 
 
     public MoveJoyStick m_MoveJoyStickControl;  //움직임 전용 조이스틱
@@ -133,7 +134,7 @@ public class CharMove : MonoBehaviour {
 
     public int m_DebugPlayerState;
 
-    int CharIndex =3; //캐릭터 선택 인덱스
+    int CharIndex = 3; //캐릭터 선택 인덱스
 
     //캐릭터 총
     public static UseGun m_UseGun;
@@ -156,8 +157,8 @@ public class CharMove : MonoBehaviour {
     //스테미나가 전부 소모된 상태
     bool m_Exhausted = false;
 
-   static bool DeadEyeStart = false;
-   public static bool DeadEyeEnd = false;
+    static bool DeadEyeStart = false;
+    public static bool DeadEyeEnd = false;
 
     bool m_AniPlay = false;
 
@@ -172,20 +173,21 @@ public class CharMove : MonoBehaviour {
     float EnemyDeadEyeTimer;    //적 데드아이 시간
     bool DeadEyecomplete = false;
     public static bool DeadEyeSuccess;
-    bool DeadEyeSuccessCheck=false;
+    bool DeadEyeSuccessCheck = false;
 
     public Transform DeathZone;
     bool DeathZoneDealay = false;
 
     public static bool GameEnd = false;
 
-    float Debug_DeadEyeTimer_Player=0;
-    float Debug_DeadEyeTimer_Enemy=0;
+    float Debug_DeadEyeTimer_Player = 0;
+    float Debug_DeadEyeTimer_Enemy = 0;
 
     public GameObject Revlolver;
     public GameObject ShotGun;
     public GameObject Musket;
     public static bool m_GunSelect = false;
+    public GameObject GunPoint;
 
 
     private float PlayerUpdateTime;
@@ -224,18 +226,19 @@ public class CharMove : MonoBehaviour {
         m_ZombieClear = false;
         m_GunSelect = false;
         gameObject.SetActive(false);
-       
+
     }
 
     // Use this for initialization
-    void Start() {
+    void Start()
+    {
 
-        
+
         m_CharCtr = GetComponent<CharacterController>();
 
         //카메라 기본위치 설정
         CamPos = cam.transform.position;
-        if(m_UseGun.Sight !=null)
+        if (m_UseGun.Sight != null)
             CamPos = m_UseGun.Sight;
 
         camAni = cam.GetComponent<Animator>();
@@ -289,156 +292,158 @@ public class CharMove : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
 
         //if (PlayerUpdateTime<Time.time)
         //{
         //    PlayerUpdateTime = Time.time + PlayerUpdateDelay;
-            //Mul_Manager.SendMultiSelectStateMessage
+        //Mul_Manager.SendMultiSelectStateMessage
 
-            m_DebugPlayerState = (int)m_PlayerState;
-            // Debug.Log("VectorForce: " + m_MoveJoyStickControl.GetVectorForce());
-            Debug.Log("PlayerState: " + m_PlayerState);
+        m_DebugPlayerState = (int)m_PlayerState;
+        // Debug.Log("VectorForce: " + m_MoveJoyStickControl.GetVectorForce());
+        //Debug.Log("PlayerState: " + m_PlayerState);
 
-            if (m_PlayerBeforeState != m_PlayerState)
+        if (m_PlayerBeforeState != m_PlayerState)
+        {
+
+            if (GameEnd)   //이기거나 졌을경우 변경을 막음
             {
-
-                if (GameEnd)   //이기거나 졌을경우 변경을 막음
-                {
-                    //ShotAble = false;
-                    m_PlayerState = m_PlayerBeforeState;
-                }
-                else
-                {
-                    CharAniInit();
-                    m_PlayerBeforeState = m_PlayerState;
-                }
-
+                //ShotAble = false;
+                m_PlayerState = m_PlayerBeforeState;
+            }
+            else
+            {
+                CharAniInit();
+                m_PlayerBeforeState = m_PlayerState;
             }
 
-            DeadEyeCheck();
-            DeathZoneCheck();
-            GameEndCheck();
+        }
 
-            if (ShotAble && m_ShotJoyStickControl.GetTouch())
-            {
-                //    if(m_PlayerState != LSD.PlayerState.SHOT_FIRE)        
-                m_PlayerState = LSD.PlayerState.SHOT_READY;
-            }
+        DeadEyeCheck();
+        DeathZoneCheck();
+        GameEndCheck();
 
-            switch (m_PlayerState)
-            {
-                case LSD.PlayerState.IDLE:
-                    {
-                        ShotAble = true;
-                        anim.SetInteger("DashLevel", 0);
-                         anim.speed = 1;
-                        Update_IDLE();
-                        break;
-                    }
-                case LSD.PlayerState.DASH_SLOW:
-                    {
-                        ShotAble = true;
-                        anim.SetInteger("DashLevel", 1);
+        if (ShotAble && m_ShotJoyStickControl.GetTouch())
+        {
+            //    if(m_PlayerState != LSD.PlayerState.SHOT_FIRE)        
+            m_PlayerState = LSD.PlayerState.SHOT_READY;
+        }
+
+        switch (m_PlayerState)
+        {
+            case LSD.PlayerState.IDLE:
+                {
+                    ShotAble = true;
+                    anim.SetInteger("DashLevel", 0);
+                    anim.speed = 1;
+                    Update_IDLE();
+                    break;
+                }
+            case LSD.PlayerState.DASH_SLOW:
+                {
+                    ShotAble = true;
+                    anim.SetInteger("DashLevel", 1);
                     anim.speed = CharStat.Speed;
                     m_FirstTouch.color = Color.red;
-                        Update_DASH_SLOW();
-                        break;
-                    }
-                case LSD.PlayerState.DASH_SOFT:
-                    {
-                        ShotAble = true;
-                        anim.SetInteger("DashLevel", 2);
+                    Update_DASH_SLOW();
+                    break;
+                }
+            case LSD.PlayerState.DASH_SOFT:
+                {
+                    ShotAble = true;
+                    anim.SetInteger("DashLevel", 2);
                     anim.speed = CharStat.Speed;
                     m_FirstTouch.color = Color.green;
-                        Update_DASH_SOFT();
-                        break;
-                    }
-                case LSD.PlayerState.DASH_HARD:
-                    {
-                        ShotAble = true;
-                        anim.SetInteger("DashLevel", 3);
+                    Update_DASH_SOFT();
+                    break;
+                }
+            case LSD.PlayerState.DASH_HARD:
+                {
+                    ShotAble = true;
+                    anim.SetInteger("DashLevel", 3);
                     anim.speed = CharStat.Speed;
                     m_FirstTouch.color = Color.blue;
-                        Update_DASH_HARD();
-                        break;
-                    }
-                case LSD.PlayerState.SHOT_READY:
+                    Update_DASH_HARD();
+                    break;
+                }
+            case LSD.PlayerState.SHOT_READY:
+                {
+                    if (!m_AniPlay)
                     {
-                        if (!m_AniPlay)
-                        {
-                            anim.Play("Shot_Ready");
-                            m_AniPlay = true;
-                        }
-                        anim.SetBool("ShotReady", true);
-
-                        Update_SHOT_READY();
-                        break;
-                    }
-                case LSD.PlayerState.SHOT_FIRE:
-                    {
-                        ShotAble = false;
-                        anim.SetBool("ShotReady", false);
-                        Update_SHOT_FIRE();
-                        break;
-                    }
-                case LSD.PlayerState.DAMAGE:
-                    {
+                        anim.Play("Shot_Ready");
                         m_AniPlay = true;
-                        ShotAble = false;
-                        Update_DAMAGE();
-                        break;
+                        GunPoint.SetActive(true);
                     }
-                case LSD.PlayerState.DEADEYE:
-                    {
-                        ShotAble = false;
-                        Update_DEADEYE();
-                        break;
-                    }
-                case LSD.PlayerState.REROAD:
-                    {
-                        // anim.Play("Reloading");
-                        ShotAble = false;
-                        anim.SetBool("Reloading", true);
-                        Update_REROAD();
-                        break;
-                    }
-                case LSD.PlayerState.ROLL:
-                    {
-                        if (!m_AniPlay)
-                        {
-                            anim.Play("Roll");
-                            m_AniPlay = true;
-                        }
-                        ShotAble = false;
-                        Update_Roll();
-                        break;
-                    }
-                case LSD.PlayerState.DEAD:
-                    {
-                        ShotAble = false;
-                        if (UI_Main.activeSelf)
-                        {
-                            UI_Main.SetActive(false);
-                        }
+                    anim.SetBool("ShotReady", true);
 
-                        break;
-                    }
-                case LSD.PlayerState.WIN:
+                    Update_SHOT_READY();
+                    break;
+                }
+            case LSD.PlayerState.SHOT_FIRE:
+                {
+                    ShotAble = false;
+                    anim.SetBool("ShotReady", false);
+                    Update_SHOT_FIRE();
+                    break;
+                }
+            case LSD.PlayerState.DAMAGE:
+                {
+                    m_AniPlay = true;
+                    ShotAble = false;
+                    Update_DAMAGE();
+                    break;
+                }
+            case LSD.PlayerState.DEADEYE:
+                {
+                    ShotAble = false;
+                    Update_DEADEYE();
+                    break;
+                }
+            case LSD.PlayerState.REROAD:
+                {
+                    // anim.Play("Reloading");
+                    ShotAble = false;
+                    anim.SetBool("Reloading", true);
+                    Update_REROAD();
+                    break;
+                }
+            case LSD.PlayerState.ROLL:
+                {
+                    if (!m_AniPlay)
                     {
-                        ShotAble = false;
-                        if (UI_Main.activeSelf)
-                        {
-                            UI_Main.SetActive(false);
-                        }
-                        break;
+                        anim.Play("Roll");
+                        m_AniPlay = true;
+                    }
+                    ShotAble = false;
+                    Update_Roll();
+                    break;
+                }
+            case LSD.PlayerState.DEAD:
+                {
+                    ShotAble = false;
+                    if (UI_Main.activeSelf)
+                    {
+                        UI_Main.SetActive(false);
                     }
 
-                default:
+                    break;
+                }
+            case LSD.PlayerState.WIN:
+                {
+                    ShotAble = false;
+                    if (UI_Main.activeSelf)
                     {
-                        break;
+                        UI_Main.SetActive(false);
                     }
-            }
+                    break;
+                }
+
+            default:
+                {
+                    break;
+                }
+        }
         //}
     }
 
@@ -572,11 +577,12 @@ public class CharMove : MonoBehaviour {
         //조준중에 손을 땠다면
         if (!m_ShotJoyStickControl.GetTouch())
         {
-            anim.SetBool("GunFire", true);           
+            anim.SetBool("GunFire", true);
+            GunPoint.SetActive(false);
             if (m_UseGun.Bullet_Gun >= m_UseGun.Bullet_Use)
             {
                 anim.SetBool("Shot", true);
-               
+
                 if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
                 {
                     Mul_Manager.SendShootMessage(true);
@@ -601,7 +607,7 @@ public class CharMove : MonoBehaviour {
     void Update_SHOT_FIRE()
     {
         if (!anim.GetBool("GunFire"))
-        {           
+        {
             m_PlayerState = LSD.PlayerState.IDLE;
         }
         else
@@ -624,10 +630,10 @@ public class CharMove : MonoBehaviour {
     {
         //if(!m_MoveJoyStickControl.TouchBegin)
         //{
-            m_MoveJoyStickControl.PedInit();
+        m_MoveJoyStickControl.PedInit();
         //}
 
-        if((DeadEyeEnd||!Mul_Manager.GetDeadEyeChecker())&& DeadEyeSuccessCheck)
+        if ((DeadEyeEnd || !Mul_Manager.GetDeadEyeChecker()) && DeadEyeSuccessCheck)
         {
             //판별했으니 초기화
             EnemyDeadEyeTimer = 0;
@@ -651,9 +657,9 @@ public class CharMove : MonoBehaviour {
 
         EnemyDeadEyeTimer = Mul_Manager.GetDeadEyeTimer();
 
-        if (EnemyDeadEyeTimer>0 && DeadEyecomplete && !DeadEyeSuccessCheck)  //플레이어의 데드아이가 끝났고 상대데드아이가 끝났는가
+        if (EnemyDeadEyeTimer > 0 && DeadEyecomplete && !DeadEyeSuccessCheck)  //플레이어의 데드아이가 끝났고 상대데드아이가 끝났는가
         {
-            if(EnemyDeadEyeTimer> m_DeadEyeTimer)//데드아이성공여부 판별
+            if (EnemyDeadEyeTimer > m_DeadEyeTimer)//데드아이성공여부 판별
             {
                 DeadEyeSuccess = true;
             }
@@ -664,7 +670,7 @@ public class CharMove : MonoBehaviour {
             //디버그용
             Debug_DeadEyeTimer_Player = m_DeadEyeTimer;
             Debug_DeadEyeTimer_Enemy = EnemyDeadEyeTimer;
-           
+
             DeadEyecomplete = false;
             DeadEyeSuccessCheck = true;
         }
@@ -678,7 +684,7 @@ public class CharMove : MonoBehaviour {
             m_PlayerState = LSD.PlayerState.IDLE;
         }
 
-        if(m_UseGun.Bullet_Hand>0&&m_UseGun.MaxBullet_Gun>m_UseGun.Bullet_Gun)//탄알이 있고 탄창이 안찼을때
+        if (m_UseGun.Bullet_Hand > 0 && m_UseGun.MaxBullet_Gun > m_UseGun.Bullet_Gun)//탄알이 있고 탄창이 안찼을때
         {
 
         }
@@ -691,7 +697,7 @@ public class CharMove : MonoBehaviour {
 
     void Update_Roll()
     {
-        
+
 
         if (!anim.GetBool("Rolling"))
         {
@@ -701,7 +707,7 @@ public class CharMove : MonoBehaviour {
             m_PlayerState = LSD.PlayerState.IDLE;
         }
         else
-        {          
+        {
             Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemy"), true);
             StaminaRecovery = false;
         }
@@ -714,9 +720,9 @@ public class CharMove : MonoBehaviour {
     /// </summary>
     public void OnReroadButton()
     {
-        if(m_PlayerState == LSD.PlayerState.IDLE)
+        if (m_PlayerState == LSD.PlayerState.IDLE)
         {
-            
+
             m_PlayerState = LSD.PlayerState.REROAD;
 
         }
@@ -728,7 +734,7 @@ public class CharMove : MonoBehaviour {
         {
             if (CharStat.Stamina > 400)
             {
-                if(m_PlayerState == LSD.PlayerState.DAMAGE)
+                if (m_PlayerState == LSD.PlayerState.DAMAGE)
                 {
                     anim.SetBool("Damaged", false);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌 중간에 캔슬된경우 여기서 바꿔줌
                 }
@@ -779,7 +785,7 @@ public class CharMove : MonoBehaviour {
             }
             Handheld.Vibrate();
         }
-        
+
     }
 
     public void DeadEyeDamaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
@@ -810,7 +816,7 @@ public class CharMove : MonoBehaviour {
                 anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
                 camAni.SetTrigger("Damage");
             }
-           
+
         }
 
         HP_bar.fillAmount = (float)CharStat.HP / CharStat.MaxHP;
@@ -827,7 +833,7 @@ public class CharMove : MonoBehaviour {
 
     public bool DeadCheck()
     {
-        if(CharStat.HP <= 0 && !GameEnd)
+        if (CharStat.HP <= 0 && !GameEnd)
         {
             CharStat.HP = 0;
             m_PlayerState = LSD.PlayerState.DEAD;
@@ -839,7 +845,7 @@ public class CharMove : MonoBehaviour {
             {
                 Mul_Manager.SendEndGameMssage(true);
             }
-          
+
             UI_Main.SetActive(false);
             UI_GameOver.SetActive(true);
             cam.SetActive(false);
@@ -847,11 +853,11 @@ public class CharMove : MonoBehaviour {
 
             //EnemyPos.gameObject.SetActive(false);
             Result.SetTrigger("Lose");
-           // UI_GameOverText.GetComponent<Text>().text = "Defeat";
+            // UI_GameOverText.GetComponent<Text>().text = "Defeat";
 
             return true;
         }
-        else if(GameEnd)
+        else if (GameEnd)
         {
             return true;
         }
@@ -873,7 +879,7 @@ public class CharMove : MonoBehaviour {
             }
         }
 
-        if(m_ZombieClear && !GameEnd)
+        if (m_ZombieClear && !GameEnd)
         {
             GameEnd = true;
             UI_Main.SetActive(false);
@@ -884,12 +890,12 @@ public class CharMove : MonoBehaviour {
     public static void DeadEye()    //데드아이 총알을 먹었을경우
     {
         DeadEyeStart = true;
-        
+
     }
 
     public void DeadEyeCheck()
     {
-        if(DeadEyeStart)
+        if (DeadEyeStart)
         {
             transform.LookAt(EnemyPos.position);
             anim.SetInteger("DashLevel", 0);
@@ -905,7 +911,7 @@ public class CharMove : MonoBehaviour {
             DeathZone.GetComponent<DeathZone>().DeadEyePlaying = true;
         }
 
-        if (GPGSManager.GetInstance.IsAuthenticated()&& Mul_Manager != null)
+        if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
         {
             if (Mul_Manager.GetDeadEyeChecker())
             {
@@ -938,7 +944,7 @@ public class CharMove : MonoBehaviour {
     public void HPRecovery(int Recovery)
     {
         CharStat.HP += Recovery;
-        if(CharStat.MaxHP< CharStat.HP)
+        if (CharStat.MaxHP < CharStat.HP)
         {
             CharStat.HP = CharStat.MaxHP;
         }
@@ -1017,27 +1023,27 @@ public class CharMove : MonoBehaviour {
     {
         if (m_Exhausted)
         {
-            CharStat.Stamina += (7* CharStat.SteminaRecovery);
+            CharStat.Stamina += (7 * CharStat.SteminaRecovery);
         }
         else
         {
             if (StaminaRecovery)
-                CharStat.Stamina += (10* CharStat.SteminaRecovery);
+                CharStat.Stamina += (10 * CharStat.SteminaRecovery);
         }
         StaminaCheck();
     }
     void FixedUpdate_DASH_SLOW()    //탈진 달리기
     {
-        m_MoveSpeed = 1*CharStat.Speed;
+        m_MoveSpeed = 1 * CharStat.Speed;
         if (StaminaRecovery)
-            CharStat.Stamina += (7* CharStat.SteminaRecovery);
+            CharStat.Stamina += (7 * CharStat.SteminaRecovery);
         PlayerMove();
         StaminaCheck();
     }
     void FixedUpdate_DASH_SOFT()    // 천천히 달리기
     {
         m_MoveSpeed = 5 * CharStat.Speed;
-        if(StaminaRecovery)
+        if (StaminaRecovery)
             CharStat.Stamina += (10 * CharStat.SteminaRecovery);
         PlayerMove();
         StaminaCheck();
@@ -1055,7 +1061,7 @@ public class CharMove : MonoBehaviour {
     }
     void FixedUpdate_SHOT_FIRE()
     {
-      
+
     }
     void FixedUpdate_DAMAGE()
     {
@@ -1078,7 +1084,7 @@ public class CharMove : MonoBehaviour {
 
         transform.rotation = m_MoveJoyStickControl.GetRotateVector();
         //transform.Translate(Vector3.forward * m_MoveSpeed * Time.deltaTime);
-        m_CharCtr.Move((transform.forward +Physics.gravity) * m_MoveSpeed * Time.deltaTime);
+        m_CharCtr.Move((transform.forward + Physics.gravity) * m_MoveSpeed * Time.deltaTime);
         //RaycastHit Ground;
         //if (Physics.Raycast(m_GroundCheck.position, Vector3.down, out Ground, 5f))
         //{
@@ -1109,9 +1115,9 @@ public class CharMove : MonoBehaviour {
             if (m_Exhausted)
             {
                 m_Exhausted = false;
-            }           
+            }
         }
-        
+
         Stamina_bar.fillAmount = CharStat.Stamina / CharStat.MaxStamina;
     }
 
@@ -1151,8 +1157,8 @@ public class CharMove : MonoBehaviour {
     {
         while (true)
         {
-            yield return new WaitForSeconds( 0.13f);
-            if (GPGSManager.GetInstance.IsAuthenticated()&& Mul_Manager != null)
+            yield return new WaitForSeconds(0.13f);
+            if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
             {
                 if (Mul_Manager == true)
                 {
@@ -1195,7 +1201,8 @@ public class CharMove : MonoBehaviour {
         Revlolver.SetActive(true);
         string Path = "Client/Resource_Art/Character/0" + CharIndex.ToString() + "/Animation/Character_BaseModel_Revolver";
         anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(Path, typeof(RuntimeAnimatorController));
-        m_GunSelect = true;      
+        m_GunSelect = true;
+        GunPoint = transform.FindChild("Gun_Pointer/Effect_Pointer_01").gameObject;
     }
 
     public void SelectGun_ShotGun()
@@ -1207,8 +1214,9 @@ public class CharMove : MonoBehaviour {
 
         anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(Path, typeof(RuntimeAnimatorController));
         m_GunSelect = true;
+        GunPoint = transform.FindChild("Gun_Pointer/Effect_Pointer_02").gameObject;
 
-      
+
     }
 
     public void SelectGun_Musket()
@@ -1220,7 +1228,7 @@ public class CharMove : MonoBehaviour {
         string Path = "Client/Resource_Art/Character/0" + CharIndex.ToString() + "/Animation/Character_BaseModel_Musket";
         anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(Path, typeof(RuntimeAnimatorController));
         m_GunSelect = true;
-
+        GunPoint = transform.FindChild("Gun_Pointer/Effect_Pointer_03").gameObject;
     }
 
 
@@ -1255,9 +1263,9 @@ public class CharMove : MonoBehaviour {
 
     void CharInit()
     {
-        
-       
-        if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene")
+
+
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene")
         {
             //if (GPGSManager.GetInstance.GetMyCharacterNumber() != 100)
             //{
@@ -1266,8 +1274,8 @@ public class CharMove : MonoBehaviour {
             //}
             //else
             //{
-                CharIndex = GameInfoManager.GetInstance().SelectIndex;
-                Debug.Log("SingleCharIndex" + CharIndex);
+            CharIndex = GameInfoManager.GetInstance().SelectIndex;
+            Debug.Log("SingleCharIndex" + CharIndex);
             //}
         }
         else
@@ -1282,7 +1290,7 @@ public class CharMove : MonoBehaviour {
         GameObject GamePlayObj = GameObject.Find("GamePlayObj");
 
         UI_Main = GamePlayObj.transform.Find("UI_Main").gameObject;
-        
+
 
         m_MoveJoyStickControl = UI_Main.GetComponentInChildren<MoveJoyStick>(); //움직임 전용 조이스틱
         m_ShotJoyStickControl = UI_Main.GetComponentInChildren<JoyStickCtrl>();  //샷 전용 조이스틱
@@ -1290,18 +1298,18 @@ public class CharMove : MonoBehaviour {
         m_FirstTouch = m_MoveJoyStickControl.transform.Find("Joystickpad").GetComponent<Image>();
         cam = GameObject.Find("CameraPos");
 
-        
-       UI_GameOver = GamePlayObj.transform.Find("UI_GameOver").gameObject;
-       // UI_GameOver.SetActive(false);
+
+        UI_GameOver = GamePlayObj.transform.Find("UI_GameOver").gameObject;
+        // UI_GameOver.SetActive(false);
 
         //UI_GameOverText;
         UI_DamageEffect = UI_Main.transform.Find("DamageEffect").gameObject;
-       // UI_DamageEffect.SetActive(false);
+        // UI_DamageEffect.SetActive(false);
 
         //EnemyPos = GamePlayObj.transform.Find("EnemyCharacter");
         HP_bar = UI_Main.transform.Find("LifeHealthLine_Bar").GetComponent<Image>();
         Stamina_bar = UI_Main.transform.Find("Stamina_Bar").GetComponent<Image>();
-        
+
 
 
         DeathZone = GameObject.Find("DeathZone").transform;
@@ -1317,7 +1325,7 @@ public class CharMove : MonoBehaviour {
     }
 
     void OnDestroy()
-    {        
+    {
         m_UseGun = null;
         m_GunSelect = false;
         GameEnd = false;
