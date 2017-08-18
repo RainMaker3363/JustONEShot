@@ -5,6 +5,8 @@ using System.Collections;
 
 public class MultiMatching_Cancel_Button : MonoBehaviour, IPointerDownHandler
 {
+    public MultiTitleManager _MultiTitleManager;
+
     public GameObject MultiMatching_UI_Obj;
     public GameObject MultiMatching_UI_Ready_Obj;
     public GameObject MultiMatching_UI_Main_Obj;
@@ -15,24 +17,45 @@ public class MultiMatching_Cancel_Button : MonoBehaviour, IPointerDownHandler
     // Use this for initialization
     void Start () {
         ButtonChecker = false;
+
+        if(_MultiTitleManager == null)
+        {
+            _MultiTitleManager = GameObject.Find("MultiTitleManager").GetComponent<MultiTitleManager>();
+        }
         
     }
 
     private void OnEnable()
     {
         ButtonChecker = false;
-        
+
+        if (_MultiTitleManager == null)
+        {
+            _MultiTitleManager = GameObject.Find("MultiTitleManager").GetComponent<MultiTitleManager>();
+        }
     }
 
     public void Initialize()
     {
         ButtonChecker = false;
-        
+
+        if (_MultiTitleManager == null)
+        {
+            _MultiTitleManager = GameObject.Find("MultiTitleManager").GetComponent<MultiTitleManager>();
+        }
     }
 
     private void Update()
     {
-        this.gameObject.SetActive(GPGSManager.GetInstance.IsMatching());
+        if(GPGSManager.GetInstance.IsMatching())
+        {
+            this.gameObject.SetActive(false);
+        }
+        else
+        {
+            this.gameObject.SetActive(true);
+        }
+        
     }
 
     // 멀티를 취소할때 사용하는 함수
@@ -60,7 +83,7 @@ public class MultiMatching_Cancel_Button : MonoBehaviour, IPointerDownHandler
 
         if (GPGSManager.GetInstance.IsAuthenticated() == true)
         {
-            if(GPGSManager.GetInstance.IsMatching() == true)
+            if(GPGSManager.GetInstance.IsMatching() == false)
             {
                 if (ButtonChecker == false)
                 {
@@ -75,6 +98,9 @@ public class MultiMatching_Cancel_Button : MonoBehaviour, IPointerDownHandler
 
                     // 방을 나간다.
                     GPGSManager.GetInstance.OnRoomConnected(false);
+
+                    // 초기화를 다시 시켜준다.
+                    _MultiTitleManager.MultiMatching_Cancel_Initilize();
                 }
             }
 

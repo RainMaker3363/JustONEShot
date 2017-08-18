@@ -841,11 +841,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
         if(percent >= 40.0f)
         {
-            IsMatchingNow = false;
+            IsMatchingNow = true;
         }
         else
         {
-            IsMatchingNow = true;
+            IsMatchingNow = false;
         }
         
 
@@ -863,14 +863,14 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             ShowMPStatus("We are connected to the room! I would probably start our game now.");
             IsConnectedOn = true;
-            IsMatchingNow = false;
+            IsMatchingNow = true;
             _myMessageNum = 0;
         }
         else
         {
             ShowMPStatus("Uh-oh. Encountered some error connecting to the room.");
             IsConnectedOn = false;
-            IsMatchingNow = true;
+            IsMatchingNow = false;
         }
     }
 

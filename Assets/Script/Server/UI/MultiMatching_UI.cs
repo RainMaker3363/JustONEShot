@@ -65,7 +65,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
-                    GPGSManager.GetInstance.ShowRoomUI();
+                    //GPGSManager.GetInstance.ShowRoomUI();
                 }
                 break;
         }
@@ -125,7 +125,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
-                    GPGSManager.GetInstance.ShowRoomUI();
+                    //GPGSManager.GetInstance.ShowRoomUI();
                 }
                 break;
         }
