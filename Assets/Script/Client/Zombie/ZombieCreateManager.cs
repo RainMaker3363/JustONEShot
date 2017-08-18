@@ -74,7 +74,8 @@ public class ZombieCreateManager : MonoBehaviour
         m_AudioSource = gameObject.GetComponent<AudioSource>();
         ZombieIndexInit();
         ZombieStageInit();
-
+        Infinity  = GameInfoManager.GetInstance().ZombieInfinityMode;
+        Level = GameInfoManager.GetInstance().ZombieLevel;
     }
 
     // Update is called once per frame
@@ -121,14 +122,14 @@ public class ZombieCreateManager : MonoBehaviour
         StartCoroutine(StageSetup());
     }
 
-    public void SelectLevel(int SelectLevel)
-    {
-        Level = SelectLevel;
-    }
-    public void SelectMode(bool Selectmode)
-    {
-        Infinity = Selectmode;
-    }
+    //public void SelectLevel(int SelectLevel)
+    //{
+    //    Level = SelectLevel;
+    //}
+    //public void SelectMode(bool Selectmode)
+    //{
+    //    Infinity = Selectmode;
+    //}
 
     void BulletUP()
     {

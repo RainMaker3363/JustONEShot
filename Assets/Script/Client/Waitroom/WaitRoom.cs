@@ -8,6 +8,8 @@ public class GameInfoManager
     static GameInfoManager m_Manager;
 
     public int SelectIndex = 3;
+    public bool ZombieInfinityMode = false;
+    public int ZombieLevel = 0;
 
     public static GameInfoManager GetInstance()
     {
@@ -39,6 +41,8 @@ public class WaitRoom : MonoBehaviour {
 
     [SerializeField]
     GameObject[] CharInfo;
+
+    public GameObject SelectPos;
 
     void Awake()
     {
@@ -124,6 +128,34 @@ public class WaitRoom : MonoBehaviour {
                     m_GPGSManager.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
                 }
                 GameInfoManager.GetInstance().SelectIndex = SelectIndex;
+
+                Vector3 Postion = Vector3.zero;
+                switch (Index)
+                {
+                    case 0:
+                        {
+                            Postion = new Vector3(-360, 160, 0);
+                            break;
+                        }
+                    case 1:
+                        {
+                            Postion = new Vector3(-120, 160, 0);
+                            break;
+                        }
+                    case 2:
+                        {
+                            Postion = new Vector3(120, 160, 0);
+                            break;
+                        }
+                    case 3:
+                        {
+                            Postion = new Vector3(360, 160, 0);
+                            break;
+                        }
+                    default:
+                        break;
+                }
+                SelectPos.transform.localPosition = Postion;
             }
         }
     }
@@ -131,5 +163,27 @@ public class WaitRoom : MonoBehaviour {
     public void CharInformation(bool set)
     {
         CharInfo[SelectIndex].SetActive(set);
+    }
+
+    public void CharInformationSet(int Index)
+    {
+        CharInfo[Index].SetActive(true);
+    }
+
+    public void CharInformationOff()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            CharInfo[i].SetActive(false);
+        }
+    }
+
+    public void SelectLevel(int SelectLevel)
+    {
+        GameInfoManager.GetInstance().ZombieLevel = SelectLevel;
+    }
+    public void SelectMode(bool Selectmode)
+    {
+        GameInfoManager.GetInstance().ZombieInfinityMode = Selectmode;
     }
 }
