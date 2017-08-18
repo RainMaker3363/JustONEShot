@@ -839,7 +839,15 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     {
         ShowMPStatus("We are " + percent + "% done with setup");
 
-        IsMatchingNow = true;
+        if(percent >= 40.0f)
+        {
+            IsMatchingNow = false;
+        }
+        else
+        {
+            IsMatchingNow = true;
+        }
+        
 
         if (!showingWaitingRoom)
         {
