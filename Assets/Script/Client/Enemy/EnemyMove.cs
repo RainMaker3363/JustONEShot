@@ -83,6 +83,9 @@ public class EnemyMove : MonoBehaviour {
 
     MultiGameManager Mul_Manager;
 
+    AudioSource m_AudioSource;
+    public AudioClip CharHitSound;
+
     /// //////////////////////////////////////////////////////////////////////////////////<summary>
     /// 서버
     /// ///////////////////////////////////////////////////////////////////////////////</summary>
@@ -116,6 +119,7 @@ public class EnemyMove : MonoBehaviour {
         //{            
         //    CharIndex = Mul_Manager.GetPVPOpponentCharNumber();
         //}
+        m_AudioSource = gameObject.transform.GetComponentInChildren<AudioSource>();
     }
 
     // Use this for initialization
@@ -583,7 +587,10 @@ public class EnemyMove : MonoBehaviour {
             anim.SetBool("Damaged", true);
         }
         //HP -= Damage;
-
+        if (GameInfoManager.GetInstance().EffectSoundUse)
+        {
+            m_AudioSource.PlayOneShot(CharHitSound);
+        }
         m_PlayerState = LSD.PlayerState.DAMAGE;
     }
     public void DamageCheck()
@@ -637,6 +644,10 @@ public class EnemyMove : MonoBehaviour {
         //    Mul_Manager.SendMyPositionUpdate();
         //    Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
         //}
+        if (GameInfoManager.GetInstance().EffectSoundUse)
+        {
+            m_AudioSource.PlayOneShot(CharHitSound);
+        }
         m_PlayerState = LSD.PlayerState.DAMAGE;
     }
     public static void PlayerDeadEye()    //데드아이 총알을 먹었을경우

@@ -20,9 +20,14 @@ public class SurvivalGameStart : MonoBehaviour
     public GameObject GamePlayObj;
 
     private float WaitOverTime;
-    private float WaitTime = 10;
+    private float WaitTime = 16;
 
     int EditorIndex = 4;
+
+    public TMPro.TextMeshPro SelectCount;
+    int SelectTime = 10;
+
+    public GameObject GunInfo;
 
     void Awake()
     {
@@ -84,63 +89,74 @@ public class SurvivalGameStart : MonoBehaviour
         if (Char != null&& Enemy != null)
         {
 
-            if (!CharMove.m_GunSelect && Input.GetMouseButtonDown(0))
+            if (!CharMove.m_GunSelect)
             {
-                if (GetClickedObject() != null)
+                if (WaitOverTime - SelectTime < Time.time)
                 {
-                    switch (GetClickedObject().gameObject.tag)
+                    SelectTime--;
+                    SelectCount.text = SelectTime.ToString();
+                }
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    if (GetClickedObject() != null)
                     {
-                        case "Revolver":
-                            {
-                                Selectanim.SetTrigger("Revolver");
-                                Char.SelectGun_Revolver();
-                                if (GPGSManager.GetInstance.IsAuthenticated())
+                        SelectCount.gameObject.SetActive(false);
+                        GunInfo.SetActive(false);
+                        switch (GetClickedObject().gameObject.tag)
+                        {
+                            case "Revolver":
                                 {
-                                    Mul_Manager.SendWeaponNumberMessage(0);
-                                    Mul_Manager.SendMultiSelectStateMessage(true);
-                                    Mul_Manager.SendMultiWaitStateMessage(true);
+                                    Selectanim.SetTrigger("Revolver");
+                                    Char.SelectGun_Revolver();
+                                    if (GPGSManager.GetInstance.IsAuthenticated())
+                                    {
+                                        Mul_Manager.SendWeaponNumberMessage(0);
+                                        Mul_Manager.SendMultiSelectStateMessage(true);
+                                        Mul_Manager.SendMultiWaitStateMessage(true);
+                                    }
+
+                                    Select.SetActive(false);
+
+                                    //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
+                                    break;
+                                }
+                            case "ShotGun":
+                                {
+                                    Selectanim.SetTrigger("ShotGun");
+                                    Char.SelectGun_ShotGun();
+                                    if (GPGSManager.GetInstance.IsAuthenticated())
+                                    {
+                                        Mul_Manager.SendWeaponNumberMessage(1);
+                                        Mul_Manager.SendMultiSelectStateMessage(true);
+                                        Mul_Manager.SendMultiWaitStateMessage(true);
+                                    }
+                                    Select.SetActive(false);
+                                    //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
+                                    break;
+                                }
+                            case "Musket":
+                                {
+                                    Selectanim.SetTrigger("Musket");
+                                    Char.SelectGun_Musket();
+                                    if (GPGSManager.GetInstance.IsAuthenticated())
+                                    {
+                                        Mul_Manager.SendWeaponNumberMessage(2);
+                                        Mul_Manager.SendMultiSelectStateMessage(true);
+                                        Mul_Manager.SendMultiWaitStateMessage(true);
+                                    }
+                                    Select.SetActive(false);
+                                    //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
+                                    break;
                                 }
 
-                                Select.SetActive(false);
 
-                                //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
+                            default:
                                 break;
-                            }
-                        case "ShotGun":
-                            {
-                                Selectanim.SetTrigger("ShotGun");
-                                Char.SelectGun_ShotGun();
-                                if (GPGSManager.GetInstance.IsAuthenticated())
-                                {
-                                    Mul_Manager.SendWeaponNumberMessage(1);
-                                    Mul_Manager.SendMultiSelectStateMessage(true);
-                                    Mul_Manager.SendMultiWaitStateMessage(true);
-                                }
-                                Select.SetActive(false);
-                                //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
-                                break;
-                            }
-                        case "Musket":
-                            {
-                                Selectanim.SetTrigger("Musket");
-                                Char.SelectGun_Musket();
-                                if (GPGSManager.GetInstance.IsAuthenticated())
-                                {
-                                    Mul_Manager.SendWeaponNumberMessage(2);
-                                    Mul_Manager.SendMultiSelectStateMessage(true);
-                                    Mul_Manager.SendMultiWaitStateMessage(true);
-                                }
-                                Select.SetActive(false);
-                                //CountDown.gameObject.SetActive(true);   //현재는 상대총을 받아오지않으므로 바로 카운트를 시작합니다.
-                                break;
-                            }
+                        }
 
 
-                        default:
-                            break;
                     }
-
-
                 }
 
             }
@@ -148,6 +164,8 @@ public class SurvivalGameStart : MonoBehaviour
             if (!CharMove.m_GunSelect && WaitOverTime < Time.time)
             {
                 int SelectGun = 0;   //캐릭터 추가시 수정 현재는 리볼버
+                SelectCount.gameObject.SetActive(false);
+                GunInfo.SetActive(false);
                 switch (SelectGun)
                 {
                     case 0:

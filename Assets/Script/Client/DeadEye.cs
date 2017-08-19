@@ -34,9 +34,14 @@ public class DeadEye : MonoBehaviour {
 
     public GameObject GamePlayObj;
 
+    AudioSource m_AudioSource;
+    public AudioClip DeadEyeShotSound;
+    public AudioClip DeadEyeJumpSound;
+    public AudioClip DeadEyeBackgroundSound;
+
     void Awake()
     {
-        
+        m_AudioSource = gameObject.GetComponent<AudioSource>();
     }
     void Start () {
         if(SceneManager.GetActiveScene().name != "GameScene")
@@ -70,10 +75,17 @@ public class DeadEye : MonoBehaviour {
 
     void DeadEyeStart()
     {
-       
+        
         DeadEyeCamera.SetActive(true);
         MainCam.gameObject.SetActive(false);
         MainUI.SetActive(false);
+
+        if (GameInfoManager.GetInstance().BackgroundSoundUse)
+        {
+            GameObject.Find("BGM").GetComponent<AudioSource>().mute = true;
+            m_AudioSource.PlayOneShot(DeadEyeBackgroundSound);
+            m_AudioSource.PlayOneShot(DeadEyeJumpSound);
+        }
     }
 
     void DeadEyePlay()
@@ -95,12 +107,16 @@ public class DeadEye : MonoBehaviour {
         yield return new WaitForSeconds(2f);
         CharMove.DeadEyeEnd = true;
         EnemyMove.DeadEyeEnd = true;
-        
+
         //if (CharMove.GameEnd)
         //{
-            MainUI.SetActive(true);
-            MainCam.gameObject.SetActive(true);
+        MainUI.SetActive(true);
+        MainCam.gameObject.SetActive(true);
         //}
+        if (GameInfoManager.GetInstance().BackgroundSoundUse)
+        {
+            GameObject.Find("BGM").GetComponent<AudioSource>().mute = false;
+        }
         DeadEyeBulletEndCam.SetActive(false);
     }
 
@@ -165,7 +181,11 @@ public class DeadEye : MonoBehaviour {
                 Effects.transform.position = m_GunTransform[CharMove.m_UseGun.NowUseGun].position;
                 Effects.transform.rotation = this.transform.rotation;
                 Effects.SetActive(true);
-                
+
+                if (GameInfoManager.GetInstance().EffectSoundUse)
+                {
+                    m_AudioSource.PlayOneShot(DeadEyeShotSound);
+                }
                
                 break;
             }

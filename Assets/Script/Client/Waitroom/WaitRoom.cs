@@ -11,6 +11,9 @@ public class GameInfoManager
     public bool ZombieInfinityMode = false;
     public int ZombieLevel = 0;
 
+    public bool BackgroundSoundUse = true;
+    public bool EffectSoundUse = true;
+    public bool FirstTitle = true;
     public static GameInfoManager GetInstance()
     {
         if(m_Manager==null)
@@ -44,6 +47,16 @@ public class WaitRoom : MonoBehaviour {
 
     public GameObject SelectPos;
 
+    [SerializeField]
+    Sprite[] GameExplainImage;
+    public Image ExplainScreen;
+    int ExplainIndex=0;
+
+    public GameObject Title;
+    public GameObject Touch;
+    public GameObject MainUI;
+    public GameObject WaitRoomBGM;
+
     void Awake()
     {
         QualitySettings.vSyncCount = 0;
@@ -72,6 +85,21 @@ public class WaitRoom : MonoBehaviour {
         StartCoroutine(SendRoutine);
         
         Zombie_Button.onClick.AddListener(OnZombieButton);
+        if(GameInfoManager.GetInstance().FirstTitle)
+        {
+            GameInfoManager.GetInstance().FirstTitle = false;
+            Title.SetActive(true);
+            Touch.SetActive(true);
+            MainUI.SetActive(false);
+            WaitRoomBGM.SetActive(false);
+        }
+        else
+        {
+            Title.SetActive(false);
+            Touch.SetActive(false);
+            MainUI.SetActive(true);
+            WaitRoomBGM.SetActive(true);
+        }
     }
 	
 	// Update is called once per frame
@@ -185,5 +213,18 @@ public class WaitRoom : MonoBehaviour {
     public void SelectMode(bool Selectmode)
     {
         GameInfoManager.GetInstance().ZombieInfinityMode = Selectmode;
+    }
+
+    public void ShowGameExplain()
+    {
+        if (ExplainIndex >= 7)
+        {
+            ExplainIndex = 0;
+            ExplainScreen.transform.parent.gameObject.SetActive(false);
+        }
+        ExplainScreen.sprite = GameExplainImage[ExplainIndex];
+        ExplainIndex++;
+
+       
     }
 }

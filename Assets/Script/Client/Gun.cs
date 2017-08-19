@@ -423,7 +423,10 @@ public class Gun : MonoBehaviour
             }
 
             //사운드
-            m_AudioSource.PlayOneShot(ShotSounds[UseGun]);
+            if (GameInfoManager.GetInstance().EffectSoundUse)
+            {
+                m_AudioSource.PlayOneShot(ShotSounds[UseGun]);
+            }
         }
     }
 
@@ -475,7 +478,10 @@ public class Gun : MonoBehaviour
                     break;
             }
 
-            m_AudioSource.PlayOneShot(ReloadSounds[CharMove.m_UseGun.NowUseGun]);
+            if (GameInfoManager.GetInstance().EffectSoundUse)
+            {
+                m_AudioSource.PlayOneShot(ReloadSounds[CharMove.m_UseGun.NowUseGun]);
+            }
 
             // UI_HandsBullets[m_HandsBulletIndex].color = Color.black;
 
@@ -505,7 +511,10 @@ public class Gun : MonoBehaviour
     void CharRollEffectOn()
     {
         CharRollEffect.SetActive(true);
-        m_AudioSource.PlayOneShot(CharRollSound);
+        if (GameInfoManager.GetInstance().EffectSoundUse)
+        {
+            m_AudioSource.PlayOneShot(CharRollSound);
+        }
     }
 
     void SetRollSpeed(float speed) //캐릭터 구르기 속도 조절

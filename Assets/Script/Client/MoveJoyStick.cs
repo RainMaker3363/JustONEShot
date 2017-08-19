@@ -65,7 +65,7 @@ public class MoveJoyStick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
 
                 //Debug.Log("Pos.x :"+Pos.x);
                 //Debug.Log("Pos.y :" + Pos.y);
-                inputVector = new Vector3((Pos.x), (Pos.y), 0) / 4;
+                inputVector = new Vector3((Pos.x), (Pos.y), 0) / 2;
                 inputVector = (inputVector.magnitude > 1.0f) ? inputVector.normalized : inputVector;
                 //Debug.Log("inputVector: " + inputVector);
                 // 조이스틱이 움직인다면..

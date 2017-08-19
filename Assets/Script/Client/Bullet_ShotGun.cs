@@ -28,6 +28,7 @@ public class Bullet_ShotGun : MonoBehaviour {
     void OnEnable()
     {
         m_Distance = m_DistanceInit;
+        transform.position += Vector3.down*0.5f;
         gameObject.GetComponent<MeshCollider>().enabled = true;
     }
 

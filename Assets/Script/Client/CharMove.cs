@@ -195,6 +195,14 @@ public class CharMove : MonoBehaviour
 
     public bool m_ZombieClear = false;
 
+    public Sprite DeadImage;
+    public Sprite ClearImage;
+    [SerializeField]
+    Sprite[] RankImage;
+
+    AudioSource m_AudioSource;
+    public AudioClip CharHitSound;
+
     //void OnEnable()
     //{
 
@@ -226,7 +234,7 @@ public class CharMove : MonoBehaviour
         m_ZombieClear = false;
         m_GunSelect = false;
         gameObject.SetActive(false);
-
+        m_AudioSource = gameObject.transform.GetComponentInChildren<AudioSource>();
     }
 
     // Use this for initialization
@@ -772,7 +780,10 @@ public class CharMove : MonoBehaviour
                 anim.SetTrigger("Damage");
                 anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
                 camAni.SetTrigger("Damage");
-
+                if (GameInfoManager.GetInstance().EffectSoundUse)
+                {
+                    m_AudioSource.PlayOneShot(CharHitSound);
+                }
             }
 
 
@@ -827,7 +838,10 @@ public class CharMove : MonoBehaviour
             Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
             Mul_Manager.SendHPStateMessage(CharStat.HP);
         }
-
+        if (GameInfoManager.GetInstance().EffectSoundUse)
+        {
+            m_AudioSource.PlayOneShot(CharHitSound);
+        }
         Handheld.Vibrate();
     }
 
@@ -852,7 +866,21 @@ public class CharMove : MonoBehaviour
             gameObject.GetComponent<CharacterController>().enabled = false;
 
             //EnemyPos.gameObject.SetActive(false);
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene")
+            {
+                Result.transform.Find("Effect_Result_Lose_01/Effect_WinUI/Images/Color_Text_Lose").GetComponent<SpriteRenderer>().sprite = DeadImage;
+            }
+            else if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Survival Scene")
+            {
+                int Rank = Mul_Manager.GetMySurvivalRankNumber();
+                Result.transform.Find("Effect_Result_Lose_01/Effect_WinUI/Images/Color_Text_Lose").GetComponent<SpriteRenderer>().sprite = RankImage[Rank-1];
+
+            }
+
             Result.SetTrigger("Lose");
+            GameObject.Find("BGM").GetComponent<AudioSource>().mute = true;
+
+
             // UI_GameOverText.GetComponent<Text>().text = "Defeat";
 
             return true;
@@ -1190,7 +1218,21 @@ public class CharMove : MonoBehaviour
 
         m_PlayerState = LSD.PlayerState.WIN;
         m_PlayerBeforeState = LSD.PlayerState.WIN;
+
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene")
+        {
+            Result.transform.Find("Effect_Result_Win_01/Effect_WinUI/Images/Color_Text_Win").GetComponent<SpriteRenderer>().sprite = ClearImage;
+        }
+        else if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Survival Scene")
+        {
+            int Rank = Mul_Manager.GetMySurvivalRankNumber();
+            Result.transform.Find("Effect_Result_Win_01/Effect_WinUI/Images/Color_Text_Win").GetComponent<SpriteRenderer>().sprite = RankImage[Rank-1];
+        }
+
         anim.SetTrigger("Victory");
+
+        GameObject.Find("BGM").GetComponent<AudioSource>().mute = true;
+
         yield return null;
     }
 

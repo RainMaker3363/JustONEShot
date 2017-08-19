@@ -23,9 +23,13 @@ public class DeadEyeUI : MonoBehaviour {
 
     bool DeadEyeComplete = false;
 
+    public AudioSource m_DeadEyeReadyAudioSource;
+   // public AudioClip DeadEyeReadySound;
+
     // Use this for initialization
     void Start () {
         GunRollAnim = transform.Find("ObjectAnimation").transform.Find("GunRoll").GetComponent<Animator>();
+        //m_AudioSource = gameObject.GetComponent<AudioSource>();
     }
 	
 	// Update is called once per frame
@@ -48,6 +52,11 @@ public class DeadEyeUI : MonoBehaviour {
                         CharMove.m_DeadEyeTimer = DeadEyeEndTime;
                         DeadEyeComplete = true;
                         BulletOrderIndex = 0;
+
+                        if (!GameInfoManager.GetInstance().EffectSoundUse)
+                        {
+                            m_DeadEyeReadyAudioSource.mute = true;
+                        }
                     }
                     else
                     {

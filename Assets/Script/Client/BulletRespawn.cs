@@ -17,7 +17,7 @@ public class BulletRespawn : MonoBehaviour {
     [SerializeField]
     int BulletIndex = -1;   //총알 인덱스
 
-    float CreateCoolTime = 3;   // 먹은후 재생성 쿨타임
+    float CreateCoolTime = 10;   // 먹은후 재생성 쿨타임
 
    public bool CreateAble = true; //생성 가능여부
 
