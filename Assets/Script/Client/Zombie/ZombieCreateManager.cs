@@ -49,7 +49,7 @@ public class ZombieCreateManager : MonoBehaviour
     GameObject Temp;
     public static int ZombieCount = 0;
     [SerializeField]
-    int Stage = 0;
+    public static int Stage = 0;
     int Level = 0;
     int LevelDamage = 0;
     int LevelHP = 0;
@@ -636,6 +636,7 @@ public class ZombieCreateManager : MonoBehaviour
                     {
                         LevelUP_UI.SetActive(true);
                         Main_UI.SetActive(false);
+                        GameInfoManager.GetInstance().Pause = true;
                         Time.timeScale = 0;
                     }
                     else

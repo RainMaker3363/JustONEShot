@@ -14,6 +14,15 @@ public class GameInfoManager
     public bool BackgroundSoundUse = true;
     public bool EffectSoundUse = true;
     public bool FirstTitle = true;
+
+    public bool GameOver = false;
+    public bool Pause = false;
+
+    int Gold = 0;
+    int Score = 1000;
+
+    int damage = 0;
+
     public static GameInfoManager GetInstance()
     {
         if(m_Manager==null)
@@ -22,6 +31,41 @@ public class GameInfoManager
         }
 
         return m_Manager;
+    }
+
+    public void GoldAdd(int gold)
+    {
+        Gold += gold;
+    }
+    public int ScoreAdd(int score)
+    {
+        Score += score;
+
+        if(Score<0)
+        {
+            Score = 0;
+        }
+        else if (Score > 10000)
+        {
+            Score = 10000;
+        }
+
+        int total = Score;
+
+        return total;
+    }
+
+    public void Accumulated_damage(int Damage)  //데미지누적
+    {
+        damage += Damage;
+    }
+    public int Accumulated_Get()  //데미지누적
+    {
+        return damage;
+    }
+    public void Accumulated_Reset() //데미지누적리셋
+    {
+        damage = 0;
     }
 }
 
@@ -83,7 +127,36 @@ public class WaitRoom : MonoBehaviour {
 
         StopCoroutine(SendRoutine);
         StartCoroutine(SendRoutine);
-        
+
+        Vector3 Postion = Vector3.zero;
+        switch (SelectIndex)
+        {
+            case 0:
+                {
+                    Postion = new Vector3(-360, 160, 0);
+                    break;
+                }
+            case 1:
+                {
+                    Postion = new Vector3(-120, 160, 0);
+                    break;
+                }
+            case 2:
+                {
+                    Postion = new Vector3(120, 160, 0);
+                    break;
+                }
+            case 3:
+                {
+                    Postion = new Vector3(360, 160, 0);
+                    break;
+                }
+            default:
+                break;
+        }
+
+
+
         Zombie_Button.onClick.AddListener(OnZombieButton);
         if(GameInfoManager.GetInstance().FirstTitle)
         {

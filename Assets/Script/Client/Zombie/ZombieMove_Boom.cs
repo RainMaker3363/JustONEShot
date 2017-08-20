@@ -38,6 +38,8 @@ public class ZombieMove_Boom : Zombie
 
     AudioSource m_AudioSource;
 
+    public GameObject MiniMapPoint;
+
     // Use this for initialization
     void Awake()
     {
@@ -196,6 +198,7 @@ public class ZombieMove_Boom : Zombie
         StopCoroutine(Dealy_Coroutine);
         NvAgent.enabled = false;
         GetComponent<CapsuleCollider>().enabled = true;
+        MiniMapPoint.SetActive(false);
     }
 
     override public void ZombieDamage(int Damage)
@@ -270,7 +273,7 @@ public class ZombieMove_Boom : Zombie
         }
 
         NvAgent.speed = speed;
-
+        MiniMapPoint.SetActive(true);
         // yield return null;
     }
 }

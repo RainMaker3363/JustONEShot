@@ -31,6 +31,14 @@ namespace LSD
         Musket
 
     }
+
+    enum GameMode
+    {
+        PVP =0,
+        Survivel,
+        Zombie              
+
+    }
 }
 
 abstract public class UseChar
@@ -878,9 +886,10 @@ public class CharMove : MonoBehaviour
             }
 
             Result.SetTrigger("Lose");
-            GameObject.Find("BGM").GetComponent<AudioSource>().mute = true;
+            if(GameObject.Find("BGM"))
+                GameObject.Find("BGM").GetComponent<AudioSource>().mute = true;
 
-
+            GameInfoManager.GetInstance().GameOver = true;
             // UI_GameOverText.GetComponent<Text>().text = "Defeat";
 
             return true;
@@ -1232,7 +1241,7 @@ public class CharMove : MonoBehaviour
         anim.SetTrigger("Victory");
 
         GameObject.Find("BGM").GetComponent<AudioSource>().mute = true;
-
+        GameInfoManager.GetInstance().GameOver = true;
         yield return null;
     }
 
