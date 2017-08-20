@@ -57,7 +57,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     private Dictionary<string, int> _SurvivalOpponentWeaponNumber;
     private Dictionary<int, string> _SurvivalPlayersID;
     private Dictionary<string, int> _SurvivalPlayersRank;
-    private Dictionary<string, bool> _SurvivalFinishedPlayerState;
+    private Dictionary<string, bool> _SurvivalFinishedOpponentState;
 
     // 서바이벌 모드에서 쓰일 여러 이벤트 및 값들
     public bool BossEvent;
@@ -657,13 +657,13 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         _SurvivalPlayersRank.Clear();
                     }
 
-                    if(_SurvivalFinishedPlayerState == null)
+                    if(_SurvivalFinishedOpponentState == null)
                     {
-                        _SurvivalFinishedPlayerState = new Dictionary<string, bool>(allPlayers.Count - 1);
+                        _SurvivalFinishedOpponentState = new Dictionary<string, bool>(allPlayers.Count - 1);
                     }
                     else
                     {
-                        _SurvivalFinishedPlayerState.Clear();
+                        _SurvivalFinishedOpponentState.Clear();
                     }
 
                     _opponentScripts = new Dictionary<string, EnemyMove>(allPlayers.Count - 1);
@@ -678,7 +678,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         // 플레이어들의 닉네임을 저장해준다.
                         PlayerCharacters_Nick[nextParticipantId] = allPlayers[i].DisplayName;
                         // 플레이어들의 종료 여부를 초기화 해준다.
-                        _SurvivalFinishedPlayerState[nextParticipantId] = false;
+                        _SurvivalFinishedOpponentState[nextParticipantId] = false;
                         // 플레이어들의 ID 값을 저장해준다.
                         _SurvivalPlayersID[i] = allPlayers[i].ParticipantId;
 
@@ -1781,9 +1781,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                             //ThisGameIsEnd = GameOver;
 
-                            if (_SurvivalFinishedPlayerState[participantId] == false)
+                            if (_SurvivalFinishedOpponentState[participantId] == false)
                             {
-                                _SurvivalFinishedPlayerState[participantId] = true;
+                                _SurvivalFinishedOpponentState[participantId] = true;
 
                                 EnemyMove opponent = _opponentScripts[participantId];
 
@@ -2614,9 +2614,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                     if (_multiplayerReady)
                     {
-                        if (_SurvivalFinishedPlayerState[participantId] == false)
+                        if (_SurvivalFinishedOpponentState[participantId] == false)
                         {
-                            _SurvivalFinishedPlayerState[participantId] = true;
+                            _SurvivalFinishedOpponentState[participantId] = true;
 
                             EnemyMove opponent = _opponentScripts[participantId];
 
