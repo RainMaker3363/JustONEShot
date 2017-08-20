@@ -198,7 +198,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         {
             bPaused = true;
 
-            GPGSManager.GetInstance.OnRoomConnected(false);
+            GPGSManager.GetInstance.LeaveRoom();
 
             MultiMatching_Cancel_Initilize();
         }
