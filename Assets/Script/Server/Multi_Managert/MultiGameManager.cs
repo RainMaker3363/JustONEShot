@@ -3114,6 +3114,14 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                             }
                         }
 
+                        if(ThisGameIsEnd == false)
+                        {
+                            if(LeftPlayerCount <= 0)
+                            {
+                                ThisGameIsEnd = true;
+                            }
+                        }
+
                         // 나의 랭크를 지속적으로 체크한다.
                         MySurvivalRank = (((allPlayers.Count) - ((allPlayers.Count) - (LeftPlayerCount))) + 1);
 
