@@ -1964,7 +1964,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 현재 데드아이 상태를 업데이트 해준다.
     // true면 데드 아이 발동을 의미
     // false면 데드 아이 발동이 끝남 혹은 안됨..
-    public void DeadEyeStateReceived(string participantId, bool DeadEyeActive, int DeadEyeRespawnIndex)
+    public void DeadEyeStateReceived(string participantId, bool DeadEyeActive)//, int DeadEyeRespawnIndex)
     {
         switch (MultiGameModeState)
         {
@@ -1979,7 +1979,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     if (_multiplayerReady)
                     {
                         _DeadEyeChecker = DeadEyeActive;
-                        _DeadEyeRespawnIndex = DeadEyeRespawnIndex;
+                        //_DeadEyeRespawnIndex = DeadEyeRespawnIndex;
 
                         EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
 
@@ -2074,9 +2074,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 {
                     if (_multiplayerReady)
                     {
-                        //_DeadEyeRespawnIndex = index;
+                        _DeadEyeRespawnIndex = index;
                         //_DeadEyeStartIndexMap[participantId] = index;
-                        _OpponentDeadEyeStartIndex = index;
+                        //_OpponentDeadEyeStartIndex = index;
                     }
                 }
                 break;
@@ -2802,8 +2802,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // bool 값으로 작동 여부를 보내줄 수 있다
     public void SendDeadEyeMessage(bool DeadEyeActive)
     {
-        _DeadEyeRespawnIndex = Random.Range(0, 4);
-        GPGSManager.GetInstance.SendDeadEyeMessage(DeadEyeActive, _DeadEyeRespawnIndex);
+        
+        GPGSManager.GetInstance.SendDeadEyeMessage(DeadEyeActive);
     }
 
     // 데드 아이 메시지를 보낸다.
@@ -2819,8 +2819,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 현재는 임시로 사용하지 않음
     private void SendDeadEyeRespawnIndexMessage()
     {
-        int index = Random.Range(1, 4);
-        GPGSManager.GetInstance.SendDeadEyeIndexMessage(index);
+        _DeadEyeRespawnIndex = Random.Range(0, 4);
+        GPGSManager.GetInstance.SendDeadEyeIndexMessage(_DeadEyeRespawnIndex);
     }
 
     // 애니메이션 값을 넣어준다.

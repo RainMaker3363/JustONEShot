@@ -80,8 +80,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private int _shootMessageLength = 3;
     // Byte + Byte + 1 Float
     private int _deadeyeTimerMessageLength = 6;
-    // Byte + Byte + 1 Boolean + Interger
-    private int _deadeyeMessageLength = 7;
+    // Byte + Byte + 1 Boolean
+    private int _deadeyeMessageLength = 3;
     // Byte + Byte + 1 Interger
     //private int _deadeyeRespawnMessageLength = 6;
     // Byte + Byte + 1 Interger
@@ -242,8 +242,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _shootMessageLength = 3;
             // Byte + Byte + 1 Float
             _deadeyeTimerMessageLength = 6;
-            // Byte + Byte + 1 Boolean + 1 Interger
-            _deadeyeMessageLength = 7;
+            // Byte + Byte + 1 Boolean
+            _deadeyeMessageLength = 3;
             // Byte + Byte + 1 Interger
             _deadEyeRespawnMessageLength = 6;
             // Byte + Byte + 1 Interger
@@ -746,10 +746,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _DeadEyeTimerMessage = new List<byte>(_deadeyeTimerMessageLength);
         }
 
-        //if (_DeadEyeRespawnMessage == null)
-        //{
-        //    _DeadEyeRespawnMessage = new List<byte>(_deadeyeRespawnMessageLength);
-        //}
+        if (_DeadEyeRespawnMessage == null)
+        {
+            _DeadEyeRespawnMessage = new List<byte>(_deadEyeRespawnMessageLength);
+        }
 
         if (_AnimMessage == null)
         {
@@ -1211,17 +1211,17 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
     // 데드아이 상태값을 보내는 메시지
     // bool 값이 true라면 데드 아이가 끝난 것을 의미한다.
-    public void SendDeadEyeMessage(bool DeadEyeSet, int RandomSeed)
+    public void SendDeadEyeMessage(bool DeadEyeSet)
     {
         _DeadEyeMessage.Clear();
         _DeadEyeMessage.Add(_protocolVersion);
         _DeadEyeMessage.Add((byte)'D');
         _DeadEyeMessage.AddRange(System.BitConverter.GetBytes(DeadEyeSet));
 
-        // 그 후 다음 생성될 데드아이 아이템 위치를 전송해준다.
-        int index = RandomSeed;
+        //// 그 후 다음 생성될 데드아이 아이템 위치를 전송해준다.
+        //int index = RandomSeed;
 
-        _DeadEyeMessage.AddRange(System.BitConverter.GetBytes(index));
+        //_DeadEyeMessage.AddRange(System.BitConverter.GetBytes(index));
 
         byte[] DeadEyeMessageToSend = _DeadEyeMessage.ToArray();
 
@@ -1460,7 +1460,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             case 'D':
                 {
                     bool DeadEyeActive = System.BitConverter.ToBoolean(data, 2);
-                    int DeadEyeRespawnIndex = System.BitConverter.ToInt32(data, 3);
+                    //int DeadEyeRespawnIndex = System.BitConverter.ToInt32(data, 3);
 
                     Debug.Log("DeadEye Message!");
 
@@ -1470,7 +1470,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                     if (updateListener != null)
                     {
                         //updateListener.ItemStateReceived(Index, ItemGet);
-                        updateListener.DeadEyeStateReceived(senderId, DeadEyeActive, DeadEyeRespawnIndex);
+                        updateListener.DeadEyeStateReceived(senderId, DeadEyeActive);//, DeadEyeRespawnIndex);
                     }
                 }
                 break;
