@@ -2817,7 +2817,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 데드 아이 아이템을 먹을 경우 메시지를 보낸다.
     // 다시 리스폰 되는 위치를 서버쪽에서 난수로 지정해준다.
     // 현재는 임시로 사용하지 않음
-    private void SendDeadEyeRespawnIndexMessage()
+    public void SendDeadEyeRespawnIndexMessage()
     {
         _DeadEyeRespawnIndex = Random.Range(0, 4);
         GPGSManager.GetInstance.SendDeadEyeIndexMessage(_DeadEyeRespawnIndex);
