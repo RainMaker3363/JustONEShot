@@ -18,8 +18,8 @@ public class GameInfoManager
     public bool GameOver = false;
     public bool Pause = false;
 
-    int Gold = 0;
-    int Score = 1000;
+    static int Gold = 0;
+    static int Score = 1000;
 
     int damage = 0;
 
@@ -28,6 +28,16 @@ public class GameInfoManager
         if(m_Manager==null)
         {
             m_Manager = new GameInfoManager();
+
+            if (PlayerPrefs.HasKey("Score"))
+            {
+                Score = PlayerPrefs.GetInt("Score");
+            }
+
+            if(PlayerPrefs.HasKey("Gold"))
+            {
+                Gold = PlayerPrefs.GetInt("Gold");
+            }
         }
 
         return m_Manager;
@@ -36,6 +46,7 @@ public class GameInfoManager
     public void GoldAdd(int gold)
     {
         Gold += gold;
+        PlayerPrefs.SetInt("Gold", Gold);
     }
     public int ScoreAdd(int score)
     {
@@ -49,6 +60,8 @@ public class GameInfoManager
         {
             Score = 10000;
         }
+
+        PlayerPrefs.SetInt("Score", Score);
 
         int total = Score;
 
@@ -155,7 +168,7 @@ public class WaitRoom : MonoBehaviour {
                 break;
         }
 
-
+        SelectPos.transform.localPosition = Postion;
 
         Zombie_Button.onClick.AddListener(OnZombieButton);
         if(GameInfoManager.GetInstance().FirstTitle)

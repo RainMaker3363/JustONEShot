@@ -142,7 +142,7 @@ public class CharMove : MonoBehaviour
 
     public int m_DebugPlayerState;
 
-    int CharIndex = 3; //캐릭터 선택 인덱스
+    int CharIndex = 1; //캐릭터 선택 인덱스
 
     //캐릭터 총
     public static UseGun m_UseGun;

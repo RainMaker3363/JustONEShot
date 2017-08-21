@@ -43,17 +43,17 @@ public class DB_CreateManager : MonoBehaviour {
 
     void Start()
     {
-        ServerIndex = Mul_Manager.GetPVPDeadEyeStartIndex();
+       // ServerIndex = Mul_Manager.GetPVPDeadEyeStartIndex();
     }
 
     void Update()
     {
         
-        if (Request)   //생성이 안되어있는경우
-        {
-            //Mul_Manager.SendDeadEyeRespawnIndexMessage();//서버에 난수를 요청한다
-            Request = false;
-        }
+        //if (Request)   //생성이 안되어있는경우
+        //{
+        //    //Mul_Manager.SendDeadEyeRespawnIndexMessage();//서버에 난수를 요청한다
+        //    Request = false;
+        //}
 
         if(Mul_Manager.GetDeadEyeRespawnIndex() > -1)
              ServerIndex = Mul_Manager.GetDeadEyeRespawnIndex(); //서버의 인덱스는 계속 참조를한다
