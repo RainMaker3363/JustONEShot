@@ -93,7 +93,7 @@ public class WaitRoom : MonoBehaviour {
     GameObject SelectChar;
     public Transform CharPos;
 
-    GPGSManager m_GPGSManager;
+    //GPGSManager m_GPGSManager;
     MultiTitleManager m_MultiTitleManager;
     private IEnumerator SendRoutine;
 
@@ -122,7 +122,7 @@ public class WaitRoom : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        m_GPGSManager = GameObject.Find("GPGSManager").GetComponent<GPGSManager>();
+        //m_GPGSManager = GameObject.Find("GPGSManager").GetComponent<GPGSManager>();
 
         if(m_MultiTitleManager == null)
         {
@@ -135,7 +135,7 @@ public class WaitRoom : MonoBehaviour {
         SelectChar.transform.SetParent(CharPos);
 
         GameInfoManager.GetInstance().SelectIndex = SelectIndex;
-        m_GPGSManager.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
+        GPGSManager.GetInstance.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
         SendRoutine = SendCharacterRoutine();
 
         StopCoroutine(SendRoutine);
@@ -239,7 +239,7 @@ public class WaitRoom : MonoBehaviour {
                 SelectChar.transform.SetParent(CharPos);
                 if (GPGSManager.GetInstance.IsAuthenticated())
                 {
-                    m_GPGSManager.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
+                    GPGSManager.GetInstance.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
                 }
                 GameInfoManager.GetInstance().SelectIndex = SelectIndex;
 

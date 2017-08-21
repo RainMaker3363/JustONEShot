@@ -48,14 +48,14 @@ public class DB_CreateManager : MonoBehaviour {
 
     void Update()
     {
-        
-        //if (Request)   //생성이 안되어있는경우
-        //{
-        //    //Mul_Manager.SendDeadEyeRespawnIndexMessage();//서버에 난수를 요청한다
-        //    Request = false;
-        //}
 
-        if(Mul_Manager.GetDeadEyeRespawnIndex() > -1)
+        if (Request)   //생성이 안되어있는경우
+        {
+            Mul_Manager.SendDeadEyeRespawnIndexMessage();//서버에 난수를 요청한다
+            Request = false;
+        }
+
+        if (Mul_Manager.GetDeadEyeRespawnIndex() > -1)
              ServerIndex = Mul_Manager.GetDeadEyeRespawnIndex(); //서버의 인덱스는 계속 참조를한다
 
         if (ServerIndex != -1 && CreateIndex != ServerIndex) //생성이 필요할경우 또는 만들었던 인덱스가 다를경우
@@ -78,7 +78,7 @@ public class DB_CreateManager : MonoBehaviour {
             else // 데스존에 잠겨있다면
             {
                 BulletCreate = false;
-                //Mul_Manager.SendDeadEyeRespawnIndexMessage();//서버에 난수 재생성 요구
+                Mul_Manager.SendDeadEyeRespawnIndexMessage();//서버에 난수 재생성 요구
             }
         }
     }
