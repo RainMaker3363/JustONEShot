@@ -1211,7 +1211,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
     // 데드아이 상태값을 보내는 메시지
     // bool 값이 true라면 데드 아이가 끝난 것을 의미한다.
-    public void SendDeadEyeMessage(bool DeadEyeSet)
+    public void SendDeadEyeMessage(bool DeadEyeSet, int RandomSeed)
     {
         _DeadEyeMessage.Clear();
         _DeadEyeMessage.Add(_protocolVersion);
@@ -1219,7 +1219,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         _DeadEyeMessage.AddRange(System.BitConverter.GetBytes(DeadEyeSet));
 
         // 그 후 다음 생성될 데드아이 아이템 위치를 전송해준다.
-        int index = UnityEngine.Random.Range(0, 5);
+        int index = RandomSeed;
 
         _DeadEyeMessage.AddRange(System.BitConverter.GetBytes(index));
 

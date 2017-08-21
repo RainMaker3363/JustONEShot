@@ -2802,7 +2802,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // bool 값으로 작동 여부를 보내줄 수 있다
     public void SendDeadEyeMessage(bool DeadEyeActive)
     {
-        GPGSManager.GetInstance.SendDeadEyeMessage(DeadEyeActive);
+        _DeadEyeRespawnIndex = Random.Range(0, 4);
+        GPGSManager.GetInstance.SendDeadEyeMessage(DeadEyeActive, _DeadEyeRespawnIndex);
     }
 
     // 데드 아이 메시지를 보낸다.
