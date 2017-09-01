@@ -25,6 +25,10 @@
     //void CharacterSelectStateReceived(int CharacterNumber);
     void SurvivalRankMessageReceived(string participantId, int RankNumber);
     void WeaponSelectStateReceived(string participantId, int WeaponNumber);
+
+    void PlayerSkillMessageReceived(string participantId, bool SkillOn);
+    void PlayerBleedOutMessageReceived(string participantId, bool BleedOutOn);
+
     void BossRaidAlarmReceived(bool Alarm);
     void BossHPStateReceived(int HPState);
     void BossAnimStateReceived(int AnimState);

@@ -36,13 +36,15 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public GameObject MyCharacterPos;
     private string MyPlayerNick;
 
-    
+
 
     // 적의 정보
     public GameObject EnemyCharacter;
     private EnemyMove OpponentPlayerCharacter;
     public GameObject EnemyCharacterPos;
     private string OpponentPlayerNick;
+    private bool OpponentBleedOutOn;
+    private bool OpponentSkillOn;
 
     private List<Participant> allPlayers;
     private List<Vector3> PlayerCharacters_Pos;
@@ -50,11 +52,17 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     private Dictionary<string, GameObject> PlayerCharacters;
     private Dictionary<string, string> PlayerCharacters_Nick;
 
+
+
     // 서바이벌 모드에서 쓰일 여러 유저들의 ID 기반의 값들
     private Dictionary<string, bool> _SurvivalOpponentWaitSignals;
     private Dictionary<string, bool> _SurvivalOpponentSelectSignals;
     private Dictionary<string, int> _SurvivalOpponentCharacterNumber;
     private Dictionary<string, int> _SurvivalOpponentWeaponNumber;
+
+    private Dictionary<string, bool> _SurvivalOpponentSkillOn;
+    private Dictionary<string, bool> _SurvivalOpponentBleedOutOn;
+
     private Dictionary<int, string> _SurvivalPlayersID;
     private Dictionary<string, int> _SurvivalPlayersRank;
     private Dictionary<string, bool> _SurvivalFinishedOpponentState;
@@ -171,6 +179,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     MyCharNumber = GPGSManager.GetInstance.GetMyCharacterNumber();
 
                     OppenentCharNumber = GPGSManager.GetInstance.GetPVPOpponentCharNumber();
+
+                    OpponentBleedOutOn = false;
+                    OpponentSkillOn = false;
 
                     // PVP에서 사용할 데드아이 총알 초기 위치
                     My_DeadEYeSTartIndex = Random.Range(1, 4);
@@ -639,7 +650,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         _SurvivalOpponentSelectSignals.Clear();
                     }
 
-                    if(_SurvivalPlayersID == null)
+                    if (_SurvivalPlayersID == null)
                     {
                         _SurvivalPlayersID = new Dictionary<int, string>(allPlayers.Count);
                     }
@@ -648,7 +659,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         _SurvivalPlayersID.Clear();
                     }
 
-                    if(_SurvivalPlayersRank == null)
+                    if (_SurvivalPlayersRank == null)
                     {
                         _SurvivalPlayersRank = new Dictionary<string, int>(allPlayers.Count);
                     }
@@ -657,13 +668,31 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                         _SurvivalPlayersRank.Clear();
                     }
 
-                    if(_SurvivalFinishedOpponentState == null)
+                    if (_SurvivalFinishedOpponentState == null)
                     {
                         _SurvivalFinishedOpponentState = new Dictionary<string, bool>(allPlayers.Count - 1);
                     }
                     else
                     {
                         _SurvivalFinishedOpponentState.Clear();
+                    }
+
+                    if (_SurvivalOpponentBleedOutOn == null)
+                    {
+                        _SurvivalOpponentBleedOutOn = new Dictionary<string, bool>(allPlayers.Count - 1);
+                    }
+                    else
+                    {
+                        _SurvivalOpponentBleedOutOn.Clear();
+                    }
+
+                    if (_SurvivalOpponentSkillOn == null)
+                    {
+                        _SurvivalOpponentSkillOn = new Dictionary<string, bool>(allPlayers.Count - 1);
+                    }
+                    else
+                    {
+                        _SurvivalOpponentSkillOn.Clear();
                     }
 
                     _opponentScripts = new Dictionary<string, EnemyMove>(allPlayers.Count - 1);
@@ -709,7 +738,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                             //}
                             //MyCharacter = GameObject.Find("GamePlayObj").transform.Find("PlayerCharacter").gameObject;
-                            
+
                             // 자기자신의 아이디 순차를 저장한다.
                             _MyParticipantId_Index = i;
                             EnemyIndexChecker = 1;
@@ -734,6 +763,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                             _SurvivalOpponentWeaponNumber[_SurvivalPlayersID[i]] = 0;
                             _SurvivalOpponentSelectSignals[_SurvivalPlayersID[i]] = false;
                             _SurvivalOpponentWaitSignals[_SurvivalPlayersID[i]] = false;
+                            _SurvivalOpponentBleedOutOn[_SurvivalPlayersID[i]] = false;
+                            _SurvivalOpponentSkillOn[_SurvivalPlayersID[i]] = false;
                             _SurvivalPlayersRank[nextParticipantId] = (allPlayers.Count);
 
                             string OpponentObjectName = ("EnemyCharacter" + (i - EnemyIndexChecker)).ToString();
@@ -843,7 +874,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     Debug.Log("SVM Init Player Count : " + PlayerCharacters.Count);
                     Debug.Log("SVM Init Players ID Count : " + _SurvivalPlayersID.Count);
 
-                    for(int i =0; i<PlayerCharacters.Count; i++)
+                    for (int i = 0; i < PlayerCharacters.Count; i++)
                     {
                         if (allPlayers[i].ParticipantId == _MyParticipantId)
                         {
@@ -863,7 +894,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                     _multiplayerReady = true;
 
-                    
+
 
                 }
                 break;
@@ -889,14 +920,14 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         //Screen.SetResolution(Screen.width, Screen.width * 16 / 9,  true); // 16:9 로 개발시
 
-        
+
 
     }
 
     // 어플리케이션이 Home 키가 눌려졌을때의 콜백되는 함수
     void OnApplicationPause(bool pause)
     {
-        
+
         if (pause)
         {
             bPaused = true;
@@ -928,15 +959,27 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         return OpponentGunNumber;
     }
-    
+
+    // 현재 PVP 모드에서 적의 스킬 사용 여부를 반환한다.
+    public bool GetPVPOpponentSkillOn()
+    {
+        return OpponentSkillOn;
+    }
+
+    // 현재 PVP 모드에서 적의 출혈 상태 여부를 반환한다.
+    public bool GetPVPOpponentBleedOutOn()
+    {
+        return OpponentBleedOutOn;
+    }
+
     // 현재 PVP 모드에서 적의 총 번호를 가지고 온다
     public void SetPVPOpponentGunNumber(int number = 100)
     {
-        if(number > 100)
+        if (number > 100)
         {
             OpponentGunNumber = 100;
         }
-        else if(number < 0)
+        else if (number < 0)
         {
             OpponentGunNumber = 0;
         }
@@ -944,7 +987,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         {
             OpponentGunNumber = number;
         }
-        
+
     }
 
     // 현재 서바이벌 모드에서 나의 랭크
@@ -952,7 +995,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         return MySurvivalRank;
     }
-    
+
     // 내 자신의 캐릭터 고유 번호를 반환
     public int GetMyCharNumber()
     {
@@ -968,11 +1011,11 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 내 자신의 총 고유 번호를 설정
     public void SetMyGunNumber(int number = 100)
     {
-        if(number < 0)
+        if (number < 0)
         {
             MyGunNumber = 0;
         }
-        else if(number > 100)
+        else if (number > 100)
         {
             MyGunNumber = 100;
         }
@@ -980,7 +1023,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         {
             MyGunNumber = number;
         }
-        
+
     }
 
     #region Survival Function
@@ -1021,6 +1064,18 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         return _SurvivalOpponentCharacterNumber;
     }
 
+    // 서바이벌 모드에서 사용하는 상대방의 스킬 사용 여부들
+    public Dictionary<string, bool> _GetSurvivalOpponentSkillOnDictionary()
+    {
+        return _SurvivalOpponentSkillOn;
+    }
+
+    // 서바이벌 모드에서 사용하는 상대방의 출혈 상태 여부들
+    public Dictionary<string, bool> _GetSurvivalOpponentBleedOutOnDictionary()
+    {
+        return _SurvivalOpponentBleedOutOn;
+    }
+
     // 서바이벌 모드에서 사용하는 모든 플레이어들의 ID를 반환
     public Dictionary<int, string> __SurvivalPlayersID_Dictionary()
     {
@@ -1048,9 +1103,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         Dictionary<string, bool> WaitDiction = _SurvivalOpponentWaitSignals;
         IDictionaryEnumerator WaitIter = WaitDiction.GetEnumerator();
 
-        while(WaitIter.MoveNext())
+        while (WaitIter.MoveNext())
         {
-            if(WaitDiction[WaitIter.Key.ToString()] == false)
+            if (WaitDiction[WaitIter.Key.ToString()] == false)
             {
                 All_Wait_Ready = false;
                 break;
@@ -1085,12 +1140,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             }
         }
 
-        if(All_Select_Ready)
+        if (All_Select_Ready)
         {
             Debug.logger.Log("SVM", "Survival Select Signals Ready: " + All_Select_Ready);
             Debug.Log("Survival Select Signals Ready : " + All_Select_Ready);
         }
-        
+
 
         return All_Select_Ready;
     }
@@ -1106,16 +1161,16 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         int WeaponNumber = 0;
 
-        if(index >= (allPlayers.Count-1))
+        if (index >= (allPlayers.Count - 1))
         {
-            index = (allPlayers.Count-1);
+            index = (allPlayers.Count - 1);
         }
-        else if(index <= 0)
+        else if (index <= 0)
         {
             index = 0;
         }
 
-        if(_SurvivalOpponentWeaponNumber.ContainsKey(allPlayers[index].ParticipantId))
+        if (_SurvivalOpponentWeaponNumber.ContainsKey(allPlayers[index].ParticipantId))
         {
             WeaponNumber = _SurvivalOpponentWeaponNumber[allPlayers[index].ParticipantId];
         }
@@ -1141,9 +1196,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         int CharNumber = 0;
 
-        if (index >= (allPlayers.Count-1))
+        if (index >= (allPlayers.Count - 1))
         {
-            index = (allPlayers.Count-1);
+            index = (allPlayers.Count - 1);
         }
         else if (index <= 0)
         {
@@ -1186,13 +1241,45 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     {
         string Nick = "";
 
-        if(PlayerCharacters_Nick.ContainsKey(ID))
+        if (PlayerCharacters_Nick.ContainsKey(ID))
         {
             Nick = PlayerCharacters_Nick[ID];
             Debug.Log("Players Nick ID : " + ID + " Num : " + Nick);
         }
 
         return Nick;
+    }
+
+    // 서바이벌에서 사용하는 상대방의 스킬 사용 여부
+    // ID값을 넣으면 해당 아이디에 있는 플레이어의 스킬 사용 여부를 알 수 있다.
+    public bool GetSurvivalOpponentSkillOn(string ID)
+    {
+        bool SkillOn = false;
+
+        if (_SurvivalOpponentSkillOn.ContainsKey(ID))
+        {
+            SkillOn = _SurvivalOpponentSkillOn[ID];
+            Debug.Log("Player ID : " + ID + " SkillOn : " + SkillOn);
+        }
+
+        return SkillOn;
+
+    }
+
+    // 서바이벌에서 사용하는 상대방의 출혈 상태 여부
+    // ID값을 넣으면 해당 아이디에 있는 플레이어의 출혈 상태 여부를 알 수 있다.
+    public bool GetSurvivalOpponentBleedOutOn(string ID)
+    {
+        bool BleedOutOn = false;
+
+        if (_SurvivalOpponentBleedOutOn.ContainsKey(ID))
+        {
+            BleedOutOn = _SurvivalOpponentBleedOutOn[ID];
+            Debug.Log("Player ID : " + ID + " BleedOutOn : " + BleedOutOn);
+        }
+
+        return BleedOutOn;
+
     }
 
     /// <summary>
@@ -1207,7 +1294,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         return (allPlayers.Count);
 
     }
-    
+
     /// <summary>
     /// 서바이벌 모드에 접속해 있는 플레이어들의 ID 값을 알 수 있다.
     /// 매개변수는 순차번호 간의 ID값을 반환해준다.
@@ -1221,7 +1308,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         {
             index = allPlayers.Count;
         }
-        else if(index <= 0)
+        else if (index <= 0)
         {
             index = 0;
         }
@@ -1247,7 +1334,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
         while (PlayerID_Iter.MoveNext())
         {
-            if(PlayerID_Iter.Value.Equals(ID))
+            if (PlayerID_Iter.Value.Equals(ID))
             {
                 Number = (int)PlayerID_Iter.Key;
                 break;
@@ -1303,7 +1390,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // 디폴트는 2.0초로 되어있다.
     public void EndGameAndLeaveRoom(float dTime = 2.0f)
     {
-        if(MultiStartChecker == false)
+        if (MultiStartChecker == false)
         {
             MultiStartChecker = true;
 
@@ -1319,7 +1406,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                 case HY.MultiGameModeState.NONE:
                     {
                         //GPGSManager.GetInstance.ReMatchingInit(0);
-                        
+
 
                         if (dTime <= 0.5f)
                         {
@@ -1469,7 +1556,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
             }
         }
 
-       
+
 
     }
 
@@ -1526,7 +1613,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
-                    if(_multiplayerReady)
+                    if (_multiplayerReady)
                     {
                         _SurvivalOpponentWaitSignals[participantId] = Wait;
                     }
@@ -1561,7 +1648,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
-                    if(_multiplayerReady)
+                    if (_multiplayerReady)
                     {
                         _SurvivalOpponentSelectSignals[participantId] = Select;
                     }
@@ -1574,7 +1661,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         //    SelectSignal = Select;
         //}
     }
-    
+
     // 상대방이 고른 캐릭터의 고유 번호를 받는다
     //public void CharacterSelectStateReceived(int CharacterNumber)
     //{
@@ -1602,7 +1689,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     //                    //{
     //                    //    OppenentCharNumber = CharacterNumber;
     //                    //}
-                        
+
     //                    //EnemyMove opponent = _opponentScripts[_EnemyParticipantId];
 
     //                    //if (opponent != null)
@@ -1872,6 +1959,86 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         if (_multiplayerReady)
         {
             // 아이템 처리를 해주세요...
+        }
+    }
+
+    // 플레이어들의 스킬 사용 여부를 받아온다
+    public void PlayerSkillMessageReceived(string participantId, bool SkillOn)
+    {
+        switch (MultiGameModeState)
+        {
+            case HY.MultiGameModeState.NONE:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+                    if (_multiplayerReady)
+                    {
+                        if(ThisGameIsEnd == false)
+                        {
+                            OpponentSkillOn = SkillOn;
+                        }
+                        
+                    }
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    if (_multiplayerReady)
+                    {
+                        if (_SurvivalFinishedOpponentState[participantId] == false)
+                        {
+                            _SurvivalOpponentSkillOn[participantId] = SkillOn;
+                            Debug.Log("Player ID : " + participantId + " SkillOn : " + SkillOn);
+                        }
+                        
+                    }
+                }
+                break;
+        }
+    }
+
+    // 플레이어들의 출혈 상태를 얻어온다.
+    public void PlayerBleedOutMessageReceived(string participantId, bool BleedOutOn)
+    {
+        switch (MultiGameModeState)
+        {
+            case HY.MultiGameModeState.NONE:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+                    if (_multiplayerReady)
+                    {
+                        if (ThisGameIsEnd == false)
+                        {
+                            OpponentBleedOutOn = BleedOutOn;
+                        }
+                            
+                    }
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    if (_multiplayerReady)
+                    {
+                        if (_SurvivalFinishedOpponentState[participantId] == false)
+                        {
+                            _SurvivalOpponentBleedOutOn[participantId] = BleedOutOn;
+                            Debug.Log("Player ID : " + participantId + " BleedOutOn : " + BleedOutOn);
+                        }
+
+                    }
+                }
+                break;
         }
     }
 
@@ -2705,6 +2872,20 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public void SendHPStateMessage(int HP)
     {
         GPGSManager.GetInstance.SendCharacterHP(HP);
+    }
+
+    // 자신의 스킬 사용 상태 여부를 보내기 위해 사용된다.
+    // True값을 통해 상태를 전달
+    public void SendPlayerSkillOnMessage(bool SkillOn = false)
+    {
+        GPGSManager.GetInstance.SendPlayerSkillMessage(SkillOn);
+    }
+
+    // 자신의 출혈 상태 여부를 보내기 위해 사용된다.
+    // True값을 통해 상태를 전달
+    public void SendPlayerBleedOutMessage(bool BleedOut = false)
+    {
+        GPGSManager.GetInstance.SendPlayerStateMessage(BleedOut);
     }
 
     // 상대방의 총알 방향을 보내는 메시지다.

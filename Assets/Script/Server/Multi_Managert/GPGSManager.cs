@@ -100,6 +100,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private int _WeaponSelectMessageLength = 6;
     // Byte + Byte + 1 Vector
     private int _shootVectorMesageLength = 14;
+    // Byte + Byte + 1 Boolean
+    private int _PlayerSkillMesageLength = 3;
+    // Byte + Byte + 1 Boolean
+    private int _PlayerStateMesageLength = 3;
 
     // Byte + Byte + 1 Interger
     private int _SurvivalRankedMessageLength = 6;
@@ -136,6 +140,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private List<byte> _DeadEyeRespawnMessage;
     private List<byte> _AnimMessage;
     private List<byte> _HealthMessage;
+    private List<byte> _PlayerSKillMessage;
+    private List<byte> _PlayerStateMessage;
 
     // 서바이벌 모드에서 사용할 랭킹 메시지
     private List<byte> _SurvivalRankedMessage;
@@ -260,6 +266,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _WeaponSelectMessageLength = 6;
              // Byte + Byte + 1 Vector
             _shootVectorMesageLength = 14;
+            // Byte + Byte + Byte + 1 Boolean
+            _PlayerSkillMesageLength = 4;
+            // Byte + Byte + Byte + 1 Boolean
+            _PlayerStateMesageLength = 4;
 
             // Byte + Byte + 1 Interger
             _SurvivalRankedMessageLength = 6;
@@ -361,6 +371,16 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if(_SurvivalRankedMessage == null)
         {
             _SurvivalRankedMessage = new List<byte>(_SurvivalRankedMessageLength);
+        }
+
+        if(_PlayerSKillMessage == null)
+        {
+            _PlayerSKillMessage = new List<byte>(_PlayerSkillMesageLength);
+        }
+
+        if(_PlayerStateMessage == null)
+        {
+            _PlayerStateMessage = new List<byte>(_PlayerStateMesageLength);
         }
 
         // 보스 이벤트
@@ -786,6 +806,16 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _SurvivalRankedMessage = new List<byte>(_SurvivalRankedMessageLength);
         }
 
+        if (_PlayerSKillMessage == null)
+        {
+            _PlayerSKillMessage = new List<byte>(_PlayerSkillMesageLength);
+        }
+
+        if (_PlayerStateMessage == null)
+        {
+            _PlayerStateMessage = new List<byte>(_PlayerStateMesageLength);
+        }
+
         // 보스 이벤트
         if (_BossAlarmMessage == null)
         {
@@ -1160,6 +1190,37 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         _StateSelectMessage.AddRange(System.BitConverter.GetBytes(Select));
 
         byte[] StateMessageToSend = _StateSelectMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, StateMessageToSend);
+    }
+
+    // 플레이어가 스킬을 사용했을때 보내주는 메시지
+    // True가 되면 스킬을 사용한 것
+    public void SendPlayerSkillMessage(bool SkillOn)
+    {
+        _PlayerSKillMessage.Clear();
+        _PlayerSKillMessage.Add(_protocolVersion);
+        _PlayerSKillMessage.Add((byte)'M');
+        _PlayerSKillMessage.Add((byte)'S');
+        _PlayerSKillMessage.AddRange(System.BitConverter.GetBytes(SkillOn));
+
+        byte[] SkillMessageToSend = _PlayerSKillMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, SkillMessageToSend);
+    }
+    
+    // 플레이어가 출혈 상태가 됬을때 보내주는 메시지
+    // True가 되면 출혈 상태인 것이다.
+    public void SendPlayerStateMessage(bool PState)
+    {
+
+        _PlayerStateMessage.Clear();
+        _PlayerStateMessage.Add(_protocolVersion);
+        _PlayerStateMessage.Add((byte)'M');
+        _PlayerStateMessage.Add((byte)'P');
+        _PlayerStateMessage.AddRange(System.BitConverter.GetBytes(PState));
+
+        byte[] StateMessageToSend = _PlayerStateMessage.ToArray();
 
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, StateMessageToSend);
     }
@@ -1657,6 +1718,44 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                     if (updateListener != null)
                     {
                         updateListener.ShootVectorReceived(senderId, VecX, VecY, VecZ);
+                    }
+                }
+                break;
+
+                // 플레이어의 여러 정보들을 나눠서 보낸다
+            case 'M':
+                {
+                    char PlayerMessageType = (char)data[2];
+
+                    switch(PlayerMessageType)
+                    {
+                        // 스킬 여부
+                        case 'S':
+                            {
+                                bool PlayerSkillOn = System.BitConverter.ToBoolean(data, 3);
+
+                                Debug.Log("Player SKill On : " + PlayerSkillOn);
+
+                                if(updateListener != null)
+                                {
+                                    updateListener.PlayerSkillMessageReceived(senderId, PlayerSkillOn);
+                                }
+                            }
+                            break;
+
+                        // 상태이상 (출혈 여부)
+                        case 'P':
+                            {
+                                bool PlayerBleedOutOn = System.BitConverter.ToBoolean(data, 3);
+
+                                Debug.Log("Player BleedOut On : " + PlayerBleedOutOn);
+
+                                if (updateListener != null)
+                                {
+                                    updateListener.PlayerBleedOutMessageReceived(senderId, PlayerBleedOutOn);
+                                }
+                            }
+                            break;
                     }
                 }
                 break;
