@@ -49,7 +49,7 @@ public class SceneInit : MonoBehaviour {
         if (m_Player == null)
         {
 
-            m_Player = Instantiate(Player[1]);   //에디터상에서는 고정
+            m_Player = Instantiate(Player[3]);   //에디터상에서는 고정
             m_Player.transform.position = PlayerStartPos.position;
             m_Player.name = "PlayerCharacter";
             m_Player.transform.SetParent(GamePlayObj.transform);

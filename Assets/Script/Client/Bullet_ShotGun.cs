@@ -9,7 +9,7 @@ public class Bullet_ShotGun : MonoBehaviour {
     int m_Distance ;    //지속시간
 
     //[SerializeField]
-    int m_DistanceInit = 1000;
+    int m_DistanceInit = 800;
 
     //총알 사용중 여부
     public bool m_Use = false;

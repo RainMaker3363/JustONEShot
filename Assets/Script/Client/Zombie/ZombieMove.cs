@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.AI;
 using UnityEngine;
+using System;
 
 enum ZombieState
 {
@@ -17,6 +18,7 @@ abstract public class Zombie : MonoBehaviour
     public float FastMoveSpeed = 10;
 
     abstract public void ZombieDamage(int Damage);
+    abstract public void Bleeding();
 
     public bool ZombieFastMoveCheck(float PlayerDistance)
     {
@@ -27,6 +29,8 @@ abstract public class Zombie : MonoBehaviour
 
         return true;
     }
+
+    
 }
 public class ZombieMove : Zombie
 {
@@ -251,9 +255,39 @@ public class ZombieMove : Zombie
             yield return new WaitForEndOfFrame();
         }
 
-       // Debug.Log("FastMoveEnd");
+        // Debug.Log("FastMoveEnd");
         NvAgent.speed = speed;
         MiniMapPoint.SetActive(true);
-       // yield return null;
+        // yield return null;
+    }
+
+    public override void Bleeding()
+    {
+        if (HP > 0)
+        {
+            StartCoroutine(BleedingDamage());
+        }
+    }
+
+    IEnumerator BleedingDamage()
+    {
+        BloodEffectsManager.GetInstance().BloodEffectOn(gameObject);
+
+        for (int i = 0; i < 5; i++)
+        {
+            HP -= 4;
+            if (HP <= 0)
+            {
+                Z_State = ZombieState.DEATH;
+
+                anim.SetTrigger("Death");
+                m_AudioSource.PlayOneShot(DeadSound);
+                break;
+            }
+            yield return new WaitForSeconds(1);
+        }
+
+        yield return null;
+
     }
 }

@@ -25,6 +25,7 @@ public class GameStart : MonoBehaviour {
 
     public GameObject GunInfo;
 
+
     void Awake()
     {
        
@@ -206,6 +207,7 @@ public class GameStart : MonoBehaviour {
                 {
                     MainUI.SetActive(true);
                     gameObject.SetActive(false);
+                    DB_CreateManager.GetInstance().DeadEyeCreateTime();
                 }
             }
         }

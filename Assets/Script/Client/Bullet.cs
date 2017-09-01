@@ -18,6 +18,8 @@ public class Bullet : MonoBehaviour {
 
     public bool Penetrate = false;
 
+    public bool Blood = false;
+
     public int HitCount=0;
 
     RaycastHit HitObj;
@@ -47,6 +49,12 @@ public class Bullet : MonoBehaviour {
             Debug.Log("Hit" + Damage);
             col.gameObject.GetComponent<CharMove>().Damaged(Damage, transform.forward);
             HitCount++;
+            if(Blood)
+            {
+                Blood = false;
+                BloodEffectsManager.GetInstance().BloodEffectOn(col.gameObject);
+                StartCoroutine(col.gameObject.GetComponent<CharMove>().BleedingDamage());//출혈 데미지 적용
+            }
             // m_Distance = 0;
         }
 
@@ -56,12 +64,26 @@ public class Bullet : MonoBehaviour {
 
             col.gameObject.GetComponent<EnemyMove>().Damaged(Damage, transform.forward);
             HitCount++;
+            if (Blood)
+            {
+                Blood = false;
+                BloodEffectsManager.GetInstance().BloodEffectOn(col.gameObject);
+                //StartCoroutine(col.gameObject.GetComponent<EnemyMove>().BleedingDamage());
+            }
             // m_Distance = 0;
         }
         if (col.gameObject.tag == "Zombie")
         {
             col.gameObject.GetComponent<Zombie>().ZombieDamage(Damage);
             HitCount++;
+            if (Blood)
+            {
+                Blood = false;
+                if (BloodEffectsManager.GetInstance().BloodEffectOn(col.gameObject))
+                {
+                    col.gameObject.GetComponent<Zombie>().Bleeding();//출혈 데미지 적용
+                }
+            }
             // m_Distance = 0;
         }
 

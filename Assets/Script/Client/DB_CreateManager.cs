@@ -9,8 +9,9 @@ public class DB_CreateManager : MonoBehaviour {
 
     static DB_CreateManager Manager;
 
-    bool BulletCreate = true;   //생성이 필요한경우
+    bool BulletCreate = false;   //생성이 필요한경우
     public bool Request = false;    //서버에 난수생성 요청 필요 여부
+    
     int ServerIndex = -1;    //서버로 받을 난수
     int CreateIndex = -1;    //총알이 생성된 인덱스 
 
@@ -55,7 +56,7 @@ public class DB_CreateManager : MonoBehaviour {
             Request = false;
         }
 
-        if (Mul_Manager.GetDeadEyeRespawnIndex() > -1)
+        if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager.GetDeadEyeRespawnIndex() > -1)
              ServerIndex = Mul_Manager.GetDeadEyeRespawnIndex(); //서버의 인덱스는 계속 참조를한다
 
         if (ServerIndex != -1 && CreateIndex != ServerIndex) //생성이 필요할경우 또는 만들었던 인덱스가 다를경우
@@ -83,6 +84,16 @@ public class DB_CreateManager : MonoBehaviour {
         }
     }
 
+    public void DeadEyeCreateTime()
+    {
+        StartCoroutine(DeadEyeCoolTime());
+    }
+
+    public IEnumerator DeadEyeCoolTime()
+    {
+        yield return new WaitForSeconds(20);
+        ServerIndex = 0;
+    }
     //void OnGUI()
     //{
     //    int w = Screen.width, h = Screen.height;

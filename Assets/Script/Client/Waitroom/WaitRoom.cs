@@ -19,7 +19,8 @@ public class GameInfoManager
     public bool Pause = false;
 
     static int Gold = 0;
-    static int Score = 1000;
+    static int SurvivalScore = 1000;
+    static int PVPScore = 1000;
 
     int damage = 0;
 
@@ -29,12 +30,17 @@ public class GameInfoManager
         {
             m_Manager = new GameInfoManager();
 
-            if (PlayerPrefs.HasKey("Score"))
+            if (PlayerPrefs.HasKey("SurvivalScore"))
             {
-                Score = PlayerPrefs.GetInt("Score");
+                SurvivalScore = PlayerPrefs.GetInt("SurvivalScore");
             }
 
-            if(PlayerPrefs.HasKey("Gold"))
+            if (PlayerPrefs.HasKey("PVPScore"))
+            {
+                PVPScore = PlayerPrefs.GetInt("PVPScore");
+            }
+
+            if (PlayerPrefs.HasKey("Gold"))
             {
                 Gold = PlayerPrefs.GetInt("Gold");
             }
@@ -48,22 +54,42 @@ public class GameInfoManager
         Gold += gold;
         PlayerPrefs.SetInt("Gold", Gold);
     }
-    public int ScoreAdd(int score)
+    public int SurvivalScoreAdd(int score)
     {
-        Score += score;
+        SurvivalScore += score;
 
-        if(Score<0)
+        if(SurvivalScore < 0)
         {
-            Score = 0;
+            SurvivalScore = 0;
         }
-        else if (Score > 10000)
+        else if (SurvivalScore > 10000)
         {
-            Score = 10000;
+            SurvivalScore = 10000;
         }
 
-        PlayerPrefs.SetInt("Score", Score);
+        PlayerPrefs.SetInt("SurvivalScore", SurvivalScore);
 
-        int total = Score;
+        int total = SurvivalScore;
+
+        return total;
+    }
+
+    public int PVPScoreAdd(int score)
+    {
+        PVPScore += score;
+
+        if (PVPScore < 0)
+        {
+            PVPScore = 0;
+        }
+        else if (PVPScore > 10000)
+        {
+            PVPScore = 10000;
+        }
+
+        PlayerPrefs.SetInt("PVPScore", PVPScore);
+
+        int total = PVPScore;
 
         return total;
     }

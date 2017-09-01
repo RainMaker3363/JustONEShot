@@ -55,6 +55,8 @@ class Gun_Revolver : UseGun
     public override void UseBullet()
     {
         Bullet_Gun -= Bullet_Use;
+        if (Bullet_Gun < 0)
+            Bullet_Gun = 0;
     }
 
 
@@ -76,6 +78,8 @@ class Gun_ShotGun : UseGun
     public override void UseBullet()
     {
         Bullet_Gun -= Bullet_Use;
+        if (Bullet_Gun < 0)
+            Bullet_Gun = 0;
     }
 
 
@@ -97,6 +101,8 @@ class Gun_Musket : UseGun
     public override void UseBullet()
     {
         Bullet_Gun -= Bullet_Use;
+        if (Bullet_Gun < 0)
+            Bullet_Gun = 0;
     }
 
 
@@ -110,7 +116,7 @@ public class Gun : MonoBehaviour
     [SerializeField]
     Bullet[] Bullets;
 
-    public Bullet_ShotGun ShotGunBullet;
+    public Bullet_ShotGun[] ShotGunBullet;
 
     [SerializeField]
     GameObject[] Effects;
@@ -258,9 +264,18 @@ public class Gun : MonoBehaviour
                                     {
                                         Bullets[m_BulletIndex].Damage = CharMove.m_UseGun.Damage;
                                         Bullets[m_BulletIndex].m_Movespeed = 30;
-                                       CharMove.m_UseGun.UseBullet();
-                                        UI_SillinderBullets[5 - CharMove.m_UseGun.Bullet_Gun].gameObject.SetActive(false);
-                                        SillinerRotate -= 60;
+                                        if (!CharMove.Skill_Fastgun)    //링컨 스킬 사용중인경우
+                                        {
+                                            CharMove.m_UseGun.UseBullet();
+                                            UI_SillinderBullets[5 - CharMove.m_UseGun.Bullet_Gun].gameObject.SetActive(false);
+                                            SillinerRotate -= 60;
+                                        }
+
+                                        if(CharMove.Skill_BloodBullet)
+                                        {
+                                            Bullets[m_BulletIndex].Blood = true;
+                                            CharMove.Skill_BloodBullet = false;
+                                        }
                                         break;
                                     } 
                                 case 2:
@@ -269,9 +284,18 @@ public class Gun : MonoBehaviour
                                         Bullets[m_BulletIndex].m_Movespeed = 60;
                                         Bullets[m_BulletIndex].m_Distance += 500;
                                         Bullets[m_BulletIndex].Penetrate = true;
-                                        CharMove.m_UseGun.UseBullet();
-                                        UI_MusketBullets.SetActive(false);
-                                        
+                                        if (!CharMove.Skill_Fastgun)    //링컨 스킬 사용중인경우
+                                        {
+                                            CharMove.m_UseGun.UseBullet();
+                                            UI_MusketBullets.SetActive(false);
+                                        }
+
+                                        if (CharMove.Skill_BloodBullet)
+                                        {
+                                            Bullets[m_BulletIndex].Blood = true;
+                                            CharMove.Skill_BloodBullet = false;
+                                        }
+
                                         break;
                                     }
 
@@ -338,7 +362,7 @@ public class Gun : MonoBehaviour
 
                 camAni.SetTrigger("Shot");
                 m_BulletIndex++;
-                if (m_BulletIndex == 3)
+                if (m_BulletIndex == Bullets.Length)
                 {
                     m_BulletIndex = 0;
                 }
@@ -361,7 +385,7 @@ public class Gun : MonoBehaviour
     {
 
 
-        if (!ShotGunBullet.m_Use)
+        if (!ShotGunBullet[m_BulletIndex].m_Use)
         {
             Debug.Log(gameObject.tag);
             int UseGun = 100;
@@ -371,10 +395,20 @@ public class Gun : MonoBehaviour
                 case "Player":
                     {
 
-                        ShotGunBullet.Damage = CharMove.m_UseGun.Damage;
-                        CharMove.m_UseGun.UseBullet();
-                        UI_ShotGunBullets[0].gameObject.SetActive(false);
-                        UI_ShotGunBullets[1].gameObject.SetActive(false);
+                        ShotGunBullet[m_BulletIndex].Damage = CharMove.m_UseGun.Damage;
+                        if (!CharMove.Skill_Fastgun)    //링컨 스킬 사용중인경우
+                        {
+                            CharMove.m_UseGun.UseBullet();
+                            UI_ShotGunBullets[0].gameObject.SetActive(false);
+                            UI_ShotGunBullets[1].gameObject.SetActive(false);
+                        }
+
+                        if (CharMove.Skill_BloodBullet)
+                        {
+                            Bullets[m_BulletIndex].Blood = true;
+                            CharMove.Skill_BloodBullet = false;
+                        }
+
                         UseGun = CharMove.m_UseGun.NowUseGun;
 
                         // UI_SillinderBullets[5 - CharMove.m_UseGun.Bullet_Gun].gameObject.SetActive(false);
@@ -386,7 +420,7 @@ public class Gun : MonoBehaviour
                     }
                 case "Enemy":
                     {
-                        ShotGunBullet.Damage = EnemyMove.m_EnemyUseGun.Damage;
+                        ShotGunBullet[m_BulletIndex].Damage = EnemyMove.m_EnemyUseGun.Damage;
                         EnemyMove.m_EnemyUseGun.UseBullet();
                         UseGun = EnemyMove.m_EnemyUseGun.NowUseGun;
                         break;
@@ -399,12 +433,12 @@ public class Gun : MonoBehaviour
            
 
             //총알
-            ShotGunBullet.transform.position = m_GunTransform[UseGun].position;
-            ShotGunBullet.transform.rotation = this.transform.rotation;
+            ShotGunBullet[m_BulletIndex].transform.position = m_GunTransform[UseGun].position;
+            ShotGunBullet[m_BulletIndex].transform.rotation = this.transform.rotation;
             //Bullets[i].DistanceInit();
 
-            ShotGunBullet.m_Use = true;
-            ShotGunBullet.gameObject.SetActive(true);
+            ShotGunBullet[m_BulletIndex].m_Use = true;
+            ShotGunBullet[m_BulletIndex].gameObject.SetActive(true);
 
             //이펙트
             Effects[m_BulletIndex].transform.position = m_GunTransform[UseGun].position;
@@ -417,7 +451,7 @@ public class Gun : MonoBehaviour
 
             camAni.SetTrigger("ShotGun");
             m_BulletIndex++;
-            if (m_BulletIndex == 3)
+            if (m_BulletIndex == ShotGunBullet.Length)
             {
                 m_BulletIndex = 0;
             }
@@ -465,6 +499,7 @@ public class Gun : MonoBehaviour
                     }
                 case 1:
                     {
+                        //Debug.Log(CharMove.m_UseGun.Bullet_Gun);
                         UI_ShotGunBullets[CharMove.m_UseGun.Bullet_Gun].SetActive(true);
                         break;
                     }

@@ -276,4 +276,34 @@ public class ZombieMove_Boom : Zombie
         MiniMapPoint.SetActive(true);
         // yield return null;
     }
+
+    public override void Bleeding()
+    {
+        if (HP > 0)
+        {
+            StartCoroutine(BleedingDamage());
+        }
+    }
+
+    IEnumerator BleedingDamage()
+    {
+        BloodEffectsManager.GetInstance().BloodEffectOn(gameObject);
+
+        for (int i = 0; i < 5; i++)
+        {
+            HP -= 4;
+            if (HP <= 0)
+            {
+                Z_State = ZombieState.DEATH;
+
+                anim.SetTrigger("Death");
+                //m_AudioSource.PlayOneShot(DeadSound);
+                break;
+            }
+            yield return new WaitForSeconds(1);
+        }
+
+        yield return null;
+
+    }
 }

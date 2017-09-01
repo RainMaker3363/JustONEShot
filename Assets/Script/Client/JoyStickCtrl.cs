@@ -51,10 +51,10 @@ public class JoyStickCtrl : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
             // Pos.x * 2 + 1, Pos.y * 2 - 1 처리를 합니다.
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(Joystick_Pad.rectTransform, ped.position, ped.pressEventCamera, out Pos))
             {
-                Pos.x = (Pos.x / Joystick_Pad.rectTransform.sizeDelta.x);
-                Pos.y = (Pos.y / Joystick_Pad.rectTransform.sizeDelta.y);
+                Pos.x = 2*(Pos.x / Joystick_Pad.rectTransform.sizeDelta.x);
+                Pos.y = 2*(Pos.y / Joystick_Pad.rectTransform.sizeDelta.y);
 
-                inputVector = new Vector3(Pos.x * 2, Pos.y * 2, 0);
+                inputVector = Pos;
                 inputVector = (inputVector.magnitude > 1.0f) ? inputVector.normalized : inputVector;
 
                 // 조이스틱이 움직인다면..

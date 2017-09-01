@@ -16,13 +16,15 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
     [SerializeField]
     int BulletIndex = -1;   //총알 인덱스
 
-    float CreateCoolTime = 30;   // 먹은후 재생성 쿨타임
+    float CreateCoolTime = 40;   // 먹은후 재생성 쿨타임
 
     public bool CreateAble = false; //생성 가능여부
 
    public MultiGameManager Mul_GameManager;
     public Transform DeathZone;
     RaycastHit HitObj;
+
+    public UnityEngine.UI.Image DeadEyeIcon;
 
     // Use this for initialization
     void Start()
@@ -60,7 +62,7 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
             //Debug.Log("PointPos" + transform.position.y);
             //Debug.Log("DeathZonePos" + DeathZone.position.y);
         }
-        if (Mul_GameManager.GetEndGameState())
+        if (GPGSManager.GetInstance.IsAuthenticated() && Mul_GameManager.GetEndGameState())
         {
             DB_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
             BulletIndex = -1; //인덱스 초기화
@@ -70,6 +72,7 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
  
         if (CreateAble)// && (P_CharPos != null && E_CharPos != null)) //생성이 가능할경우
         {
+            DeadEyeIcon.color = new Color(1, 1, 1, 1);
             P_Distance = Vector3.Distance(P_CharPos.position, this.transform.position);
             E_Distance = Vector3.Distance(E_CharPos.position, this.transform.position);
 
@@ -87,6 +90,7 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
 
             if (BulletIndex > -1) //생성을 했고 캐릭터가 근처에 왔을경우
             {
+                
                 if (P_Distance < 1) //플레이어인경우
                 {
                     CharMove.DeadEye();  //캐릭터 데드아이 시작
@@ -94,7 +98,9 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
                     DB_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
                     BulletIndex = -1; //인덱스 초기화
                     CreateAble = false;
+                    DeadEyeIcon.color = new Color(1,1,1,0.3f);
                     StartCoroutine(BulletCreateDelay());    //재생성 쿨타임 시작
+
                 }
                 else if(E_Distance < 1)
                 {
@@ -102,6 +108,7 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
                     DB_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
                     BulletIndex = -1; //인덱스 초기화
                     CreateAble = false; //적이 먹은경우 난수생성요청을하지않기위해 코루틴은 실행하지않는다
+                    DeadEyeIcon.color = new Color(1, 1, 1, 0.3f);
                     // StartCoroutine(BulletCreateDelay());    //재생성 쿨타임 시작
                 }
 

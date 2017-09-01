@@ -63,14 +63,14 @@ public class ResultManager : MonoBehaviour {
                         {
                             UI_Coin.text = "100";
                             GameInfoManager.GetInstance().GoldAdd(100);
-                            UI_Score.text = GameInfoManager.GetInstance().ScoreAdd(100).ToString();
+                            UI_Score.text = GameInfoManager.GetInstance().PVPScoreAdd(100).ToString();
 
                         }
                         else
                         {
                             UI_Coin.text = "10";
                             GameInfoManager.GetInstance().GoldAdd(10);
-                            UI_Score.text = GameInfoManager.GetInstance().ScoreAdd(-100).ToString();
+                            UI_Score.text = GameInfoManager.GetInstance().PVPScoreAdd(-100).ToString();
                         }
                         break;
                     }
@@ -80,14 +80,14 @@ public class ResultManager : MonoBehaviour {
                         {
                             UI_Coin.text = "100";
                             GameInfoManager.GetInstance().GoldAdd(100);
-                            UI_Score.text = GameInfoManager.GetInstance().ScoreAdd(100).ToString();
+                            UI_Score.text = GameInfoManager.GetInstance().SurvivalScoreAdd(100).ToString();
 
                         }
                         else
                         {
                             UI_Coin.text = "10";
                             GameInfoManager.GetInstance().GoldAdd(10);
-                            UI_Score.text = GameInfoManager.GetInstance().ScoreAdd(-100).ToString();
+                            UI_Score.text = GameInfoManager.GetInstance().SurvivalScoreAdd(-100).ToString();
                         }
                         break;
                     }

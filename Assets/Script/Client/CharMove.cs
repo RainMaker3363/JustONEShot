@@ -142,7 +142,7 @@ public class CharMove : MonoBehaviour
 
     public int m_DebugPlayerState;
 
-    int CharIndex = 1; //캐릭터 선택 인덱스
+    int CharIndex = 3; //캐릭터 선택 인덱스
 
     //캐릭터 총
     public static UseGun m_UseGun;
@@ -154,6 +154,11 @@ public class CharMove : MonoBehaviour
 
     public static bool Invincibility = false;
 
+
+    public static bool Skill_Fastgun = false;
+    bool Skill_Hide = false;
+    public static bool Skill_BloodBullet = false;
+    bool Skill_Invincibility = false;
 
     //float Stamina = 1000;   
     //[SerializeField]
@@ -595,26 +600,38 @@ public class CharMove : MonoBehaviour
         {
             anim.SetBool("GunFire", true);
             GunPoint.SetActive(false);
-            if (m_UseGun.Bullet_Gun >= m_UseGun.Bullet_Use)
+            if (!Skill_Fastgun)
+            {
+                if (m_UseGun.Bullet_Gun >= m_UseGun.Bullet_Use)
+                {
+                    anim.SetBool("Shot", true);
+
+                    if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
+                    {
+                        Mul_Manager.SendShootMessage(true);
+                    }
+                    m_PlayerState = LSD.PlayerState.SHOT_FIRE;
+                }
+                else
+                {
+                    anim.SetBool("Shot", false);
+                    if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
+                    {
+                        Mul_Manager.SendShootMessage(false);
+                    }
+                    m_PlayerState = LSD.PlayerState.SHOT_FIRE;
+                }
+            }
+            else
             {
                 anim.SetBool("Shot", true);
-
+                anim.speed = 4;
                 if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
                 {
                     Mul_Manager.SendShootMessage(true);
                 }
                 m_PlayerState = LSD.PlayerState.SHOT_FIRE;
             }
-            else
-            {
-                anim.SetBool("Shot", false);
-                if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
-                {
-                    Mul_Manager.SendShootMessage(false);
-                }
-                m_PlayerState = LSD.PlayerState.SHOT_FIRE;
-            }
-
 
         }
 
@@ -624,6 +641,7 @@ public class CharMove : MonoBehaviour
     {
         if (!anim.GetBool("GunFire"))
         {
+            anim.speed = 1;
             m_PlayerState = LSD.PlayerState.IDLE;
         }
         else
@@ -1312,6 +1330,45 @@ public class CharMove : MonoBehaviour
         }
     }
 
+    public void OnSkillButton()
+    {
+        Debug.Log("Skill");
+        //스킬 사용 전송
+
+        switch (CharIndex)
+        {
+            case 0: // 링컨 스킬
+                {
+                    StartCoroutine(SkillUse(2));
+                    Skill_Fastgun = true;
+                    break;
+                }
+            case 1: // 샬롯 스킬
+                {
+                    StartCoroutine(SkillUse(6));
+                    Skill_Hide = true;
+                    break;
+                }
+                case 2: // 호그 스킬
+                {
+                    StartCoroutine(SkillUse(4));
+                    Skill_Invincibility = true;
+                    break;
+                }
+            case 3: // 엔젤 스킬
+                {
+                    //StartCoroutine(SkillUse(3));
+                    Skill_BloodBullet = true;
+                    break;
+                }
+            
+            default:
+                break;
+        }
+
+        //버튼삭제
+    }
+
     void CharInit()
     {
 
@@ -1367,6 +1424,7 @@ public class CharMove : MonoBehaviour
 
         UI_Main.transform.Find("Control/Button_Reroad").GetComponent<Button>().onClick.AddListener(OnReroadButton);
         UI_Main.transform.Find("Control/Button_Roll").GetComponent<Button>().onClick.AddListener(OnRollButton);
+        UI_Main.transform.Find("Control/Button_Skill").GetComponent<Button>().onClick.AddListener(OnSkillButton);
 
         GamePlayObj.transform.Find("UI_GameOver/Image/Button_Exit").GetComponent<Button>().onClick.AddListener(OnExitButton);
         GamePlayObj.transform.Find("UI_GameOver/Image/Button_Rematch").GetComponent<Button>().onClick.AddListener(OnRematchButton);
@@ -1374,6 +1432,49 @@ public class CharMove : MonoBehaviour
         //UI_Main.SetActive(false);
         // gameObject.SetActive(false);
     }
+
+    IEnumerator SkillUse(int SkillTime)
+    {
+        Debug.Log("SkillStart");
+        yield return new WaitForSeconds(SkillTime);
+
+        Skill_Fastgun = false;
+        Skill_Hide = false;
+        //Skill_BloodBullet = false;
+        Skill_Invincibility = false;
+        Debug.Log("SkillEnd");
+        yield return null;
+    }
+
+    public IEnumerator BleedingDamage()
+    {
+        BloodEffectsManager.GetInstance().BloodEffectOn(gameObject);
+
+        for (int i = 0; i < 5; i++)
+        {
+            CharStat.HP -= 4;
+
+            HP_bar.fillAmount = (float)CharStat.HP / CharStat.MaxHP;
+
+            if (!DeadCheck())
+            {
+                
+            }
+
+
+            if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
+            {
+                Mul_Manager.SendMyPositionUpdate();
+                Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
+                Mul_Manager.SendHPStateMessage(CharStat.HP);              
+            }
+            yield return new WaitForSeconds(1);
+        }
+
+        yield return null;
+
+    }
+
 
     void OnDestroy()
     {
