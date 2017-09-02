@@ -271,7 +271,7 @@ public class Gun : MonoBehaviour
                                             SillinerRotate -= 60;
                                         }
 
-                                        if(CharMove.Skill_BloodBullet)
+                                        if(CharMove.Skill_BloodBullet) // 엔젤 스킬 사용
                                         {
                                             Bullets[m_BulletIndex].Blood = true;
                                             CharMove.Skill_BloodBullet = false;
@@ -284,13 +284,13 @@ public class Gun : MonoBehaviour
                                         Bullets[m_BulletIndex].m_Movespeed = 60;
                                         Bullets[m_BulletIndex].m_Distance += 500;
                                         Bullets[m_BulletIndex].Penetrate = true;
-                                        if (!CharMove.Skill_Fastgun)    //링컨 스킬 사용중인경우
+                                        if (!CharMove.Skill_Fastgun)    //링컨 스킬 사용중인경우 - 총알갯수제한 제거
                                         {
                                             CharMove.m_UseGun.UseBullet();
                                             UI_MusketBullets.SetActive(false);
                                         }
 
-                                        if (CharMove.Skill_BloodBullet)
+                                        if (CharMove.Skill_BloodBullet) //엔젤 스킬 사용 - 출혈탄장전
                                         {
                                             Bullets[m_BulletIndex].Blood = true;
                                             CharMove.Skill_BloodBullet = false;
@@ -320,6 +320,13 @@ public class Gun : MonoBehaviour
                                     {
                                         Bullets[m_BulletIndex].Damage = EnemyMove.m_EnemyUseGun.Damage;
                                         Bullets[m_BulletIndex].m_Movespeed = 30;
+                                       
+                                        if (EnemyMove.Skill_BloodBullet)    //상대엔젤 스킬사용
+                                        {
+                                            Bullets[m_BulletIndex].Blood = true;
+                                            EnemyMove.Skill_BloodBullet = false;
+                                        }
+                                        
                                         break;
                                     }
                                 case 2:
@@ -328,6 +335,11 @@ public class Gun : MonoBehaviour
                                         Bullets[m_BulletIndex].m_Movespeed = 60;
                                         Bullets[m_BulletIndex].m_Distance += 500;
                                         Bullets[m_BulletIndex].Penetrate = true;
+                                        if (EnemyMove.Skill_BloodBullet)
+                                        {
+                                            Bullets[m_BulletIndex].Blood = true;
+                                            EnemyMove.Skill_BloodBullet = false;
+                                        }
                                         break;
                                     }
 
@@ -422,6 +434,11 @@ public class Gun : MonoBehaviour
                     {
                         ShotGunBullet[m_BulletIndex].Damage = EnemyMove.m_EnemyUseGun.Damage;
                         EnemyMove.m_EnemyUseGun.UseBullet();
+                        if (EnemyMove.Skill_BloodBullet)
+                        {
+                            Bullets[m_BulletIndex].Blood = true;
+                            EnemyMove.Skill_BloodBullet = false;
+                        }
                         UseGun = EnemyMove.m_EnemyUseGun.NowUseGun;
                         break;
                     }

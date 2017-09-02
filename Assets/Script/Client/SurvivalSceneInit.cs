@@ -50,7 +50,7 @@ public class SurvivalSceneInit : MonoBehaviour
         // Mul_Manager.CharacterSelectStateReceived();
 
 
-#if UNITY_EDITOR    //유니티에디터에서 실행시킬경우 이쪽코드를 실행
+#if !UNITY_EDITOR    //유니티에디터에서 실행시킬경우 이쪽코드를 실행
 
         if (m_Player == null)
         {
@@ -150,11 +150,12 @@ public class SurvivalSceneInit : MonoBehaviour
                     EnemyID = GPGSManager.GetInstance.GetSurvivalAllPlayerCharacterID(j);
                     CharCode = GPGSManager.GetInstance.GetSurvivalAllPlayerCharacterNumber(EnemyID);
                 }
-                
+
                 m_Enemy[index] = Instantiate(EnemyObj[CharCode]);
                 m_Enemy[index].transform.position = EnemyStartPos[index].position;
                 m_Enemy[index].name = "EnemyCharacter" + index;
                 m_Enemy[index].transform.SetParent(GamePlayObj.transform);
+                m_Enemy[index].GetComponent<EnemyMove>().EnemyID = EnemyID;
             }
 
 

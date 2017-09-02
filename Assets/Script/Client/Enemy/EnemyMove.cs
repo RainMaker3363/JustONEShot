@@ -52,7 +52,23 @@ public class EnemyMove : MonoBehaviour {
 
     ////데미지모션 여부
     //bool m_Damaged = false;
-    
+    bool Invincibility = false; //무적여부
+
+    bool Skill = true;
+    bool bleeding = false;
+
+    public static bool Skill_Fastgun = false;
+    public static bool Skill_Hide = false;
+    public static bool Skill_BloodBullet = false;
+    public static bool Skill_Invincibility = false;
+
+    public GameObject Woman;
+    GameObject WomanGun;
+    public GameObject CamoEffect;
+    public GameObject InvincibilityEffect;
+
+    string SceneName;
+
     // 게임 끝의 여부
     public bool GameEndOn;
 
@@ -85,6 +101,8 @@ public class EnemyMove : MonoBehaviour {
 
     AudioSource m_AudioSource;
     public AudioClip CharHitSound;
+
+    public string EnemyID;
 
     /// //////////////////////////////////////////////////////////////////////////////////<summary>
     /// 서버
@@ -119,6 +137,7 @@ public class EnemyMove : MonoBehaviour {
         //{            
         //    CharIndex = Mul_Manager.GetPVPOpponentCharNumber();
         //}
+        SceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         m_AudioSource = gameObject.transform.GetComponentInChildren<AudioSource>();
     }
 
@@ -201,11 +220,18 @@ public class EnemyMove : MonoBehaviour {
         if (m_PlayerBeforeState != m_PlayerState)
         {
             CharAniInit();
+            if (m_PlayerBeforeState == LSD.PlayerState.ROLL)
+            {
+                Invincibility = false;
+            }
+
             m_PlayerBeforeState = m_PlayerState;
         }
 
         DeadEyeCheck();
         DamageCheck();
+        EnemySkillCheck();
+
 
         EnemyUI.transform.position = transform.position;
         //if (m_PlayerState != LSD.PlayerState.REROAD && m_PlayerState != LSD.PlayerState.DAMAGE && m_ShotJoyStickControl.GetTouch())
@@ -255,7 +281,10 @@ public class EnemyMove : MonoBehaviour {
                     {
                         anim.SetBool("GunFire", true);
                     }
-
+                    if(Skill_Fastgun)
+                    {
+                        anim.speed = 4;
+                    }
                     Update_SHOT_READY();
                     break;
                 }
@@ -290,6 +319,7 @@ public class EnemyMove : MonoBehaviour {
                         anim.Play("Roll");
                         m_AniPlay = true;   //CharAniInit에서 false로 바꿔줌
                         anim.SetBool("Rolling", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
+                        Invincibility = true;
                     }
                     Update_Roll();
                     break;
@@ -370,7 +400,40 @@ public class EnemyMove : MonoBehaviour {
         if (anim.GetBool("Reloading"))
         {
             anim.SetBool("Reloading", false);
+        }   
+    }
+
+    void EnemySkillCheck()
+    {
+        if (SceneName == "Survival Scene")
+        {
+            if (Mul_Manager.GetSurvivalOpponentSkillOn(EnemyID) && Skill)
+            {
+                Skill = false; //한번 사용했으므로 두번돌지않게함
+                OnSkill();
+            }
+
+            if (Mul_Manager.GetSurvivalOpponentBleedOutOn(EnemyID) && !bleeding)
+            {
+                bleeding = true;
+                StartCoroutine(BleedingDamage());
+            }
         }
+        else if (SceneName == "GameScene")
+        {
+            if (Mul_Manager.GetPVPOpponentSkillOn() && Skill)
+            {
+                Skill = false; //한번 사용했으므로 두번돌지않게함
+                OnSkill();
+            }
+
+            if (Mul_Manager.GetPVPOpponentBleedOutOn() && !bleeding)
+            {
+                bleeding = true;
+                StartCoroutine(BleedingDamage());
+            }
+        }
+
     }
     /// <summary>
     /// //////////////////////////////////////////////////////////////////////////
@@ -495,11 +558,12 @@ public class EnemyMove : MonoBehaviour {
     void Update_SHOT_FIRE()
     {
         if (anim.GetBool("GunFire"))
-        {
+        {      
             anim.SetBool("Shot", m_ShootSuccess);
         }
         else if (!anim.GetBool("GunFire"))
         {
+            anim.speed = 1;
             m_PlayerState = LSD.PlayerState.IDLE;
         }
         
@@ -574,24 +638,27 @@ public class EnemyMove : MonoBehaviour {
 
     public void Damaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
     {
-        Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
-        DamageVec.y = 0; //위아래로는 움직이지 않게합니다
-
-        transform.rotation = Quaternion.LookRotation(DamageVec);
-
-        Debug.Log(Damage);
-        Debug.Log("Damaged");
-        if (!DeadCheck())
+        if (!Invincibility)
         {
-            anim.SetTrigger("Damage");
-            anim.SetBool("Damaged", true);
+            Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
+            DamageVec.y = 0; //위아래로는 움직이지 않게합니다
+
+            transform.rotation = Quaternion.LookRotation(DamageVec);
+
+            Debug.Log(Damage);
+            Debug.Log("Damaged");
+            if (!DeadCheck())
+            {
+                anim.SetTrigger("Damage");
+                anim.SetBool("Damaged", true);
+            }
+            //HP -= Damage;
+            if (GameInfoManager.GetInstance().EffectSoundUse)
+            {
+                m_AudioSource.PlayOneShot(CharHitSound);
+            }
+            m_PlayerState = LSD.PlayerState.DAMAGE;
         }
-        //HP -= Damage;
-        if (GameInfoManager.GetInstance().EffectSoundUse)
-        {
-            m_AudioSource.PlayOneShot(CharHitSound);
-        }
-        m_PlayerState = LSD.PlayerState.DAMAGE;
     }
     public void DamageCheck()
     {
@@ -600,7 +667,10 @@ public class EnemyMove : MonoBehaviour {
             //if (DamageVec != Vector3.zero)
             //{
             //    transform.rotation = Quaternion.LookRotation(DamageVec);
-
+            if(Skill_Hide)
+            {
+                Skill_Hide = false;
+            }
                 if (!DeadCheck())   //죽은경우 true반환
                 {
                     //anim.SetTrigger("Damage");
@@ -1009,6 +1079,7 @@ public class EnemyMove : MonoBehaviour {
     {
         CharIndex = charindex;
         m_SelectGun = selectgun;
+        WomanGun = Guns[m_SelectGun];
             switch (m_SelectGun)
             {
                 case 0:
@@ -1071,6 +1142,117 @@ public class EnemyMove : MonoBehaviour {
 
         anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(Path, typeof(RuntimeAnimatorController));
 
+    }
+
+    public void OnSkill()
+    {
+        Debug.Log("EnemySkill");
+  
+        switch (CharIndex)
+        {
+            case 0: // 링컨 스킬
+                {
+                    StartCoroutine(SkillUse(2));
+                    Skill_Fastgun = true;
+                    break;
+                }
+            case 1: // 샬롯 스킬
+                {
+                    StartCoroutine(SkillUse(6));
+                    Skill_Hide = true;
+                    StartCoroutine(Camouflage());
+                    break;
+                }
+            case 2: // 호그 스킬
+                {
+                    StartCoroutine(SkillUse(4));
+                    Skill_Invincibility = true;
+                    StartCoroutine(InvincibilitySkill());
+                    break;
+                }
+            case 3: // 엔젤 스킬
+                {
+                    //StartCoroutine(SkillUse(3));
+                    Skill_BloodBullet = true;
+                    break;
+                }
+
+            default:
+                break;
+        }
+
+        //버튼삭제
+    }
+
+    IEnumerator SkillUse(int SkillTime)
+    {
+        Debug.Log("EnemySkillStart");
+        yield return new WaitForSeconds(SkillTime);
+
+        Skill_Fastgun = false;
+        Skill_Hide = false;
+        //Skill_BloodBullet = false;
+        Skill_Invincibility = false;
+        Debug.Log("EnemySkillEnd");
+        yield return null;
+    }
+    public IEnumerator BleedingDamage()
+    {
+        BloodEffectsManager.GetInstance().BloodEffectOn(gameObject);
+        
+        //for (int i = 0; i < 5; i++)
+        //{
+
+        yield return new WaitForSeconds(5);
+        //}
+        //if (GPGSManager.GetInstance.IsAuthenticated())
+        //    Mul_Manager.SendPlayerBleedOutMessage(false);
+        bleeding = false;
+        yield return null;
+
+    }
+    public IEnumerator Camouflage()
+    {
+        Woman.SetActive(false);
+        WomanGun.SetActive(false);
+        EnemyUI.SetActive(false);
+
+
+        GameObject effect = Instantiate(CamoEffect);
+        effect.transform.position = gameObject.transform.position;
+       // m_Exhausted = false;
+
+    
+        while (true)
+        {
+            if(m_PlayerState == LSD.PlayerState.SHOT_READY)
+            {
+                Skill_Hide = false;
+            }
+
+            if (!Skill_Hide)
+            {
+                Woman.SetActive(true);
+                EnemyUI.SetActive(true);
+                WomanGun.SetActive(true);
+                Destroy(effect);
+                break;
+            }
+            yield return new WaitForEndOfFrame();
+        }
+
+        yield return null;
+    }
+
+    public IEnumerator InvincibilitySkill()
+    {
+        Invincibility = true;
+        GameObject effect = Instantiate(InvincibilityEffect);
+        effect.transform.position = gameObject.transform.position;
+        effect.transform.SetParent(gameObject.transform);
+        yield return new WaitForSeconds(4);
+        Invincibility = false;
+        Destroy(effect);
     }
 
     void OnDestroy()

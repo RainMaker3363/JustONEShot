@@ -228,7 +228,8 @@ public class ZombieMove : Zombie
         while(true)
         {
             yield return new WaitForSeconds(MoveDealy);
-            NvAgent.SetDestination(PlayerPos.position);
+            if(!CharMove.Skill_Hide)
+                NvAgent.SetDestination(PlayerPos.position);
         }
 
         yield return null;

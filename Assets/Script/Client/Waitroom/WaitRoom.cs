@@ -8,6 +8,7 @@ public class GameInfoManager
     static GameInfoManager m_Manager;
 
     public int SelectIndex = 3;
+    public int SelectSkinIndex = 1;
     public bool ZombieInfinityMode = false;
     public int ZombieLevel = 0;
 
@@ -268,7 +269,7 @@ public class WaitRoom : MonoBehaviour {
                     GPGSManager.GetInstance.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
                 }
                 GameInfoManager.GetInstance().SelectIndex = SelectIndex;
-
+                GameInfoManager.GetInstance().SelectSkinIndex = 0; // 스킨인덱스 기본으로 변경
                 Vector3 Postion = Vector3.zero;
                 switch (Index)
                 {
@@ -338,5 +339,14 @@ public class WaitRoom : MonoBehaviour {
         ExplainIndex++;
 
        
+    }
+
+    public void SelectSkin(int Index)
+    {
+        GameInfoManager.GetInstance().SelectSkinIndex = Index;
+        string Path = "Client/InGamePrefab/Skin/0" + GameInfoManager.GetInstance().SelectIndex.ToString() + "/" + GameInfoManager.GetInstance().SelectSkinIndex.ToString();
+        Debug.Log(Path);
+        Material Mat = (Material)Resources.Load(Path, typeof(Material));
+        SelectChar.GetComponent<WaitRoomSkin>().Skin.material = Mat;
     }
 }

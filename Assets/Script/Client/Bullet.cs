@@ -67,7 +67,7 @@ public class Bullet : MonoBehaviour {
             if (Blood)
             {
                 Blood = false;
-                BloodEffectsManager.GetInstance().BloodEffectOn(col.gameObject);
+               // BloodEffectsManager.GetInstance().BloodEffectOn(col.gameObject);
                 //StartCoroutine(col.gameObject.GetComponent<EnemyMove>().BleedingDamage());
             }
             // m_Distance = 0;

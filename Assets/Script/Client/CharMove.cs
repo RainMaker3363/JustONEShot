@@ -142,7 +142,7 @@ public class CharMove : MonoBehaviour
 
     public int m_DebugPlayerState;
 
-    int CharIndex = 3; //캐릭터 선택 인덱스
+    int CharIndex = 2; //캐릭터 선택 인덱스
 
     //캐릭터 총
     public static UseGun m_UseGun;
@@ -156,9 +156,15 @@ public class CharMove : MonoBehaviour
 
 
     public static bool Skill_Fastgun = false;
-    bool Skill_Hide = false;
+    public static bool Skill_Hide = false;
     public static bool Skill_BloodBullet = false;
-    bool Skill_Invincibility = false;
+    public static bool Skill_Invincibility = false;
+
+    public SkinnedMeshRenderer WomenSkin;
+    SkinnedMeshRenderer WomenGun;
+    public Material WomenCamo;
+    public GameObject CamoEffect;
+    public GameObject InvincibilityEffect;
 
     //float Stamina = 1000;   
     //[SerializeField]
@@ -216,6 +222,8 @@ public class CharMove : MonoBehaviour
     AudioSource m_AudioSource;
     public AudioClip CharHitSound;
 
+
+    public SkinnedMeshRenderer Skin;
     //void OnEnable()
     //{
 
@@ -248,6 +256,7 @@ public class CharMove : MonoBehaviour
         m_GunSelect = false;
         gameObject.SetActive(false);
         m_AudioSource = gameObject.transform.GetComponentInChildren<AudioSource>();
+       
     }
 
     // Use this for initialization
@@ -766,15 +775,15 @@ public class CharMove : MonoBehaviour
     {
         if (m_PlayerState != LSD.PlayerState.SHOT_FIRE && m_PlayerState != LSD.PlayerState.ROLL && !m_Exhausted)
         {
-            if (CharStat.Stamina > 400)
+            if (CharStat.Stamina > 400 || Skill_Hide)
             {
                 if (m_PlayerState == LSD.PlayerState.DAMAGE)
                 {
                     anim.SetBool("Damaged", false);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌 중간에 캔슬된경우 여기서 바꿔줌
                 }
 
-
-                CharStat.Stamina -= 400;
+                if (!Skill_Hide)
+                    CharStat.Stamina -= 400;
                 //PlayerMove();
                 anim.SetBool("Rolling", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
                 m_PlayerState = LSD.PlayerState.ROLL;
@@ -1106,7 +1115,8 @@ public class CharMove : MonoBehaviour
     void FixedUpdate_DASH_HARD()
     {
         m_MoveSpeed = 8 * CharStat.Speed;
-        CharStat.Stamina -= (4 * CharStat.SteminaRecovery);
+        if(!Skill_Hide)
+            CharStat.Stamina -= (4 * CharStat.SteminaRecovery);
         PlayerMove();
         StaminaCheck();
     }
@@ -1272,6 +1282,8 @@ public class CharMove : MonoBehaviour
         anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(Path, typeof(RuntimeAnimatorController));
         m_GunSelect = true;
         GunPoint = transform.FindChild("Gun_Pointer/Effect_Pointer_01").gameObject;
+
+        WomenGun = Revlolver.GetComponent<SkinnedMeshRenderer>();
     }
 
     public void SelectGun_ShotGun()
@@ -1285,7 +1297,7 @@ public class CharMove : MonoBehaviour
         m_GunSelect = true;
         GunPoint = transform.FindChild("Gun_Pointer/Effect_Pointer_02").gameObject;
 
-
+        WomenGun = ShotGun.GetComponent<SkinnedMeshRenderer>();
     }
 
     public void SelectGun_Musket()
@@ -1298,6 +1310,8 @@ public class CharMove : MonoBehaviour
         anim.runtimeAnimatorController = (RuntimeAnimatorController)Resources.Load(Path, typeof(RuntimeAnimatorController));
         m_GunSelect = true;
         GunPoint = transform.FindChild("Gun_Pointer/Effect_Pointer_03").gameObject;
+
+        WomenGun = Musket.GetComponent<SkinnedMeshRenderer>();
     }
 
 
@@ -1334,6 +1348,8 @@ public class CharMove : MonoBehaviour
     {
         Debug.Log("Skill");
         //스킬 사용 전송
+        if (GPGSManager.GetInstance.IsAuthenticated())
+            Mul_Manager.SendPlayerSkillOnMessage(true);
 
         switch (CharIndex)
         {
@@ -1347,12 +1363,14 @@ public class CharMove : MonoBehaviour
                 {
                     StartCoroutine(SkillUse(6));
                     Skill_Hide = true;
+                    StartCoroutine(Camouflage());
                     break;
                 }
                 case 2: // 호그 스킬
                 {
                     StartCoroutine(SkillUse(4));
                     Skill_Invincibility = true;
+                    StartCoroutine(InvincibilitySkill());
                     break;
                 }
             case 3: // 엔젤 스킬
@@ -1425,9 +1443,18 @@ public class CharMove : MonoBehaviour
         UI_Main.transform.Find("Control/Button_Reroad").GetComponent<Button>().onClick.AddListener(OnReroadButton);
         UI_Main.transform.Find("Control/Button_Roll").GetComponent<Button>().onClick.AddListener(OnRollButton);
         UI_Main.transform.Find("Control/Button_Skill").GetComponent<Button>().onClick.AddListener(OnSkillButton);
+        string Path = "Client/UI/InGame/Skill_0" + CharIndex.ToString();
+        Sprite sprite = (Sprite)Resources.Load(Path, typeof(Sprite));
+        UI_Main.transform.Find("Control/Button_Skill").GetComponent<Image>().sprite = sprite;
 
         GamePlayObj.transform.Find("UI_GameOver/Image/Button_Exit").GetComponent<Button>().onClick.AddListener(OnExitButton);
         GamePlayObj.transform.Find("UI_GameOver/Image/Button_Rematch").GetComponent<Button>().onClick.AddListener(OnRematchButton);
+
+
+        Path = "Client/InGamePrefab/Skin/0" + CharIndex.ToString()+"/"+GameInfoManager.GetInstance().SelectSkinIndex.ToString();
+        Debug.Log(Path);
+        Material Mat = (Material)Resources.Load(Path, typeof(Material));
+        Skin.material = Mat;
         //anim;
         //UI_Main.SetActive(false);
         // gameObject.SetActive(false);
@@ -1442,12 +1469,16 @@ public class CharMove : MonoBehaviour
         Skill_Hide = false;
         //Skill_BloodBullet = false;
         Skill_Invincibility = false;
+        if (GPGSManager.GetInstance.IsAuthenticated())
+            Mul_Manager.SendPlayerSkillOnMessage(false);
         Debug.Log("SkillEnd");
         yield return null;
     }
 
     public IEnumerator BleedingDamage()
     {
+        if (GPGSManager.GetInstance.IsAuthenticated())
+            Mul_Manager.SendPlayerBleedOutMessage(true);
         BloodEffectsManager.GetInstance().BloodEffectOn(gameObject);
 
         for (int i = 0; i < 5; i++)
@@ -1470,11 +1501,57 @@ public class CharMove : MonoBehaviour
             }
             yield return new WaitForSeconds(1);
         }
-
+        if (GPGSManager.GetInstance.IsAuthenticated())
+            Mul_Manager.SendPlayerBleedOutMessage(false);
         yield return null;
 
     }
 
+    public IEnumerator Camouflage()
+    {
+        Material Skin = WomenSkin.material;
+        Material Gun = WomenGun.material;
+        int layer = WomenSkin.gameObject.layer;
+        WomenSkin.gameObject.layer = 0; //"Defult";
+
+        GameObject effect = Instantiate(CamoEffect);
+        effect.transform.position = gameObject.transform.position;
+        m_Exhausted = false;
+
+        WomenSkin.material = WomenCamo;
+        WomenGun.material = WomenCamo;
+        while(true)
+        {
+            if(m_PlayerState == LSD.PlayerState.DAMAGE || m_PlayerState == LSD.PlayerState.SHOT_READY)
+            {
+                Skill_Hide = false;
+            }
+
+
+            if (!Skill_Hide)
+            {
+                WomenSkin.material = Skin;
+                WomenGun.material = Gun;
+                WomenSkin.gameObject.layer = layer;
+                Destroy(effect);
+                break;
+            }
+            yield return new WaitForEndOfFrame();
+        }
+
+        yield return null;
+    }
+
+    public IEnumerator InvincibilitySkill()
+    {
+        Invincibility = true;
+        GameObject effect = Instantiate(InvincibilityEffect);
+        effect.transform.position = gameObject.transform.position;
+        effect.transform.SetParent(gameObject.transform);
+        yield return new WaitForSeconds(4);
+        Invincibility = false;       
+        Destroy(effect);
+    }
 
     void OnDestroy()
     {

@@ -28,21 +28,27 @@ public class FootEffect : MonoBehaviour {
     void StempFoot_L()
     {
         Debug.Log("LeftFoot");
-
-        temp = Instantiate(m_FootEffect);
-        temp.transform.position = m_LeftFoot.position;
-        temp.transform.rotation = this.transform.rotation;
+        if (((gameObject.tag == "Player") && !CharMove.Skill_Hide) || ((gameObject.tag == "Enemy") && !EnemyMove.Skill_Hide))
+        {
+            temp = Instantiate(m_FootEffect);
+            temp.transform.position = m_LeftFoot.position;
+            temp.transform.rotation = this.transform.rotation;
+        }
         m_AudioSource.PlayOneShot(StepSounds);
+        
     }
-    
+
 
     void StempFoot_R()
     {
         Debug.Log("RightFoot");
-
-        temp = Instantiate(m_FootEffect);
-        temp.transform.position = m_RightFoot.position;
-        temp.transform.rotation = this.transform.rotation;
+        if (((gameObject.tag == "Player") && !CharMove.Skill_Hide) || ((gameObject.tag == "Enemy") && !EnemyMove.Skill_Hide))
+        {
+            temp = Instantiate(m_FootEffect);
+            temp.transform.position = m_RightFoot.position;
+            temp.transform.rotation = this.transform.rotation;
+        }
         m_AudioSource.PlayOneShot(StepSounds);
+        
     }
 }
