@@ -142,7 +142,7 @@ public class CharMove : MonoBehaviour
 
     public int m_DebugPlayerState;
 
-    int CharIndex = 2; //캐릭터 선택 인덱스
+    int CharIndex = 1; //캐릭터 선택 인덱스
 
     //캐릭터 총
     public static UseGun m_UseGun;
@@ -324,7 +324,12 @@ public class CharMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+#if UNITY_EDITOR
+        if(Input.GetKeyDown(KeyCode.K))
+        {
+            Damaged(10000, Vector2.zero);
+        }
+#endif
         //if (PlayerUpdateTime<Time.time)
         //{
         //    PlayerUpdateTime = Time.time + PlayerUpdateDelay;
@@ -492,7 +497,7 @@ public class CharMove : MonoBehaviour
     /// Update
     /// 
     /// </summary>
-    #region Update_State
+#region Update_State
     void Update_IDLE()
     {
         //if (anim.GetBool("Reloading"))
@@ -756,7 +761,7 @@ public class CharMove : MonoBehaviour
         }
     }
 
-    #endregion Update_State
+#endregion Update_State
 
     /// <summary>
     /// //////////////////////////////////////////////////////////////////////////////////////////
@@ -1349,7 +1354,12 @@ public class CharMove : MonoBehaviour
         Debug.Log("Skill");
         //스킬 사용 전송
         if (GPGSManager.GetInstance.IsAuthenticated())
-            Mul_Manager.SendPlayerSkillOnMessage(true);
+        {
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "ZombieScene")
+            {
+                Mul_Manager.SendPlayerSkillOnMessage(true);
+            }
+        }
 
         switch (CharIndex)
         {
@@ -1385,6 +1395,7 @@ public class CharMove : MonoBehaviour
         }
 
         //버튼삭제
+        UI_Main.transform.Find("Control/Button_Skill").gameObject.SetActive(false);
     }
 
     void CharInit()

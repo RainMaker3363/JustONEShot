@@ -62,6 +62,7 @@ public class ZombieCreateManager : MonoBehaviour
     public TMPro.TextMeshProUGUI UI_Stage;  //남은 좀비와 스테이지 현황표시
     public GameObject LevelUP_UI;
     public GameObject Main_UI;
+    public GameObject Skill_UI;
 
     public DeathZone m_DeathZone;
 
@@ -634,6 +635,7 @@ public class ZombieCreateManager : MonoBehaviour
                     StageInit = true;
                     if (Stage < 20 || Infinity)
                     {
+                        Skill_UI.SetActive(true);
                         LevelUP_UI.SetActive(true);
                         Main_UI.SetActive(false);
                         GameInfoManager.GetInstance().Pause = true;

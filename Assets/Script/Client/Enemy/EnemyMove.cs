@@ -1079,7 +1079,7 @@ public class EnemyMove : MonoBehaviour {
     {
         CharIndex = charindex;
         m_SelectGun = selectgun;
-        WomanGun = Guns[m_SelectGun];
+        WomanGun = Guns[m_SelectGun].gameObject;
             switch (m_SelectGun)
             {
                 case 0:
