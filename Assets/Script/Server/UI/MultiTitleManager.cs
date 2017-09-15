@@ -14,12 +14,17 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
 
     private int OpponentCharNumber;
+    private int OpponentCharSkinNumber;
     private bool bPaused = false;  // 어플리케이션이 내려진 상태인지 아닌지의 스테이트를 저장하기 위한 변수
     private float LogCheckTimer;
     private int MyCharacterNumberBackup;
+    private int MyCharacterSkinNumberBackup;
 
     private Dictionary<string, int> __SurvivalOpponentCharNumbers;
     private IDictionaryEnumerator __SurvivalOpoonentCharNumbers_Iter;
+
+    private Dictionary<string, int> __OpponentCharSkinNumbers;
+    private IDictionaryEnumerator __OpoonentCharSkinNumbers_Iter;
 
     public static HY.MultiGameModeState NowMultiGameModeNumber;
 
@@ -27,7 +32,9 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     // Use this for initialization
     void Awake () {
         MyCharacterNumberBackup = 0;
+        MyCharacterSkinNumberBackup = 0;
         OpponentCharNumber = 100;
+        OpponentCharSkinNumber = 0;
         LogCheckTimer = 3.0f;
 
         GPGSManager.GetInstance.InitializeGPGS(); // 초기화
@@ -57,6 +64,10 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
             //__SurvivalOpponentCharNumbers.Clear();
         }
 
+        if(__OpponentCharSkinNumbers == null)
+        {
+            __OpponentCharSkinNumbers = new Dictionary<string, int>(7);
+        }
         /* 
         * 유니티 엔진 사용 시 입력을 하지 않으면 모바일 장치의 화면이 어두워지다가 잠기게 되는데,
         * 그러면 플레이어는 잠김을 다시 풀어야 해서 불편합니다. 따라서 화면 잠금 방지 기능 추가는 필수적이고,
@@ -125,11 +136,33 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
     }
 
+    // 현재 자신이 선택한 캐릭터의 스킨 정보를 보내준다.
+    public void SendCharacterSkinNumber(int SKinNumber = 0)
+    {
+        if(SKinNumber < 0)
+        {
+            GPGSManager.GetInstance.SendPlayerSkinStateMessage(SKinNumber);
+        }
+        else if(SKinNumber >= 100)
+        {
+            GPGSManager.GetInstance.SendPlayerSkinStateMessage(SKinNumber);
+        }
+        else
+        {
+            GPGSManager.GetInstance.SendPlayerSkinStateMessage(SKinNumber);
+        }
+    }
 
     // 현재 자신이 가지고 있는 캐릭터 넘버를 기억한다.
     public int GetOpponentCharNumber()
     {
         return OpponentCharNumber;
+    }
+
+    // 현재 PVP에서 상대방이 가지고 있는 캐릭터 스킨 번호를 기억한다.
+    public int GetOpponentCharSkinNumber()
+    {
+        return OpponentCharSkinNumber;
     }
 
     // 현재 서바이벌 모드에 접속한 사람들의 캐릭터 정보(고유 번호)의 수를 반환한다.
@@ -191,6 +224,36 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         }
     }
 
+    // 상대방이 보내는 캐릭터 스킨 번호를 갱신한다.
+    public void OpponentCharacterSkinNumberReceive(string participantId, int skinNumber)
+    {
+        switch (NowMultiGameModeNumber)
+        {
+            case HY.MultiGameModeState.PVP:
+                {
+                    OpponentCharSkinNumber = skinNumber;
+
+                    Debug.Log("ID : " + participantId + " Number : " + OpponentCharSkinNumber);
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+
+                    __OpponentCharSkinNumbers[participantId] = skinNumber;
+
+                    Debug.Log("ID : " + participantId + " Number : " + __OpponentCharSkinNumbers[participantId]);
+                }
+                break;
+
+            default:
+                {
+                    OpponentCharSkinNumber = skinNumber;
+                }
+                break;
+        }
+    }
+
     // 어플리케이션이 Home 키가 눌려졌을때의 콜백되는 함수
     void OnApplicationPause(bool pause)
     {
@@ -212,7 +275,11 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         MyCharacterNumberBackup = GPGSManager.GetInstance.GetMyCharacterNumber();
         Debug.Log("MyCharacterNumberBackUp : " + MyCharacterNumberBackup);
 
+        MyCharacterSkinNumberBackup = GPGSManager.GetInstance.GetMyCharacterSkinNumber();
+        Debug.Log("MyCharacterSkinNumberBackUp : " + MyCharacterSkinNumberBackup);
+
         OpponentCharNumber = 100;
+        OpponentCharSkinNumber = 0;
         LogCheckTimer = 3.0f;
 
         GPGSManager.GetInstance.LBListener = null;
@@ -237,8 +304,20 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
             __SurvivalOpponentCharNumbers.Clear();
         }
 
+        if (__OpponentCharSkinNumbers == null)
+        {
+            __OpponentCharSkinNumbers = new Dictionary<string, int>(7);
+        }
+        else
+        {
+            __OpponentCharSkinNumbers.Clear();
+        }
+
         // 캐릭터 선택을 백업해준다.
         GPGSManager.GetInstance.SetMyCharacterNumber(MyCharacterNumberBackup);
+
+        // 캐릭터 번호를 백업해준다.
+        GPGSManager.GetInstance.SetMyCharacterSkinNumber(MyCharacterSkinNumberBackup);
 
         /* 
         * 유니티 엔진 사용 시 입력을 하지 않으면 모바일 장치의 화면이 어두워지다가 잠기게 되는데,

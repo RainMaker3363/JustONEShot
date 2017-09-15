@@ -104,6 +104,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private int _PlayerSkillMesageLength = 3;
     // Byte + Byte + 1 Boolean
     private int _PlayerStateMesageLength = 3;
+    // Byte + Byte + 1 Interger
+    private int _PlayerSkinStateMessageLength = 6;
 
     // Byte + Byte + 1 Interger
     private int _SurvivalRankedMessageLength = 6;
@@ -142,6 +144,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private List<byte> _HealthMessage;
     private List<byte> _PlayerSKillMessage;
     private List<byte> _PlayerStateMessage;
+    private List<byte> _PlayerSkinStateMessage;
 
     // 서바이벌 모드에서 사용할 랭킹 메시지
     private List<byte> _SurvivalRankedMessage;
@@ -166,8 +169,15 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private Dictionary<string, int> SurvivalOpponentCharNumbers;
     // 나를 포함한 모든 플레이어들의 캐릭터 번호를 가지고 있는다.
     private Dictionary<string, int> PlayerCharacters_Number;
+    // 상대방의 캐릭터 스킨 번호를 가지고 있다.
+    // 기본 값은 0
+    private Dictionary<string, int> OppoenetCharSkinNumbers;
+    // 나를 포함한 모든 플레이어들의 캐릭터 스킨 번호를 가지고 있는다.
+    private Dictionary<string, int> PlayerCharacters_Skin_Number;
     // 서바이벌 모드에서 사용하는 나의 인덱스 번호
     private int MySurvival_ID_Index;
+    private int My_Character_SkinNumber = 100;
+    private int PVP_OpponentCharSKinNumber = 100;
     private int OppenentCharNumber = 100;
 
     // 난수 발생시 동기화를 위한 변수
@@ -205,8 +215,12 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         IsMultiGameStart = false;
 
         MyCharacterNumber = 100;
+        My_Character_SkinNumber = 0;
         OppenentCharNumber = 100;
+        PVP_OpponentCharSKinNumber = 0;
         StartRandomEncounter = UnityEngine.Random.Range(0, 5);
+
+        #region 캐릭터 번호
 
         if (SurvivalOpponentCharNumbers == null)
         {
@@ -226,6 +240,31 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             PlayerCharacters_Number.Clear();
         }
+
+        #endregion
+
+        #region 캐릭터 스킨 번호
+        
+        if(OppoenetCharSkinNumbers == null)
+        {
+            OppoenetCharSkinNumbers = new Dictionary<string, int>(8);
+
+        }
+        else
+        {
+            OppoenetCharSkinNumbers.Clear();
+        }
+
+        if(PlayerCharacters_Skin_Number == null)
+        {
+            PlayerCharacters_Skin_Number = new Dictionary<string, int>(8);
+        }
+        else
+        {
+            PlayerCharacters_Skin_Number.Clear();
+        }
+
+        #endregion
 
         MySurvival_ID_Index = 0;
 
@@ -270,6 +309,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _PlayerSkillMesageLength = 4;
             // Byte + Byte + Byte + 1 Boolean
             _PlayerStateMesageLength = 4;
+            // Byte + Byte + 1 Interger
+            _PlayerSkinStateMessageLength = 6;
 
             // Byte + Byte + 1 Interger
             _SurvivalRankedMessageLength = 6;
@@ -381,6 +422,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if(_PlayerStateMessage == null)
         {
             _PlayerStateMessage = new List<byte>(_PlayerStateMesageLength);
+        }
+
+        if(_PlayerSkinStateMessage == null)
+        {
+            _PlayerSkinStateMessage = new List<byte>(_PlayerSkinStateMessageLength);
         }
 
         // 보스 이벤트
@@ -554,6 +600,24 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         return OppenentCharNumber;
     }
 
+    // 현재 PVP 모드에서 적의 캐릭터 스킨 번호를 가지고 온다.
+    public int GetPVPOpponentCharSkinNumber()
+    {
+        return PVP_OpponentCharSKinNumber;
+    }
+
+    // PVP, 서바이벌 모드에서 적들의 캐릭터 스킨 번호를 알 수 있습니다.
+    public Dictionary<string, int> GetSurvivalOpponentCharSkinNumbers()
+    {
+        return OppoenetCharSkinNumbers;
+    }
+
+    // PVP, 서바이벌 모드에서 나를 포함한 모두의 캐릭터 스킨 번호를 알 수 있습니다.
+    public Dictionary<string, int> GetAllPlayerCharSkinNumbers()
+    {
+        return PlayerCharacters_Skin_Number;
+    }
+
     // 서바이벌 모드에서 적들의 캐릭터 번호를 알 수 있습니다.
     public Dictionary<string, int> GetSurvivalOpponentCharNumbers()
     {
@@ -617,6 +681,25 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         return GetAllPlayers()[index].ParticipantId;
     }
 
+    // 서바이벌 모드에서 모든 플레이어들의 스킨 번호를 알아낸다
+    public int GetSurvivalAllPlayerCharacterSkinNumber(string ID)
+    {
+        int Character_Skin_Number = 0;
+        IDictionaryEnumerator Iter = PlayerCharacters_Skin_Number.GetEnumerator();
+
+        while (Iter.MoveNext())
+        {
+            if (Iter.Key.Equals(ID))
+            {
+                Character_Skin_Number = (int)Iter.Value;
+                break;
+            }
+        }
+
+        Debug.Log("Test Opponent CharNum : " + Character_Skin_Number + " ID : " + PlayerCharacters_Skin_Number[ID]);
+        return Character_Skin_Number;
+    }
+
     //// 서바이벌 모드에서 적들의 캐릭터 번호를 설정할 때 사용합니다.
     //public void SetPlayerCharacters_Number(int CharNumber = 0)
     //{
@@ -627,11 +710,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // 기본값은 100
     public void SetMyCharacterNumber(int number = 100)
     {
-        if(number < 0)
+        if (number < 0)
         {
             MyCharacterNumber = 0;
         }
-        else if(number > 100)
+        else if (number > 100)
         {
             MyCharacterNumber = 100;
         }
@@ -641,7 +724,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
         }
 
-        switch(NowMultiGameMode)
+        switch (NowMultiGameMode)
         {
             case HY.MultiGameModeState.NONE:
                 {
@@ -657,10 +740,51 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
-                    
+
                     PlayerCharacters_Number[GetMyParticipantId()] = MyCharacterNumber;
 
                     Debug.Log("Test Char Num :" + PlayerCharacters_Number[GetMyParticipantId()]);
+                }
+                break;
+        }
+    }
+
+    // 현재 내가 선택한 캐릭터 스킨에 대한 정보를 설정해준다.
+    // 기본값은 0이다
+    public void SetMyCharacterSkinNumber(int skin = 0)
+    {
+        int SkinNumber = 0;
+
+        if(skin <= 0)
+        {
+            SkinNumber = 0;
+        }
+        else
+        {
+            SkinNumber = skin;
+        }
+
+        switch(NowMultiGameMode)
+        {
+            case HY.MultiGameModeState.NONE:
+                {
+
+                }
+                break;
+
+            case HY.MultiGameModeState.PVP:
+                {
+                    PlayerCharacters_Skin_Number[GetMyParticipantId()] = SkinNumber;
+
+                    Debug.Log("PVP MY Skin Number : " + SkinNumber);
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    PlayerCharacters_Skin_Number[GetMyParticipantId()] = SkinNumber;
+
+                    Debug.Log("Survival MY Skin Number : " + SkinNumber);
                 }
                 break;
         }
@@ -670,6 +794,12 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     public int GetMyCharacterNumber()
     {
         return MyCharacterNumber;
+    }
+
+    // 현재 내가 선택한 캐릭터의 대한 스킨 번호를 반환한다.
+    public int GetMyCharacterSkinNumber()
+    {
+        return My_Character_SkinNumber;
     }
 
 
@@ -814,6 +944,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if (_PlayerStateMessage == null)
         {
             _PlayerStateMessage = new List<byte>(_PlayerStateMesageLength);
+        }
+
+        if(_PlayerSkinStateMessage == null)
+        {
+            _PlayerSkinStateMessage = new List<byte>(_PlayerSkinStateMessageLength);
         }
 
         // 보스 이벤트
@@ -1223,6 +1358,21 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         byte[] StateMessageToSend = _PlayerStateMessage.ToArray();
 
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, StateMessageToSend);
+    }
+
+    // 플레이어가 선택한 캐릭터 스킨을 보내주는 메시지
+    // 캐릭터 고유번호를 보내준다.
+    public void SendPlayerSkinStateMessage(int SkinState)
+    {
+        _PlayerSkinStateMessage.Clear();
+        _PlayerSkinStateMessage.Add(_protocolVersion);
+        _PlayerSkinStateMessage.Add((byte)'M');
+        _PlayerSkinStateMessage.Add((byte)'K');
+        _PlayerSkinStateMessage.AddRange(System.BitConverter.GetBytes(SkinState));
+
+        byte[] SkinStateMessageToSend = _PlayerSkinStateMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, SkinStateMessageToSend);
     }
 
     //// 상대방 총알의 궤도를 보내는 메시지
@@ -1753,6 +1903,47 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                                 if (updateListener != null)
                                 {
                                     updateListener.PlayerBleedOutMessageReceived(senderId, PlayerBleedOutOn);
+                                }
+                            }
+                            break;
+
+                        // 스킨 상태
+                        case 'K':
+                            {
+                                int SkinStateNumber = System.BitConverter.ToInt32(data, 3);
+
+                                if(LBListener != null)
+                                {
+                                    switch (NowMultiGameMode)
+                                    {
+                                        case HY.MultiGameModeState.PVP:
+                                            {
+
+                                                Debug.Log("SkinState Number : " + SkinStateNumber);
+
+                                                PVP_OpponentCharSKinNumber = SkinStateNumber;
+                                                //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
+                                            }
+                                            break;
+
+                                        case HY.MultiGameModeState.SURVIVAL:
+                                            {
+                                                OppoenetCharSkinNumbers[senderId] = SkinStateNumber;
+                                                PlayerCharacters_Skin_Number[senderId] = SkinStateNumber;
+                                                Debug.Log("Survival Char ID : " + senderId);
+                                                Debug.Log("Survival Char Skin Number : " + OppoenetCharSkinNumbers[senderId]);
+                                                //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
+                                            }
+                                            break;
+
+                                        default:
+                                            {
+                                                PVP_OpponentCharSKinNumber = SkinStateNumber;
+                                            }
+                                            break;
+                                    }
+
+                                    LBListener.OpponentCharacterSkinNumberReceive(senderId, SkinStateNumber);
                                 }
                             }
                             break;

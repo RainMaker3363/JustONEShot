@@ -191,6 +191,9 @@ public class MultiMatching_UI : MonoBehaviour {
 
     IEnumerator StartMultiGame()
     {
+        //티켓사용
+        WaitRoom.TicketUse();
+
         yield return new WaitForSeconds(0.2f);
 
         switch (MultiGameModeNumber)

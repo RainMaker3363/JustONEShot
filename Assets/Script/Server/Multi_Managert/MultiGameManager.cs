@@ -35,6 +35,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     private CharMove MyPlayerCharacter;
     public GameObject MyCharacterPos;
     private string MyPlayerNick;
+    private int MyChracterSkinNumber;
 
 
 
@@ -43,6 +44,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     private EnemyMove OpponentPlayerCharacter;
     public GameObject EnemyCharacterPos;
     private string OpponentPlayerNick;
+    private int OpponentSkinNumber;
     private bool OpponentBleedOutOn;
     private bool OpponentSkillOn;
 
@@ -52,12 +54,15 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     private Dictionary<string, GameObject> PlayerCharacters;
     private Dictionary<string, string> PlayerCharacters_Nick;
 
+    
+
 
 
     // 서바이벌 모드에서 쓰일 여러 유저들의 ID 기반의 값들
     private Dictionary<string, bool> _SurvivalOpponentWaitSignals;
     private Dictionary<string, bool> _SurvivalOpponentSelectSignals;
     private Dictionary<string, int> _SurvivalOpponentCharacterNumber;
+    private Dictionary<string, int> _SurvivalOpponentCharacterSkinNumber;
     private Dictionary<string, int> _SurvivalOpponentWeaponNumber;
 
     private Dictionary<string, bool> _SurvivalOpponentSkillOn;
@@ -177,8 +182,10 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     Debug.Log("MultiGameModeState : " + MultiGameModeState);
 
                     MyCharNumber = GPGSManager.GetInstance.GetMyCharacterNumber();
+                    MyChracterSkinNumber = GPGSManager.GetInstance.GetMyCharacterSkinNumber();
 
                     OppenentCharNumber = GPGSManager.GetInstance.GetPVPOpponentCharNumber();
+                    OpponentSkinNumber = GPGSManager.GetInstance.GetPVPOpponentCharSkinNumber();
 
                     OpponentBleedOutOn = false;
                     OpponentSkillOn = false;
@@ -201,6 +208,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     #region OpoonentInfoMap
 
                     _SurvivalOpponentCharacterNumber = GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers();
+                    _SurvivalOpponentCharacterSkinNumber = GPGSManager.GetInstance.GetSurvivalOpponentCharSkinNumbers();
 
                     //if (_SurvivalOpponentWeaponNumber == null)
                     //{
@@ -954,6 +962,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         return OppenentCharNumber;
     }
 
+    // 현재 PVP 모드에서 적의 캐릭터 스킨 번호를 가지고 온다.
+    public int GetPVPOpponentCharSkinNumber()
+    {
+        return OpponentSkinNumber;
+    }
+
     // 현재 PVP 모드에서 적의 총 번호를 가지고 온다
     public int GetPVPOpponentGunNumber()
     {
@@ -1000,6 +1014,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     public int GetMyCharNumber()
     {
         return MyCharNumber;
+    }
+
+    // 내 자신의 캐릭터 고유 스킨 번호를 반환
+    public int GetMyChracterSkinNumber()
+    {
+        return MyChracterSkinNumber;
     }
 
     // 내 자신의 총 고유 번호를 반환
@@ -1062,6 +1082,15 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         Debug.Log("Survival Char Map Count : " + _SurvivalOpponentCharacterNumber.Count);
 
         return _SurvivalOpponentCharacterNumber;
+    }
+
+    // 서바이벌 모드에서 사용하는 상대방의 캐릭터 스킨 번호들
+    public Dictionary<string, int> _SurvivalOpponentCharacterSkinNumbers()
+    {
+        Debug.logger.Log("SVM", "Survival Char Skin Map Count : " + _SurvivalOpponentCharacterNumber.Count);
+        Debug.Log("Survival Char Skin Map Count : " + _SurvivalOpponentCharacterNumber.Count);
+
+        return _SurvivalOpponentCharacterSkinNumber;
     }
 
     // 서바이벌 모드에서 사용하는 상대방의 스킬 사용 여부들
@@ -1218,6 +1247,41 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
         Debug.Log("SVM Survival Char " + index + " Num : " + CharNumber);
 
         return CharNumber;
+    }
+
+    /// <summary>
+    /// 서바이벌 모드에서 사용하는 각 상대방의 캐릭터 스킨 번호를 알려준다.
+    /// index 값에 따라서 현재 방 안에 존재하는 플레이어(자기자신을 제외한)의 캐릭터 스킨 번호를 알 수 있다.
+    /// 디폴트 값 0
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    public int GetSurvivalOpponentCharacterSkinNumber(int index = 0)
+    {
+        int CharSkinNumber = 0;
+
+        if (index >= (allPlayers.Count - 1))
+        {
+            index = (allPlayers.Count - 1);
+        }
+        else if (index <= 0)
+        {
+            index = 0;
+        }
+
+        if (_SurvivalOpponentCharacterSkinNumber.ContainsKey(allPlayers[index].ParticipantId))
+        {
+            CharSkinNumber = _SurvivalOpponentCharacterSkinNumber[allPlayers[index].ParticipantId];
+        }
+        else
+        {
+            CharSkinNumber = 0;
+        }
+
+        Debug.logger.Log("SVM", "Survival Char " + index + " Skin Num : " + CharSkinNumber);
+        Debug.Log("SVM Survival Char " + index + " Skin Num : " + CharSkinNumber);
+
+        return CharSkinNumber;
     }
 
     // 서바이벌 모드에서 사용하는 랭킹 번호를 반환한다.
