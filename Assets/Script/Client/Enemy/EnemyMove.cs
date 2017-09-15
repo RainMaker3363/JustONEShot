@@ -31,6 +31,7 @@ public class EnemyMove : MonoBehaviour {
     public int m_DebugPlayerState;
 
     int CharIndex = 0; //캐릭터 선택 인덱스
+    public int CharSkinIndex = 0;//캐릭터 스킨 선택 인덱스
 
     //캐릭터 총
     public static UseGun m_EnemyUseGun;
@@ -103,6 +104,7 @@ public class EnemyMove : MonoBehaviour {
     public AudioClip CharHitSound;
 
     public string EnemyID;
+    public SkinnedMeshRenderer Skin;
 
     /// //////////////////////////////////////////////////////////////////////////////////<summary>
     /// 서버
@@ -1079,7 +1081,7 @@ public class EnemyMove : MonoBehaviour {
     {
         CharIndex = charindex;
         m_SelectGun = selectgun;
-        WomanGun = Guns[m_SelectGun].gameObject;
+       // WomanGun = Guns[m_SelectGun].gameObject;
             switch (m_SelectGun)
             {
                 case 0:
@@ -1100,7 +1102,14 @@ public class EnemyMove : MonoBehaviour {
                 default:
                     break;
             }
- 
+
+
+        string Path = "Client/InGamePrefab/Skin/0" + CharIndex.ToString() + "/" + CharSkinIndex.ToString();
+        //Debug.Log(Path);
+        Material Mat = (Material)Resources.Load(Path, typeof(Material));
+        Skin.material = Mat;       
+
+
     }
     public void SelectGun_Revolver()
     {
@@ -1214,7 +1223,7 @@ public class EnemyMove : MonoBehaviour {
     public IEnumerator Camouflage()
     {
         Woman.SetActive(false);
-        WomanGun.SetActive(false);
+        Guns[m_SelectGun].gameObject.SetActive(false);
         EnemyUI.SetActive(false);
 
 
@@ -1234,7 +1243,7 @@ public class EnemyMove : MonoBehaviour {
             {
                 Woman.SetActive(true);
                 EnemyUI.SetActive(true);
-                WomanGun.SetActive(true);
+                Guns[m_SelectGun].gameObject.SetActive(true);
                 Destroy(effect);
                 break;
             }

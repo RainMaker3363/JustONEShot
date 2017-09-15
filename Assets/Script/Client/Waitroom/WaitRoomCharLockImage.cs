@@ -9,24 +9,24 @@ public class WaitRoomCharLockImage : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         int Mask = 1; // 00000001
-        int select = Mask << CharIndex;
-        int LockCheck = (GameInfoManager.CharLock & select);
+        //int select = Mask << CharIndex;
+        int LockCheck = (GameInfoManager.LockCode[CharIndex] & Mask);
 
         if(LockCheck>0)
         {
             gameObject.SetActive(false);
         }
-        LockIndex = GameInfoManager.CharLock;
+        LockIndex = GameInfoManager.LockCode[CharIndex];
     }
 
 	void Update()
     {
-        if(LockIndex != GameInfoManager.CharLock)
+        if(LockIndex != GameInfoManager.LockCode[CharIndex])
         {
-            LockIndex = GameInfoManager.CharLock;
+            LockIndex = GameInfoManager.LockCode[CharIndex];
             int Mask = 1; // 00000001
-            int select = Mask << CharIndex;
-            int LockCheck = (GameInfoManager.CharLock & select);
+            //int select = Mask << CharIndex;
+            int LockCheck = (GameInfoManager.LockCode[CharIndex] & Mask);
 
             if (LockCheck > 0)
             {

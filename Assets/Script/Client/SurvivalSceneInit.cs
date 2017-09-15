@@ -50,12 +50,12 @@ public class SurvivalSceneInit : MonoBehaviour
         // Mul_Manager.CharacterSelectStateReceived();
 
 
-#if !UNITY_EDITOR    //유니티에디터에서 실행시킬경우 이쪽코드를 실행
+#if UNITY_EDITOR    //유니티에디터에서 실행시킬경우 이쪽코드를 실행
 
         if (m_Player == null)
         {
 
-            m_Player = Instantiate(PlayerObj[3]);   //에디터상에서는 고정
+            m_Player = Instantiate(PlayerObj[1]);   //에디터상에서는 고정
             m_Player.transform.position = PlayerStartPos.position;
             m_Player.name = "PlayerCharacter";
             m_Player.transform.SetParent(GamePlayObj.transform);
@@ -131,6 +131,7 @@ public class SurvivalSceneInit : MonoBehaviour
         int MyIDNumber = GPGSManager.GetInstance.GetMySurvival_ID_Index();
         int MyIDCheck = 0;  //i 가 ,PlayerIDNumber와 같을경우 보정
         int CharCode = 0;
+        int CharSkinCode = 0;
         while (j < GPGSManager.GetInstance.GetAllPlayers().Count)
         {
             int index = j - MyIDCheck;
@@ -149,6 +150,8 @@ public class SurvivalSceneInit : MonoBehaviour
                 {
                     EnemyID = GPGSManager.GetInstance.GetSurvivalAllPlayerCharacterID(j);
                     CharCode = GPGSManager.GetInstance.GetSurvivalAllPlayerCharacterNumber(EnemyID);
+                    CharSkinCode = GPGSManager.GetInstance.GetSurvivalAllPlayerCharacterSkinNumber(EnemyID);
+                    
                 }
 
                 m_Enemy[index] = Instantiate(EnemyObj[CharCode]);
@@ -156,6 +159,7 @@ public class SurvivalSceneInit : MonoBehaviour
                 m_Enemy[index].name = "EnemyCharacter" + index;
                 m_Enemy[index].transform.SetParent(GamePlayObj.transform);
                 m_Enemy[index].GetComponent<EnemyMove>().EnemyID = EnemyID;
+                m_Enemy[index].GetComponent<EnemyMove>().CharSkinIndex = CharSkinCode;
             }
 
 

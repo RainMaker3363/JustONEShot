@@ -30,6 +30,9 @@ public class BulletRespawn : MonoBehaviour {
     public GameObject GamePlayObj;
 
     Collider m_Col;
+
+    string NowSceneName;
+    float CenterDistance;
     // Use this for initialization
 
     void Awake()
@@ -40,6 +43,8 @@ public class BulletRespawn : MonoBehaviour {
         
     }
     void Start () {
+
+        NowSceneName = SceneManager.GetActiveScene().name;
 
         if (Physics.Raycast(transform.position, Vector3.down, out HitObj, 5f))
         {
@@ -54,10 +59,14 @@ public class BulletRespawn : MonoBehaviour {
 
         m_Col = gameObject.GetComponent<SphereCollider>();
         m_Col.enabled = false;
+
+
+        CenterDistance = Vector3.Distance(Vector3.zero, new Vector3(transform.position.x, 0, transform.position.z));
+
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update () {
         //if(P_CharPos == null)
         //{
         //    P_CharPos = GamePlayObj.transform.Find("PlayerCharacter");
@@ -67,13 +76,25 @@ public class BulletRespawn : MonoBehaviour {
         //{
         //    E_CharPos = GamePlayObj.transform.Find("EnemyCharacter");
         //}
-
-        if (DeathZone.position.y+0.5f>transform.position.y)
+        if (NowSceneName == "GameScene" || NowSceneName == "Survival Scene" || NowSceneName == "ZombieScene")
         {
-            gameObject.SetActive(false);
-            Debug.Log("PointPos" + transform.position.y);
-            Debug.Log("DeathZonePos" + DeathZone.position.y);
+            if (DeathZone.position.y + 0.5f > transform.position.y)
+            {
+                gameObject.SetActive(false);
+                Debug.Log("PointPos" + transform.position.y);
+                Debug.Log("DeathZonePos" + DeathZone.position.y);
+            }
         }
+        else
+        {
+            //Debug.Log("Distance x" + DeathZone.position.x);
+            //Debug.Log("CenterDistance" + CenterDistance);
+            if (CenterDistance> DeathZone.position.x)
+            {
+                gameObject.SetActive(false);
+            }
+        }
+
         if (GPGSManager.GetInstance.IsAuthenticated() && Mul_GameManager != null)  //접속중일때
         {
             if (Mul_GameManager.GetEndGameState())

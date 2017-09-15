@@ -97,6 +97,7 @@ public class SceneInit : MonoBehaviour {
             m_Enemy.transform.position = EnemyStartPos.position;
             m_Enemy.name = "EnemyCharacter";
             m_Enemy.transform.SetParent(GamePlayObj.transform);
+            m_Enemy.GetComponent<EnemyMove>().CharSkinIndex = GPGSManager.GetInstance.GetPVPOpponentCharSkinNumber();
         }
 
         Char1.sprite = Poster[GPGSManager.GetInstance.GetMyCharacterNumber()];

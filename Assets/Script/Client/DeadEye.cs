@@ -44,7 +44,7 @@ public class DeadEye : MonoBehaviour {
         m_AudioSource = gameObject.GetComponent<AudioSource>();
     }
     void Start () {
-        if(SceneManager.GetActiveScene().name != "GameScene")
+        if(SceneManager.GetActiveScene().name != "GameScene"&& SceneManager.GetActiveScene().name != "GameScene 1")
             Destroy(gameObject.GetComponent<DeadEye>());
         else
         DeadEyeInit();
@@ -83,7 +83,8 @@ public class DeadEye : MonoBehaviour {
         if (GameInfoManager.GetInstance().BackgroundSoundUse)
         {
             GameObject.Find("BGM").GetComponent<AudioSource>().mute = true;
-            m_AudioSource.PlayOneShot(DeadEyeBackgroundSound);
+            m_AudioSource.clip = DeadEyeBackgroundSound;
+            m_AudioSource.Play();
             m_AudioSource.PlayOneShot(DeadEyeJumpSound);
         }
     }
@@ -184,6 +185,8 @@ public class DeadEye : MonoBehaviour {
 
                 if (GameInfoManager.GetInstance().EffectSoundUse)
                 {
+                    m_AudioSource.Stop();
+                    m_AudioSource.clip = null;
                     m_AudioSource.PlayOneShot(DeadEyeShotSound);
                 }
                

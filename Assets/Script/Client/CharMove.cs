@@ -224,6 +224,8 @@ public class CharMove : MonoBehaviour
 
 
     public SkinnedMeshRenderer Skin;
+
+    string NowSceneName;
     //void OnEnable()
     //{
 
@@ -262,7 +264,7 @@ public class CharMove : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        NowSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
         m_CharCtr = GetComponent<CharacterController>();
 
@@ -694,7 +696,14 @@ public class CharMove : MonoBehaviour
                 Mul_Manager.SendDeadEyeMessage(false);
             }
             m_PlayerState = LSD.PlayerState.IDLE;
-            DeathZone.GetComponent<DeathZone>().DeadEyePlaying = false;
+            if (NowSceneName == "GameScene" || NowSceneName == "Survival Scene" || NowSceneName == "ZombieScene")
+            {
+                DeathZone.GetComponent<DeathZone>().DeadEyePlaying = false;
+            }
+            else
+            {
+                DeathZone.parent.parent.GetComponent<DeathZone_03>().DeadEyePlaying = false;
+            }
         }
 
         if (m_DeadEyeTimer > 0 && !DeadEyecomplete && !DeadEyeSuccessCheck)
@@ -977,7 +986,14 @@ public class CharMove : MonoBehaviour
                 Mul_Manager.SendDeadEyeMessage(true);
             }
 
-            DeathZone.GetComponent<DeathZone>().DeadEyePlaying = true;
+            if (NowSceneName == "GameScene" || NowSceneName == "Survival Scene" || NowSceneName == "ZombieScene")
+            {
+                DeathZone.GetComponent<DeathZone>().DeadEyePlaying = false;
+            }
+            else
+            {
+                DeathZone.parent.parent.GetComponent<DeathZone_03>().DeadEyePlaying = false;
+            }
         }
 
         if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
@@ -997,15 +1013,34 @@ public class CharMove : MonoBehaviour
 
     void DeathZoneCheck()
     {
-        if (DeathZone.position.y + 0.02 >= transform.position.y)
+        if (NowSceneName == "GameScene" || NowSceneName == "Survival Scene" || NowSceneName == "ZombieScene")
         {
-            if (!DeathZoneDealay)
+            if (DeathZone.position.y + 0.02 >= transform.position.y)
             {
-                DeathZoneDealay = true;
-                CharStat.HP -= DeathZone.gameObject.GetComponent<DeathZone>().Damage;
-                HP_bar.fillAmount = (float)CharStat.HP / 100;
-                DeadCheck();
-                StartCoroutine(DeathZoneDealyTime(DeathZone.gameObject.GetComponent<DeathZone>().DamageDealay));
+                if (!DeathZoneDealay)
+                {
+                    DeathZoneDealay = true;
+                    CharStat.HP -= DeathZone.gameObject.GetComponent<DeathZone>().Damage;
+                    HP_bar.fillAmount = (float)CharStat.HP / 100;
+                    DeadCheck();
+                    StartCoroutine(DeathZoneDealyTime(DeathZone.gameObject.GetComponent<DeathZone>().DamageDealay));
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("Distance"+Vector3.Distance(Vector2.zero, new Vector3(transform.position.x, 0, transform.position.z)));
+            Debug.Log("CenterDistance" + Mathf.Abs(DeathZone.position.x));
+            if (DeathZone.position.x < Vector3.Distance(Vector2.zero, new Vector3(transform.position.x, 0, transform.position.z)))
+            {
+                if (!DeathZoneDealay)
+                {
+                    DeathZoneDealay = true;
+                    CharStat.HP -= DeathZone.parent.parent.gameObject.GetComponent<DeathZone_03>().Damage;
+                    HP_bar.fillAmount = (float)CharStat.HP / 100;
+                    DeadCheck();
+                    StartCoroutine(DeathZoneDealyTime(DeathZone.parent.parent.gameObject.GetComponent<DeathZone_03>().DamageDealay));
+                }
             }
         }
     }

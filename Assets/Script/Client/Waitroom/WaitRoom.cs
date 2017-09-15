@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+//#if UNITY_ADS
+using UnityEngine.Advertisements;
+//#endif
 public class GameInfoManager
 {
     static GameInfoManager m_Manager;
 
-    public int SelectIndex = 1;
+    public int SelectIndex = 0;
     public int SelectSkinIndex = 0;
     public bool ZombieInfinityMode = false;
     public int ZombieLevel = 0;
@@ -32,6 +34,7 @@ public class GameInfoManager
 
     static string LoadLock;
     public static int CharLock;  //1번 캐릭은 잠그지 않음
+    public static int[] LockCode;   //1번비트 캐릭 잠금여부 이후 비트 스킨잠금여부
 
     
 
@@ -48,16 +51,29 @@ public class GameInfoManager
             // PlayerPrefs.DeleteAll();
 
 #endif
-            if (PlayerPrefs.HasKey("CharLock"))
-            {
-                LoadLock = PlayerPrefs.GetString("CharLock");
-            }
-            else
-            {
-                LoadLock = "00000001";  //2,3,4번은 lock상태
-            }
-            CharLock = System.Convert.ToInt32(LoadLock, 2);// string을 2진수로 변환
+            LockCode = new int[4];
 
+            for (int i = 0; i < 4; i++)
+            {
+                string Key = "LockCode" + i.ToString();
+                if (PlayerPrefs.HasKey(Key))
+                {
+                    LoadLock = PlayerPrefs.GetString(Key);
+                }
+                else
+                {
+                    if(i==0)    //기본 첫번째 캐릭인경우
+                    {
+                        LoadLock = "00000001";  //캐릭만 열려있음
+                    }
+                    else //아닌경우(게임을 처음 플레이함)
+                    {
+                        LoadLock = "00000000";  //전부 잠금상태
+                    }
+                    
+                }
+                LockCode[i] = System.Convert.ToInt32(LoadLock, 2);// string을 2진수로 변환
+            }
             if (PlayerPrefs.HasKey("SurvivalScore"))
             {
                 SurvivalScore = PlayerPrefs.GetInt("SurvivalScore");
@@ -254,12 +270,24 @@ public class WaitRoom : MonoBehaviour {
     IEnumerator PlayTicketRecovery;
 
 
-    public GameObject UI_Buy;
+    public GameObject UI_BuyChar;
+    public GameObject UI_BuySkin;
+    public GameObject UI_Skin;
     public Image Buy_CharImage;
     public TMPro.TextMeshProUGUI Buy_Price_Text;
     int Buy_Price;
     int Buy_CharIndex;
+    int Buy_SkinIndex;
+    int BeforSkinIndex;
 
+    [SerializeField]
+    public GameObject[] WaitRoomChar;
+
+    //광고
+    public string zoneId;
+    public int rewardQty = 250; //보상?
+
+    public GameObject UI_Reward;
 
     void Awake()
     {
@@ -316,6 +344,8 @@ public class WaitRoom : MonoBehaviour {
         }
 
         SelectPos.transform.localPosition = Postion;
+
+        WaitRoomChar[SelectIndex].SetActive(false);
 
         Zombie_Button.onClick.AddListener(OnZombieButton);
         if(GameInfoManager.GetInstance().FirstTitle)
@@ -386,8 +416,8 @@ public class WaitRoom : MonoBehaviour {
     public void CharLockCheck(int Index)
     {
         int Mask = 1; // 00000001
-        int select = Mask << Index;
-        int LockCheck = (GameInfoManager.CharLock & select);
+       // int select = Mask << Index;
+        int LockCheck = (GameInfoManager.LockCode[Index] & Mask);
 
         if (LockCheck > 0)  //잠금이 해제되어있음
         {
@@ -397,7 +427,7 @@ public class WaitRoom : MonoBehaviour {
         else //잠김 구매창 표시
         {
             Debug.Log("false");
-            UI_Buy.SetActive(true);
+            UI_BuyChar.SetActive(true);
             Buy_CharIndex = Index;
             switch (Index)
             {
@@ -432,6 +462,59 @@ public class WaitRoom : MonoBehaviour {
             Buy_Price_Text.text = Buy_Price.ToString();
         }
     }
+    public void SkinLockCheck(int Index)
+    {
+        int Mask = 1; // 00000001
+        int select = Mask << Index;
+        int LockCheck = (GameInfoManager.LockCode[GameInfoManager.GetInstance().SelectIndex] & select);
+        BeforSkinIndex = GameInfoManager.GetInstance().SelectSkinIndex;//이전 스킨인덱스 저장
+
+        SelectSkin(Index);
+
+        if (LockCheck > 0)  //잠금이 해제되어있음
+        {
+            Debug.Log("True");
+            
+        }
+        else //잠김 구매창 표시
+        {
+            Debug.Log("false");
+            UI_Skin.SetActive(false);
+            UI_BuySkin.SetActive(true);
+            Buy_SkinIndex = Index;
+            switch (Index)
+            {
+                case 0:
+                    {
+                        Buy_Price = 1000;
+                        break;
+                    }
+                case 1:
+                    {
+                        Buy_Price = 1002;
+                        break;
+                    }
+                case 2:
+                    {
+                        Buy_Price = 1003;
+                        //Index++;
+                        break;
+                    }
+                case 3:
+                    {
+                        Buy_Price = 1004;
+                        //Index--;
+                        break;
+                    }
+                default:
+                    break;
+            }
+            //string Path = "Client/UI/WaitRoom/Color_Character_0" + (Index + 1);
+            //Debug.Log(Path);
+            //Buy_CharImage.sprite = (Sprite)Resources.Load(Path, typeof(Sprite));
+            Buy_Price_Text.text = Buy_Price.ToString();
+        }
+    }
 
     public void CharBuy()
     {
@@ -440,20 +523,48 @@ public class WaitRoom : MonoBehaviour {
         {
             GameInfoManager.GetInstance().GoldAdd(-Buy_Price);
             GoldText.text = GameInfoManager.GetInstance().ShowGold().ToString();
-            int Mask = 1; // 00000001
-            int select = Mask << Buy_CharIndex;
-            GameInfoManager.CharLock += select;
-            //PlayerPrefs.SetString("CharLock", GameInfoManager.CharLock.ToString());
+            //int Mask = 1; // 00000001
+            //int select = Mask << Buy_CharIndex;
+            // GameInfoManager.CharLock += select;
+            GameInfoManager.LockCode[Buy_CharIndex] += 1;   //00000001
+            PlayerPrefs.SetString("LockCode" + Buy_CharIndex.ToString(), System.Convert.ToString(GameInfoManager.LockCode[Buy_CharIndex], 2));
+
         }
     }
 
-    public void ChangeChar(int Index)  //대기실은 끊겨도되니 GC를 고려하지 않고 삭제후 생성합니다
+    public void SkinBuy()
+    {
+
+        if (Buy_Price <= GameInfoManager.GetInstance().ShowGold())
+        {
+            GameInfoManager.GetInstance().GoldAdd(-Buy_Price);
+            GoldText.text = GameInfoManager.GetInstance().ShowGold().ToString();
+            int Mask = 1; // 00000001
+            int select = Mask << Buy_SkinIndex;
+           // GameInfoManager.CharLock += select;
+            GameInfoManager.LockCode[GameInfoManager.GetInstance().SelectIndex] += select;   
+           PlayerPrefs.SetString("LockCode" + GameInfoManager.GetInstance().SelectIndex, System.Convert.ToString(GameInfoManager.LockCode[GameInfoManager.GetInstance().SelectIndex], 2));
+        }
+        else
+        {
+
+        }
+    }
+
+    public void SkinBuyNot()
+    {
+        SelectSkin(BeforSkinIndex);
+    }
+
+    void ChangeChar(int Index)  //대기실은 끊겨도되니 GC를 고려하지 않고 삭제후 생성합니다
     {
 
         if (Index < 4)  //캐릭터 최대개수
         {
             if (SelectIndex != Index)   //전에 선택한것과 다를경우
             {
+                WaitRoomChar[SelectIndex].SetActive(true);
+                WaitRoomChar[Index].SetActive(false);
                 SelectIndex = Index;    //선택한것으로 바꿈
                 Destroy(SelectChar);    //전에 있던 캐릭터는 파기
                 SelectChar = Instantiate(PlayerChar[SelectIndex]);  //현재 선택한거로 다시 생성
@@ -540,13 +651,17 @@ public class WaitRoom : MonoBehaviour {
     public void SelectSkin(int Index)
     {
         GameInfoManager.GetInstance().SelectSkinIndex = Index;
-        string Path = "Client/InGamePrefab/Skin/0" + GameInfoManager.GetInstance().SelectIndex.ToString() + "/" + GameInfoManager.GetInstance().SelectSkinIndex.ToString();
+        string Path = "Client/InGamePrefab/Skin/0" + GameInfoManager.GetInstance().SelectIndex.ToString() + "/" + Index.ToString();
         Debug.Log(Path);
         Material Mat = (Material)Resources.Load(Path, typeof(Material));
         SelectChar.GetComponent<WaitRoomSkin>().Skin.material = Mat;
+        if (GPGSManager.GetInstance.IsAuthenticated())
+        {
+            GPGSManager.GetInstance.SetMyCharacterSkinNumber(Index);//GPGS캐릭터 인덱스 설정
+        }
     }
 
-    public void TicketUse()
+    public static void TicketUse()
     {
         GameInfoManager.PlayTicket--;
         PlayerPrefs.SetInt("PlayTicket", GameInfoManager.PlayTicket);
@@ -614,4 +729,66 @@ public class WaitRoom : MonoBehaviour {
         yield return null;
     }
 
+
+    public void OpenLeaderboard()
+    {
+        GPGSManager.GetInstance.OpenLeaderboardUI();
+    }
+
+    public void OnButton_AD()
+    {
+        bool test = false;
+#if UNITY_EDITOR    //유니티에디터에서 실행시킬경우 이쪽코드를 실행
+        test = true;
+#endif
+
+        if (GameInfoManager.PlayTicket < 1 || test)
+        {
+#if !UNITY_ADS // If the Ads service is not enabled...
+            if (Advertisement.isSupported)
+            { // If runtime platform is supported...
+                Advertisement.Initialize(zoneId, true); // ...initialize.
+            }
+#endif
+
+            // Wait until Unity Ads is initialized,
+            //  and the default ad placement is ready.
+            //while (!Advertisement.isInitialized || !Advertisement.IsReady())
+            //{
+            //   // yield return new WaitForSeconds(0.5f);
+            //}
+
+
+            if (string.IsNullOrEmpty(zoneId))
+                zoneId = null;
+
+            ShowOptions options = new ShowOptions();
+            options.resultCallback = HandleShowResult;
+            Advertisement.Show(zoneId, options);
+        }
+
+    }
+
+    private void HandleShowResult(ShowResult result)
+    {
+        switch (result)
+        {
+            case ShowResult.Finished:
+                Debug.Log("Video completed. User rewarded " + rewardQty + " credits.");
+                UI_Reward.SetActive(true);
+                break;
+            case ShowResult.Skipped:
+                Debug.LogWarning("Video was skipped.");
+                break;
+            case ShowResult.Failed:
+                Debug.LogError("Video failed to show.");
+                break;
+        }
+    }
+
+    public void GetReward()
+    {
+        GameInfoManager.PlayTicket = 10;
+        TicketText.text = GameInfoManager.PlayTicket.ToString();
+    }
 }

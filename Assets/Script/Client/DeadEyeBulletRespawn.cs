@@ -26,9 +26,14 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
 
     public UnityEngine.UI.Image DeadEyeIcon;
 
+    string NowSceneName;
+    float CenterDistance;
+
     // Use this for initialization
     void Start()
     {
+        NowSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
         GameObject GamePlayObj = GameObject.Find("GamePlayObj");
         P_CharPos = GamePlayObj.transform.Find("PlayerCharacter");
         E_CharPos = GamePlayObj.transform.Find("EnemyCharacter");
@@ -37,6 +42,11 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
         {
             transform.position = new Vector3(transform.position.x, HitObj.point.y + 0.5f, transform.position.z);
         }
+
+
+        CenterDistance = Vector3.Distance(Vector3.zero, new Vector3(transform.position.x, 0, transform.position.z));
+
+
     }
 
     // Update is called once per frame
@@ -55,13 +65,25 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
 
         //    CreateAble = true;
 
-
-        if (DeathZone.position.y + 0.5f > transform.position.y) //데스존에 잠겼다면
+        if (NowSceneName == "GameScene" || NowSceneName == "Survival Scene" || NowSceneName == "ZombieScene")
         {
-            gameObject.SetActive(false);
-            //Debug.Log("PointPos" + transform.position.y);
-            //Debug.Log("DeathZonePos" + DeathZone.position.y);
+            if (DeathZone.position.y + 0.5f > transform.position.y) //데스존에 잠겼다면
+            {
+                gameObject.SetActive(false);
+                //Debug.Log("PointPos" + transform.position.y);
+                //Debug.Log("DeathZonePos" + DeathZone.position.y);
+            }
         }
+        else
+        {
+            //Debug.Log("Distance x" + DeathZone.position.x);
+            //Debug.Log("CenterDistance" + CenterDistance);
+            if (CenterDistance > DeathZone.position.x)
+            {
+                gameObject.SetActive(false);
+            }
+        }
+
         if (GPGSManager.GetInstance.IsAuthenticated() && Mul_GameManager.GetEndGameState())
         {
             DB_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거

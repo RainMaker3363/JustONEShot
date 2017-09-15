@@ -54,7 +54,7 @@ public class ResultManager : MonoBehaviour {
         if(GameInfoManager.GetInstance().GameOver)
         {
             GameInfoManager.GetInstance().GameOver = false;
-
+            int Score;
             switch (m_GameMode)
             {
                 case LSD.GameMode.PVP:
@@ -63,15 +63,20 @@ public class ResultManager : MonoBehaviour {
                         {
                             UI_Coin.text = "100";
                             GameInfoManager.GetInstance().GoldAdd(100);
-                            UI_Score.text = GameInfoManager.GetInstance().PVPScoreAdd(100).ToString();
+
+                            Score = GameInfoManager.GetInstance().PVPScoreAdd(100);
+                            
 
                         }
                         else
                         {
                             UI_Coin.text = "10";
                             GameInfoManager.GetInstance().GoldAdd(10);
-                            UI_Score.text = GameInfoManager.GetInstance().PVPScoreAdd(-100).ToString();
+                            Score = GameInfoManager.GetInstance().PVPScoreAdd(-100);
                         }
+
+                        UI_Score.text = Score.ToString();
+                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_pvp_1_vs_1", Score);
                         break;
                     }
                 case LSD.GameMode.Survivel:
@@ -80,15 +85,18 @@ public class ResultManager : MonoBehaviour {
                         {
                             UI_Coin.text = "100";
                             GameInfoManager.GetInstance().GoldAdd(100);
-                            UI_Score.text = GameInfoManager.GetInstance().SurvivalScoreAdd(100).ToString();
+                            Score = GameInfoManager.GetInstance().SurvivalScoreAdd(100);
 
                         }
                         else
                         {
                             UI_Coin.text = "10";
                             GameInfoManager.GetInstance().GoldAdd(10);
-                            UI_Score.text = GameInfoManager.GetInstance().SurvivalScoreAdd(-100).ToString();
+                            Score = GameInfoManager.GetInstance().SurvivalScoreAdd(-100);
                         }
+
+                        UI_Score.text = Score.ToString();
+                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_pvp_survival_1_vs_m", Score);
                         break;
                     }
                 case LSD.GameMode.Zombie:
@@ -182,9 +190,53 @@ public class ResultManager : MonoBehaviour {
                             default:
                                 break;
                         }
-                        int Score = (Scoreadd * ZombieCreateManager.Stage) - PlayTime - GameInfoManager.GetInstance().Accumulated_Get(); ;
+                        Score = (Scoreadd * ZombieCreateManager.Stage) - PlayTime - GameInfoManager.GetInstance().Accumulated_Get(); ;
                         UI_Score.text = Score.ToString();
 
+                        switch (GameInfoManager.GetInstance().ZombieLevel)
+                        {
+                            case 0:
+                                {
+                                   if(GameInfoManager.GetInstance().ZombieInfinityMode)
+                                    {
+                                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_zombie_survival_easy", Score);
+                                    }
+                                    else
+                                    {
+                                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_zombie_survival_endless_easy", Score);
+                                    }
+                                    break;
+                                }
+                            case 1:
+                                {
+                                    if (GameInfoManager.GetInstance().ZombieInfinityMode)
+                                    {
+                                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_zombie_survival_normal", Score);
+                                    }
+                                    else
+                                    {
+                                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_zombie_survival_endless_normal", Score);
+                                    }
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    if (GameInfoManager.GetInstance().ZombieInfinityMode)
+                                    {
+                                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_zombie_survival_hard", Score);
+                                    }
+                                    else
+                                    {
+                                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_zombie_survival_endless_hard", Score);
+                                    }
+                                    break;
+                                }
+
+                            default:
+                                break;
+                        }
+
+                        
                         GameInfoManager.GetInstance().Accumulated_Reset();
 
                         break;

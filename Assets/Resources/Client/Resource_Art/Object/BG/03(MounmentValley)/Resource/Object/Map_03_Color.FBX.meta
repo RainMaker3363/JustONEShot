@@ -1,0 +1,143 @@
+fileFormatVersion: 2
+guid: 66c6bb877f93e9745a2a67e57469ef16
+timeCreated: 1503251275
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: BigStorn
+    100002: Box
+    100004: Cactus_B
+    100006: Cactus_S
+    100008: Desert_Tree
+    100010: Log
+    100012: //RootNode
+    100014: Plant
+    100016: railWay
+    100018: Stone_Small
+    100020: Train_Body
+    100022: TrainUp
+    100024: WarterBox
+    100026: Wheel
+    400000: BigStorn
+    400002: Box
+    400004: Cactus_B
+    400006: Cactus_S
+    400008: Desert_Tree
+    400010: Log
+    400012: //RootNode
+    400014: Plant
+    400016: railWay
+    400018: Stone_Small
+    400020: Train_Body
+    400022: TrainUp
+    400024: WarterBox
+    400026: Wheel
+    2300000: BigStorn
+    2300002: Box
+    2300004: Cactus_B
+    2300006: Cactus_S
+    2300008: Desert_Tree
+    2300010: Log
+    2300012: Plant
+    2300014: railWay
+    2300016: Stone_Small
+    2300018: Train_Body
+    2300020: TrainUp
+    2300022: WarterBox
+    2300024: Wheel
+    3300000: BigStorn
+    3300002: Box
+    3300004: Cactus_B
+    3300006: Cactus_S
+    3300008: Desert_Tree
+    3300010: Log
+    3300012: Plant
+    3300014: railWay
+    3300016: Stone_Small
+    3300018: Train_Body
+    3300020: TrainUp
+    3300022: WarterBox
+    3300024: Wheel
+    4300000: Log
+    4300002: railWay
+    4300004: TrainUp
+    4300006: BigStorn
+    4300008: Desert_Tree
+    4300010: Stone_Small
+    4300012: Cactus_S
+    4300014: Cactus_B
+    4300016: Wheel
+    4300018: WarterBox
+    4300020: Box
+    4300022: Plant
+    4300024: Train_Body
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

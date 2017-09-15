@@ -189,6 +189,7 @@ public class ZombieMove : Zombie
 
     void OnDisable()
     {
+        shader.material.SetFloat("_DissolveEdgeRange", 0);
         StopCoroutine(Dealy_Coroutine);
         NvAgent.enabled = false;
         GetComponent<CapsuleCollider>().enabled = true;
