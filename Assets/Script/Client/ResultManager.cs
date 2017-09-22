@@ -118,22 +118,31 @@ public class ResultManager : MonoBehaviour {
                         if (CharMove.CharStat.HP > 0)   //클리어했을때
                         {
                             int Gold = 0;
-
+                            int Mask = 1; // 00000001
+                            int CharIndex = 0;
+                            int select = 0;
                             switch (GameInfoManager.GetInstance().ZombieLevel)
                             {
                                 case 0:
                                     {
                                         Gold = 250;
+                                        select = Mask << 2;
+                                        // GameInfoManager.CharLock += select;
+                                        CharIndex = 2;
                                         break;
                                     }
                                 case 1:
                                     {
                                         Gold = 500;
+                                        select = Mask << 3;
+                                        CharIndex = 3;
                                         break;
                                     }
                                 case 2:
                                     {
                                         Gold = 1000;
+                                        select = Mask << 1;
+                                        CharIndex = 1;
                                         break;
                                     }
 
@@ -143,6 +152,17 @@ public class ResultManager : MonoBehaviour {
 
                             UI_Coin.text = Gold.ToString();
                             GameInfoManager.GetInstance().GoldAdd(Gold);
+                            int LockCheck = (GameInfoManager.LockCode[CharIndex] & select);
+
+                            if (LockCheck > 0)
+                            {
+
+                            }
+                            else //보상 캐릭이 잠겨있다면 해제
+                            {
+                                GameInfoManager.LockCode[CharIndex] += 1;   //00000001
+                                PlayerPrefs.SetString("LockCode" + CharIndex.ToString(), System.Convert.ToString(GameInfoManager.LockCode[CharIndex], 2));
+                            }
 
                         }
                         else //패배했을때

@@ -36,7 +36,15 @@ public class GameStart : MonoBehaviour {
     void Start ()
     {
         Char = GamePlayObj.transform.Find("PlayerCharacter").GetComponent<CharMove>();
-        Enemy = GamePlayObj.transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
+        if (Mul_Manager == null)
+        {
+            EnemyDummy = GamePlayObj.transform.Find("EnemyCharacter").GetComponent<Scarecrow>();
+        }
+        else if (Enemy == null)
+        {
+            Enemy = GamePlayObj.transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
+
+        }
         WaitOverTime = Time.time + WaitTime;
     }
 
@@ -48,14 +56,14 @@ public class GameStart : MonoBehaviour {
             Char = GamePlayObj.transform.Find("PlayerCharacter").GetComponent<CharMove>();
         }
 
-
-        if (Enemy == null)
+        if (Mul_Manager == null)
+        {
+            EnemyDummy = GamePlayObj.transform.Find("EnemyCharacter").GetComponent<Scarecrow>();
+        }
+        else if (Enemy == null)
         {
             Enemy = GamePlayObj.transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
-            if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "TutorialScene")
-            {
-                EnemyDummy = GamePlayObj.transform.Find("EnemyCharacter").GetComponent<Scarecrow>();
-            }
+            
         }
 
         if (Char != null && (Enemy != null|| EnemyDummy != null))
@@ -79,7 +87,7 @@ public class GameStart : MonoBehaviour {
                                 {
                                     Selectanim.SetTrigger("Revolver");
                                     Char.SelectGun_Revolver();
-                                    if (GPGSManager.GetInstance.IsAuthenticated())
+                                    if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
                                     {
                                         Mul_Manager.SendWeaponNumberMessage(0);
                                         Mul_Manager.SendMultiSelectStateMessage(true);
@@ -94,7 +102,7 @@ public class GameStart : MonoBehaviour {
                                 {
                                     Selectanim.SetTrigger("ShotGun");
                                     Char.SelectGun_ShotGun();
-                                    if (GPGSManager.GetInstance.IsAuthenticated())
+                                    if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
                                     {
                                         Mul_Manager.SendWeaponNumberMessage(1);
                                         Mul_Manager.SendMultiSelectStateMessage(true);
@@ -107,7 +115,7 @@ public class GameStart : MonoBehaviour {
                                 {
                                     Selectanim.SetTrigger("Musket");
                                     Char.SelectGun_Musket();
-                                    if (GPGSManager.GetInstance.IsAuthenticated())
+                                    if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
                                     {
                                         Mul_Manager.SendWeaponNumberMessage(2);
                                         Mul_Manager.SendMultiSelectStateMessage(true);
@@ -138,7 +146,7 @@ public class GameStart : MonoBehaviour {
                         {
                             Selectanim.SetTrigger("Revolver");
                             Char.SelectGun_Revolver();
-                            if (GPGSManager.GetInstance.IsAuthenticated())
+                            if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
                             {
                                 Mul_Manager.SendWeaponNumberMessage(0);
                                 Mul_Manager.SendMultiSelectStateMessage(true);
@@ -151,7 +159,7 @@ public class GameStart : MonoBehaviour {
                         {
                             Selectanim.SetTrigger("ShotGun");
                             Char.SelectGun_ShotGun();
-                            if (GPGSManager.GetInstance.IsAuthenticated())
+                            if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
                             {
                                 Mul_Manager.SendWeaponNumberMessage(1);
                                 Mul_Manager.SendMultiSelectStateMessage(true);
@@ -164,7 +172,7 @@ public class GameStart : MonoBehaviour {
                         {
                             Selectanim.SetTrigger("Musket");
                             Char.SelectGun_Musket();
-                            if (GPGSManager.GetInstance.IsAuthenticated())
+                            if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
                             {
                                 Mul_Manager.SendWeaponNumberMessage(2);
                                 Mul_Manager.SendMultiSelectStateMessage(true);

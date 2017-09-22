@@ -143,7 +143,7 @@ public class CharMove : MonoBehaviour
 
     public int m_DebugPlayerState;
 
-    int CharIndex = GameInfoManager.GetInstance().SelectIndex; //캐릭터 선택 인덱스
+    int CharIndex = 0; //캐릭터 선택 인덱스
 
     //캐릭터 총
     public static UseGun m_UseGun;
@@ -257,6 +257,7 @@ public class CharMove : MonoBehaviour
     void Awake()
     {
         m_GunState = LSD.GunState.ShotGun; //현재는 고정 추후 받아오게함
+        CharIndex = GameInfoManager.GetInstance().SelectIndex;
         CharInit();
         m_ZombieClear = false;
         m_GunSelect = false;
@@ -1440,13 +1441,13 @@ public class CharMove : MonoBehaviour
         //스킬 사용 전송
         if (GPGSManager.GetInstance.IsAuthenticated())
         {
-            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "ZombieScene")
+            if (NowSceneName != "ZombieScene"&& NowSceneName != "TutorialScene")
             {
                 Mul_Manager.SendPlayerSkillOnMessage(true);
             }
         }
 
-        if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "TutorialScene")
+        if(NowSceneName == "TutorialScene")
         {
             TutorialText.gameObject.SetActive(true); 
         }
@@ -1599,7 +1600,13 @@ public class CharMove : MonoBehaviour
         //Skill_BloodBullet = false;
         Skill_Invincibility = false;
         if (GPGSManager.GetInstance.IsAuthenticated())
-            Mul_Manager.SendPlayerSkillOnMessage(false);
+        {
+            if (NowSceneName != "ZombieScene" && NowSceneName != "TutorialScene")
+            {
+                Mul_Manager.SendPlayerSkillOnMessage(false);
+            }
+        }
+            
         Debug.Log("SkillEnd");
         if (TutorialText != null)
         {

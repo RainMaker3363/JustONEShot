@@ -84,11 +84,14 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
             }
         }
 
-        if (GPGSManager.GetInstance.IsAuthenticated() && Mul_GameManager.GetEndGameState())
+        if (GPGSManager.GetInstance.IsAuthenticated() && Mul_GameManager != null)
         {
-            DB_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
-            BulletIndex = -1; //인덱스 초기화
-            gameObject.SetActive(false);
+            if (Mul_GameManager.GetEndGameState())
+            {
+                DB_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
+                BulletIndex = -1; //인덱스 초기화
+                gameObject.SetActive(false);
+            }
         }
 
  

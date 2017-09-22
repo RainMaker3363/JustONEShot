@@ -36,7 +36,9 @@ public class GameInfoManager
     public static int CharLock;  //1번 캐릭은 잠그지 않음
     public static int[] LockCode;   //1번비트 캐릭 잠금여부 이후 비트 스킨잠금여부
 
-    
+    public static int[] Skin_Char;  //선택했던 스킨저장
+
+    public static int BeforeCharSelect;
 
     int damage = 0;
 
@@ -73,6 +75,25 @@ public class GameInfoManager
                     
                 }
                 LockCode[i] = System.Convert.ToInt32(LoadLock, 2);// string을 2진수로 변환
+            }
+
+            Skin_Char = new int[4];
+
+            for (int i = 0; i < 4; i++)
+            {
+                string Key = "Skin_Char" + i.ToString();
+                if (PlayerPrefs.HasKey(Key))
+                {
+                    Skin_Char[i] = PlayerPrefs.GetInt(Key);
+                }
+                else
+                {
+                    Skin_Char[i] = 0;
+                }
+            }
+            if (PlayerPrefs.HasKey("BeforeCharSelect"))
+            {
+                BeforeCharSelect = PlayerPrefs.GetInt("BeforeCharSelect");
             }
             if (PlayerPrefs.HasKey("SurvivalScore"))
             {
@@ -238,7 +259,7 @@ public class WaitRoom : MonoBehaviour {
     [SerializeField]
     GameObject[] PlayerChar;
 
-    static int SelectIndex = 0;
+    static int SelectIndex;
     GameObject SelectChar;
     public Transform CharPos;
 
@@ -304,14 +325,22 @@ public class WaitRoom : MonoBehaviour {
             m_MultiTitleManager = GameObject.Find("MultiTitleManager").GetComponent<MultiTitleManager>();
         }
 
+        
+        GameInfoManager.GetInstance().SelectIndex = GameInfoManager.BeforeCharSelect;
+        SelectIndex = GameInfoManager.GetInstance().SelectIndex;
+        //Debug.Log("BeforeCharSelect" + SelectIndex);
         SelectChar = Instantiate(PlayerChar[SelectIndex]);
         SelectChar.transform.position = CharPos.position;
         SelectChar.transform.rotation = CharPos.rotation;
         SelectChar.transform.SetParent(CharPos);
-
-        GameInfoManager.GetInstance().SelectIndex = SelectIndex;
+        
         GPGSManager.GetInstance.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
         SendRoutine = SendCharacterRoutine();
+
+        string Path = "Client/InGamePrefab/Skin/0" + SelectIndex + "/" + GameInfoManager.Skin_Char[SelectIndex].ToString();
+        Debug.Log(Path);
+        Material Mat = (Material)Resources.Load(Path, typeof(Material));
+        SelectChar.GetComponent<WaitRoomSkin>().Skin.material = Mat;
 
         StopCoroutine(SendRoutine);
         StartCoroutine(SendRoutine);
@@ -344,6 +373,14 @@ public class WaitRoom : MonoBehaviour {
         }
 
         SelectPos.transform.localPosition = Postion;
+
+        for(int i =0; i< WaitRoomChar.Length;i++)
+        {
+            Path = "Client/InGamePrefab/Skin/0" + i.ToString() + "/" + GameInfoManager.Skin_Char[i].ToString();
+            
+            Mat = (Material)Resources.Load(Path, typeof(Material));
+            WaitRoomChar[i].GetComponent<WaitRoomSkin>().Skin.material = Mat;
+        }
 
         WaitRoomChar[SelectIndex].SetActive(false);
 
@@ -474,7 +511,6 @@ public class WaitRoom : MonoBehaviour {
         if (LockCheck > 0)  //잠금이 해제되어있음
         {
             Debug.Log("True");
-            
         }
         else //잠김 구매창 표시
         {
@@ -564,7 +600,14 @@ public class WaitRoom : MonoBehaviour {
             if (SelectIndex != Index)   //전에 선택한것과 다를경우
             {
                 WaitRoomChar[SelectIndex].SetActive(true);
+                //스킨적용
+                string Path = "Client/InGamePrefab/Skin/0" + SelectIndex.ToString() + "/" + GameInfoManager.Skin_Char[SelectIndex].ToString();
+                Debug.Log("waitskin "+Path);
+                Material Mat = (Material)Resources.Load(Path, typeof(Material));
+                WaitRoomChar[SelectIndex].GetComponent<WaitRoomSkin>().Skin.material = Mat;
+                
                 WaitRoomChar[Index].SetActive(false);
+
                 SelectIndex = Index;    //선택한것으로 바꿈
                 Destroy(SelectChar);    //전에 있던 캐릭터는 파기
                 SelectChar = Instantiate(PlayerChar[SelectIndex]);  //현재 선택한거로 다시 생성
@@ -576,34 +619,49 @@ public class WaitRoom : MonoBehaviour {
                     GPGSManager.GetInstance.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
                 }
                 GameInfoManager.GetInstance().SelectIndex = SelectIndex;
-                GameInfoManager.GetInstance().SelectSkinIndex = 0; // 스킨인덱스 기본으로 변경
+               // Debug.Log("SaveIndex"+SelectIndex);
+                //선택한 캐릭터 저장
+                PlayerPrefs.SetInt("BeforeCharSelect", SelectIndex);
+                //GameInfoManager.GetInstance().SelectSkinIndex = 0; // 스킨인덱스 기본으로 변경
                 Vector3 Postion = Vector3.zero;
+                int SkinIndex = 0;
                 switch (Index)
                 {
                     case 0:
                         {
                             Postion = new Vector3(-360, 160, 0);
+                            SkinIndex = GameInfoManager.Skin_Char[0];
                             break;
                         }
                     case 1:
                         {
                             Postion = new Vector3(-120, 160, 0);
+                            SkinIndex = GameInfoManager.Skin_Char[1];
                             break;
                         }
                     case 2:
                         {
                             Postion = new Vector3(120, 160, 0);
+                            SkinIndex = GameInfoManager.Skin_Char[2];
                             break;
                         }
                     case 3:
                         {
                             Postion = new Vector3(360, 160, 0);
+                            SkinIndex = GameInfoManager.Skin_Char[3];
                             break;
                         }
                     default:
                         break;
                 }
                 SelectPos.transform.localPosition = Postion;
+
+                GameInfoManager.GetInstance().SelectSkinIndex = SkinIndex;
+                //스킨적용
+                Path = "Client/InGamePrefab/Skin/0" + Index.ToString() + "/" + SkinIndex.ToString();
+                //Debug.Log(Path);
+                Mat = (Material)Resources.Load(Path, typeof(Material));
+                SelectChar.GetComponent<WaitRoomSkin>().Skin.material = Mat;
             }
         }
     }
@@ -651,10 +709,17 @@ public class WaitRoom : MonoBehaviour {
     public void SelectSkin(int Index)
     {
         GameInfoManager.GetInstance().SelectSkinIndex = Index;
-        string Path = "Client/InGamePrefab/Skin/0" + GameInfoManager.GetInstance().SelectIndex.ToString() + "/" + Index.ToString();
+        int NowCharIndex = GameInfoManager.GetInstance().SelectIndex;
+        string Path = "Client/InGamePrefab/Skin/0" + NowCharIndex.ToString() + "/" + Index.ToString();
         Debug.Log(Path);
         Material Mat = (Material)Resources.Load(Path, typeof(Material));
         SelectChar.GetComponent<WaitRoomSkin>().Skin.material = Mat;
+
+        GameInfoManager.Skin_Char[NowCharIndex] = Index;
+        string Key = "Skin_Char" + NowCharIndex.ToString();
+
+        PlayerPrefs.SetInt(Key, GameInfoManager.Skin_Char[NowCharIndex]);
+
         if (GPGSManager.GetInstance.IsAuthenticated())
         {
             GPGSManager.GetInstance.SetMyCharacterSkinNumber(Index);//GPGS캐릭터 인덱스 설정
