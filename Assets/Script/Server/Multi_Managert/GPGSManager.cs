@@ -305,8 +305,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             MapSelected_RandomSeeds.Clear();
         }
 
-        PVP_DeadEyeBullet_RandomSeeds[GetMyParticipantId()] = UnityEngine.Random.Range(0, 5);
-        MapSelected_RandomSeeds[GetMyParticipantId()] = UnityEngine.Random.Range(0, 1);
+        //PVP_DeadEyeBullet_RandomSeeds[GetMyParticipantId()] = UnityEngine.Random.Range(0, 5);
+        //MapSelected_RandomSeeds[GetMyParticipantId()] = UnityEngine.Random.Range(0, 1);
 
 
         #endregion
@@ -663,6 +663,35 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
         return StartMapSelectEncount;
     }
+
+    // 자기 자신의 ID에 대한 데드아이 난수값을 넣어준다.
+    public void SetMy_PVP_DeadEyeBullet_RandomSeeds(int Seed = 0)
+    {
+        if (Seed == 0)
+        {
+            PVP_DeadEyeBullet_RandomSeeds[GetMyParticipantId()] = 0;
+        }
+        else
+        {
+            PVP_DeadEyeBullet_RandomSeeds[GetMyParticipantId()] = UnityEngine.Random.Range(0, 5);
+        }
+
+    }
+
+    // 자기 자신의 대한 맵 난수값을 넣어준다.
+    public void SetMy_Map_Selected_RandomSeeds(int Seed = 0)
+    {
+        if(Seed == 0)
+        {
+            MapSelected_RandomSeeds[GetMyParticipantId()] = 0;
+        }
+        else
+        {
+            MapSelected_RandomSeeds[GetMyParticipantId()] = UnityEngine.Random.Range(0, 1);
+        }
+        
+    } 
+       
 
     // PVP, 서바이벌 모드에서 사용할 나와 다른 사용자들의 맵 선택 난수 값들
     public Dictionary<string, int> GetMapSelectedRandomSeeds()

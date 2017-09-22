@@ -181,6 +181,9 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     public void SendPVPDeadEyeSeed()
     {
         int DeadEyeSeed = Random.Range(0, 5);
+
+        GPGSManager.GetInstance.SetMy_PVP_DeadEyeBullet_RandomSeeds(DeadEyeSeed);
+
         Debug.Log("My DeadEyeSeed : " + DeadEyeSeed);
 
         GPGSManager.GetInstance.SendPVPDeadEyeBulletIndexSeed(DeadEyeSeed);
@@ -203,6 +206,9 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     public void SendSelectedMapSeed()
     {
         int SelectedMapSeed = Random.Range(0, 2);
+
+        GPGSManager.GetInstance.SetMy_Map_Selected_RandomSeeds(SelectedMapSeed);
+
         Debug.Log("My SelectedMapSeed : " + SelectedMapSeed);
 
         GPGSManager.GetInstance.SendSelectMapSeed(SelectedMapSeed);
