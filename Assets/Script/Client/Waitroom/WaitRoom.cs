@@ -791,4 +791,9 @@ public class WaitRoom : MonoBehaviour {
         GameInfoManager.PlayTicket = 10;
         TicketText.text = GameInfoManager.PlayTicket.ToString();
     }
+
+    public void OnButtonTutorial()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("TutorialScene");
+    }
 }

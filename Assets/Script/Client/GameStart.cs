@@ -9,6 +9,7 @@ public class GameStart : MonoBehaviour {
     public GameObject MainUI;
     public CharMove Char;
     public EnemyMove Enemy;
+    public Scarecrow EnemyDummy;
     public MultiGameManager Mul_Manager;
     public Animator CountDown;
     bool CountDownBool = false;
@@ -51,9 +52,13 @@ public class GameStart : MonoBehaviour {
         if (Enemy == null)
         {
             Enemy = GamePlayObj.transform.Find("EnemyCharacter").GetComponent<EnemyMove>();
+            if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "TutorialScene")
+            {
+                EnemyDummy = GamePlayObj.transform.Find("EnemyCharacter").GetComponent<Scarecrow>();
+            }
         }
 
-        if (Char != null && Enemy != null)
+        if (Char != null && (Enemy != null|| EnemyDummy != null))
         {
             if (!CharMove.m_GunSelect)
             {

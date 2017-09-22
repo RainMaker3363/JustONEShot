@@ -36,7 +36,8 @@ namespace LSD
     {
         PVP =0,
         Survivel,
-        Zombie              
+        Zombie,
+        Tutorial              
 
     }
 }
@@ -142,7 +143,7 @@ public class CharMove : MonoBehaviour
 
     public int m_DebugPlayerState;
 
-    int CharIndex = 1; //캐릭터 선택 인덱스
+    int CharIndex = GameInfoManager.GetInstance().SelectIndex; //캐릭터 선택 인덱스
 
     //캐릭터 총
     public static UseGun m_UseGun;
@@ -159,6 +160,7 @@ public class CharMove : MonoBehaviour
     public static bool Skill_Hide = false;
     public static bool Skill_BloodBullet = false;
     public static bool Skill_Invincibility = false;
+    bool Button_SkillOn = false;
 
     public SkinnedMeshRenderer WomenSkin;
     SkinnedMeshRenderer WomenGun;
@@ -226,6 +228,8 @@ public class CharMove : MonoBehaviour
     public SkinnedMeshRenderer Skin;
 
     string NowSceneName;
+    TMPro.TextMeshProUGUI TutorialText;
+    bool DeadEyeTutorial = false;
     //void OnEnable()
     //{
 
@@ -360,6 +364,16 @@ public class CharMove : MonoBehaviour
         DeadEyeCheck();
         DeathZoneCheck();
         GameEndCheck();
+
+        if(NowSceneName == "TutorialScene")
+        {
+            if(Button_SkillOn && !Skill_BloodBullet)
+            {
+                Button_SkillOn = false;
+                UI_Main.transform.Find("Control/Button_Skill").gameObject.SetActive(true);
+                TutorialText.gameObject.SetActive(false);
+            }
+        }
 
         if (ShotAble && m_ShotJoyStickControl.GetTouch())
         {
@@ -533,15 +547,22 @@ public class CharMove : MonoBehaviour
     {
         if (m_MoveJoyStickControl.GetVectorForce() > 0) // 계속 조작중인경우
         {
+            if(TutorialText != null)
+            {
+                TutorialText.gameObject.SetActive(true);
+                TutorialText.text = "slow";
+            }
 
             if (!m_Exhausted) //탈진상태에서 회복됬다면
             {
+                TutorialText.gameObject.SetActive(false);
                 m_PlayerState++;    //Player상태를 DASH_SOFT로 변경
                                     //m_PlayerState = LSD.PlayerState.DASH_SOFT;
             }
         }
         else //조작을 멈출경우
         {
+            TutorialText.gameObject.SetActive(false);
             m_PlayerState--;//Player상태를 IDLE로 변경
                             //m_PlayerState = LSD.PlayerState.IDLE;
         }
@@ -635,6 +656,19 @@ public class CharMove : MonoBehaviour
                     {
                         Mul_Manager.SendShootMessage(false);
                     }
+
+                    if (TutorialText != null)
+                    {
+                        TutorialText.gameObject.SetActive(true);
+                        if (m_UseGun.Bullet_Hand < 1)
+                        {
+                            TutorialText.text = "no ammo";
+                        }
+                        else if (m_UseGun.Bullet_Gun < m_UseGun.Bullet_Use)
+                        {
+                            TutorialText.text = "no reload";
+                        }
+                    }
                     m_PlayerState = LSD.PlayerState.SHOT_FIRE;
                 }
             }
@@ -657,6 +691,10 @@ public class CharMove : MonoBehaviour
     {
         if (!anim.GetBool("GunFire"))
         {
+            if (TutorialText != null)
+            {
+                TutorialText.gameObject.SetActive(false);
+            }
             anim.speed = 1;
             m_PlayerState = LSD.PlayerState.IDLE;
         }
@@ -682,54 +720,65 @@ public class CharMove : MonoBehaviour
         //{
         m_MoveJoyStickControl.PedInit();
         //}
-
-        if ((DeadEyeEnd || !Mul_Manager.GetDeadEyeChecker()) && DeadEyeSuccessCheck)
+        if (Mul_Manager != null)
         {
-            //판별했으니 초기화
-            EnemyDeadEyeTimer = 0;
-            m_DeadEyeTimer = 0;
-            DeadEyeEnd = false;
-            DeadEyeSuccessCheck = false;
-            cam.transform.position = CamPos + transform.position;
-            if (GPGSManager.GetInstance.IsAuthenticated())
+            if ((DeadEyeEnd || !Mul_Manager.GetDeadEyeChecker()) && DeadEyeSuccessCheck)
             {
-                Mul_Manager.SendDeadEyeMessage(false);
+                //판별했으니 초기화
+                EnemyDeadEyeTimer = 0;
+                m_DeadEyeTimer = 0;
+                DeadEyeEnd = false;
+                DeadEyeSuccessCheck = false;
+                cam.transform.position = CamPos + transform.position;
+                if (GPGSManager.GetInstance.IsAuthenticated())
+                {
+                    Mul_Manager.SendDeadEyeMessage(false);
+                }
+                m_PlayerState = LSD.PlayerState.IDLE;
+                if (NowSceneName == "GameScene" || NowSceneName == "Survival Scene" || NowSceneName == "ZombieScene")
+                {
+                    DeathZone.GetComponent<DeathZone>().DeadEyePlaying = false;
+                }
+                else
+                {
+                    DeathZone.parent.parent.GetComponent<DeathZone_03>().DeadEyePlaying = false;
+                }
             }
-            m_PlayerState = LSD.PlayerState.IDLE;
-            if (NowSceneName == "GameScene" || NowSceneName == "Survival Scene" || NowSceneName == "ZombieScene")
+
+
+            if (m_DeadEyeTimer > 0 && !DeadEyecomplete && !DeadEyeSuccessCheck)
             {
-                DeathZone.GetComponent<DeathZone>().DeadEyePlaying = false;
+                Mul_Manager.SendDeadEyeTimerMessage(m_DeadEyeTimer);
+                DeadEyecomplete = true;
             }
-            else
+
+            EnemyDeadEyeTimer = Mul_Manager.GetDeadEyeTimer();
+
+            if (EnemyDeadEyeTimer > 0 && DeadEyecomplete && !DeadEyeSuccessCheck)  //플레이어의 데드아이가 끝났고 상대데드아이가 끝났는가
             {
-                DeathZone.parent.parent.GetComponent<DeathZone_03>().DeadEyePlaying = false;
+                if (EnemyDeadEyeTimer > m_DeadEyeTimer)//데드아이성공여부 판별
+                {
+                    DeadEyeSuccess = true;
+                }
+                else
+                {
+                    DeadEyeSuccess = false;
+                }
+                //디버그용
+                Debug_DeadEyeTimer_Player = m_DeadEyeTimer;
+                Debug_DeadEyeTimer_Enemy = EnemyDeadEyeTimer;
+
+                DeadEyecomplete = false;
+                DeadEyeSuccessCheck = true;
             }
         }
-
-        if (m_DeadEyeTimer > 0 && !DeadEyecomplete && !DeadEyeSuccessCheck)
+        else
         {
-            Mul_Manager.SendDeadEyeTimerMessage(m_DeadEyeTimer);
-            DeadEyecomplete = true;
-        }
-
-        EnemyDeadEyeTimer = Mul_Manager.GetDeadEyeTimer();
-
-        if (EnemyDeadEyeTimer > 0 && DeadEyecomplete && !DeadEyeSuccessCheck)  //플레이어의 데드아이가 끝났고 상대데드아이가 끝났는가
-        {
-            if (EnemyDeadEyeTimer > m_DeadEyeTimer)//데드아이성공여부 판별
+            if(!DeadEyeTutorial)
             {
-                DeadEyeSuccess = true;
+                DeadEyeTutorial = true;
+                StartCoroutine(DeadEye_Tutorial());
             }
-            else
-            {
-                DeadEyeSuccess = false;
-            }
-            //디버그용
-            Debug_DeadEyeTimer_Player = m_DeadEyeTimer;
-            Debug_DeadEyeTimer_Enemy = EnemyDeadEyeTimer;
-
-            DeadEyecomplete = false;
-            DeadEyeSuccessCheck = true;
         }
     }
 
@@ -915,7 +964,7 @@ public class CharMove : MonoBehaviour
             gameObject.GetComponent<CharacterController>().enabled = false;
 
             //EnemyPos.gameObject.SetActive(false);
-            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene")
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene" || UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "TutorialScene")
             {
                 Result.transform.Find("Effect_Result_Lose_01/Effect_WinUI/Images/Color_Text_Lose").GetComponent<SpriteRenderer>().sprite = DeadImage;
             }
@@ -1029,8 +1078,8 @@ public class CharMove : MonoBehaviour
         }
         else
         {
-            Debug.Log("Distance"+Vector3.Distance(Vector2.zero, new Vector3(transform.position.x, 0, transform.position.z)));
-            Debug.Log("CenterDistance" + Mathf.Abs(DeathZone.position.x));
+            //Debug.Log("Distance"+Vector3.Distance(Vector2.zero, new Vector3(transform.position.x, 0, transform.position.z)));
+            //Debug.Log("CenterDistance" + Mathf.Abs(DeathZone.position.x));
             if (DeathZone.position.x < Vector3.Distance(Vector2.zero, new Vector3(transform.position.x, 0, transform.position.z)))
             {
                 if (!DeathZoneDealay)
@@ -1362,7 +1411,7 @@ public class CharMove : MonoBehaviour
         {
             Mul_Manager.EndGameAndLeaveRoom();
         }
-        else if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene")
+        else if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene"|| UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "TutorialScene")
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene("WaitingRoom");
             // UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
@@ -1396,16 +1445,30 @@ public class CharMove : MonoBehaviour
             }
         }
 
+        if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "TutorialScene")
+        {
+            TutorialText.gameObject.SetActive(true); 
+        }
+
         switch (CharIndex)
         {
             case 0: // 링컨 스킬
                 {
+                    if(TutorialText != null)
+                    {
+                        TutorialText.text = "fire blindly for 2 seconds";
+                    }
+
                     StartCoroutine(SkillUse(2));
                     Skill_Fastgun = true;
                     break;
                 }
             case 1: // 샬롯 스킬
                 {
+                    if (TutorialText != null)
+                    {
+                        TutorialText.text = "transparent for 6 seconds";
+                    }
                     StartCoroutine(SkillUse(6));
                     Skill_Hide = true;
                     StartCoroutine(Camouflage());
@@ -1413,6 +1476,10 @@ public class CharMove : MonoBehaviour
                 }
                 case 2: // 호그 스킬
                 {
+                    if (TutorialText != null)
+                    {
+                        TutorialText.text = "invincible for 4 seconds";
+                    }
                     StartCoroutine(SkillUse(4));
                     Skill_Invincibility = true;
                     StartCoroutine(InvincibilitySkill());
@@ -1420,8 +1487,13 @@ public class CharMove : MonoBehaviour
                 }
             case 3: // 엔젤 스킬
                 {
+                    if (TutorialText != null)
+                    {
+                        TutorialText.text = "bleeding shot";
+                    }
                     //StartCoroutine(SkillUse(3));
                     Skill_BloodBullet = true;
+                    Button_SkillOn = true;
                     break;
                 }
             
@@ -1436,6 +1508,9 @@ public class CharMove : MonoBehaviour
     void CharInit()
     {
 
+        GameObject GamePlayObj = GameObject.Find("GamePlayObj");
+
+        UI_Main = GamePlayObj.transform.Find("UI_Main").gameObject;
 
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene")
         {
@@ -1450,6 +1525,10 @@ public class CharMove : MonoBehaviour
             Debug.Log("SingleCharIndex" + CharIndex);
             //}
         }
+        else if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "TutorialScene")
+        {
+            TutorialText = UI_Main.transform.Find("TutorialText").GetComponent<TMPro.TextMeshProUGUI>();
+        }
         else
         {
             if (GPGSManager.GetInstance.IsAuthenticated())  //접속중일때
@@ -1459,9 +1538,7 @@ public class CharMove : MonoBehaviour
             Mul_Manager = GameObject.Find("MultiGameMananger").GetComponent<MultiGameManager>();
             Mul_Manager.MyCharacter = this.gameObject;
         }
-        GameObject GamePlayObj = GameObject.Find("GamePlayObj");
-
-        UI_Main = GamePlayObj.transform.Find("UI_Main").gameObject;
+        
 
 
         m_MoveJoyStickControl = UI_Main.GetComponentInChildren<MoveJoyStick>(); //움직임 전용 조이스틱
@@ -1508,7 +1585,12 @@ public class CharMove : MonoBehaviour
 
     IEnumerator SkillUse(int SkillTime)
     {
-        Debug.Log("SkillStart");
+        
+        if(TutorialText != null)
+        {
+            Debug.Log("SkillStart");
+            TutorialText.gameObject.SetActive(true);
+        }
         yield return new WaitForSeconds(SkillTime);
 
         Skill_Fastgun = false;
@@ -1518,6 +1600,11 @@ public class CharMove : MonoBehaviour
         if (GPGSManager.GetInstance.IsAuthenticated())
             Mul_Manager.SendPlayerSkillOnMessage(false);
         Debug.Log("SkillEnd");
+        if (TutorialText != null)
+        {
+            UI_Main.transform.Find("Control/Button_Skill").gameObject.SetActive(true);
+            TutorialText.gameObject.SetActive(false);
+        }
         yield return null;
     }
 
@@ -1597,6 +1684,14 @@ public class CharMove : MonoBehaviour
         yield return new WaitForSeconds(4);
         Invincibility = false;       
         Destroy(effect);
+    }
+
+    public IEnumerator DeadEye_Tutorial()
+    {
+        yield return new WaitForSeconds(15);
+        DeadEyeTutorial = false;
+        cam.transform.position = CamPos + transform.position;
+        m_PlayerState = LSD.PlayerState.IDLE;
     }
 
     void OnDestroy()

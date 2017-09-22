@@ -59,6 +59,13 @@ public class Bullet_DeadEye : MonoBehaviour
                 HitObj.collider.gameObject.GetComponent<EnemyMove>().DeadEyeDamaged(Damage, transform.forward);
                 m_Distance = 0;
             }
+
+            if (HitObj.collider.gameObject.tag == "Scarecrow")
+            {
+                Debug.Log("Hit");
+                HitObj.collider.transform.parent.GetComponent<Scarecrow>().DeadEyeDamaged(Damage);
+                m_Distance = 0;
+            }
         }
         //Debug.DrawLine(transform.position, transform.position + Vector3.forward * 5, Color.blue);
        

@@ -75,6 +75,13 @@ public class Bullet_ShotGun : MonoBehaviour {
             gameObject.GetComponent<MeshCollider>().enabled = false;
             // m_Distance = 0;
         }
+
+        if (HitObj.gameObject.tag == "Scarecrow")
+        {
+            Debug.Log("Hit");
+            HitObj.transform.parent.GetComponent<Scarecrow>().Damaged(Damage);
+            m_Distance = 0;
+        }
         //m_Distance = 0;
         Debug.Log(HitObj.gameObject.tag);
         if (HitObj.gameObject.tag == "Zombie")

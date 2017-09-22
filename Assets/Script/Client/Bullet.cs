@@ -72,6 +72,21 @@ public class Bullet : MonoBehaviour {
             }
             // m_Distance = 0;
         }
+        if (col.gameObject.tag == "Scarecrow")
+        {
+            Debug.Log("Hit");
+
+            col.transform.parent.GetComponent<Scarecrow>().Damaged(Damage);
+            HitCount++;
+            if (Blood)
+            {
+                Blood = false;
+                BloodEffectsManager.GetInstance().BloodEffectOn(col.gameObject);
+                StartCoroutine(col.transform.parent.GetComponent<Scarecrow>().BleedingDamage());//출혈 데미지 적용
+            }
+            // m_Distance = 0;
+        }
+
         if (col.gameObject.tag == "Zombie")
         {
             col.gameObject.GetComponent<Zombie>().ZombieDamage(Damage);

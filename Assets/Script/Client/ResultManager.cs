@@ -36,7 +36,11 @@ public class ResultManager : MonoBehaviour {
                     m_GameMode = LSD.GameMode.Zombie;
                     break;
                 }
-
+            case "TutorialScene":
+                {
+                    m_GameMode = LSD.GameMode.Tutorial;
+                    break;
+                }
             default:
                 break;
         }
@@ -239,6 +243,15 @@ public class ResultManager : MonoBehaviour {
                         
                         GameInfoManager.GetInstance().Accumulated_Reset();
 
+                        break;
+                    }
+                case LSD.GameMode.Tutorial:
+                    {
+                        UI_Coin.text = "0";
+                        //GameInfoManager.GetInstance().GoldAdd(10);
+                        Score = 0;
+
+                        UI_Score.text = Score.ToString();
                         break;
                     }
                 default:

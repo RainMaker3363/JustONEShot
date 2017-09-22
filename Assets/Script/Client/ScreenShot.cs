@@ -19,6 +19,7 @@ public class ScreenShot : MonoBehaviour
     void Awake()
     {
         GameObject GamePlayObj = GameObject.Find("GamePlayObj");
+        if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "TutorialScene")
         EnemyCam = GamePlayObj.transform.Find("EnemyCharacter/Effect_Camera_DeadEye_01_01/CameraMove/Camera (1)").GetComponent<Camera>();
         PlayerCam = GamePlayObj.transform.Find("PlayerCharacter/Effect_Camera_DeadEye_01_01/CameraMove/Camera (1)").GetComponent<Camera>(); 
     }
@@ -26,12 +27,18 @@ public class ScreenShot : MonoBehaviour
     void OnEnable()
     {
         //m_ScreenImage = GetComponent<Image>();
-       
-        if (EnemyCam.gameObject.activeSelf)
+        if (EnemyCam != null)
         {
-            ScreenCam = EnemyCam;
+            if (EnemyCam.gameObject.activeSelf)
+            {
+                ScreenCam = EnemyCam;
+            }
+            else if (PlayerCam.gameObject.activeSelf)
+            {
+                ScreenCam = PlayerCam;
+            }
         }
-        else if (PlayerCam.gameObject.activeSelf)
+        else if (PlayerCam.gameObject.activeSelf)   // 튜토리얼
         {
             ScreenCam = PlayerCam;
         }
@@ -60,7 +67,8 @@ public class ScreenShot : MonoBehaviour
         // }
         //ScreenCam.gameObject.SetActive(false);
         PlayerCam.gameObject.SetActive(false);
-        EnemyCam.gameObject.SetActive(false);
+       if(EnemyCam != null)
+          EnemyCam.gameObject.SetActive(false);
         m_ScreenImage.gameObject.SetActive(true);
     }
 

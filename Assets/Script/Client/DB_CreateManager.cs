@@ -44,7 +44,8 @@ public class DB_CreateManager : MonoBehaviour {
 
     void Start()
     {
-       // ServerIndex = Mul_Manager.GetPVPDeadEyeStartIndex();
+        if(Mul_Manager!=null)
+            ServerIndex = Mul_Manager.GetPVPDeadEyeStartIndex();
     }
 
     void Update()
