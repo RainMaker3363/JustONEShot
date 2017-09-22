@@ -45,7 +45,7 @@ public class DeadEye : MonoBehaviour {
     }
     void Start () {
         string SceneName = SceneManager.GetActiveScene().name;
-        if (SceneName != "GameScene"&& SceneName != "GameScene 1"&& SceneName != "TutorialScene")
+        if (SceneName != "GameScene0"&& SceneName != "GameScene1"&& SceneName != "TutorialScene")
             Destroy(gameObject.GetComponent<DeadEye>());
         else
         DeadEyeInit();

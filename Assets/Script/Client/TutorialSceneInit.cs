@@ -71,7 +71,7 @@ public class TutorialSceneInit : MonoBehaviour {
         {
            // Mul_Manager.SendCharacterNumberMessage(Mul_Manager.GetMyCharNumber());
 
-            m_Player = Instantiate(Player[GPGSManager.GetInstance.GetMyCharacterNumber()]);
+            m_Player = Instantiate(Player[GameInfoManager.GetInstance().SelectIndex]);
             m_Player.transform.position = PlayerStartPos.position;
             m_Player.name = "PlayerCharacter";
             m_Player.transform.SetParent(GamePlayObj.transform);

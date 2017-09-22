@@ -65,7 +65,7 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
 
         //    CreateAble = true;
 
-        if (NowSceneName == "GameScene" || NowSceneName == "Survival Scene" || NowSceneName == "ZombieScene")
+        if (NowSceneName == "GameScene0" || NowSceneName == "SurvivalScene0" || NowSceneName == "ZombieScene")
         {
             if (DeathZone.position.y + 0.5f > transform.position.y) //데스존에 잠겼다면
             {

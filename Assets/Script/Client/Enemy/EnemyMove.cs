@@ -131,7 +131,7 @@ public class EnemyMove : MonoBehaviour {
     {
         m_GunState = LSD.GunState.Revolver; //현재는 고정 추후 받아오게함
         Mul_Manager = GameObject.Find("MultiGameMananger").GetComponent<MultiGameManager>();
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene")
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene0" || UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene1")
         {
             Mul_Manager.EnemyCharacter = this.gameObject;
         }
@@ -148,7 +148,7 @@ public class EnemyMove : MonoBehaviour {
     {
         m_CharCtr = GetComponent<CharacterController>();
 
-        if (GPGSManager.GetInstance.IsAuthenticated() && UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene")  //접속중일때
+        if (GPGSManager.GetInstance.IsAuthenticated() && (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene0"|| UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene1"))  //접속중일때
         {
             StartCoroutine(WaitSelectEnemyGun());
         }
@@ -407,7 +407,7 @@ public class EnemyMove : MonoBehaviour {
 
     void EnemySkillCheck()
     {
-        if (SceneName == "Survival Scene")
+        if (SceneName == "SurvivalScene0" || SceneName == "SurvivalScene1")
         {
             if (Mul_Manager.GetSurvivalOpponentSkillOn(EnemyID) && Skill)
             {
@@ -421,7 +421,7 @@ public class EnemyMove : MonoBehaviour {
                 StartCoroutine(BleedingDamage());
             }
         }
-        else if (SceneName == "GameScene")
+        else if (SceneName == "GameScene0"|| SceneName == "GameScene1")
         {
             if (Mul_Manager.GetPVPOpponentSkillOn() && Skill)
             {
@@ -1038,7 +1038,7 @@ public class EnemyMove : MonoBehaviour {
 
     public bool SetEnemyGun()
     {
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene")
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene0"|| UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene1")
         {
             CharIndex = Mul_Manager.GetPVPOpponentCharNumber();
             m_SelectGun = Mul_Manager.GetPVPOpponentGunNumber();

@@ -20,12 +20,22 @@ public class ResultManager : MonoBehaviour {
 
         switch (NowScene)
         {
-            case "GameScene":
+            case "GameScene0":
                 {
                     m_GameMode = LSD.GameMode.PVP;
                     break;
                 }
-            case "Survival Scene":
+            case "GameScene1":
+                {
+                    m_GameMode = LSD.GameMode.PVP;
+                    break;
+                }
+            case "SurvivalScene0":
+                {
+                    m_GameMode = LSD.GameMode.Survivel;
+                    break;
+                }
+            case "SurvivalScene1":
                 {
                     m_GameMode = LSD.GameMode.Survivel;
                     break;

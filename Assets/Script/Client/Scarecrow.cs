@@ -69,7 +69,7 @@ public class Scarecrow : MonoBehaviour
 
 
 
-        Handheld.Vibrate();
+       // Handheld.Vibrate();
         // }
 
     }

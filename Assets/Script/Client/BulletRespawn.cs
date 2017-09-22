@@ -54,7 +54,7 @@ public class BulletRespawn : MonoBehaviour {
         Debug.Log("BulletRespawn");
         P_CharPos = GamePlayObj.transform.Find("PlayerCharacter");
 
-        if (SceneManager.GetActiveScene().name != "GameScene")
+        if (SceneManager.GetActiveScene().name != "GameScene0" || SceneManager.GetActiveScene().name != "GameScene1")
             E_CharPos = GamePlayObj.transform.Find("EnemyCharacter");
 
         m_Col = gameObject.GetComponent<SphereCollider>();
@@ -76,7 +76,7 @@ public class BulletRespawn : MonoBehaviour {
         //{
         //    E_CharPos = GamePlayObj.transform.Find("EnemyCharacter");
         //}
-        if (NowSceneName == "GameScene" || NowSceneName == "Survival Scene" || NowSceneName == "ZombieScene")
+        if (NowSceneName == "GameScene0" || NowSceneName == "SurvivalScene0" || NowSceneName == "ZombieScene")
         {
             if (DeathZone.position.y + 0.5f > transform.position.y)
             {

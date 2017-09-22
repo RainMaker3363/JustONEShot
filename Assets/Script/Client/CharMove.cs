@@ -735,7 +735,7 @@ public class CharMove : MonoBehaviour
                     Mul_Manager.SendDeadEyeMessage(false);
                 }
                 m_PlayerState = LSD.PlayerState.IDLE;
-                if (NowSceneName == "GameScene" || NowSceneName == "Survival Scene" || NowSceneName == "ZombieScene")
+                if (NowSceneName == "GameScene0" || NowSceneName == "SurvivalScene0" || NowSceneName == "ZombieScene")
                 {
                     DeathZone.GetComponent<DeathZone>().DeadEyePlaying = false;
                 }
@@ -964,11 +964,11 @@ public class CharMove : MonoBehaviour
             gameObject.GetComponent<CharacterController>().enabled = false;
 
             //EnemyPos.gameObject.SetActive(false);
-            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene" || UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "TutorialScene")
+            if (NowSceneName == "ZombieScene" || NowSceneName == "TutorialScene")
             {
                 Result.transform.Find("Effect_Result_Lose_01/Effect_WinUI/Images/Color_Text_Lose").GetComponent<SpriteRenderer>().sprite = DeadImage;
             }
-            else if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Survival Scene")
+            else if (NowSceneName == "SurvivalScene0"||NowSceneName == "SurvivalScene1")
             {
                 int Rank = Mul_Manager.GetMySurvivalRankNumber();
                 Result.transform.Find("Effect_Result_Lose_01/Effect_WinUI/Images/Color_Text_Lose").GetComponent<SpriteRenderer>().sprite = RankImage[Rank-1];
@@ -1035,7 +1035,7 @@ public class CharMove : MonoBehaviour
                 Mul_Manager.SendDeadEyeMessage(true);
             }
 
-            if (NowSceneName == "GameScene" || NowSceneName == "Survival Scene" || NowSceneName == "ZombieScene")
+            if (NowSceneName == "GameScene0" || NowSceneName == "SurvivalScene0" || NowSceneName == "ZombieScene")
             {
                 DeathZone.GetComponent<DeathZone>().DeadEyePlaying = false;
             }
@@ -1062,7 +1062,7 @@ public class CharMove : MonoBehaviour
 
     void DeathZoneCheck()
     {
-        if (NowSceneName == "GameScene" || NowSceneName == "Survival Scene" || NowSceneName == "ZombieScene")
+        if (NowSceneName == "GameScene0" || NowSceneName == "SurvivalScene0" || NowSceneName == "ZombieScene")
         {
             if (DeathZone.position.y + 0.02 >= transform.position.y)
             {
@@ -1345,11 +1345,12 @@ public class CharMove : MonoBehaviour
         m_PlayerState = LSD.PlayerState.WIN;
         m_PlayerBeforeState = LSD.PlayerState.WIN;
 
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ZombieScene")
+       
+        if (NowSceneName == "ZombieScene")
         {
             Result.transform.Find("Effect_Result_Win_01/Effect_WinUI/Images/Color_Text_Win").GetComponent<SpriteRenderer>().sprite = ClearImage;
         }
-        else if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Survival Scene")
+        else if (NowSceneName == "SurvivalScene0" || NowSceneName == "SurvivalScene1")
         {
             int Rank = Mul_Manager.GetMySurvivalRankNumber();
             Result.transform.Find("Effect_Result_Win_01/Effect_WinUI/Images/Color_Text_Win").GetComponent<SpriteRenderer>().sprite = RankImage[Rank-1];
