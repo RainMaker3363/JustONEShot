@@ -240,13 +240,13 @@ public class MultiMatching_UI : MonoBehaviour {
                         {
                             case 0:
                                 {
-                                    AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
+                                    AutoFade.LoadLevel("GameScene0", 0.1f, 0.1f, Color.black);
                                 }
                                 break;
 
                             case 1:
                                 {
-                                    AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
+                                    AutoFade.LoadLevel("GameScene1", 0.1f, 0.1f, Color.black);
                                 }
                                 break;
                         }
@@ -266,13 +266,13 @@ public class MultiMatching_UI : MonoBehaviour {
                         {
                             case 0:
                                 {
-                                    AutoFade.LoadLevel("Survival Scene", 0.1f, 0.1f, Color.black);
+                                    AutoFade.LoadLevel("SurvivalScene0", 0.1f, 0.1f, Color.black);
                                 }
                                 break;
 
                             case 1:
                                 {
-                                    AutoFade.LoadLevel("Survival Scene", 0.1f, 0.1f, Color.black);
+                                    AutoFade.LoadLevel("SurvivalScene1", 0.1f, 0.1f, Color.black);
                                 }
                                 break;
                         }
