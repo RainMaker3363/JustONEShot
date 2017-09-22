@@ -14,6 +14,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
     private bool MultiLogChecker;
     private bool MultiStartChecker;
+    private bool MultiSeedSenderChecker;
 
     // 매칭시 타임아웃을 체크한다.
     private float TimeOutChecker;
@@ -24,6 +25,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
         MultiStartChecker = false;
         MultiLogChecker = false;
+        MultiSeedSenderChecker = false;
 
         // 매칭 시 타임아웃을 체크할 시간
         TimeOutChecker = 60.0f;
@@ -43,7 +45,18 @@ public class MultiMatching_UI : MonoBehaviour {
         if (TitleManager == null)
         {
             TitleManager = GameObject.Find("MultiTitleManager").GetComponent<MultiTitleManager>();
+
+            //// 맵, 데드아이 위치에 대한 난수값을 던진다.
+            //TitleManager.SendSelectedMapSeed();
+            //TitleManager.SendPVPDeadEyeSeed();
         }
+        else
+        {
+            //// 맵, 데드아이 위치에 대한 난수값을 던진다.
+            //TitleManager.SendSelectedMapSeed();
+            //TitleManager.SendPVPDeadEyeSeed();
+        }
+
 
         Matching_Text.text = "Matching The Player...\nMode : " + MultiGameModeNumber.ToString();
 
@@ -139,6 +152,7 @@ public class MultiMatching_UI : MonoBehaviour {
     {
         MultiStartChecker = false;
         MultiLogChecker = false;
+        MultiSeedSenderChecker = false;
 
         // 매칭 시 타임아웃을 체크할 시간
         TimeOutChecker = 60.0f;
@@ -158,6 +172,16 @@ public class MultiMatching_UI : MonoBehaviour {
         if (TitleManager == null)
         {
             TitleManager = GameObject.Find("MultiTitleManager").GetComponent<MultiTitleManager>();
+
+            //// 맵, 데드아이 위치에 대한 난수값을 던진다.
+            //TitleManager.SendSelectedMapSeed();
+            //TitleManager.SendPVPDeadEyeSeed();
+        }
+        else
+        {
+            //// 맵, 데드아이 위치에 대한 난수값을 던진다.
+            //TitleManager.SendSelectedMapSeed();
+            //TitleManager.SendPVPDeadEyeSeed();
         }
 
         Matching_Text.text = "Matching The Player...\nMode : " + MultiGameModeNumber.ToString();
@@ -208,16 +232,54 @@ public class MultiMatching_UI : MonoBehaviour {
             // HY.MultiGameModeState.PVP
             case HY.MultiGameModeState.PVP:
                 {
-                    AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
+                    if(TitleManager != null)
+                    {
+                        int Map = TitleManager.GetSelectedMapSeed();
+
+                        switch (Map)
+                        {
+                            case 0:
+                                {
+                                    AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
+                                }
+                                break;
+
+                            case 1:
+                                {
+                                    AutoFade.LoadLevel("GameScene", 0.1f, 0.1f, Color.black);
+                                }
+                                break;
+                        }
+                    }
+
                 }
                 break;
 
             // HY.MultiGameModeState.SURVIVAL
             case HY.MultiGameModeState.SURVIVAL:
                 {
+                    if (TitleManager != null)
+                    {
+                        int Map = TitleManager.GetSelectedMapSeed();
+
+                        switch (Map)
+                        {
+                            case 0:
+                                {
+                                    AutoFade.LoadLevel("Survival Scene", 0.1f, 0.1f, Color.black);
+                                }
+                                break;
+
+                            case 1:
+                                {
+                                    AutoFade.LoadLevel("Survival Scene", 0.1f, 0.1f, Color.black);
+                                }
+                                break;
+                        }
+                    }
                     //Debug.Log("Survival Game Mode Connect Test End");
 
-                    AutoFade.LoadLevel("Survival Scene", 0.1f, 0.1f, Color.black);
+
                 }
                 break;
         }
@@ -276,6 +338,15 @@ public class MultiMatching_UI : MonoBehaviour {
 
                             Debug.Log("Players Count : " + GPGSManager.GetInstance.GetAllPlayers().Count);
                         }
+                        
+                        if(MultiSeedSenderChecker == false)
+                        {
+                            MultiSeedSenderChecker = true;
+
+                            // 맵, 데드아이 위치에 대한 난수값을 던진다.
+                            TitleManager.SendSelectedMapSeed();
+                            TitleManager.SendPVPDeadEyeSeed();
+                        }
 
                         if (TitleManager.GetOpponentCharNumber() != 100)
                         {
@@ -284,6 +355,8 @@ public class MultiMatching_UI : MonoBehaviour {
                             if (MultiStartChecker == false)
                             {
                                 MultiStartChecker = true;
+
+
 
                                 StartCoroutine(StartMultiGame());
                             }
@@ -325,6 +398,14 @@ public class MultiMatching_UI : MonoBehaviour {
                             Debug.Log("Players Count : " + GPGSManager.GetInstance.GetAllPlayers().Count);
                         }
 
+                        if (MultiSeedSenderChecker == false)
+                        {
+                            MultiSeedSenderChecker = true;
+
+                            // 맵, 데드아이 위치에 대한 난수값을 던진다.
+                            TitleManager.SendSelectedMapSeed();
+                            TitleManager.SendPVPDeadEyeSeed();
+                        }
 
                         if (TitleManager.GetSurvivalOpoonentCharNumbers() >= (GPGSManager.GetInstance.GetAllPlayers().Count - 1))
                         {

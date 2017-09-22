@@ -3,6 +3,7 @@ using UnityEngine.SocialPlatforms;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.IO;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi.SavedGame;
 using GooglePlayGames.BasicApi.Multiplayer;
@@ -84,7 +85,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private int _deadeyeMessageLength = 3;
     // Byte + Byte + 1 Interger
     //private int _deadeyeRespawnMessageLength = 6;
-    // Byte + Byte + 1 Interger
+    //Byte + Byte + 1 Interger
     private int _deadEyeRespawnMessageLength = 6;
     // Byte + Byte + 1 Interger
     private int _animMessageLength = 6;
@@ -121,6 +122,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // Byte + Byte + Byte + 1 interger
     private int _BossHPStateMessageLength = 7;
 
+    // Byte + Byte + Byte + 1 Interger
+    private int _PVPDeadEyeBulletSeedMessageLength = 7;
+    // Byte + Byte + Byte + 1 Interger
+    private int _SelectedMapSeedMessageLength = 7;
+
     // 메시지 도착 순서를 제어할 변수
     // 네트워크 도착 순서가 무작위로 된다면 동기화가 이상하게 될 가능성이 있기에
     // 이것을 보정해줄 변수이다.
@@ -156,6 +162,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private List<byte> _BossDeadEventMessage;
     private List<byte> _BossHPStateMeesage;
 
+    // 랜덤 시드(Seed) 메시지
+    private List<byte> _SelectedMapSeedMessage;
+    private List<byte> _DeadEyeBulletSeedMessage;
+
     // 현재 세션에 접속한 플레이어들의 정보들이다.
     //private List<Participant> allPlayers;
 
@@ -183,7 +193,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // 난수 발생시 동기화를 위한 변수
     // 맨 처음의 발생되는 리스폰 난수는 초기화할때 해준다.
     private int StartRandomEncounter;
-
+    // 맵 선택시 골라지는 변수로써 자기자신만의 고유 난수값을 가지고 난 후 마지막 플레이어의 아이디 값의 난수만 받도록 한다.
+    private int StartMapSelectEncount;
+    private int StartDeadEyeBulletEncount;
+    private Dictionary<string, int> PVP_DeadEyeBullet_RandomSeeds;
+    private Dictionary<string, int> MapSelected_RandomSeeds;
 
     private bool IsConnectedOn = false;
     private bool IsMatchingNow = false;
@@ -219,6 +233,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         OppenentCharNumber = 100;
         PVP_OpponentCharSKinNumber = 0;
         StartRandomEncounter = UnityEngine.Random.Range(0, 5);
+
+        StartDeadEyeBulletEncount = 0;
+        StartMapSelectEncount = 0;
 
         #region 캐릭터 번호
 
@@ -263,6 +280,34 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             PlayerCharacters_Skin_Number.Clear();
         }
+
+
+
+        #endregion
+
+        #region 서버에서 사용할 난수 값들 설정
+
+        if (PVP_DeadEyeBullet_RandomSeeds == null)
+        {
+            PVP_DeadEyeBullet_RandomSeeds = new Dictionary<string, int>(8);
+        }
+        else
+        {
+            PVP_DeadEyeBullet_RandomSeeds.Clear();
+        }
+
+        if (MapSelected_RandomSeeds == null)
+        {
+            MapSelected_RandomSeeds = new Dictionary<string, int>(8);
+        }
+        else
+        {
+            MapSelected_RandomSeeds.Clear();
+        }
+
+        PVP_DeadEyeBullet_RandomSeeds[GetMyParticipantId()] = UnityEngine.Random.Range(0, 5);
+        MapSelected_RandomSeeds[GetMyParticipantId()] = UnityEngine.Random.Range(0, 1);
+
 
         #endregion
 
@@ -326,6 +371,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _BossPosMessageLength = 7;
             // Byte + Byte + Byte + 1 interger
             _BossHPStateMessageLength = 7;
+
+            // Byte + Byte + Byte + 1 Interger
+            _PVPDeadEyeBulletSeedMessageLength = 7;
+            // Byte + Byte + Byte + 1 Interger
+            _SelectedMapSeedMessageLength = 7;
 
             //PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
             //    // 클라우드 게임 데이터 저장을 위해서 사용
@@ -592,6 +642,38 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     public int GetStartRandomSeed()
     {
         return StartRandomEncounter;
+    }
+
+    // PVP 모드에서 사용할 데드아이 총알의 위치를 반환한다.
+    public int GetPVPStartDeadEyeBulletEncount()
+    {
+        // 가장 마지막 플레이어의 시드값을 받는다.
+        StartDeadEyeBulletEncount = PVP_DeadEyeBullet_RandomSeeds[GetAllPlayers()[(GetAllPlayers().Count - 1)].ParticipantId];
+        Debug.Log("StartDeadEyeBulletEncount : " + PVP_DeadEyeBullet_RandomSeeds[GetAllPlayers()[(GetAllPlayers().Count - 1)].ParticipantId]);
+
+        return StartDeadEyeBulletEncount;
+    }
+
+    // PVP, 서바이벌 모드에서 사용할 맵 번호를 반환한다.
+    public int GetStartMapSelectEncount()
+    {
+        // 가장 마지막 플레이어의 시드값을 받는다.
+        StartMapSelectEncount = MapSelected_RandomSeeds[GetAllPlayers()[(GetAllPlayers().Count - 1)].ParticipantId];
+        Debug.Log("StartMapSelectEncount : " + MapSelected_RandomSeeds[GetAllPlayers()[(GetAllPlayers().Count - 1)].ParticipantId]);
+
+        return StartMapSelectEncount;
+    }
+
+    // PVP, 서바이벌 모드에서 사용할 나와 다른 사용자들의 맵 선택 난수 값들
+    public Dictionary<string, int> GetMapSelectedRandomSeeds()
+    {
+        return MapSelected_RandomSeeds;
+    }
+
+    // PVP 모드에서 사용될 다른 사용자들과 나에 대한 데드아이 총알 난수 값들
+    public Dictionary<string, int> GetDeadEyeBulletRandomSeeds()
+    {
+        return PVP_DeadEyeBullet_RandomSeeds;
     }
 
     // 현재 PVP 모드에서 적의 캐릭터 번호를 가지고 온다
@@ -896,10 +978,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _DeadEyeTimerMessage = new List<byte>(_deadeyeTimerMessageLength);
         }
 
-        if (_DeadEyeRespawnMessage == null)
-        {
-            _DeadEyeRespawnMessage = new List<byte>(_deadEyeRespawnMessageLength);
-        }
+        //if (_DeadEyeRespawnMessage == null)
+        //{
+        //    _DeadEyeRespawnMessage = new List<byte>(_deadEyeRespawnMessageLength);
+        //}
 
         if (_AnimMessage == null)
         {
@@ -1411,7 +1493,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     {
         _DeadEyeRespawnMessage.Clear();
         _DeadEyeRespawnMessage.Add(_protocolVersion);
-        _DeadEyeRespawnMessage.Add((byte)'I');
+        _DeadEyeRespawnMessage.Add((byte)'Z');
 
         _DeadEyeRespawnMessage.AddRange(System.BitConverter.GetBytes(RespawnIndex));
 
@@ -1571,6 +1653,34 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, BossDeadStateMessageToSend);
     }
 
+    // PVP 데드아이 총알 랜덤 값을 보낸다.
+    public void SendPVPDeadEyeBulletIndexSeed(int DeadEyeIndex)
+    {
+        _DeadEyeBulletSeedMessage.Clear();
+        _DeadEyeBulletSeedMessage.Add(_protocolVersion);
+        _DeadEyeBulletSeedMessage.Add((byte)'I');
+        _DeadEyeBulletSeedMessage.Add((byte)'D');
+        _DeadEyeBulletSeedMessage.AddRange(System.BitConverter.GetBytes(DeadEyeIndex));
+
+        byte[] DeadEyeBulletIndexSeedMessageToSend = _DeadEyeBulletSeedMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, DeadEyeBulletIndexSeedMessageToSend);
+    }
+
+    // 사용자가 플레이할 맵(Map) 고유 번호 값을 보낸다
+    public void SendSelectMapSeed(int MapSeed)
+    {
+        _SelectedMapSeedMessage.Clear();
+        _SelectedMapSeedMessage.Add(_protocolVersion);
+        _SelectedMapSeedMessage.Add((byte)'I');
+        _SelectedMapSeedMessage.Add((byte)'M');
+        _SelectedMapSeedMessage.AddRange(System.BitConverter.GetBytes(MapSeed));
+
+        byte[] SelectedMapSeddMessageToSend = _SelectedMapSeedMessage.ToArray();
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, SelectedMapSeddMessageToSend);
+
+    }
     // 상대 ID로부터 메시지를 받았을때 호출되는 리스너 함수
     public void OnRealTimeMessageReceived(bool isReliable, string senderId, byte[] data)
     {
@@ -1621,6 +1731,93 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                 break;
 
             case 'I':
+                {
+                    char MessageState = (char)data[2];
+
+                    switch(MessageState)
+                    {
+                        // 데드 아이 위치
+                        case 'D':
+                            {
+                                int DeadEyeIndex = System.BitConverter.ToInt32(data, 3);
+
+                                Debug.Log("Dead Eye Respawn : " + DeadEyeIndex);
+
+                                ReceiveMessage = ByteToString(data);
+
+                                PVP_DeadEyeBullet_RandomSeeds[senderId] = DeadEyeIndex;
+
+                                if(LBListener != null)
+                                {
+                                    switch(NowMultiGameMode)
+                                    {
+                                        case HY.MultiGameModeState.NONE:
+                                            {
+                                                
+                                            }
+                                            break;
+
+                                        case HY.MultiGameModeState.PVP:
+                                            {
+                                                LBListener.OpponentDeadEyeBulletIndexReceive(senderId, DeadEyeIndex);
+                                            }
+                                            break;
+
+                                        case HY.MultiGameModeState.SURVIVAL:
+                                            {
+
+                                            }
+                                            break;
+                                    }
+
+                                }
+                            }
+                            break;
+
+                        // 맵 선택지
+                        case 'M':
+                            {
+                                int MapSelected = System.BitConverter.ToInt32(data, 3);
+
+                                
+                                Debug.Log("Map Select Number : " + MapSelected);
+
+                                ReceiveMessage = ByteToString(data);
+
+                                MapSelected_RandomSeeds[senderId] = MapSelected;
+
+                                if (LBListener != null)
+                                {
+                                    switch (NowMultiGameMode)
+                                    {
+                                        case HY.MultiGameModeState.NONE:
+                                            {
+
+                                            }
+                                            break;
+
+                                        case HY.MultiGameModeState.PVP:
+                                            {
+                                                LBListener.OpponentSelectedMapSeedReceive(senderId, MapSelected);
+                                            }
+                                            break;
+
+                                        case HY.MultiGameModeState.SURVIVAL:
+                                            {
+                                                LBListener.OpponentSelectedMapSeedReceive(senderId, MapSelected);
+                                            }
+                                            break;
+                                    }
+
+                                }
+                            }
+                            break;
+                    }
+
+                }
+                break;
+
+            case 'Z':
                 {
                     int index = System.BitConverter.ToInt32(data, 2);
 

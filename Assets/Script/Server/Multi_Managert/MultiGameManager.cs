@@ -127,8 +127,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
     // PVP에서 사용하는 맨 처음 데드 아이 총알의 위치 관련 변수들
     private int DeadEyeStartIndex;
-    private int _OpponentDeadEyeStartIndex;
-    private int My_DeadEYeSTartIndex;
+    //private int _OpponentDeadEyeStartIndex;
+    //private int My_DeadEYeSTartIndex;
 
     // 서바이벌 모드에서 현재 남은 플레이어의 수를 체크한다.
     private float LeftPlayerCountTimer;
@@ -191,10 +191,12 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     OpponentSkillOn = false;
 
                     // PVP에서 사용할 데드아이 총알 초기 위치
-                    My_DeadEYeSTartIndex = Random.Range(1, 4);
-                    _OpponentDeadEyeStartIndex = 1;
-                    SendDeadEyeRespawnIndexMessage();
+                    //My_DeadEYeSTartIndex = Random.Range(1, 4);
+                    //_OpponentDeadEyeStartIndex = 1;
+                    //SendDeadEyeRespawnIndexMessage();
+                    DeadEyeStartIndex = GPGSManager.GetInstance.GetPVPStartDeadEyeBulletEncount();
 
+                    Debug.Log("DeadEyeStartIndex : " + DeadEyeStartIndex);
                 }
                 break;
 
@@ -950,7 +952,7 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // PVP에서 사용하는 데드아이 총알의 시작 위치를 결정해준다.
     public int GetPVPDeadEyeStartIndex()
     {
-        DeadEyeStartIndex = ((My_DeadEYeSTartIndex + _OpponentDeadEyeStartIndex) / 2);
+        //DeadEyeStartIndex = ((My_DeadEYeSTartIndex + _OpponentDeadEyeStartIndex) / 2);
 
         Debug.Log("DeadEyeStartIndex : " + DeadEyeStartIndex);
         return DeadEyeStartIndex;
