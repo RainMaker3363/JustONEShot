@@ -267,18 +267,21 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     // 데드아이 총알 위치 시드 값을 모든 플레이어가 받았는지 체크 한다.
     public bool GetAllPlayerDeadEyeSeedChecker()
     {
+        int PlayerCount = 0;
         IDictionaryEnumerator iter = _AllPlayerPVPDeadEyeBulletSeeds.GetEnumerator();
 
         while(iter.MoveNext())
         {
             if(_AllPlayerPVPDeadEyeBulletSeeds[iter.Key.ToString()] != -1)
             {
-                DeadEyeBulletSeedChecker = true;
+                //DeadEyeBulletSeedChecker = true;
+                PlayerCount++;
             }
-            else
-            {
-                DeadEyeBulletSeedChecker = false;
-            }
+        }
+
+        if(PlayerCount >= GPGSManager.GetInstance.GetAllPlayers().Count)
+        {
+            DeadEyeBulletSeedChecker = true;
         }
 
         return DeadEyeBulletSeedChecker;
@@ -287,18 +290,21 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     // 선택한 맵 시드 값을 모든 플레이어가 받았는지 체크 한다.
     public bool GetAllPlayerMapSeedChecker()
     {
+        int PlayerCount = 0;
         IDictionaryEnumerator iter = _AllPlayerSelectedMapSeeds.GetEnumerator();
 
         while (iter.MoveNext())
         {
             if (_AllPlayerSelectedMapSeeds[iter.Key.ToString()] != -1)
             {
-                SelectedMapSeedChecker = true;
+                PlayerCount++;
+                //SelectedMapSeedChecker = true;
             }
-            else
-            {
-                SelectedMapSeedChecker = false;
-            }
+        }
+
+        if (PlayerCount >= GPGSManager.GetInstance.GetAllPlayers().Count)
+        {
+            SelectedMapSeedChecker = true;
         }
 
         return SelectedMapSeedChecker;
