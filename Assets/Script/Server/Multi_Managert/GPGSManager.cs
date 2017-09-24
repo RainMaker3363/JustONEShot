@@ -505,6 +505,16 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _BossHPStateMeesage = new List<byte>(_BossHPStateMessageLength);
         }
 
+        if(_SelectedMapSeedMessage == null)
+        {
+            _SelectedMapSeedMessage = new List<byte>(_SelectedMapSeedMessageLength);
+        }
+
+        if(_DeadEyeBulletSeedMessage == null)
+        {
+            _DeadEyeBulletSeedMessage = new List<byte>(_PVPDeadEyeBulletSeedMessageLength);
+        }
+
         NowMultiGameMode = HY.MultiGameModeState.NONE;
 
         _BossPosMessageNum = 0;
@@ -1092,6 +1102,16 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if (_BossHPStateMeesage == null)
         {
             _BossHPStateMeesage = new List<byte>(_BossHPStateMessageLength);
+        }
+
+        if (_SelectedMapSeedMessage == null)
+        {
+            _SelectedMapSeedMessage = new List<byte>(_SelectedMapSeedMessageLength);
+        }
+
+        if (_DeadEyeBulletSeedMessage == null)
+        {
+            _DeadEyeBulletSeedMessage = new List<byte>(_PVPDeadEyeBulletSeedMessageLength);
         }
 
         _BossPosMessageNum = 0;
