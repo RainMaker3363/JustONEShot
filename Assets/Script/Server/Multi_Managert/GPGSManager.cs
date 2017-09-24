@@ -687,7 +687,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         }
         else
         {
-            PVP_DeadEyeBullet_RandomSeeds[GetMyParticipantId()] = UnityEngine.Random.Range(0, 5);
+            PVP_DeadEyeBullet_RandomSeeds[GetMyParticipantId()] = Seed;// UnityEngine.Random.Range(0, 5);
         }
 
         Debug.Log("GPGSManager Set PVP_DeadEyeBullet_RandomSeeds : " + PVP_DeadEyeBullet_RandomSeeds[GetMyParticipantId()]);
@@ -702,7 +702,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         }
         else
         {
-            MapSelected_RandomSeeds[GetMyParticipantId()] = UnityEngine.Random.Range(0, 2);
+            MapSelected_RandomSeeds[GetMyParticipantId()] = Seed;//UnityEngine.Random.Range(0, 2);
         }
 
         Debug.Log("GPGSManager Set MapSelect_RandomSeeds : " + MapSelected_RandomSeeds[GetMyParticipantId()]);

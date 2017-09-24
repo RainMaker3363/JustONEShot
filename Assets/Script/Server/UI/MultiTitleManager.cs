@@ -284,6 +284,11 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
             DeadEyeBulletSeedChecker = true;
         }
 
+        if (LogCheckTimer >= 3.0f)
+        {
+            Debug.Log("DeadEyeBulletSeedChecker Player Count: " + PlayerCount);
+        }
+
         return DeadEyeBulletSeedChecker;
     }
 
@@ -302,9 +307,14 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
             }
         }
 
-        if (PlayerCount >= GPGSManager.GetInstance.GetAllPlayers().Count)
+        if (PlayerCount >= (GPGSManager.GetInstance.GetAllPlayers().Count))
         {
             SelectedMapSeedChecker = true;
+        }
+
+        if (LogCheckTimer >= 3.0f)
+        {
+            Debug.Log("SeedChecker Player Count: " + PlayerCount);
         }
 
         return SelectedMapSeedChecker;
@@ -418,12 +428,16 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         {
             case HY.MultiGameModeState.PVP:
                 {
+                    Debug.Log("SelectedMap Seed Receive : " + SelectedMapNumber);
+
                     _AllPlayerSelectedMapSeeds[participantid] = SelectedMapNumber;
                 }
                 break;
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
+                    Debug.Log("SelectedMap Seed Receive : " + SelectedMapNumber);
+
                     _AllPlayerSelectedMapSeeds[participantid] = SelectedMapNumber;
                 }
                 break;
@@ -443,6 +457,8 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         {
             case HY.MultiGameModeState.PVP:
                 {
+                    Debug.Log("DeadEye Seed Receive : " + DeadEyeIndex);
+
                     _AllPlayerPVPDeadEyeBulletSeeds[participantid] = DeadEyeIndex;
                 }
                 break;
