@@ -1719,6 +1719,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
         byte[] DeadEyeBulletIndexSeedMessageToSend = _DeadEyeBulletSeedMessage.ToArray();
 
+        Debug.Log("Send My DeadEye Seed");
+
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, DeadEyeBulletIndexSeedMessageToSend);
     }
 
@@ -1732,6 +1734,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         _SelectedMapSeedMessage.AddRange(System.BitConverter.GetBytes(MapSeed));
 
         byte[] SelectedMapSeddMessageToSend = _SelectedMapSeedMessage.ToArray();
+
+        Debug.Log("Send My SelectedMap Seed");
 
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, SelectedMapSeddMessageToSend);
 
@@ -1789,6 +1793,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                 {
                     char MessageState = (char)data[2];
 
+                    Debug.Log("Receive Opponent Seed");
+                    Debug.Log("Seed Message State : " + MessageState);
+
                     switch(MessageState)
                     {
                         // 데드 아이 위치
@@ -1804,27 +1811,27 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
                                 if(LBListener != null)
                                 {
-                                    switch(NowMultiGameMode)
-                                    {
-                                        case HY.MultiGameModeState.NONE:
-                                            {
+                                    //switch(NowMultiGameMode)
+                                    //{
+                                    //    case HY.MultiGameModeState.NONE:
+                                    //        {
                                                 
-                                            }
-                                            break;
+                                    //        }
+                                    //        break;
 
-                                        case HY.MultiGameModeState.PVP:
-                                            {
-                                                LBListener.OpponentDeadEyeBulletIndexReceive(senderId, DeadEyeIndex);
-                                            }
-                                            break;
+                                    //    case HY.MultiGameModeState.PVP:
+                                    //        {
+                                    //            LBListener.OpponentDeadEyeBulletIndexReceive(senderId, DeadEyeIndex);
+                                    //        }
+                                    //        break;
 
-                                        case HY.MultiGameModeState.SURVIVAL:
-                                            {
+                                    //    case HY.MultiGameModeState.SURVIVAL:
+                                    //        {
 
-                                            }
-                                            break;
-                                    }
-
+                                    //        }
+                                    //        break;
+                                    //}
+                                    LBListener.OpponentDeadEyeBulletIndexReceive(senderId, DeadEyeIndex);
                                 }
                             }
                             break;
@@ -1843,27 +1850,27 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
                                 if (LBListener != null)
                                 {
-                                    switch (NowMultiGameMode)
-                                    {
-                                        case HY.MultiGameModeState.NONE:
-                                            {
+                                    //switch (NowMultiGameMode)
+                                    //{
+                                    //    case HY.MultiGameModeState.NONE:
+                                    //        {
 
-                                            }
-                                            break;
+                                    //        }
+                                    //        break;
 
-                                        case HY.MultiGameModeState.PVP:
-                                            {
-                                                LBListener.OpponentSelectedMapSeedReceive(senderId, MapSelected);
-                                            }
-                                            break;
+                                    //    case HY.MultiGameModeState.PVP:
+                                    //        {
+                                    //            LBListener.OpponentSelectedMapSeedReceive(senderId, MapSelected);
+                                    //        }
+                                    //        break;
 
-                                        case HY.MultiGameModeState.SURVIVAL:
-                                            {
-                                                LBListener.OpponentSelectedMapSeedReceive(senderId, MapSelected);
-                                            }
-                                            break;
-                                    }
-
+                                    //    case HY.MultiGameModeState.SURVIVAL:
+                                    //        {
+                                    //            LBListener.OpponentSelectedMapSeedReceive(senderId, MapSelected);
+                                    //        }
+                                    //        break;
+                                    //}
+                                    LBListener.OpponentSelectedMapSeedReceive(senderId, MapSelected);
                                 }
                             }
                             break;
