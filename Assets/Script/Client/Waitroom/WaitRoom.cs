@@ -800,56 +800,56 @@ public class WaitRoom : MonoBehaviour {
         GPGSManager.GetInstance.OpenLeaderboardUI();
     }
 
-    public void OnButton_AD()
-    {
-        bool test = false;
-#if UNITY_EDITOR    //유니티에디터에서 실행시킬경우 이쪽코드를 실행
-        test = true;
-#endif
+//    public void OnButton_AD()
+//    {
+//        bool test = false;
+//#if UNITY_EDITOR    //유니티에디터에서 실행시킬경우 이쪽코드를 실행
+//        test = true;
+//#endif
 
-        if (GameInfoManager.PlayTicket < 1 || test)
-        {
-#if !UNITY_ADS // If the Ads service is not enabled...
-            if (Advertisement.isSupported)
-            { // If runtime platform is supported...
-                Advertisement.Initialize(zoneId, true); // ...initialize.
-            }
-#endif
+//        if (GameInfoManager.PlayTicket < 1 || test)
+//        {
+//#if !UNITY_ADS // If the Ads service is not enabled...
+//            if (Advertisement.isSupported)
+//            { // If runtime platform is supported...
+//                Advertisement.Initialize(zoneId, true); // ...initialize.
+//            }
+//#endif
 
-            // Wait until Unity Ads is initialized,
-            //  and the default ad placement is ready.
-            //while (!Advertisement.isInitialized || !Advertisement.IsReady())
-            //{
-            //   // yield return new WaitForSeconds(0.5f);
-            //}
+//            // Wait until Unity Ads is initialized,
+//            //  and the default ad placement is ready.
+//            //while (!Advertisement.isInitialized || !Advertisement.IsReady())
+//            //{
+//            //   // yield return new WaitForSeconds(0.5f);
+//            //}
 
 
-            if (string.IsNullOrEmpty(zoneId))
-                zoneId = null;
+//            if (string.IsNullOrEmpty(zoneId))
+//                zoneId = null;
 
-            ShowOptions options = new ShowOptions();
-            options.resultCallback = HandleShowResult;
-            Advertisement.Show(zoneId, options);
-        }
+//            ShowOptions options = new ShowOptions();
+//            options.resultCallback = HandleShowResult;
+//            Advertisement.Show(zoneId, options);
+//        }
 
-    }
+//    }
 
-    private void HandleShowResult(ShowResult result)
-    {
-        switch (result)
-        {
-            case ShowResult.Finished:
-                Debug.Log("Video completed. User rewarded " + rewardQty + " credits.");
-                UI_Reward.SetActive(true);
-                break;
-            case ShowResult.Skipped:
-                Debug.LogWarning("Video was skipped.");
-                break;
-            case ShowResult.Failed:
-                Debug.LogError("Video failed to show.");
-                break;
-        }
-    }
+//    private void HandleShowResult(ShowResult result)
+//    {
+//        switch (result)
+//        {
+//            case ShowResult.Finished:
+//                Debug.Log("Video completed. User rewarded " + rewardQty + " credits.");
+//                UI_Reward.SetActive(true);
+//                break;
+//            case ShowResult.Skipped:
+//                Debug.LogWarning("Video was skipped.");
+//                break;
+//            case ShowResult.Failed:
+//                Debug.LogError("Video failed to show.");
+//                break;
+//        }
+//    }
 
     public void GetReward()
     {
