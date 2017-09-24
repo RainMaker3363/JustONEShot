@@ -647,9 +647,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // PVP 모드에서 사용할 데드아이 총알의 위치를 반환한다.
     public int GetPVPStartDeadEyeBulletEncount()
     {
-        // 가장 마지막 플레이어의 시드값을 받는다.
-        StartDeadEyeBulletEncount = PVP_DeadEyeBullet_RandomSeeds[GetAllPlayers()[(GetAllPlayers().Count - 1)].ParticipantId];
-        Debug.Log("StartDeadEyeBulletEncount : " + PVP_DeadEyeBullet_RandomSeeds[GetAllPlayers()[(GetAllPlayers().Count - 1)].ParticipantId]);
+        // 가장 첫번째 플레이어의 시드값을 받는다.
+        StartDeadEyeBulletEncount = PVP_DeadEyeBullet_RandomSeeds[GetAllPlayers()[0].ParticipantId];//PVP_DeadEyeBullet_RandomSeeds[GetAllPlayers()[(GetAllPlayers().Count - 1)].ParticipantId];
+
+        Debug.Log("GetAllPlayers : " + GetAllPlayers().Count);
+        Debug.Log("StartDeadEyeBulletEncount : " + PVP_DeadEyeBullet_RandomSeeds[GetAllPlayers()[0].ParticipantId]);
 
         return StartDeadEyeBulletEncount;
     }
@@ -658,8 +660,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     public int GetStartMapSelectEncount()
     {
         // 가장 마지막 플레이어의 시드값을 받는다.
-        StartMapSelectEncount = MapSelected_RandomSeeds[GetAllPlayers()[(GetAllPlayers().Count - 1)].ParticipantId];
-        Debug.Log("StartMapSelectEncount : " + MapSelected_RandomSeeds[GetAllPlayers()[(GetAllPlayers().Count - 1)].ParticipantId]);
+        StartMapSelectEncount = MapSelected_RandomSeeds[GetAllPlayers()[0].ParticipantId];//MapSelected_RandomSeeds[GetAllPlayers()[(GetAllPlayers().Count - 1)].ParticipantId];
+
+        Debug.Log("GetAllPlayers : " + GetAllPlayers().Count);
+        Debug.Log("StartMapSelectEncount : " + MapSelected_RandomSeeds[GetAllPlayers()[0].ParticipantId]);
 
         return StartMapSelectEncount;
     }
@@ -676,6 +680,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             PVP_DeadEyeBullet_RandomSeeds[GetMyParticipantId()] = UnityEngine.Random.Range(0, 5);
         }
 
+        Debug.Log("GPGSManager Set PVP_DeadEyeBullet_RandomSeeds : " + PVP_DeadEyeBullet_RandomSeeds[GetMyParticipantId()]);
     }
 
     // 자기 자신의 대한 맵 난수값을 넣어준다.
@@ -687,9 +692,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         }
         else
         {
-            MapSelected_RandomSeeds[GetMyParticipantId()] = UnityEngine.Random.Range(0, 1);
+            MapSelected_RandomSeeds[GetMyParticipantId()] = UnityEngine.Random.Range(0, 2);
         }
-        
+
+        Debug.Log("GPGSManager Set MapSelect_RandomSeeds : " + MapSelected_RandomSeeds[GetMyParticipantId()]);
     } 
        
 

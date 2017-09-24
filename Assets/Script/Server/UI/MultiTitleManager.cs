@@ -26,14 +26,17 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     private int SelectedMapSeedBackup;
     private int PVPDeadEyeBulletSeedBackup;
 
+    private bool SelectedMapSeedChecker;
+    private bool DeadEyeBulletSeedChecker;
+
     private Dictionary<string, int> __SurvivalOpponentCharNumbers;
     private IDictionaryEnumerator __SurvivalOpoonentCharNumbers_Iter;
 
     private Dictionary<string, int> __OpponentCharSkinNumbers;
     private IDictionaryEnumerator __OpoonentCharSkinNumbers_Iter;
 
-    private Dictionary<string, int> _OpponentSelectedMapSeeds;
-    private Dictionary<string, int> _OpponentPVPDeadEyeBulletSeeds;
+    private Dictionary<string, int> _AllPlayerSelectedMapSeeds;
+    private Dictionary<string, int> _AllPlayerPVPDeadEyeBulletSeeds;
 
     public static HY.MultiGameModeState NowMultiGameModeNumber;
 
@@ -46,10 +49,14 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         OpponentCharSkinNumber = 0;
         LogCheckTimer = 3.0f;
 
-        SelectedMapSeed = 0;
-        PVPDeadEyeBulletSeed = 0;
-        SelectedMapSeedBackup = 0;
-        PVPDeadEyeBulletSeedBackup = 0;
+        SelectedMapSeed = -1;
+        PVPDeadEyeBulletSeed = -1;
+        SelectedMapSeedBackup = -1;
+        PVPDeadEyeBulletSeedBackup = -1;
+
+        SelectedMapSeedChecker = false;
+        DeadEyeBulletSeedChecker = false;
+
 
         GPGSManager.GetInstance.InitializeGPGS(); // 초기화
 
@@ -83,14 +90,14 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
             __OpponentCharSkinNumbers = new Dictionary<string, int>(7);
         }
 
-        if(_OpponentSelectedMapSeeds == null)
+        if(_AllPlayerSelectedMapSeeds == null)
         {
-            _OpponentSelectedMapSeeds = new Dictionary<string, int>(7);
+            _AllPlayerSelectedMapSeeds = new Dictionary<string, int>(7);
         }
 
-        if(_OpponentPVPDeadEyeBulletSeeds == null)
+        if(_AllPlayerPVPDeadEyeBulletSeeds == null)
         {
-            _OpponentPVPDeadEyeBulletSeeds = new Dictionary<string, int>(7);
+            _AllPlayerPVPDeadEyeBulletSeeds = new Dictionary<string, int>(7);
         }
         /* 
         * 유니티 엔진 사용 시 입력을 하지 않으면 모바일 장치의 화면이 어두워지다가 잠기게 되는데,
@@ -180,13 +187,14 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     // 자기 자신의 데드아이 위치 시드 값을 보내준다.
     public void SendPVPDeadEyeSeed()
     {
-        int DeadEyeSeed = Random.Range(0, 5);
+        PVPDeadEyeBulletSeed = Random.Range(0, 5);
 
-        GPGSManager.GetInstance.SetMy_PVP_DeadEyeBullet_RandomSeeds(DeadEyeSeed);
+        GPGSManager.GetInstance.SetMy_PVP_DeadEyeBullet_RandomSeeds(PVPDeadEyeBulletSeed);
+        _AllPlayerPVPDeadEyeBulletSeeds[GPGSManager.GetInstance.GetMyParticipantId()] = PVPDeadEyeBulletSeed;
 
-        Debug.Log("My DeadEyeSeed : " + DeadEyeSeed);
+        Debug.Log("My DeadEyeSeed : " + PVPDeadEyeBulletSeed);
 
-        GPGSManager.GetInstance.SendPVPDeadEyeBulletIndexSeed(DeadEyeSeed);
+        GPGSManager.GetInstance.SendPVPDeadEyeBulletIndexSeed(PVPDeadEyeBulletSeed);
 
         //if (DeadEyeSeed < 0)
         //{
@@ -205,9 +213,10 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     // 자기 자신의 맵(Map) 시드 값을 보내준다.
     public void SendSelectedMapSeed()
     {
-        int SelectedMapSeed = Random.Range(0, 2);
+        SelectedMapSeed = Random.Range(0, 2);
 
         GPGSManager.GetInstance.SetMy_Map_Selected_RandomSeeds(SelectedMapSeed);
+        _AllPlayerSelectedMapSeeds[GPGSManager.GetInstance.GetMyParticipantId()] = SelectedMapSeed;
 
         Debug.Log("My SelectedMapSeed : " + SelectedMapSeed);
 
@@ -255,16 +264,56 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         return SelectedMapSeed;
     }
 
-    // 현재 게임내에 저장된 사람들의 데드아이 총알 위치를 저장한 맵이다.
-    public Dictionary<string, int> GetOpponentPVPDeadEyeBulletSeeds()
+    // 데드아이 총알 위치 시드 값을 모든 플레이어가 받았는지 체크 한다.
+    public bool GetAllPlayerDeadEyeSeedChecker()
     {
-        return _OpponentPVPDeadEyeBulletSeeds;
+        IDictionaryEnumerator iter = _AllPlayerPVPDeadEyeBulletSeeds.GetEnumerator();
+
+        while(iter.MoveNext())
+        {
+            if(_AllPlayerPVPDeadEyeBulletSeeds[iter.Key.ToString()] != -1)
+            {
+                DeadEyeBulletSeedChecker = true;
+            }
+            else
+            {
+                DeadEyeBulletSeedChecker = false;
+            }
+        }
+
+        return DeadEyeBulletSeedChecker;
+    }
+
+    // 선택한 맵 시드 값을 모든 플레이어가 받았는지 체크 한다.
+    public bool GetAllPlayerMapSeedChecker()
+    {
+        IDictionaryEnumerator iter = _AllPlayerSelectedMapSeeds.GetEnumerator();
+
+        while (iter.MoveNext())
+        {
+            if (_AllPlayerSelectedMapSeeds[iter.Key.ToString()] != -1)
+            {
+                SelectedMapSeedChecker = true;
+            }
+            else
+            {
+                SelectedMapSeedChecker = false;
+            }
+        }
+
+        return SelectedMapSeedChecker;
+    }
+
+    // 현재 게임내에 저장된 사람들의 데드아이 총알 위치를 저장한 맵이다.
+    public Dictionary<string, int> GetAllPlayerPVPDeadEyeBulletSeeds()
+    {
+        return _AllPlayerPVPDeadEyeBulletSeeds;
     }
 
     // 현재 게임내에 저장된 사람들의 선택한 맵에 대한 값들을 가지고 있다.
-    public Dictionary<string, int> GetOpponentSelectedMapSeeds()
+    public Dictionary<string, int> GetAllPlayerSelectedMapSeeds()
     {
-        return _OpponentSelectedMapSeeds;
+        return _AllPlayerSelectedMapSeeds;
     }
 
     // 현재 서바이벌 모드에 접속한 사람들의 캐릭터 정보(고유 번호)의 수를 반환한다.
@@ -363,13 +412,13 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         {
             case HY.MultiGameModeState.PVP:
                 {
-                    _OpponentSelectedMapSeeds[participantid] = SelectedMapNumber;
+                    _AllPlayerSelectedMapSeeds[participantid] = SelectedMapNumber;
                 }
                 break;
 
             case HY.MultiGameModeState.SURVIVAL:
                 {
-                    _OpponentSelectedMapSeeds[participantid] = SelectedMapNumber;
+                    _AllPlayerSelectedMapSeeds[participantid] = SelectedMapNumber;
                 }
                 break;
 
@@ -388,7 +437,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         {
             case HY.MultiGameModeState.PVP:
                 {
-                    _OpponentPVPDeadEyeBulletSeeds[participantid] = DeadEyeIndex;
+                    _AllPlayerPVPDeadEyeBulletSeeds[participantid] = DeadEyeIndex;
                 }
                 break;
 
@@ -443,6 +492,12 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         SelectedMapSeedBackup = SelectedMapSeed;
         Debug.Log("SelectedMapSeedBackup : " + SelectedMapSeedBackup);
 
+        SelectedMapSeedChecker = false;
+        Debug.Log("MapSeedChecker : " + SelectedMapSeedChecker);
+
+        DeadEyeBulletSeedChecker = false;
+        Debug.Log("DeadEyeBulletSeedChecker : " + DeadEyeBulletSeedChecker);
+
         GPGSManager.GetInstance.LBListener = null;
 
         // 다시 세팅을 해준다.
@@ -474,23 +529,23 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
             __OpponentCharSkinNumbers.Clear();
         }
 
-        if (_OpponentSelectedMapSeeds == null)
+        if (_AllPlayerSelectedMapSeeds == null)
         {
-            _OpponentSelectedMapSeeds = new Dictionary<string, int>(7);
+            _AllPlayerSelectedMapSeeds = new Dictionary<string, int>(7);
         }
         else
         {
-            _OpponentSelectedMapSeeds.Clear();
+            _AllPlayerSelectedMapSeeds.Clear();
         }
         
 
-        if (_OpponentPVPDeadEyeBulletSeeds == null)
+        if (_AllPlayerPVPDeadEyeBulletSeeds == null)
         {
-            _OpponentPVPDeadEyeBulletSeeds = new Dictionary<string, int>(7);
+            _AllPlayerPVPDeadEyeBulletSeeds = new Dictionary<string, int>(7);
         }
         else
         {
-            _OpponentPVPDeadEyeBulletSeeds.Clear();
+            _AllPlayerPVPDeadEyeBulletSeeds.Clear();
         }
 
         // 캐릭터 선택을 백업해준다.

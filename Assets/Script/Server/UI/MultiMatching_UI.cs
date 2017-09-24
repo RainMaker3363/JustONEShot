@@ -236,6 +236,8 @@ public class MultiMatching_UI : MonoBehaviour {
                     {
                         int Map = TitleManager.GetSelectedMapSeed();
 
+                        Debug.Log("Map Select Number : " + Map);
+
                         switch (Map)
                         {
                             case 0:
@@ -261,6 +263,8 @@ public class MultiMatching_UI : MonoBehaviour {
                     if (TitleManager != null)
                     {
                         int Map = TitleManager.GetSelectedMapSeed();
+
+                        Debug.Log("Map Select Number : " + Map);
 
                         switch (Map)
                         {
@@ -348,7 +352,9 @@ public class MultiMatching_UI : MonoBehaviour {
                             TitleManager.SendPVPDeadEyeSeed();
                         }
 
-                        if (TitleManager.GetOpponentCharNumber() != 100)
+                        if (TitleManager.GetOpponentCharNumber() != 100 && 
+                            TitleManager.GetAllPlayerMapSeedChecker() &&
+                            TitleManager.GetAllPlayerDeadEyeSeedChecker())
                         {
                             Matching_Text.text = "Join the PVP Session.";//\nCharNum : " + TitleManager.GetOpponentCharNumber();
 
@@ -407,7 +413,8 @@ public class MultiMatching_UI : MonoBehaviour {
                             TitleManager.SendPVPDeadEyeSeed();
                         }
 
-                        if (TitleManager.GetSurvivalOpoonentCharNumbers() >= (GPGSManager.GetInstance.GetAllPlayers().Count - 1))
+                        if (TitleManager.GetSurvivalOpoonentCharNumbers() >= (GPGSManager.GetInstance.GetAllPlayers().Count - 1) &&
+                            TitleManager.GetAllPlayerMapSeedChecker())
                         {
 
 
