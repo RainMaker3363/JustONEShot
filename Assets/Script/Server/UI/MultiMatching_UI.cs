@@ -354,7 +354,9 @@ public class MultiMatching_UI : MonoBehaviour {
 
                         if (TitleManager.GetOpponentCharNumber() != 100 && 
                             TitleManager.GetAllPlayerMapSeedChecker() &&
-                            TitleManager.GetAllPlayerDeadEyeSeedChecker())
+                            TitleManager.GetAllPlayerDeadEyeSeedChecker() &&
+                            TitleManager.GetAllPlayerDeadEyeSeedConfirmChecker() &&
+                            TitleManager.GetAllPlayerMapSeedConfirmChecker())
                         {
                             Matching_Text.text = "Join the PVP Session.";//\nCharNum : " + TitleManager.GetOpponentCharNumber();
 
@@ -414,7 +416,8 @@ public class MultiMatching_UI : MonoBehaviour {
                         }
 
                         if (TitleManager.GetSurvivalOpoonentCharNumbers() >= (GPGSManager.GetInstance.GetAllPlayers().Count - 1) &&
-                            TitleManager.GetAllPlayerMapSeedChecker())
+                            TitleManager.GetAllPlayerMapSeedChecker() &&
+                            TitleManager.GetAllPlayerMapSeedConfirmChecker())
                         {
 
 

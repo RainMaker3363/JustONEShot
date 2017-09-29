@@ -38,6 +38,9 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     private Dictionary<string, int> _AllPlayerSelectedMapSeeds;
     private Dictionary<string, int> _AllPlayerPVPDeadEyeBulletSeeds;
 
+    private Dictionary<string, bool> _AllPlayerSelectedMapSeeds_ConfirmMap;
+    private Dictionary<string, bool> _AllPlayerPVPDeadEyeBulletSeeds_ConfirmMap;
+
     public static HY.MultiGameModeState NowMultiGameModeNumber;
 
 
@@ -99,7 +102,19 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         {
             _AllPlayerPVPDeadEyeBulletSeeds = new Dictionary<string, int>(7);
         }
+
+        if(_AllPlayerSelectedMapSeeds_ConfirmMap == null)
+        {
+            _AllPlayerSelectedMapSeeds_ConfirmMap = new Dictionary<string, bool>(7);
+        }
+
+        if(_AllPlayerPVPDeadEyeBulletSeeds_ConfirmMap == null)
+        {
+            _AllPlayerPVPDeadEyeBulletSeeds_ConfirmMap = new Dictionary<string, bool>(7);
+        }
+
         /* 
+         * 
         * 유니티 엔진 사용 시 입력을 하지 않으면 모바일 장치의 화면이 어두워지다가 잠기게 되는데,
         * 그러면 플레이어는 잠김을 다시 풀어야 해서 불편합니다. 따라서 화면 잠금 방지 기능 추가는 필수적이고,
         * Screen.sleepTimeout를 아래처럼 설정하면 그걸 할 수 있습니다. 
@@ -195,6 +210,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         Debug.Log("My DeadEyeSeed : " + PVPDeadEyeBulletSeed);
 
         GPGSManager.GetInstance.SendPVPDeadEyeBulletIndexSeed(PVPDeadEyeBulletSeed);
+        SendDeadEyeBulletSeedConfirm(true);
 
         //if (DeadEyeSeed < 0)
         //{
@@ -221,6 +237,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         Debug.Log("My SelectedMapSeed : " + SelectedMapSeed);
 
         GPGSManager.GetInstance.SendSelectMapSeed(SelectedMapSeed);
+        SendSelectedMapSeedConfirm(true);
 
         //if (SKinNumber < 0)
         //{
@@ -234,6 +251,18 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         //{
         //    GPGSManager.GetInstance.SendPlayerSkinStateMessage(SKinNumber);
         //}
+    }
+
+    // 자기 자신이 선택한 맵 난수 값을 확인했다는 것을 보내준다.
+    public void SendSelectedMapSeedConfirm(bool Confirm = false)
+    {
+        GPGSManager.GetInstance.SendSelectedSeedMapConfirm(Confirm);
+    }
+
+    // 자기 자신이 선택한 데드아이 총알 난수 값을 확인했다는 것을 보내준다.
+    public void SendDeadEyeBulletSeedConfirm(bool Confirm = false)
+    {
+        GPGSManager.GetInstance.SendDeadEyeSeedMapConfirm(Confirm);
     }
 
     // 현재 자신이 가지고 있는 캐릭터 넘버를 기억한다.
@@ -320,6 +349,74 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         return SelectedMapSeedChecker;
     }
 
+    // 선택한 맵 시드 값을 모든 플레이어가 받았는지 체크 한다.
+    // 만약 게임 플레이어들이 다 받질 못했다면 false를 반환
+    public bool GetAllPlayerMapSeedConfirmChecker()
+    {
+        bool ConfirmChecker = false;
+        int PlayerCount = 0;
+
+        IDictionaryEnumerator iter = _AllPlayerSelectedMapSeeds_ConfirmMap.GetEnumerator();
+
+        while (iter.MoveNext())
+        {
+            if (_AllPlayerSelectedMapSeeds_ConfirmMap[iter.Key.ToString()] != true)
+            {
+                PlayerCount++;
+            }
+        }
+
+        if (PlayerCount >= (GPGSManager.GetInstance.GetAllPlayers().Count))
+        {
+            ConfirmChecker = true;
+        }
+        else
+        {
+            ConfirmChecker = false;
+        }
+
+        if (LogCheckTimer >= 3.0f)
+        {
+            Debug.Log("MapSeedConfirmChecker Player Count: " + PlayerCount);
+        }
+
+        return ConfirmChecker;
+    }
+
+    // 데드아이 총알 위치 시드 값을 모든 플레이어가 받았는지 체크 한다.
+    // 만약 게임 플레이어들이 다 받질 못했다면 false를 반환
+    public bool GetAllPlayerDeadEyeSeedConfirmChecker()
+    {
+        bool ConfirmChecker = false;
+        int PlayerCount = 0;
+
+        IDictionaryEnumerator iter = _AllPlayerPVPDeadEyeBulletSeeds_ConfirmMap.GetEnumerator();
+
+        while (iter.MoveNext())
+        {
+            if (_AllPlayerPVPDeadEyeBulletSeeds_ConfirmMap[iter.Key.ToString()] != true)
+            {
+                PlayerCount++;
+            }
+        }
+
+        if (PlayerCount >= (GPGSManager.GetInstance.GetAllPlayers().Count))
+        {
+            ConfirmChecker = true;
+        }
+        else
+        {
+            ConfirmChecker = false;
+        }
+
+        if (LogCheckTimer >= 3.0f)
+        {
+            Debug.Log("DeadEyeSeedConfirm Player Count: " + PlayerCount);
+        }
+
+        return ConfirmChecker;
+    }
+
     // 현재 게임내에 저장된 사람들의 데드아이 총알 위치를 저장한 맵이다.
     public Dictionary<string, int> GetAllPlayerPVPDeadEyeBulletSeeds()
     {
@@ -330,6 +427,18 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     public Dictionary<string, int> GetAllPlayerSelectedMapSeeds()
     {
         return _AllPlayerSelectedMapSeeds;
+    }
+
+    // 현재 게임내에 저장된 사람들의 데드아이 총알 위치 반환 여부를 저장한 맵이다
+    public Dictionary<string, bool> GetAllPlayerPVPDeadEyeBulletSeeds_ConfirmMap()
+    {
+        return _AllPlayerPVPDeadEyeBulletSeeds_ConfirmMap;
+    }
+
+    // 현재 게임내에 저장된 사람들의 맵 선택 반환 여부를 저장한 맵이다
+    public Dictionary<string, bool> GetAllPlayerSelectedMapSeeds_ConfirmMap()
+    {
+        return _AllPlayerSelectedMapSeeds_ConfirmMap;
     }
 
     // 현재 서바이벌 모드에 접속한 사람들의 캐릭터 정보(고유 번호)의 수를 반환한다.
@@ -477,6 +586,63 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         }
     }
 
+    // 상대방이 보낸 맵 시드 값을 모두 받았는지 받는 리스너
+    public void OpponentSelectedMapCertificationReceive(string participantid, bool Receive)
+    {
+        switch (NowMultiGameModeNumber)
+        {
+            case HY.MultiGameModeState.PVP:
+                {
+                    Debug.Log("SelectedMap Seed Confirm Receive : " + Receive);
+
+                    _AllPlayerSelectedMapSeeds_ConfirmMap[participantid] = Receive;
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+                    Debug.Log("SelectedMap Seed Confirm Receive : " + Receive);
+
+                    _AllPlayerSelectedMapSeeds_ConfirmMap[participantid] = Receive;
+                }
+                break;
+
+            default:
+                {
+
+                }
+                break;
+        }
+
+    }
+
+    // 상대방이 보낸 데드아이 시드 값을 모두 받았는지 받는 리스너
+    public void OpponentDeadEyeBulletSeedCertificationReceive(string participantid, bool Receive)
+    {
+        switch (NowMultiGameModeNumber)
+        {
+            case HY.MultiGameModeState.PVP:
+                {
+                    Debug.Log("DeadEye Seed Confirm Receive : " + Receive);
+
+                    _AllPlayerPVPDeadEyeBulletSeeds_ConfirmMap[participantid] = Receive;
+                }
+                break;
+
+            case HY.MultiGameModeState.SURVIVAL:
+                {
+
+                }
+                break;
+
+            default:
+                {
+
+                }
+                break;
+        }
+    }
+
     // 어플리케이션이 Home 키가 눌려졌을때의 콜백되는 함수
     void OnApplicationPause(bool pause)
     {
@@ -568,6 +734,24 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         else
         {
             _AllPlayerPVPDeadEyeBulletSeeds.Clear();
+        }
+
+        if(_AllPlayerSelectedMapSeeds_ConfirmMap == null)
+        {
+            _AllPlayerSelectedMapSeeds_ConfirmMap = new Dictionary<string, bool>(7);
+        }
+        else
+        {
+            _AllPlayerSelectedMapSeeds_ConfirmMap.Clear();
+        }
+
+        if(_AllPlayerPVPDeadEyeBulletSeeds_ConfirmMap == null)
+        {
+            _AllPlayerPVPDeadEyeBulletSeeds_ConfirmMap = new Dictionary<string, bool>(7);
+        }
+        else
+        {
+            _AllPlayerPVPDeadEyeBulletSeeds_ConfirmMap.Clear();
         }
 
         // 캐릭터 선택을 백업해준다.

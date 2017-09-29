@@ -9,8 +9,14 @@
     // 상대방이 선택한 맵을 자신만의 고유 랜덤값을 모두에게 보내주는 리스너
     void OpponentSelectedMapSeedReceive(string participantid, int SelectedMapNumber);
 
+    // 상대방이 보낸 맵 시드 값을 모두 받았는지 받는 리스너
+    void OpponentSelectedMapCertificationReceive(string participantid, bool Receive);
+
     // 상대방이 가지고 있는 고유 인덱스 데드아이 총알 위치 값을 모두에게 보내주는 리스너
     void OpponentDeadEyeBulletIndexReceive(string participantid, int DeadEyeIndex);
+
+    // 상대방이 보낸 데드아이 시드 값을 모두 받았는지 받는 리스너
+    void OpponentDeadEyeBulletSeedCertificationReceive(string participantid, bool Receive);
 
     // 매칭을 취소했을 경우 콜백되는 함수
     void LeftRoomConfirmed();

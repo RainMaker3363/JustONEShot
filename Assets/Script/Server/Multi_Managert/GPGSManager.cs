@@ -126,6 +126,10 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private int _PVPDeadEyeBulletSeedMessageLength = 7;
     // Byte + Byte + Byte + 1 Interger
     private int _SelectedMapSeedMessageLength = 7;
+    // Byte + Byte + Byte + 1 Boolean
+    private int _PVPDeadEyeBulletSeedCertificationMessageLength = 4;
+    // Byte + Byte + Byte + 1 Boolean
+    private int _SelectedMapSeedCertificationMessageLength = 4;
 
     // 메시지 도착 순서를 제어할 변수
     // 네트워크 도착 순서가 무작위로 된다면 동기화가 이상하게 될 가능성이 있기에
@@ -165,6 +169,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // 랜덤 시드(Seed) 메시지
     private List<byte> _SelectedMapSeedMessage;
     private List<byte> _DeadEyeBulletSeedMessage;
+    private List<byte> _DeadEyeBulletSeedCertificationMessage;
+    private List<byte> _SelectedMApSeedCertificationMessage;
 
     // 현재 세션에 접속한 플레이어들의 정보들이다.
     //private List<Participant> allPlayers;
@@ -198,6 +204,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     private int StartDeadEyeBulletEncount;
     private Dictionary<string, int> PVP_DeadEyeBullet_RandomSeeds;
     private Dictionary<string, int> MapSelected_RandomSeeds;
+    private Dictionary<string, bool> PVP_DeadEyeBullet_RandomSeeds_Confirm_Map;
+    private Dictionary<string, bool> MapSelected_RandomSeeds_Confirm_Map;
+
+    // 현재 게임에 접속한 사람들의 카운트를 체크한다.
+    //private int NowGamePlayerCount;
 
     private bool IsConnectedOn = false;
     private bool IsMatchingNow = false;
@@ -377,6 +388,11 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             // Byte + Byte + Byte + 1 Interger
             _SelectedMapSeedMessageLength = 7;
 
+            // Byte + Byte + Byte + 1 Boolean
+            _SelectedMapSeedCertificationMessageLength = 4;
+            // Byte + Byte + Byte + 1 Boolean
+            _PVPDeadEyeBulletSeedCertificationMessageLength = 4;
+
             //PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
             //    // 클라우드 게임 데이터 저장을 위해서 사용
             //    .EnableSavedGames()
@@ -513,6 +529,16 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if(_DeadEyeBulletSeedMessage == null)
         {
             _DeadEyeBulletSeedMessage = new List<byte>(_PVPDeadEyeBulletSeedMessageLength);
+        }
+
+        if(_SelectedMApSeedCertificationMessage == null)
+        {
+            _SelectedMApSeedCertificationMessage = new List<byte>(_SelectedMapSeedCertificationMessageLength);
+        }
+
+        if(_DeadEyeBulletSeedCertificationMessage == null)
+        {
+            _DeadEyeBulletSeedCertificationMessage = new List<byte>(_PVPDeadEyeBulletSeedCertificationMessageLength);
         }
 
         NowMultiGameMode = HY.MultiGameModeState.NONE;
@@ -690,6 +716,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             PVP_DeadEyeBullet_RandomSeeds[GetMyParticipantId()] = Seed;// UnityEngine.Random.Range(0, 5);
         }
 
+        // 자기 자신의 확인이 끝났다는 인증을 한다.
+        PVP_DeadEyeBullet_RandomSeeds_Confirm_Map[GetMyParticipantId()] = true;
+
         Debug.Log("GPGSManager Set PVP_DeadEyeBullet_RandomSeeds : " + PVP_DeadEyeBullet_RandomSeeds[GetMyParticipantId()]);
     }
 
@@ -705,6 +734,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             MapSelected_RandomSeeds[GetMyParticipantId()] = Seed;//UnityEngine.Random.Range(0, 2);
         }
 
+        // 자기 자신의 확인이 끝났다는 인증을 한다.
+        MapSelected_RandomSeeds_Confirm_Map[GetMyParticipantId()] = true;
+
         Debug.Log("GPGSManager Set MapSelect_RandomSeeds : " + MapSelected_RandomSeeds[GetMyParticipantId()]);
     } 
        
@@ -719,6 +751,18 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     public Dictionary<string, int> GetDeadEyeBulletRandomSeeds()
     {
         return PVP_DeadEyeBullet_RandomSeeds;
+    }
+
+    // PVP, 서바이벌 모드에서 사용할 나와 다른 사용자들의 맵 난수 수신 여부
+    public Dictionary<string, bool> GetMapSelectedRandomSeedsConfirmMap()
+    {
+        return MapSelected_RandomSeeds_Confirm_Map;
+    }
+
+    // PVP 모드에서 사용될 나와 다른 사용자들의 데드아이 위치 난수 수신 여부
+    public Dictionary<string, bool> GetDeadEyeBulletRandomSeedConfirmMap()
+    {
+        return PVP_DeadEyeBullet_RandomSeeds_Confirm_Map;
     }
 
     // 현재 PVP 모드에서 적의 캐릭터 번호를 가지고 온다
@@ -1112,6 +1156,16 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         if (_DeadEyeBulletSeedMessage == null)
         {
             _DeadEyeBulletSeedMessage = new List<byte>(_PVPDeadEyeBulletSeedMessageLength);
+        }
+
+        if (_SelectedMApSeedCertificationMessage == null)
+        {
+            _SelectedMApSeedCertificationMessage = new List<byte>(_SelectedMapSeedCertificationMessageLength);
+        }
+
+        if (_DeadEyeBulletSeedCertificationMessage == null)
+        {
+            _DeadEyeBulletSeedCertificationMessage = new List<byte>(_PVPDeadEyeBulletSeedCertificationMessageLength);
         }
 
         _BossPosMessageNum = 0;
@@ -1740,6 +1794,39 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, SelectedMapSeddMessageToSend);
 
     }
+
+    // 사용자가 자신의 맵 선택 난수 값을 지정했다는 여부를 보낸다
+    public void SendSelectedSeedMapConfirm(bool Receive)
+    {
+        _SelectedMApSeedCertificationMessage.Clear();
+        _SelectedMApSeedCertificationMessage.Add(_protocolVersion);
+        _SelectedMApSeedCertificationMessage.Add((byte)'I');
+        _SelectedMApSeedCertificationMessage.Add((byte)'C');
+        _SelectedMApSeedCertificationMessage.AddRange(System.BitConverter.GetBytes(Receive));
+
+        byte[] _SelectedMApSeedCertificationMessageToSend = _SelectedMApSeedCertificationMessage.ToArray();
+
+        Debug.Log("Send My SelectedMap Seed Confirm");
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, _SelectedMApSeedCertificationMessageToSend);
+    }
+
+    // 사용자가 자신의 데드아이 총알 난수 값을 지정했다는 여부를 보낸다
+    public void SendDeadEyeSeedMapConfirm(bool Receive)
+    {
+        _DeadEyeBulletSeedCertificationMessage.Clear();
+        _DeadEyeBulletSeedCertificationMessage.Add(_protocolVersion);
+        _DeadEyeBulletSeedCertificationMessage.Add((byte)'I');
+        _DeadEyeBulletSeedCertificationMessage.Add((byte)'O');
+        _DeadEyeBulletSeedCertificationMessage.AddRange(System.BitConverter.GetBytes(Receive));
+
+        byte[] _DeadEyeBulletSeedCertificationMessageToSend = _DeadEyeBulletSeedCertificationMessage.ToArray();
+
+        Debug.Log("Send My DeadEyeMap Seed Confirm");
+
+        PlayGamesPlatform.Instance.RealTime.SendMessageToAll(true, _DeadEyeBulletSeedCertificationMessageToSend);
+    }
+
     // 상대 ID로부터 메시지를 받았을때 호출되는 리스너 함수
     public void OnRealTimeMessageReceived(bool isReliable, string senderId, byte[] data)
     {
@@ -1871,6 +1958,43 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                                     //        break;
                                     //}
                                     LBListener.OpponentSelectedMapSeedReceive(senderId, MapSelected);
+                                }
+                            }
+                            break;
+
+                        // 맵 선택 난수 여부 확인
+                        case 'C':
+                            {
+                                bool MapSelectedConfirm = System.BitConverter.ToBoolean(data, 3);
+
+
+                                Debug.Log("Map Select Confirm ID : " + MapSelectedConfirm + " Bool : " + MapSelectedConfirm);
+
+                                ReceiveMessage = ByteToString(data);
+
+                                MapSelected_RandomSeeds_Confirm_Map[senderId] = MapSelectedConfirm;
+
+                                if (LBListener != null)
+                                {
+                                    LBListener.OpponentSelectedMapCertificationReceive(senderId, MapSelectedConfirm);
+                                }
+                            }
+                            break;
+
+                        // 데드아이 총알 난수 여부 확인
+                        case 'O':
+                            {
+                                bool DeadEyeBulletConfirm = System.BitConverter.ToBoolean(data, 3);
+
+                                Debug.Log("Map DeadEyeBullet Confirm ID : " + DeadEyeBulletConfirm + " Bool : " + DeadEyeBulletConfirm);
+
+                                ReceiveMessage = ByteToString(data);
+
+                                PVP_DeadEyeBullet_RandomSeeds_Confirm_Map[senderId] = DeadEyeBulletConfirm;
+
+                                if (LBListener != null)
+                                {
+                                    LBListener.OpponentDeadEyeBulletSeedCertificationReceive(senderId, DeadEyeBulletConfirm);
                                 }
                             }
                             break;
