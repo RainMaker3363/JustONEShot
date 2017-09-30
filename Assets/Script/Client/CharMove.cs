@@ -230,6 +230,8 @@ public class CharMove : MonoBehaviour
     string NowSceneName;
     TMPro.TextMeshProUGUI TutorialText;
     bool DeadEyeTutorial = false;
+
+    GameObject Button_Roll;
     //void OnEnable()
     //{
 
@@ -386,6 +388,10 @@ public class CharMove : MonoBehaviour
         {
             case LSD.PlayerState.IDLE:
                 {
+                    if(Physics.GetIgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemy")))
+                    {
+                        Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemy"), false);
+                    }
                     ShotAble = true;
                     anim.SetInteger("DashLevel", 0);
                     anim.speed = 1;
@@ -466,6 +472,7 @@ public class CharMove : MonoBehaviour
                     {
                         anim.Play("Roll");
                         m_AniPlay = true;
+                        Button_Roll.SetActive(false);
                     }
                     ShotAble = false;
                     Update_Roll();
@@ -556,14 +563,20 @@ public class CharMove : MonoBehaviour
 
             if (!m_Exhausted) //탈진상태에서 회복됬다면
             {
-                TutorialText.gameObject.SetActive(false);
+                if (TutorialText != null)
+                {
+                    TutorialText.gameObject.SetActive(false);
+                }
                 m_PlayerState++;    //Player상태를 DASH_SOFT로 변경
                                     //m_PlayerState = LSD.PlayerState.DASH_SOFT;
             }
         }
         else //조작을 멈출경우
         {
-            TutorialText.gameObject.SetActive(false);
+            if (TutorialText != null)
+            {
+                TutorialText.gameObject.SetActive(false);
+            }
             m_PlayerState--;//Player상태를 IDLE로 변경
                             //m_PlayerState = LSD.PlayerState.IDLE;
         }
@@ -811,11 +824,13 @@ public class CharMove : MonoBehaviour
             StopCoroutine(StaminaRecoveryDealy());
             StartCoroutine(StaminaRecoveryDealy());
             Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemy"), false);
+            
             m_PlayerState = LSD.PlayerState.IDLE;
+            Button_Roll.SetActive(true);
         }
         else
         {
-            Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemy"), true);
+            
             StaminaRecovery = false;
         }
     }
@@ -852,6 +867,7 @@ public class CharMove : MonoBehaviour
                 anim.SetBool("Rolling", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
                 m_PlayerState = LSD.PlayerState.ROLL;
                 StaminaCheck();
+                Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Enemy"), true);
                 if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
                 {
                     Mul_Manager.SendAniStateMessage((int)m_PlayerState);//서버 전송
@@ -1239,6 +1255,7 @@ public class CharMove : MonoBehaviour
 
         transform.rotation = m_MoveJoyStickControl.GetRotateVector();
         //transform.Translate(Vector3.forward * m_MoveSpeed * Time.deltaTime);
+  
         m_CharCtr.Move((transform.forward + Physics.gravity) * m_MoveSpeed * Time.deltaTime);
         //RaycastHit Ground;
         //if (Physics.Raycast(m_GroundCheck.position, Vector3.down, out Ground, 5f))
@@ -1566,7 +1583,8 @@ public class CharMove : MonoBehaviour
         DeathZone = GameObject.Find("DeathZone").transform;
 
         UI_Main.transform.Find("Control/Button_Reroad").GetComponent<Button>().onClick.AddListener(OnReroadButton);
-        UI_Main.transform.Find("Control/Button_Roll").GetComponent<Button>().onClick.AddListener(OnRollButton);
+        Button_Roll = UI_Main.transform.Find("Control/Button_Roll").gameObject;
+        Button_Roll.GetComponent<Button>().onClick.AddListener(OnRollButton);
         UI_Main.transform.Find("Control/Button_Skill").GetComponent<Button>().onClick.AddListener(OnSkillButton);
         string Path = "Client/UI/InGame/Skill_0" + CharIndex.ToString();
         Sprite sprite = (Sprite)Resources.Load(Path, typeof(Sprite));

@@ -334,13 +334,21 @@ public class WaitRoom : MonoBehaviour {
         SelectChar.transform.rotation = CharPos.rotation;
         SelectChar.transform.SetParent(CharPos);
         
-        GPGSManager.GetInstance.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
+        
         SendRoutine = SendCharacterRoutine();
 
         string Path = "Client/InGamePrefab/Skin/0" + SelectIndex + "/" + GameInfoManager.Skin_Char[SelectIndex].ToString();
         Debug.Log(Path);
         Material Mat = (Material)Resources.Load(Path, typeof(Material));
         SelectChar.GetComponent<WaitRoomSkin>().Skin.material = Mat;
+
+        GameInfoManager.GetInstance().SelectSkinIndex = GameInfoManager.Skin_Char[SelectIndex];
+
+        if (GPGSManager.GetInstance.IsAuthenticated())
+        {
+            GPGSManager.GetInstance.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
+            GPGSManager.GetInstance.SetMyCharacterSkinNumber(GameInfoManager.GetInstance().SelectSkinIndex);//GPGS캐릭터스킨 인덱스 설정
+        }
 
         StopCoroutine(SendRoutine);
         StartCoroutine(SendRoutine);
@@ -583,7 +591,7 @@ public class WaitRoom : MonoBehaviour {
         }
         else
         {
-
+            SelectSkin(BeforSkinIndex);
         }
     }
 

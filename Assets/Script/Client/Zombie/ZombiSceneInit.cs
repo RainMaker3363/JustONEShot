@@ -21,7 +21,7 @@ public class ZombiSceneInit : MonoBehaviour
     void Awake()
     {
         QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 30;
 
         //for(int i =0; i< InitObject.Length;i++)
         //{

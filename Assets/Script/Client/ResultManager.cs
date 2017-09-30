@@ -224,7 +224,7 @@ public class ResultManager : MonoBehaviour {
                             default:
                                 break;
                         }
-                        Score = (Scoreadd * ZombieCreateManager.Stage) - PlayTime - GameInfoManager.GetInstance().Accumulated_Get(); ;
+                        Score = (Scoreadd * ZombieCreateManager.Stage) - PlayTime - GameInfoManager.GetInstance().Accumulated_Get();
                         UI_Score.text = Score.ToString();
 
                         switch (GameInfoManager.GetInstance().ZombieLevel)

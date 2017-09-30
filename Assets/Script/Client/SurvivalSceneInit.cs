@@ -36,7 +36,7 @@ public class SurvivalSceneInit : MonoBehaviour
 
         //프레임 고정
         QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 30;
         /////
 
 
