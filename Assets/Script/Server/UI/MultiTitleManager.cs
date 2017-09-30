@@ -206,6 +206,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
         GPGSManager.GetInstance.SetMy_PVP_DeadEyeBullet_RandomSeeds(PVPDeadEyeBulletSeed);
         _AllPlayerPVPDeadEyeBulletSeeds[GPGSManager.GetInstance.GetMyParticipantId()] = PVPDeadEyeBulletSeed;
+        _AllPlayerPVPDeadEyeBulletSeeds_ConfirmMap[GPGSManager.GetInstance.GetMyParticipantId()] = true;
 
         Debug.Log("My DeadEyeSeed : " + PVPDeadEyeBulletSeed);
 
@@ -233,6 +234,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
         GPGSManager.GetInstance.SetMy_Map_Selected_RandomSeeds(SelectedMapSeed);
         _AllPlayerSelectedMapSeeds[GPGSManager.GetInstance.GetMyParticipantId()] = SelectedMapSeed;
+        _AllPlayerSelectedMapSeeds_ConfirmMap[GPGSManager.GetInstance.GetMyParticipantId()] = true;
 
         Debug.Log("My SelectedMapSeed : " + SelectedMapSeed);
 
@@ -310,8 +312,12 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
         if(PlayerCount >= GPGSManager.GetInstance.GetAllPlayers().Count)
         {
-            Debug.Log("DeadEye SeedChecker Complete!");
             DeadEyeBulletSeedChecker = true;
+
+            if (DeadEyeBulletSeedChecker == true)
+            {
+                Debug.Log("DeadEye SeedChecker Complete!");
+            }
         }
 
         if (LogCheckTimer >= 3.0f)
@@ -339,8 +345,14 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
         if (PlayerCount >= (GPGSManager.GetInstance.GetAllPlayers().Count))
         {
-            Debug.Log("Map SeedChecker Complete!");
             SelectedMapSeedChecker = true;
+
+            if (SelectedMapSeedChecker == true)
+            {
+                Debug.Log("Map SeedChecker Complete!");
+            }
+
+
         }
 
         if (LogCheckTimer >= 3.0f)
@@ -370,8 +382,14 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
         if (PlayerCount >= (GPGSManager.GetInstance.GetAllPlayers().Count))
         {
-            Debug.Log("MapConfirm SeedChecker Complete!");
             ConfirmChecker = true;
+
+            if (ConfirmChecker == true)
+            {
+                Debug.Log("MapConfirm SeedChecker Complete!");
+            }
+
+
         }
 
         if (LogCheckTimer >= 3.0f)
@@ -402,8 +420,12 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
         if (PlayerCount >= (GPGSManager.GetInstance.GetAllPlayers().Count))
         {
-            Debug.Log("DeadEyeConfirm SeedChecker Complete!");
             ConfirmChecker = true;
+
+            if (ConfirmChecker == true)
+            {
+                Debug.Log("DeadEyeConfirm SeedChecker Complete!");
+            }
         }
 
         if (LogCheckTimer >= 3.0f)
