@@ -240,9 +240,9 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         IsMultiGameStart = false;
 
         MyCharacterNumber = 100;
-        My_Character_SkinNumber = 0;
+        My_Character_SkinNumber = 100;
         OppenentCharNumber = 100;
-        PVP_OpponentCharSKinNumber = 0;
+        PVP_OpponentCharSKinNumber = 100;
         StartRandomEncounter = UnityEngine.Random.Range(0, 5);
 
         StartDeadEyeBulletEncount = 0;
@@ -867,7 +867,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             }
         }
 
-        Debug.Log("Test Opponent CharNum : " + Character_Skin_Number + " ID : " + PlayerCharacters_Skin_Number[ID]);
+        Debug.Log("SkinNum : " + Character_Skin_Number + " ID : " + ID);
         return Character_Skin_Number;
     }
 
@@ -922,7 +922,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
     // 현재 내가 선택한 캐릭터 스킨에 대한 정보를 설정해준다.
     // 기본값은 0이다
-    public void SetMyCharacterSkinNumber(int skin = 0)
+    public void SetMyCharacterSkinNumber(int skin = 100)
     {
         int SkinNumber = 0;
 
@@ -946,6 +946,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             case HY.MultiGameModeState.PVP:
                 {
                     PlayerCharacters_Skin_Number[GetMyParticipantId()] = SkinNumber;
+                    //PVP_OpponentCharSKinNumber = SkinNumber;
 
                     Debug.Log("PVP MY Skin Number : " + SkinNumber);
                 }
@@ -1553,7 +1554,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
 
     // 플레이어가 선택한 캐릭터 스킨을 보내주는 메시지
     // 캐릭터 고유번호를 보내준다.
-    public void SendPlayerSkinStateMessage(int SkinState)
+    // 기본값은 100이다.
+    public void SendPlayerSkinStateMessage(int SkinState = 100)
     {
         _PlayerSkinStateMessage.Clear();
         _PlayerSkinStateMessage.Add(_protocolVersion);

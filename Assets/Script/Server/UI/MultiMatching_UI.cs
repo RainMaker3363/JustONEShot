@@ -19,6 +19,9 @@ public class MultiMatching_UI : MonoBehaviour {
     // 매칭시 타임아웃을 체크한다.
     private float TimeOutChecker;
 
+    // 로그를 체크한다
+    private float MultiTimeLogChecker;
+
     // Use this for initialization
     void Start () {
         //Matching_Text.text = "Player Searching...";
@@ -29,6 +32,8 @@ public class MultiMatching_UI : MonoBehaviour {
 
         // 매칭 시 타임아웃을 체크할 시간
         TimeOutChecker = 60.0f;
+
+        MultiTimeLogChecker = 3.0f;
 
         MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();//MultiTitleManager.NowMultiGameModeNumber;
 
@@ -300,6 +305,15 @@ public class MultiMatching_UI : MonoBehaviour {
         //MultiGameModeNumber = MultiTitleManager.NowMultiGameModeNumber;
         MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();
 
+        if(MultiTimeLogChecker <= 0)
+        {
+            MultiTimeLogChecker = 3.0f;
+        }
+        else
+        {
+            MultiTimeLogChecker -= Time.deltaTime;
+        }
+
         switch(MultiGameModeNumber)
         {
             case HY.MultiGameModeState.NONE:
@@ -369,6 +383,48 @@ public class MultiMatching_UI : MonoBehaviour {
                                 StartCoroutine(StartMultiGame());
                             }
                         }
+                        else
+                        {
+                            if(TitleManager.GetOpponentCharNumber() != 100)
+                            {
+                                if (MultiTimeLogChecker <= 0)
+                                {
+                                    Debug.Log("PVP Mode OpponentCharNumber Check isn't Complete");
+                                }
+                            }
+
+                            if(TitleManager.GetAllPlayerMapSeedChecker() == false)
+                            {
+                                if (MultiTimeLogChecker <= 0)
+                                {
+                                    Debug.Log("PVP Mode AllPlayerMapSeed Check isn't Complete");
+                                }
+                            }
+
+                            if(TitleManager.GetAllPlayerDeadEyeSeedChecker() == false)
+                            {
+                                if (MultiTimeLogChecker <= 0)
+                                {
+                                    Debug.Log("PVP Mode AllPlayerDeadEyeSeed Check isn't Complete");
+                                }
+                            }
+
+                            if(TitleManager.GetAllPlayerDeadEyeSeedConfirmChecker() == false)
+                            {
+                                if (MultiTimeLogChecker <= 0)
+                                {
+                                    Debug.Log("PVP Mode AllPlayerDeadEyeSeedConfirm Check isn't Complete");
+                                }
+                            }
+
+                            if(TitleManager.GetAllPlayerMapSeedConfirmChecker() == false)
+                            {
+                                if (MultiTimeLogChecker <= 0)
+                                {
+                                    Debug.Log("PVP Mode AllPlayerMapSeedConfirm Check isn't Complete");
+                                }
+                            }
+                        }
 
 
                     }
@@ -416,6 +472,7 @@ public class MultiMatching_UI : MonoBehaviour {
                         }
 
                         if (TitleManager.GetSurvivalOpoonentCharNumbers() >= (GPGSManager.GetInstance.GetAllPlayers().Count - 1) &&
+                            TitleManager.GetSurvivalOpponentCharSkinNumbers() >= (GPGSManager.GetInstance.GetAllPlayers().Count - 1) &&
                             TitleManager.GetAllPlayerMapSeedChecker() &&
                             TitleManager.GetAllPlayerMapSeedConfirmChecker())
                         {
@@ -452,6 +509,40 @@ public class MultiMatching_UI : MonoBehaviour {
                                 MultiStartChecker = true;
 
                                 StartCoroutine(StartMultiGame());
+                            }
+                        }
+                        else
+                        {
+                            if(!(TitleManager.GetSurvivalOpoonentCharNumbers() >= (GPGSManager.GetInstance.GetAllPlayers().Count - 1)))
+                            { 
+                                if(MultiTimeLogChecker <= 0)
+                                {
+                                    Debug.Log("Survival Mode OpponentCharNumber Check isn't Complete");
+                                }
+                            }
+
+                            if(!(TitleManager.GetSurvivalOpponentCharSkinNumbers() >= (GPGSManager.GetInstance.GetAllPlayers().Count - 1)))
+                            {
+                                if (MultiTimeLogChecker <= 0)
+                                {
+                                    Debug.Log("Survival Mode OpponentCharSkinNumber Check isn't Complete");
+                                }
+                            }
+
+                            if(!(TitleManager.GetAllPlayerMapSeedChecker()))
+                            {
+                                if (MultiTimeLogChecker <= 0)
+                                {
+                                    Debug.Log("Survival Mode AllPlayerMapSeedChecker Check isn't Complete");
+                                }
+                            }
+
+                            if(!(TitleManager.GetAllPlayerMapSeedConfirmChecker()))
+                            {
+                                if (MultiTimeLogChecker <= 0)
+                                {
+                                    Debug.Log("Survival Mode AllPlyerMapConfirm Check isn't Complete");
+                                }
                             }
                         }
 

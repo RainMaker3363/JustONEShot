@@ -49,7 +49,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         MyCharacterNumberBackup = 0;
         MyCharacterSkinNumberBackup = 0;
         OpponentCharNumber = 100;
-        OpponentCharSkinNumber = 0;
+        OpponentCharSkinNumber = 100;
         LogCheckTimer = 3.0f;
 
         SelectedMapSeed = -1;
@@ -183,7 +183,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     }
 
     // 현재 자신이 선택한 캐릭터의 스킨 정보를 보내준다.
-    public void SendCharacterSkinNumber(int SKinNumber = 0)
+    public void SendCharacterSkinNumber(int SKinNumber = 100)
     {
         if(SKinNumber < 0)
         {
@@ -458,9 +458,32 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
         if(LogCheckTimer >= 3.0f)
         {
-            Debug.Log("AlreadyChecker : " + AlreadyChecker);
+            Debug.Log("Char Number AlreadyChecker : " + AlreadyChecker);
         }
         
+        return AlreadyChecker;
+    }
+
+    // 현재 서바이벌 모드에 접속한 사람들의 캐릭터 스킨 정보(고유 번호)의 수를 반환한다.
+    public int GetSurvivalOpponentCharSkinNumbers()
+    {
+        int AlreadyChecker = 0;
+
+        __OpoonentCharSkinNumbers_Iter = __OpponentCharSkinNumbers.GetEnumerator();
+
+        while(__OpoonentCharSkinNumbers_Iter.MoveNext())
+        {
+            if(__OpponentCharSkinNumbers[__OpoonentCharSkinNumbers_Iter.Key.ToString()] != 100)
+            {
+                AlreadyChecker++;
+            }
+        }
+
+        if (LogCheckTimer >= 3.0f)
+        {
+            Debug.Log("Skin Number AlreadyChecker : " + AlreadyChecker);
+        }
+
         return AlreadyChecker;
     }
 
@@ -468,6 +491,12 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     public Dictionary<string, int> GetSurvivalOpponentCharNumber()
     {
         return __SurvivalOpponentCharNumbers;
+    }
+
+    // 상대방의 캐릭터 스킨 번호를 기억한다.
+    public Dictionary<string, int> GetSurvivalOppoentCharSkinNumber()
+    {
+        return __OpponentCharSkinNumbers;
     }
 
     // 상대방이 보낸 캐릭터의 정보를 받아서 값을 갱신해준다.
@@ -509,7 +538,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
                 {
                     OpponentCharSkinNumber = skinNumber;
 
-                    Debug.Log("ID : " + participantId + " Number : " + OpponentCharSkinNumber);
+                    Debug.Log("ID : " + participantId + " Skin Number : " + OpponentCharSkinNumber);
                 }
                 break;
 
@@ -518,7 +547,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
                     __OpponentCharSkinNumbers[participantId] = skinNumber;
 
-                    Debug.Log("ID : " + participantId + " Number : " + __OpponentCharSkinNumbers[participantId]);
+                    Debug.Log("ID : " + participantId + " Skin Number : " + __OpponentCharSkinNumbers[participantId]);
                 }
                 break;
 
@@ -668,7 +697,7 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         Debug.Log("MyCharacterSkinNumberBackUp : " + MyCharacterSkinNumberBackup);
 
         OpponentCharNumber = 100;
-        OpponentCharSkinNumber = 0;
+        OpponentCharSkinNumber = 100;
         LogCheckTimer = 3.0f;
 
 
@@ -780,7 +809,32 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     // 게임이 완전 끝났을때 콜백 된다.
     public void LeftRoomConfirmed()
     {
-        Debug.Log("Multi Game Matching Cancel");
+        Debug.Log("Multi Game LeftRoomConfirmed!");
+
+        MyCharacterNumberBackup = GPGSManager.GetInstance.GetMyCharacterNumber();
+        Debug.Log("MyCharacterNumberBackUp : " + MyCharacterNumberBackup);
+
+        MyCharacterSkinNumberBackup = GPGSManager.GetInstance.GetMyCharacterSkinNumber();
+        Debug.Log("MyCharacterSkinNumberBackUp : " + MyCharacterSkinNumberBackup);
+
+        OpponentCharNumber = 100;
+        OpponentCharSkinNumber = 100;
+        LogCheckTimer = 3.0f;
+
+
+        PVPDeadEyeBulletSeed = GPGSManager.GetInstance.GetPVPStartDeadEyeBulletEncount();
+        PVPDeadEyeBulletSeedBackup = PVPDeadEyeBulletSeed;
+        Debug.Log("PVPDeadEyeBulletSeedBackup : " + PVPDeadEyeBulletSeedBackup);
+
+        SelectedMapSeed = GPGSManager.GetInstance.GetStartMapSelectEncount();
+        SelectedMapSeedBackup = SelectedMapSeed;
+        Debug.Log("SelectedMapSeedBackup : " + SelectedMapSeedBackup);
+
+        SelectedMapSeedChecker = false;
+        Debug.Log("MapSeedChecker : " + SelectedMapSeedChecker);
+
+        DeadEyeBulletSeedChecker = false;
+        Debug.Log("DeadEyeBulletSeedChecker : " + DeadEyeBulletSeedChecker);
 
         GPGSManager.GetInstance.LBListener = null;
 
@@ -803,6 +857,58 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         {
             __SurvivalOpponentCharNumbers.Clear();
         }
+
+        if (__OpponentCharSkinNumbers == null)
+        {
+            __OpponentCharSkinNumbers = new Dictionary<string, int>(7);
+        }
+        else
+        {
+            __OpponentCharSkinNumbers.Clear();
+        }
+
+        if (_AllPlayerSelectedMapSeeds == null)
+        {
+            _AllPlayerSelectedMapSeeds = new Dictionary<string, int>(7);
+        }
+        else
+        {
+            _AllPlayerSelectedMapSeeds.Clear();
+        }
+
+
+        if (_AllPlayerPVPDeadEyeBulletSeeds == null)
+        {
+            _AllPlayerPVPDeadEyeBulletSeeds = new Dictionary<string, int>(7);
+        }
+        else
+        {
+            _AllPlayerPVPDeadEyeBulletSeeds.Clear();
+        }
+
+        if (_AllPlayerSelectedMapSeeds_ConfirmMap == null)
+        {
+            _AllPlayerSelectedMapSeeds_ConfirmMap = new Dictionary<string, bool>(7);
+        }
+        else
+        {
+            _AllPlayerSelectedMapSeeds_ConfirmMap.Clear();
+        }
+
+        if (_AllPlayerPVPDeadEyeBulletSeeds_ConfirmMap == null)
+        {
+            _AllPlayerPVPDeadEyeBulletSeeds_ConfirmMap = new Dictionary<string, bool>(7);
+        }
+        else
+        {
+            _AllPlayerPVPDeadEyeBulletSeeds_ConfirmMap.Clear();
+        }
+
+        // 캐릭터 선택을 백업해준다.
+        GPGSManager.GetInstance.SetMyCharacterNumber(MyCharacterNumberBackup);
+
+        // 캐릭터 번호를 백업해준다.
+        GPGSManager.GetInstance.SetMyCharacterSkinNumber(MyCharacterSkinNumberBackup);
 
         /* 
         * 유니티 엔진 사용 시 입력을 하지 않으면 모바일 장치의 화면이 어두워지다가 잠기게 되는데,
