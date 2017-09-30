@@ -316,6 +316,25 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             MapSelected_RandomSeeds.Clear();
         }
 
+
+        if (MapSelected_RandomSeeds_Confirm_Map == null)
+        {
+            MapSelected_RandomSeeds_Confirm_Map = new Dictionary<string, bool>(7);
+        }
+        else
+        {
+            MapSelected_RandomSeeds_Confirm_Map.Clear();
+        }
+
+        if(PVP_DeadEyeBullet_RandomSeeds_Confirm_Map == null)
+        {
+            PVP_DeadEyeBullet_RandomSeeds_Confirm_Map = new Dictionary<string, bool>(7);
+        }
+        else
+        {
+            PVP_DeadEyeBullet_RandomSeeds_Confirm_Map.Clear();
+        }
+
         //PVP_DeadEyeBullet_RandomSeeds[GetMyParticipantId()] = UnityEngine.Random.Range(0, 5);
         //MapSelected_RandomSeeds[GetMyParticipantId()] = UnityEngine.Random.Range(0, 1);
 
@@ -540,6 +559,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         {
             _DeadEyeBulletSeedCertificationMessage = new List<byte>(_PVPDeadEyeBulletSeedCertificationMessageLength);
         }
+
 
         NowMultiGameMode = HY.MultiGameModeState.NONE;
 
