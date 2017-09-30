@@ -1912,7 +1912,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                             {
                                 int DeadEyeIndex = System.BitConverter.ToInt32(data, 3);
 
-                                Debug.Log("Dead Eye Respawn : " + DeadEyeIndex);
+                                Debug.Log("Dead Eye Respawn ID : " + senderId + " Number : " + DeadEyeIndex);
 
                                 ReceiveMessage = ByteToString(data);
 
@@ -1951,7 +1951,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                                 int MapSelected = System.BitConverter.ToInt32(data, 3);
 
                                 
-                                Debug.Log("Map Select Number : " + MapSelected);
+                                Debug.Log("Map SelectSeed ID : " + senderId + " Number : " + MapSelected);
 
                                 ReceiveMessage = ByteToString(data);
 
@@ -1990,7 +1990,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                                 bool MapSelectedConfirm = System.BitConverter.ToBoolean(data, 3);
 
 
-                                Debug.Log("Map Select Confirm ID : " + MapSelectedConfirm + " Bool : " + MapSelectedConfirm);
+                                Debug.Log("Map Select Confirm ID : " + senderId + " Bool : " + MapSelectedConfirm);
 
                                 ReceiveMessage = ByteToString(data);
 
@@ -2008,7 +2008,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                             {
                                 bool DeadEyeBulletConfirm = System.BitConverter.ToBoolean(data, 3);
 
-                                Debug.Log("Map DeadEyeBullet Confirm ID : " + DeadEyeBulletConfirm + " Bool : " + DeadEyeBulletConfirm);
+                                Debug.Log("Map DeadEyeBullet Confirm ID : " + senderId + " Bool : " + DeadEyeBulletConfirm);
 
                                 ReceiveMessage = ByteToString(data);
 
