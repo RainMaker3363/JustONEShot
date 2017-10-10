@@ -96,4 +96,8 @@ public class JoyStickCtrl : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
     {
         return Touch;
     }
+    public void InitTouch()
+    {
+        Touch = false;
+    }
 }

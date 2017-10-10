@@ -141,6 +141,8 @@ public class EnemyMove : MonoBehaviour {
         //}
         SceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         m_AudioSource = gameObject.transform.GetComponentInChildren<AudioSource>();
+
+        
     }
 
     // Use this for initialization
@@ -182,6 +184,12 @@ public class EnemyMove : MonoBehaviour {
         m_PlayerPosBack = Vector3.zero;
 
         HP_BarPos = Vector3.up;
+
+        ///스킨적용
+        string Path = "Client/InGamePrefab/Skin/0" + GPGSManager.GetInstance.GetPVPOpponentCharNumber().ToString() + "/" + GPGSManager.GetInstance.GetPVPOpponentCharSkinNumber().ToString();
+        //Debug.Log(Path);
+        Material Mat = (Material)Resources.Load(Path, typeof(Material));
+        Skin.material = Mat;
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///서버
@@ -283,10 +291,7 @@ public class EnemyMove : MonoBehaviour {
                     {
                         anim.SetBool("GunFire", true);
                     }
-                    if(Skill_Fastgun)
-                    {
-                        anim.speed = 4;
-                    }
+                   
                     Update_SHOT_READY();
                     break;
                 }
@@ -552,15 +557,23 @@ public class EnemyMove : MonoBehaviour {
         //    m_PlayerState = LSD.PlayerState.SHOT_FIRE;
         //    // }
 
-        //}
-        
+        //} 
+        if (Skill_Fastgun)
+        {
+            anim.speed = 4;
+        }
+
 
     }
 
     void Update_SHOT_FIRE()
     {
         if (anim.GetBool("GunFire"))
-        {      
+        {
+            if (Skill_Fastgun)
+            {
+                anim.speed = 4;
+            }
             anim.SetBool("Shot", m_ShootSuccess);
         }
         else if (!anim.GetBool("GunFire"))
@@ -1104,10 +1117,10 @@ public class EnemyMove : MonoBehaviour {
             }
 
 
-        string Path = "Client/InGamePrefab/Skin/0" + CharIndex.ToString() + "/" + CharSkinIndex.ToString();
-        //Debug.Log(Path);
-        Material Mat = (Material)Resources.Load(Path, typeof(Material));
-        Skin.material = Mat;       
+        //string Path = "Client/InGamePrefab/Skin/0" + CharIndex.ToString() + "/" + CharSkinIndex.ToString();
+        ////Debug.Log(Path);
+        //Material Mat = (Material)Resources.Load(Path, typeof(Material));
+        //Skin.material = Mat;
 
 
     }

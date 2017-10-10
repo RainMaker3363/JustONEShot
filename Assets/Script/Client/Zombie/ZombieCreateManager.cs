@@ -64,6 +64,8 @@ public class ZombieCreateManager : MonoBehaviour
     public GameObject Main_UI;
     public GameObject Skill_UI;
 
+    GameObject Player;
+
     public DeathZone m_DeathZone;
 
     public AudioClip SelectSound;
@@ -86,6 +88,8 @@ public class ZombieCreateManager : MonoBehaviour
 
         if (LevelUP_UI.activeSelf)
         {
+            Player.GetComponent<CharMove>().CharAllInit();
+            
             if (CharMove.CharStat.HP >= CharMove.CharStat.MaxHP)    //max로 찍었으면 추후찍지못하게 합니다
             {
                 LevelUP_UI.transform.Find("HP_Button").Find("BackWhite").gameObject.SetActive(false);
@@ -119,6 +123,7 @@ public class ZombieCreateManager : MonoBehaviour
 
         LevelUPStatSelect = true;
 
+        Player = GameplayObj.transform.Find("PlayerCharacter").gameObject;
 
         StartCoroutine(StageSetup());
     }

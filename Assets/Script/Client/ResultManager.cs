@@ -68,6 +68,7 @@ public class ResultManager : MonoBehaviour {
         if(GameInfoManager.GetInstance().GameOver)
         {
             GameInfoManager.GetInstance().GameOver = false;
+            GameObject.Find("BGM").GetComponent<AudioSource>().mute = true;
             int Score;
             switch (m_GameMode)
             {

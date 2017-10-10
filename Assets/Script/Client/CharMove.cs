@@ -846,6 +846,7 @@ public class CharMove : MonoBehaviour
         {
 
             m_PlayerState = LSD.PlayerState.REROAD;
+            m_MoveJoyStickControl.PedInit();
 
         }
     }
@@ -895,6 +896,7 @@ public class CharMove : MonoBehaviour
                 anim.SetTrigger("Damage");
                 anim.SetBool("Damaged", true);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌
                 camAni.SetTrigger("Damage");
+                GunPoint.SetActive(false);
                 if (GameInfoManager.GetInstance().EffectSoundUse)
                 {
                     m_AudioSource.PlayOneShot(CharHitSound);
@@ -1255,7 +1257,7 @@ public class CharMove : MonoBehaviour
 
         transform.rotation = m_MoveJoyStickControl.GetRotateVector();
         //transform.Translate(Vector3.forward * m_MoveSpeed * Time.deltaTime);
-  
+        
         m_CharCtr.Move((transform.forward + Physics.gravity) * m_MoveSpeed * Time.deltaTime);
         //RaycastHit Ground;
         //if (Physics.Raycast(m_GroundCheck.position, Vector3.down, out Ground, 5f))
@@ -1717,6 +1719,16 @@ public class CharMove : MonoBehaviour
         yield return new WaitForSeconds(15);
         DeadEyeTutorial = false;
         cam.transform.position = CamPos + transform.position;
+        m_PlayerState = LSD.PlayerState.IDLE;
+    }
+
+    public void CharAllInit()
+    {
+        m_MoveJoyStickControl.PedInit();
+        m_ShotJoyStickControl.InitInputVector();
+        m_ShotJoyStickControl.InitTouch();
+        GunPoint.SetActive(false);
+        anim.Play("Idle");
         m_PlayerState = LSD.PlayerState.IDLE;
     }
 

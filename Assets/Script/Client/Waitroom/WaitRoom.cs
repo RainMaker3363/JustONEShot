@@ -627,8 +627,9 @@ public class WaitRoom : MonoBehaviour {
                     GPGSManager.GetInstance.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
                 }
                 GameInfoManager.GetInstance().SelectIndex = SelectIndex;
-               // Debug.Log("SaveIndex"+SelectIndex);
+                // Debug.Log("SaveIndex"+SelectIndex);
                 //선택한 캐릭터 저장
+                GameInfoManager.BeforeCharSelect = SelectIndex;
                 PlayerPrefs.SetInt("BeforeCharSelect", SelectIndex);
                 //GameInfoManager.GetInstance().SelectSkinIndex = 0; // 스킨인덱스 기본으로 변경
                 Vector3 Postion = Vector3.zero;

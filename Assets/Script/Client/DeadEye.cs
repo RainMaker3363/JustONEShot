@@ -118,7 +118,7 @@ public class DeadEye : MonoBehaviour {
         //}
         if (GameInfoManager.GetInstance().BackgroundSoundUse)
         {
-            if (SceneManager.GetActiveScene().name != "TutorialScene")
+            if (SceneManager.GetActiveScene().name != "TutorialScene"&& !CharMove.GameEnd)
                 GameObject.Find("BGM").GetComponent<AudioSource>().mute = false;
         }
         DeadEyeBulletEndCam.SetActive(false);
