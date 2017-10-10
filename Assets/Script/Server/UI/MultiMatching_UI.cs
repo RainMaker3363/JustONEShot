@@ -378,8 +378,6 @@ public class MultiMatching_UI : MonoBehaviour {
                             {
                                 MultiStartChecker = true;
 
-
-
                                 StartCoroutine(StartMultiGame());
                             }
                         }

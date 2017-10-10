@@ -187,6 +187,9 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                     OppenentCharNumber = GPGSManager.GetInstance.GetPVPOpponentCharNumber();
                     OpponentSkinNumber = GPGSManager.GetInstance.GetPVPOpponentCharSkinNumber();
 
+                    Debug.Log("PVP OppenentCharNumber : " + OppenentCharNumber);
+                    Debug.Log("PVP OpponentSKinNumber : " + OpponentSkinNumber);
+
                     OpponentBleedOutOn = false;
                     OpponentSkillOn = false;
 
@@ -211,6 +214,28 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
 
                     _SurvivalOpponentCharacterNumber = GPGSManager.GetInstance.GetSurvivalOpponentCharNumbers();
                     _SurvivalOpponentCharacterSkinNumber = GPGSManager.GetInstance.GetSurvivalOpponentCharSkinNumbers();
+
+                    Debug.Log("Survival OppenentCharNumberCount : " + _SurvivalOpponentCharacterNumber.Count);
+                    Debug.Log("Survival OpponentSKinNumberCount : " + _SurvivalOpponentCharacterSkinNumber.Count);
+
+                    IDictionaryEnumerator CharNumIter = _SurvivalOpponentCharacterNumber.GetEnumerator();
+                    IDictionaryEnumerator CharSkinNumIter = _SurvivalOpponentCharacterSkinNumber.GetEnumerator();
+
+                    while (CharNumIter.MoveNext())
+                    {
+                        if (_SurvivalOpponentCharacterNumber.ContainsKey(CharNumIter.Key.ToString()))
+                        {
+                            Debug.Log("Player ID : " + CharNumIter.Key + " OpponentCharNumber : " + CharNumIter.Value);
+                        }
+                    }
+
+                    while (CharSkinNumIter.MoveNext())
+                    {
+                        if (_SurvivalOpponentCharacterSkinNumber.ContainsKey(CharSkinNumIter.Key.ToString()))
+                        {
+                            Debug.Log("Player ID : " + CharSkinNumIter.Key + " OpponentSKinNumber : " + CharSkinNumIter.Value);
+                        }
+                    }
 
                     //if (_SurvivalOpponentWeaponNumber == null)
                     //{

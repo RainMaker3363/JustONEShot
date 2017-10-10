@@ -310,14 +310,21 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
             }
         }
 
-        if(PlayerCount >= GPGSManager.GetInstance.GetAllPlayers().Count)
+        if(PlayerCount >= GPGSManager.GetInstance.GetAllPlayers().Count &&
+            GPGSManager.GetInstance.GetAllPlayers().Count >= 2)
         {
             DeadEyeBulletSeedChecker = true;
 
-            if (DeadEyeBulletSeedChecker == true)
+
+            if (LogCheckTimer >= 3.0f)
             {
-                Debug.Log("DeadEye SeedChecker Complete!");
+
+                if (DeadEyeBulletSeedChecker == true)
+                {
+                    Debug.Log("DeadEye SeedChecker Complete!");
+                }
             }
+
         }
 
         if (LogCheckTimer >= 3.0f)
@@ -343,14 +350,20 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
             }
         }
 
-        if (PlayerCount >= (GPGSManager.GetInstance.GetAllPlayers().Count))
+        if (PlayerCount >= (GPGSManager.GetInstance.GetAllPlayers().Count) &&
+            GPGSManager.GetInstance.GetAllPlayers().Count >= 2)
         {
             SelectedMapSeedChecker = true;
 
-            if (SelectedMapSeedChecker == true)
+            if (LogCheckTimer >= 3.0f)
             {
-                Debug.Log("Map SeedChecker Complete!");
+
+                if (SelectedMapSeedChecker == true)
+                {
+                    Debug.Log("Map SeedChecker Complete!");
+                }
             }
+
 
 
         }
@@ -380,14 +393,20 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
             }
         }
 
-        if (PlayerCount >= (GPGSManager.GetInstance.GetAllPlayers().Count))
+        if (PlayerCount >= (GPGSManager.GetInstance.GetAllPlayers().Count) &&
+            GPGSManager.GetInstance.GetAllPlayers().Count >= 2)
         {
             ConfirmChecker = true;
 
-            if (ConfirmChecker == true)
+            if (LogCheckTimer >= 3.0f)
             {
-                Debug.Log("MapConfirm SeedChecker Complete!");
+
+                if (ConfirmChecker == true)
+                {
+                    Debug.Log("MapConfirm SeedChecker Complete!");
+                }
             }
+
 
 
         }
@@ -418,14 +437,20 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
             }
         }
 
-        if (PlayerCount >= (GPGSManager.GetInstance.GetAllPlayers().Count))
+        if (PlayerCount >= (GPGSManager.GetInstance.GetAllPlayers().Count) &&
+            GPGSManager.GetInstance.GetAllPlayers().Count >= 2)
         {
             ConfirmChecker = true;
 
-            if (ConfirmChecker == true)
+            if (LogCheckTimer >= 3.0f)
             {
-                Debug.Log("DeadEyeConfirm SeedChecker Complete!");
+
+                if (ConfirmChecker == true)
+                {
+                    Debug.Log("DeadEyeConfirm SeedChecker Complete!");
+                }
             }
+
         }
 
         if (LogCheckTimer >= 3.0f)

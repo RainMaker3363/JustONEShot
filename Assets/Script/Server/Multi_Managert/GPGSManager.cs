@@ -994,8 +994,6 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
         return My_Character_SkinNumber;
     }
 
-
-
     // 현재 멀티게임 모드의 상태를 반환해준다.
     public HY.MultiGameModeState GetMultiGameModeState()
     { 
