@@ -384,8 +384,8 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             _PlayerSkillMesageLength = 4;
             // Byte + Byte + Byte + 1 Boolean
             _PlayerStateMesageLength = 4;
-            // Byte + Byte + 1 Interger
-            _PlayerSkinStateMessageLength = 6;
+            // Byte + Byte + Byte + 1 Interger
+            _PlayerSkinStateMessageLength = 7;
 
             // Byte + Byte + 1 Interger
             _SurvivalRankedMessageLength = 6;
@@ -2315,37 +2315,39 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
                             {
                                 int SkinStateNumber = System.BitConverter.ToInt32(data, 3);
 
-                                if(LBListener != null)
+                                switch (NowMultiGameMode)
                                 {
-                                    switch (NowMultiGameMode)
-                                    {
-                                        case HY.MultiGameModeState.PVP:
-                                            {
+                                    case HY.MultiGameModeState.PVP:
+                                        {
 
-                                                Debug.Log("SkinState Number : " + SkinStateNumber);
+                                            Debug.Log("SkinState Number : " + SkinStateNumber);
 
-                                                PVP_OpponentCharSKinNumber = SkinStateNumber;
-                                                //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
-                                            }
-                                            break;
+                                            PVP_OpponentCharSKinNumber = SkinStateNumber;
+                                            PlayerCharacters_Skin_Number[senderId] = SkinStateNumber;
+                                            //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
+                                        }
+                                        break;
 
-                                        case HY.MultiGameModeState.SURVIVAL:
-                                            {
-                                                OppoenetCharSkinNumbers[senderId] = SkinStateNumber;
-                                                PlayerCharacters_Skin_Number[senderId] = SkinStateNumber;
-                                                Debug.Log("Survival Char ID : " + senderId);
-                                                Debug.Log("Survival Char Skin Number : " + OppoenetCharSkinNumbers[senderId]);
-                                                //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
-                                            }
-                                            break;
+                                    case HY.MultiGameModeState.SURVIVAL:
+                                        {
+                                            OppoenetCharSkinNumbers[senderId] = SkinStateNumber;
+                                            PlayerCharacters_Skin_Number[senderId] = SkinStateNumber;
+                                            Debug.Log("Survival Char ID : " + senderId);
+                                            Debug.Log("Survival Char Skin Number : " + OppoenetCharSkinNumbers[senderId]);
+                                            //LBListener.OpponentCharacterNumberReceive(senderId, CharacterNumber);
+                                        }
+                                        break;
 
-                                        default:
-                                            {
-                                                PVP_OpponentCharSKinNumber = SkinStateNumber;
-                                            }
-                                            break;
-                                    }
+                                    default:
+                                        {
+                                            PVP_OpponentCharSKinNumber = SkinStateNumber;
+                                            PlayerCharacters_Skin_Number[senderId] = SkinStateNumber;
+                                        }
+                                        break;
+                                }
 
+                                if (LBListener != null)
+                                {
                                     LBListener.OpponentCharacterSkinNumberReceive(senderId, SkinStateNumber);
                                 }
                             }
