@@ -307,7 +307,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
         if(MultiTimeLogChecker <= 0)
         {
-            MultiTimeLogChecker = 3.0f;
+            MultiTimeLogChecker = 1.5f;
         }
         else
         {
@@ -388,6 +388,16 @@ public class MultiMatching_UI : MonoBehaviour {
                                 if (MultiTimeLogChecker <= 0)
                                 {
                                     Debug.Log("PVP Mode OpponentCharNumber Check isn't Complete");
+                                    TitleManager.SendCharacterNumber(GPGSManager.GetInstance.GetMyCharacterNumber());
+                                }
+                            }
+
+                            if(TitleManager.GetOpponentCharSkinNumber() != 100)
+                            {
+                                if (MultiTimeLogChecker <= 0)
+                                {
+                                    Debug.Log("PVP Mode OpponentSkinNumber Check isn't Complete");
+                                    TitleManager.SendCharacterSkinNumber(GPGSManager.GetInstance.GetMyCharacterNumber());
                                 }
                             }
 
@@ -396,6 +406,7 @@ public class MultiMatching_UI : MonoBehaviour {
                                 if (MultiTimeLogChecker <= 0)
                                 {
                                     Debug.Log("PVP Mode AllPlayerMapSeed Check isn't Complete");
+                                    TitleManager.SendSelectedMapSeed();
                                 }
                             }
 
@@ -404,6 +415,7 @@ public class MultiMatching_UI : MonoBehaviour {
                                 if (MultiTimeLogChecker <= 0)
                                 {
                                     Debug.Log("PVP Mode AllPlayerDeadEyeSeed Check isn't Complete");
+                                    TitleManager.SendPVPDeadEyeSeed();
                                 }
                             }
 
@@ -516,6 +528,7 @@ public class MultiMatching_UI : MonoBehaviour {
                                 if(MultiTimeLogChecker <= 0)
                                 {
                                     Debug.Log("Survival Mode OpponentCharNumber Check isn't Complete");
+                                    TitleManager.SendCharacterNumber(GPGSManager.GetInstance.GetMyCharacterNumber());
                                 }
                             }
 
@@ -524,6 +537,7 @@ public class MultiMatching_UI : MonoBehaviour {
                                 if (MultiTimeLogChecker <= 0)
                                 {
                                     Debug.Log("Survival Mode OpponentCharSkinNumber Check isn't Complete");
+                                    TitleManager.SendCharacterSkinNumber(GPGSManager.GetInstance.GetMyCharacterNumber());
                                 }
                             }
 
@@ -532,6 +546,7 @@ public class MultiMatching_UI : MonoBehaviour {
                                 if (MultiTimeLogChecker <= 0)
                                 {
                                     Debug.Log("Survival Mode AllPlayerMapSeedChecker Check isn't Complete");
+                                    TitleManager.SendSelectedMapSeed();
                                 }
                             }
 

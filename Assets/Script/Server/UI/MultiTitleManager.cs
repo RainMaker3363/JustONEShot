@@ -29,6 +29,9 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     private bool SelectedMapSeedChecker;
     private bool DeadEyeBulletSeedChecker;
 
+    private bool SelectedMapSeedBlock;
+    private bool DeadEyeMapSeedBlock;
+
     private Dictionary<string, int> __SurvivalOpponentCharNumbers;
     private IDictionaryEnumerator __SurvivalOpoonentCharNumbers_Iter;
 
@@ -59,6 +62,9 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
         SelectedMapSeedChecker = false;
         DeadEyeBulletSeedChecker = false;
+
+        SelectedMapSeedBlock = false;
+        DeadEyeMapSeedBlock = false;
 
 
         GPGSManager.GetInstance.InitializeGPGS(); // 초기화
@@ -202,7 +208,14 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     // 자기 자신의 데드아이 위치 시드 값을 보내준다.
     public void SendPVPDeadEyeSeed()
     {
-        PVPDeadEyeBulletSeed = Random.Range(0, 5);
+        if(DeadEyeMapSeedBlock == false)
+        {
+            DeadEyeMapSeedBlock = true;
+
+            PVPDeadEyeBulletSeed = Random.Range(0, 5);
+        }
+
+
 
         GPGSManager.GetInstance.SetMy_PVP_DeadEyeBullet_RandomSeeds(PVPDeadEyeBulletSeed);
         _AllPlayerPVPDeadEyeBulletSeeds[GPGSManager.GetInstance.GetMyParticipantId()] = PVPDeadEyeBulletSeed;
@@ -230,7 +243,13 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
     // 자기 자신의 맵(Map) 시드 값을 보내준다.
     public void SendSelectedMapSeed()
     {
-        SelectedMapSeed = Random.Range(0, 2);
+        if (SelectedMapSeedBlock == false)
+        {
+            SelectedMapSeedBlock = true;
+
+            SelectedMapSeed = Random.Range(0, 2);
+        }
+
 
         GPGSManager.GetInstance.SetMy_Map_Selected_RandomSeeds(SelectedMapSeed);
         _AllPlayerSelectedMapSeeds[GPGSManager.GetInstance.GetMyParticipantId()] = SelectedMapSeed;
@@ -744,6 +763,12 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         OpponentCharSkinNumber = 100;
         LogCheckTimer = 3.0f;
 
+        SelectedMapSeedChecker = false;
+        DeadEyeBulletSeedChecker = false;
+
+        DeadEyeMapSeedBlock = false;
+        SelectedMapSeedBlock = false;
+
 
         PVPDeadEyeBulletSeed = GPGSManager.GetInstance.GetPVPStartDeadEyeBulletEncount();
         PVPDeadEyeBulletSeedBackup = PVPDeadEyeBulletSeed;
@@ -864,6 +889,12 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
         OpponentCharNumber = 100;
         OpponentCharSkinNumber = 100;
         LogCheckTimer = 3.0f;
+
+        SelectedMapSeedChecker = false;
+        DeadEyeBulletSeedChecker = false;
+
+        DeadEyeMapSeedBlock = false;
+        SelectedMapSeedBlock = false;
 
 
         PVPDeadEyeBulletSeed = GPGSManager.GetInstance.GetPVPStartDeadEyeBulletEncount();
