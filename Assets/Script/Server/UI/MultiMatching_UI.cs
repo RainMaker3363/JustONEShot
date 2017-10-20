@@ -19,6 +19,10 @@ public class MultiMatching_UI : MonoBehaviour {
     // 매칭시 타임아웃을 체크한다.
     private float TimeOutChecker;
 
+    // 방 세팅을 준비하는 체크 타이머이다.
+    private float RoomSettingChecker;
+    private float RoomSwitchingChecker;
+
     // 로그를 체크한다
     private float MultiTimeLogChecker;
 
@@ -33,6 +37,11 @@ public class MultiMatching_UI : MonoBehaviour {
         // 매칭 시 타임아웃을 체크할 시간
         TimeOutChecker = 60.0f;
 
+        // 방을 세팅할때 까지 남은 시간
+        RoomSettingChecker = 3.0f;
+        RoomSwitchingChecker = 0.3f;
+
+        // 멀티 로그 체크 시간
         MultiTimeLogChecker = 3.0f;
 
         MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();//MultiTitleManager.NowMultiGameModeNumber;
@@ -366,7 +375,8 @@ public class MultiMatching_UI : MonoBehaviour {
                             TitleManager.SendPVPDeadEyeSeed();
                         }
 
-                        if (TitleManager.GetOpponentCharNumber() != 100 && 
+                        if (TitleManager.GetOpponentCharNumber() != 100 &&
+                            TitleManager.GetOpponentCharSkinNumber() != 100 &&
                             TitleManager.GetAllPlayerMapSeedChecker() &&
                             TitleManager.GetAllPlayerDeadEyeSeedChecker() &&
                             TitleManager.GetAllPlayerDeadEyeSeedConfirmChecker() &&
@@ -374,16 +384,37 @@ public class MultiMatching_UI : MonoBehaviour {
                         {
                             Matching_Text.text = "Join the PVP Session.";//\nCharNum : " + TitleManager.GetOpponentCharNumber();
 
-                            if (MultiStartChecker == false)
+                            if(RoomSwitchingChecker >= 0.0f)
                             {
-                                MultiStartChecker = true;
-
-                                StartCoroutine(StartMultiGame());
+                                RoomSwitchingChecker -= Time.deltaTime;
                             }
+                            else
+                            {
+                                RoomSwitchingChecker = 0.3f;
+
+                                // 맵, 데드아이 위치에 대한 난수값을 던진다.
+                                TitleManager.SendSelectedMapSeed();
+                                TitleManager.SendPVPDeadEyeSeed();
+                            }
+
+                            if(RoomSettingChecker <= 0.0f)
+                            {
+                                RoomSettingChecker -= Time.deltaTime;
+                            }
+                            else
+                            {
+                                if (MultiStartChecker == false)
+                                {
+                                    MultiStartChecker = true;
+
+                                    StartCoroutine(StartMultiGame());
+                                }
+                            }
+
                         }
                         else
                         {
-                            if(TitleManager.GetOpponentCharNumber() != 100)
+                            if(TitleManager.GetOpponentCharNumber() == 100)
                             {
                                 if (MultiTimeLogChecker <= 0)
                                 {
@@ -392,7 +423,7 @@ public class MultiMatching_UI : MonoBehaviour {
                                 }
                             }
 
-                            if(TitleManager.GetOpponentCharSkinNumber() != 100)
+                            if(TitleManager.GetOpponentCharSkinNumber() == 100)
                             {
                                 if (MultiTimeLogChecker <= 0)
                                 {
@@ -490,36 +521,58 @@ public class MultiMatching_UI : MonoBehaviour {
 
                             Matching_Text.text = "Join the Survival Session.";
 
-                            if (MultiStartChecker == false)
+                            if (RoomSwitchingChecker >= 0.0f)
                             {
-                                Debug.Log("SurvivalOpponentCharNumber : " + TitleManager.GetSurvivalOpoonentCharNumbers());
+                                RoomSwitchingChecker -= Time.deltaTime;
+                            }
+                            else
+                            {
+                                RoomSwitchingChecker = 0.3f;
 
-                                Dictionary<string, int> Diction = TitleManager.GetSurvivalOpponentCharNumber();
-                                IDictionaryEnumerator Iter = Diction.GetEnumerator();
+                                // 맵, 데드아이 위치에 대한 난수값을 던진다.
+                                TitleManager.SendSelectedMapSeed();
+                                TitleManager.SendPVPDeadEyeSeed();
+                            }
 
-                                int Counter = 0;
-
-                                while(Iter.MoveNext())
+                            if (RoomSettingChecker >= 0.0f)
+                            {
+                                RoomSettingChecker -= Time.deltaTime;
+                            }
+                            else
+                            {
+                                if (MultiStartChecker == false)
                                 {
-                                    if (Diction.ContainsKey(Iter.Key.ToString()))
+                                    Debug.Log("SurvivalOpponentCharNumber : " + TitleManager.GetSurvivalOpoonentCharNumbers());
+
+                                    Dictionary<string, int> Diction = TitleManager.GetSurvivalOpponentCharNumber();
+                                    IDictionaryEnumerator Iter = Diction.GetEnumerator();
+
+                                    int Counter = 0;
+
+                                    while (Iter.MoveNext())
                                     {
-                                        Debug.Log("Session Player[" + Counter + "] ID : " + Iter.Key + " Char : " + Iter.Value);
-                                        Counter++;
+                                        if (Diction.ContainsKey(Iter.Key.ToString()))
+                                        {
+                                            Debug.Log("Session Player[" + Counter + "] ID : " + Iter.Key + " Char : " + Iter.Value);
+                                            Counter++;
+                                        }
+
+
                                     }
 
-                                    
+
+                                    //for (int i = 0; i < GPGSManager.GetInstance.GetAllPlayers().Count; i++)
+                                    //{
+                                    //    Debug.Log("Session Player[" + i + "] Name : " GPGSManager.GetInstance.GetOtherNameGPGS(i) + " Char : ");
+                                    //}
+
+                                    MultiStartChecker = true;
+
+                                    StartCoroutine(StartMultiGame());
                                 }
-                                
-
-                                //for (int i = 0; i < GPGSManager.GetInstance.GetAllPlayers().Count; i++)
-                                //{
-                                //    Debug.Log("Session Player[" + i + "] Name : " GPGSManager.GetInstance.GetOtherNameGPGS(i) + " Char : ");
-                                //}
-
-                                MultiStartChecker = true;
-
-                                StartCoroutine(StartMultiGame());
                             }
+
+                           
                         }
                         else
                         {
