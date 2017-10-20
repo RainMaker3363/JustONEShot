@@ -53,7 +53,7 @@ public class Bullet : MonoBehaviour {
             {
                 Blood = false;
                 BloodEffectsManager.GetInstance().BloodEffectOn(col.gameObject);
-                StartCoroutine(col.gameObject.GetComponent<CharMove>().BleedingDamage());//출혈 데미지 적용
+                col.transform.parent.GetComponent<CharMove>().BleedingStart();//출혈 데미지 적용
             }
             // m_Distance = 0;
         }
@@ -82,7 +82,7 @@ public class Bullet : MonoBehaviour {
             {
                 Blood = false;
                 BloodEffectsManager.GetInstance().BloodEffectOn(col.gameObject);
-                StartCoroutine(col.transform.parent.GetComponent<Scarecrow>().BleedingDamage());//출혈 데미지 적용
+                col.transform.parent.GetComponent<Scarecrow>().BleedingStart();//출혈 데미지 적용
             }
             // m_Distance = 0;
         }

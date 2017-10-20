@@ -33,10 +33,11 @@ public class ZombieMove_Vomit : Zombie
 
     public SkinnedMeshRenderer shader;
 
-    //public AudioClip HitSound;
-    //public AudioClip AttackSound;
-    //public AudioClip DeadSound;
-    //public AudioClip IdleSound;
+    public AudioClip HitSound;
+    public AudioClip VomitSound;
+    public AudioClip DeadSound;
+    public AudioClip IdleSound;
+    public AudioClip BloodSound;
 
     AudioSource m_AudioSource;
 
@@ -85,7 +86,7 @@ public class ZombieMove_Vomit : Zombie
                 Z_State = ZombieState.WALK;
                 anim.SetTrigger("Walk");
                 NvAgent.Resume();
-                //m_AudioSource.PlayOneShot(IdleSound);
+                m_AudioSource.PlayOneShot(IdleSound);
             }
             else if (Distance <= 3.5f && AttackTime < Time.time)
             {
@@ -95,7 +96,7 @@ public class ZombieMove_Vomit : Zombie
                 anim.SetTrigger("Attack");
                 NvAgent.Stop();
                 MotionPlay = true;
-                //m_AudioSource.PlayOneShot(AttackSound);
+                m_AudioSource.PlayOneShot(VomitSound);
             }
             else if (Distance <= 3.5f && AttackTime > Time.time)
             {
@@ -180,13 +181,14 @@ public class ZombieMove_Vomit : Zombie
             Z_State = ZombieState.DEATH;
 
             anim.SetTrigger("Death");
-            // m_AudioSource.PlayOneShot(DeadSound);
+             m_AudioSource.PlayOneShot(DeadSound);
         }
         else
         {
             Z_State = ZombieState.DAMAGE;
             anim.SetTrigger("Damage");
-            // m_AudioSource.PlayOneShot(HitSound);
+             m_AudioSource.PlayOneShot(HitSound);
+            m_AudioSource.PlayOneShot(BloodSound);
         }
         StartCoroutine(ZombieDamageEffect());
         NvAgent.Stop();
@@ -261,7 +263,7 @@ public class ZombieMove_Vomit : Zombie
                 Z_State = ZombieState.DEATH;
 
                 anim.SetTrigger("Death");
-                //m_AudioSource.PlayOneShot(DeadSound);
+                m_AudioSource.PlayOneShot(DeadSound);
                 break;
             }
             yield return new WaitForSeconds(1);

@@ -223,6 +223,9 @@ public class CharMove : MonoBehaviour
 
     AudioSource m_AudioSource;
     public AudioClip CharHitSound;
+    public AudioClip CharGroan;
+    public AudioClip CharDieSound;
+    
 
 
     public SkinnedMeshRenderer Skin;
@@ -691,7 +694,7 @@ public class CharMove : MonoBehaviour
                 anim.SetBool("Shot", true);
                 anim.speed = 4;
                 if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
-                {
+                {                  
                     Mul_Manager.SendShootMessage(true);
                 }
                 m_PlayerState = LSD.PlayerState.SHOT_FIRE;
@@ -900,6 +903,7 @@ public class CharMove : MonoBehaviour
                 if (GameInfoManager.GetInstance().EffectSoundUse)
                 {
                     m_AudioSource.PlayOneShot(CharHitSound);
+                    m_AudioSource.PlayOneShot(CharGroan);                   
                 }
             }
 
@@ -958,6 +962,7 @@ public class CharMove : MonoBehaviour
         if (GameInfoManager.GetInstance().EffectSoundUse)
         {
             m_AudioSource.PlayOneShot(CharHitSound);
+            m_AudioSource.PlayOneShot(CharGroan);
         }
         Handheld.Vibrate();
     }
@@ -970,6 +975,11 @@ public class CharMove : MonoBehaviour
             m_PlayerState = LSD.PlayerState.DEAD;
             m_PlayerBeforeState = LSD.PlayerState.DEAD;
             anim.SetTrigger("Death");
+            if (GameInfoManager.GetInstance().EffectSoundUse)
+            {
+                m_AudioSource.PlayOneShot(CharDieSound);
+            }
+
             GameEnd = true;
             // Mul_Manager.SendAniStateMessage((int)m_PlayerState); //데미지부분에서도 보내줌
             if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
@@ -995,8 +1005,10 @@ public class CharMove : MonoBehaviour
             }
 
             Result.SetTrigger("Lose");
-            if(GameObject.Find("BGM"))
-                GameObject.Find("BGM").GetComponent<AudioSource>().mute = true;
+            if (GameObject.Find("BGM"))
+            {
+                GameObject.Find("BGM").GetComponent<AudioSource>().mute = true;                
+            }
 
             GameInfoManager.GetInstance().GameOver = true;
             // UI_GameOverText.GetComponent<Text>().text = "Defeat";
@@ -1338,6 +1350,12 @@ public class CharMove : MonoBehaviour
                 {
                     Mul_Manager.SendAniStateMessage((int)m_PlayerState);
                 }
+
+                while(Skill_Fastgun)
+                {
+                    Mul_Manager.SendAniStateMessage((int)m_PlayerState);
+                    yield return new WaitForSeconds(0.06f);
+                }
             }
         }
     }
@@ -1636,16 +1654,22 @@ public class CharMove : MonoBehaviour
         yield return null;
     }
 
+    public void BleedingStart()
+    {
+        StartCoroutine(BleedingDamage());
+    }
+
     public IEnumerator BleedingDamage()
     {
+        Debug.Log("BleedingDamage");
         if (GPGSManager.GetInstance.IsAuthenticated())
             Mul_Manager.SendPlayerBleedOutMessage(true);
         BloodEffectsManager.GetInstance().BloodEffectOn(gameObject);
-
+        Debug.Log("BleedingEffectOn");
         for (int i = 0; i < 5; i++)
         {
             CharStat.HP -= 4;
-
+            Debug.Log("BleedingDamage");
             HP_bar.fillAmount = (float)CharStat.HP / CharStat.MaxHP;
 
             if (!DeadCheck())

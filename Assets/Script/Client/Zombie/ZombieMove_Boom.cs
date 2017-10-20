@@ -31,10 +31,11 @@ public class ZombieMove_Boom : Zombie
 
     public SkinnedMeshRenderer shader;
     public GameObject BoomEffect;
-    //public AudioClip HitSound;
-    //public AudioClip AttackSound;
-    //public AudioClip DeadSound;
-    //public AudioClip IdleSound;
+    public AudioClip HitSound;
+    public AudioClip BoomSound;
+    public AudioClip DeadSound;
+    public AudioClip IdleSound;
+    public AudioClip BloodSound;
 
     AudioSource m_AudioSource;
 
@@ -83,7 +84,7 @@ public class ZombieMove_Boom : Zombie
                 Z_State = ZombieState.WALK;
                 anim.SetTrigger("Walk");
                 NvAgent.Resume();
-                //m_AudioSource.PlayOneShot(IdleSound);
+                m_AudioSource.PlayOneShot(IdleSound);
             }
             else if (Distance <= 3.5f && Distance > 2.5f)
             {
@@ -99,7 +100,7 @@ public class ZombieMove_Boom : Zombie
                 
                 //NvAgent.Stop();
                 //MotionPlay = true;
-                //m_AudioSource.PlayOneShot(AttackSound);
+                m_AudioSource.PlayOneShot(BoomSound);
             }
             else if (Distance <= 2.5f)
             {
@@ -210,13 +211,14 @@ public class ZombieMove_Boom : Zombie
             Z_State = ZombieState.DEATH;
             MotionPlay = true;
             anim.SetTrigger("Death");
-           // m_AudioSource.PlayOneShot(DeadSound);
+            m_AudioSource.PlayOneShot(DeadSound);
         }
         else
         {
             Z_State = ZombieState.DAMAGE;
             anim.SetTrigger("Damage");
-            //m_AudioSource.PlayOneShot(HitSound);
+            m_AudioSource.PlayOneShot(HitSound);
+            m_AudioSource.PlayOneShot(BloodSound);
         }
         StartCoroutine(ZombieDamageEffect());
         NvAgent.Stop();
@@ -299,7 +301,7 @@ public class ZombieMove_Boom : Zombie
                 Z_State = ZombieState.DEATH;
 
                 anim.SetTrigger("Death");
-                //m_AudioSource.PlayOneShot(DeadSound);
+                m_AudioSource.PlayOneShot(DeadSound);
                 break;
             }
             yield return new WaitForSeconds(1);

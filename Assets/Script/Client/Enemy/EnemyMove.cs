@@ -102,6 +102,8 @@ public class EnemyMove : MonoBehaviour {
 
     AudioSource m_AudioSource;
     public AudioClip CharHitSound;
+    public AudioClip CharGroan;
+    public AudioClip CharDieSound;
 
     public string EnemyID;
     public SkinnedMeshRenderer Skin;
@@ -184,13 +186,21 @@ public class EnemyMove : MonoBehaviour {
         m_PlayerPosBack = Vector3.zero;
 
         HP_BarPos = Vector3.up;
+#if UNITY_EDITOR    //유니티에디터에서 실행시킬경우 이쪽코드를 실행
+        ///스킨적용
+        string Path = "Client/InGamePrefab/Skin/0" + 0 + "/" + 1;
+        //Debug.Log(Path);
+        Material Mat = (Material)Resources.Load(Path, typeof(Material));
+        Skin.material = Mat;
 
+#else
         ///스킨적용
         string Path = "Client/InGamePrefab/Skin/0" + GPGSManager.GetInstance.GetPVPOpponentCharNumber().ToString() + "/" + GPGSManager.GetInstance.GetPVPOpponentCharSkinNumber().ToString();
         //Debug.Log(Path);
         Material Mat = (Material)Resources.Load(Path, typeof(Material));
         Skin.material = Mat;
 
+#endif
         ///////////////////////////////////////////////////////////////////////////////////////////////
         ///서버
         //////////////////////////////////////////////////////////////
@@ -445,7 +455,7 @@ public class EnemyMove : MonoBehaviour {
     /// <summary>
     /// //////////////////////////////////////////////////////////////////////////
     /// </summary>
-    #region Update_State
+#region Update_State
     void Update_IDLE()
     {
 
@@ -638,7 +648,7 @@ public class EnemyMove : MonoBehaviour {
         //}
     }
 
-    #endregion Update_State
+#endregion Update_State
 
     /// <summary>
     /// /////////////////////////////////////////////////////////////////////////////
@@ -671,6 +681,7 @@ public class EnemyMove : MonoBehaviour {
             if (GameInfoManager.GetInstance().EffectSoundUse)
             {
                 m_AudioSource.PlayOneShot(CharHitSound);
+                m_AudioSource.PlayOneShot(CharGroan);
             }
             m_PlayerState = LSD.PlayerState.DAMAGE;
         }
@@ -772,7 +783,11 @@ public class EnemyMove : MonoBehaviour {
         {
             HP = 0;
             m_PlayerState = LSD.PlayerState.DEAD;
-            anim.SetBool("Death", true);   
+            anim.SetBool("Death", true);
+            if (GameInfoManager.GetInstance().EffectSoundUse)
+            {
+                m_AudioSource.PlayOneShot(CharDieSound);
+            }
             return true;         
         }
         return false;
@@ -1218,6 +1233,12 @@ public class EnemyMove : MonoBehaviour {
         Debug.Log("EnemySkillEnd");
         yield return null;
     }
+
+    public void BleedingStart()
+    {
+        StartCoroutine(BleedingDamage());
+    }
+
     public IEnumerator BleedingDamage()
     {
         BloodEffectsManager.GetInstance().BloodEffectOn(gameObject);

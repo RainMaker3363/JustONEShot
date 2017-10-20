@@ -156,14 +156,42 @@ public class Scarecrow : MonoBehaviour
         }
         return false;
     }
+
+    public void BleedingStart()
+    {
+        StartCoroutine(BleedingDamage());
+    }
+
     public IEnumerator BleedingDamage()
     {
         BloodEffectsManager.GetInstance().BloodEffectOn(gameObject);
 
         //for (int i = 0; i < 5; i++)
         //{
+        Debug.Log("BleedingEffectOn");
+        int i = 0;
+        while(true)
+        {
+            HP -= 4;
+            
+            Hp_Bar.fillAmount = (float)HP / MaxHP;
+            Debug.Log("BleedingDamage");
+            if (!DeadCheck())
+            {
 
-        yield return new WaitForSeconds(5);
+            }
+
+
+            if (i < 5)
+            {
+                yield return new WaitForSeconds(1);
+                i++;
+            }
+            else
+            {
+                break;
+            }
+        }
         //}
         //if (GPGSManager.GetInstance.IsAuthenticated())
         //    Mul_Manager.SendPlayerBleedOutMessage(false);

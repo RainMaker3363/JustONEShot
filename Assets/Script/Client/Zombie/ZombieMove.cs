@@ -65,6 +65,7 @@ public class ZombieMove : Zombie
     public AudioClip AttackSound;
     public AudioClip DeadSound;
     public AudioClip IdleSound;
+    public AudioClip BloodSound;
 
     AudioSource m_AudioSource;
 
@@ -211,6 +212,7 @@ public class ZombieMove : Zombie
             Z_State = ZombieState.DAMAGE;
             anim.SetTrigger("Damage");          
             m_AudioSource.PlayOneShot(HitSound);
+            m_AudioSource.PlayOneShot(BloodSound);
         }
         StartCoroutine(ZombieDamageEffect());
         NvAgent.Stop();

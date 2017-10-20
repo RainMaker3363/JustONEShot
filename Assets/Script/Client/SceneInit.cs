@@ -64,7 +64,7 @@ public class SceneInit : MonoBehaviour {
             m_Enemy.transform.SetParent(GamePlayObj.transform);
         }
 
-        Char1.sprite = Poster[3];
+        Char1.sprite = Poster[GameInfoManager.GetInstance().SelectIndex];
         Char2.sprite = Poster[0];
 
 #else

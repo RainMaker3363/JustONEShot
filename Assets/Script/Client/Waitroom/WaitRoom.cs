@@ -310,6 +310,10 @@ public class WaitRoom : MonoBehaviour {
 
     public GameObject UI_Reward;
 
+    [SerializeField]
+    public AudioClip[] CharSelectSound;
+    AudioSource CharSoundAudio;
+
     void Awake()
     {
         QualitySettings.vSyncCount = 0;
@@ -348,6 +352,10 @@ public class WaitRoom : MonoBehaviour {
         {
             GPGSManager.GetInstance.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
             GPGSManager.GetInstance.SetMyCharacterSkinNumber(GameInfoManager.GetInstance().SelectSkinIndex);//GPGS캐릭터스킨 인덱스 설정
+        }
+        else
+        {
+            StartCoroutine(GameStartSendChar());
         }
 
         StopCoroutine(SendRoutine);
@@ -418,6 +426,8 @@ public class WaitRoom : MonoBehaviour {
         TicketText.text = GameInfoManager.PlayTicket.ToString();
         //PlayTicketRecovery = TicketTime();
         //StartCoroutine(PlayTicketRecovery);
+
+        CharSoundAudio = GetComponent<AudioSource>();
     }
 	
 	// Update is called once per frame
@@ -443,6 +453,7 @@ public class WaitRoom : MonoBehaviour {
                         yield return new WaitForSeconds(0.5f);
 
                         m_MultiTitleManager.SendCharacterNumber(SelectIndex);
+                        m_MultiTitleManager.SendCharacterSkinNumber(GameInfoManager.GetInstance().SelectSkinIndex);
                     }
                     else
                     {
@@ -665,6 +676,11 @@ public class WaitRoom : MonoBehaviour {
                 }
                 SelectPos.transform.localPosition = Postion;
 
+                if (GameInfoManager.GetInstance().EffectSoundUse)
+                {
+                    CharSoundAudio.PlayOneShot(CharSelectSound[Index]); //캐릭터 선택 사운드 출력
+                }
+
                 GameInfoManager.GetInstance().SelectSkinIndex = SkinIndex;
                 //스킨적용
                 Path = "Client/InGamePrefab/Skin/0" + Index.ToString() + "/" + SkinIndex.ToString();
@@ -803,6 +819,24 @@ public class WaitRoom : MonoBehaviour {
         yield return null;
     }
 
+    IEnumerator GameStartSendChar()
+    {
+        while(true)
+        {
+            if (GPGSManager.GetInstance.IsAuthenticated())
+            {
+                GPGSManager.GetInstance.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
+                GPGSManager.GetInstance.SetMyCharacterSkinNumber(GameInfoManager.GetInstance().SelectSkinIndex);//GPGS캐릭터스킨 인덱스 설정
+                break;
+            }
+            else
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
+            
+        }
+       
+    }
 
     public void OpenLeaderboard()
     {
