@@ -390,14 +390,14 @@ public class MultiMatching_UI : MonoBehaviour {
                             }
                             else
                             {
-                                RoomSwitchingChecker = 0.3f;
+                                RoomSwitchingChecker = 0.1f;
 
                                 // 맵, 데드아이 위치에 대한 난수값을 던진다.
                                 TitleManager.SendSelectedMapSeed();
                                 TitleManager.SendPVPDeadEyeSeed();
                             }
 
-                            if(RoomSettingChecker <= 0.0f)
+                            if(RoomSettingChecker >= 0.0f)
                             {
                                 RoomSettingChecker -= Time.deltaTime;
                             }
@@ -527,7 +527,7 @@ public class MultiMatching_UI : MonoBehaviour {
                             }
                             else
                             {
-                                RoomSwitchingChecker = 0.3f;
+                                RoomSwitchingChecker = 0.1f;
 
                                 // 맵, 데드아이 위치에 대한 난수값을 던진다.
                                 TitleManager.SendSelectedMapSeed();
