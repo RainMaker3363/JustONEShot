@@ -234,6 +234,7 @@ public class ZombieMove_Boom : Zombie
     {
         BoomEffect.SetActive(true);
         CamAnim.SetTrigger("Effect");
+        NvAgent.Stop();
     }
 
     IEnumerator ZombieMoveSystem(float MoveDealy)

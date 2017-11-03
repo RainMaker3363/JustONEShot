@@ -291,11 +291,14 @@ public class WaitRoom : MonoBehaviour {
     IEnumerator PlayTicketRecovery;
 
 
+    public GameObject UI_Custom;
     public GameObject UI_BuyChar;
     public GameObject UI_BuySkin;
     public GameObject UI_Skin;
+    public GameObject UI_BuyFail;
     public Image Buy_CharImage;
     public TMPro.TextMeshProUGUI Buy_Price_Text;
+    public TMPro.TextMeshProUGUI SkinBuy_Price_Text;
     int Buy_Price;
     int Buy_CharIndex;
     int Buy_SkinIndex;
@@ -351,7 +354,7 @@ public class WaitRoom : MonoBehaviour {
         if (GPGSManager.GetInstance.IsAuthenticated())
         {
             GPGSManager.GetInstance.SetMyCharacterNumber(SelectIndex);//GPGS캐릭터 인덱스 설정
-            GPGSManager.GetInstance.SetMyCharacterSkinNumber(GameInfoManager.GetInstance().SelectSkinIndex);//GPGS캐릭터스킨 인덱스 설정
+            GPGSManager.GetInstance.SetMyCharacterSkinNumber(GameInfoManager.Skin_Char[SelectIndex]);//GPGS캐릭터스킨 인덱스 설정
         }
         else
         {
@@ -536,6 +539,8 @@ public class WaitRoom : MonoBehaviour {
             Debug.Log("false");
             UI_Skin.SetActive(false);
             UI_BuySkin.SetActive(true);
+            UI_Custom.SetActive(false);
+
             Buy_SkinIndex = Index;
             switch (Index)
             {
@@ -567,7 +572,7 @@ public class WaitRoom : MonoBehaviour {
             //string Path = "Client/UI/WaitRoom/Color_Character_0" + (Index + 1);
             //Debug.Log(Path);
             //Buy_CharImage.sprite = (Sprite)Resources.Load(Path, typeof(Sprite));
-            Buy_Price_Text.text = Buy_Price.ToString();
+            SkinBuy_Price_Text.text = Buy_Price.ToString();
         }
     }
 
@@ -602,13 +607,16 @@ public class WaitRoom : MonoBehaviour {
         }
         else
         {
+            UI_BuyFail.SetActive(true);
             SelectSkin(BeforSkinIndex);
         }
+        UI_Custom.SetActive(true);
     }
 
     public void SkinBuyNot()
     {
         SelectSkin(BeforSkinIndex);
+        UI_Custom.SetActive(true);
     }
 
     void ChangeChar(int Index)  //대기실은 끊겨도되니 GC를 고려하지 않고 삭제후 생성합니다

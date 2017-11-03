@@ -196,7 +196,7 @@ public class EnemyMove : MonoBehaviour {
 #else
         ///스킨적용
         string Path = "Client/InGamePrefab/Skin/0" + GPGSManager.GetInstance.GetPVPOpponentCharNumber().ToString() + "/" + GPGSManager.GetInstance.GetPVPOpponentCharSkinNumber().ToString();
-        //Debug.Log(Path);
+        Debug.Log(Path);
         Material Mat = (Material)Resources.Load(Path, typeof(Material));
         Skin.material = Mat;
 
