@@ -159,6 +159,7 @@ public class SurvivalSceneInit : MonoBehaviour
                 m_Enemy[index].name = "EnemyCharacter" + index;
                 m_Enemy[index].transform.SetParent(GamePlayObj.transform);
                 m_Enemy[index].GetComponent<EnemyMove>().EnemyID = EnemyID;
+                m_Enemy[index].GetComponent<EnemyMove>().PlayerNumber = CharCode;
                 m_Enemy[index].GetComponent<EnemyMove>().CharSkinIndex = CharSkinCode;
             }
 
