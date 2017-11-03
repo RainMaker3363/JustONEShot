@@ -727,7 +727,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // 자기 자신의 ID에 대한 데드아이 난수값을 넣어준다.
     public void SetMy_PVP_DeadEyeBullet_RandomSeeds(int Seed = 0)
     {
-        if (Seed == 0)
+        if (Seed <= 0)
         {
             PVP_DeadEyeBullet_RandomSeeds[GetMyParticipantId()] = 0;
         }
@@ -745,7 +745,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     // 자기 자신의 대한 맵 난수값을 넣어준다.
     public void SetMy_Map_Selected_RandomSeeds(int Seed = 0)
     {
-        if(Seed == 0)
+        if(Seed <= 0)
         {
             MapSelected_RandomSeeds[GetMyParticipantId()] = 0;
         }
