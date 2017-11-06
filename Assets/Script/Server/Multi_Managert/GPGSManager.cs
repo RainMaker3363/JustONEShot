@@ -611,7 +611,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
             case HY.MultiGameModeState.SURVIVAL:
                 {
                     // 최소 수용 인원
-                    minimumOpponents = 3;
+                    minimumOpponents = 6;
                     // 최대 수용 인원
                     maximumOpponents = 5;
                     // 게임 모드

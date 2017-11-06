@@ -3013,7 +3013,8 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
                                                         MyCharacter.transform.rotation.eulerAngles.y);
 
                 //_nextBroadcastTime = Time.time + 0.16f;
-                _nextBroadcastTime = Time.time +  0.13f;
+                //_nextBroadcastTime = Time.time +  0.13f;
+                _nextBroadcastTime = Time.time + 0.05f;
             }
         }
 
