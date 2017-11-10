@@ -76,7 +76,7 @@ public class BulletRespawn : MonoBehaviour {
         //{
         //    E_CharPos = GamePlayObj.transform.Find("EnemyCharacter");
         //}
-        if (NowSceneName == "GameScene0" || NowSceneName == "SurvivalScene0" || NowSceneName == "ZombieScene")
+        if (NowSceneName == "GameScene0" || NowSceneName == "SurvivalScene0" || NowSceneName == "ZombieScene"|| NowSceneName == "GameScene2" || NowSceneName == "SurvivalScene2")
         {
             if (DeathZone.position.y + 0.5f > transform.position.y)
             {

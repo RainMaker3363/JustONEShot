@@ -40,6 +40,7 @@ public class GameInfoManager
 
     public static int BeforeCharSelect;
 
+
     int damage = 0;
 
     
@@ -317,6 +318,9 @@ public class WaitRoom : MonoBehaviour {
     public AudioClip[] CharSelectSound;
     AudioSource CharSoundAudio;
 
+    [SerializeField]
+    GameObject[] SkinButton;
+
     void Awake()
     {
         QualitySettings.vSyncCount = 0;
@@ -340,8 +344,8 @@ public class WaitRoom : MonoBehaviour {
         SelectChar.transform.position = CharPos.position;
         SelectChar.transform.rotation = CharPos.rotation;
         SelectChar.transform.SetParent(CharPos);
-        
-        
+        SkinButton[SelectIndex].SetActive(true);
+
         SendRoutine = SendCharacterRoutine();
 
         string Path = "Client/InGamePrefab/Skin/0" + SelectIndex + "/" + GameInfoManager.Skin_Char[SelectIndex].ToString();
@@ -497,18 +501,18 @@ public class WaitRoom : MonoBehaviour {
                     }
                 case 1:
                     {
-                        Buy_Price = 1002;
+                        Buy_Price = 5000;
                         break;
                     }
                 case 2:
                     {
-                        Buy_Price = 1003;
+                        Buy_Price = 2500;
                         Index++;
                         break;
                     }
                 case 3:
                     {
-                        Buy_Price = 1004;
+                        Buy_Price = 1000;
                         Index--;
                         break;
                     }
@@ -546,23 +550,23 @@ public class WaitRoom : MonoBehaviour {
             {
                 case 0:
                     {
-                        Buy_Price = 1000;
+                        Buy_Price = 3000;
                         break;
                     }
                 case 1:
                     {
-                        Buy_Price = 1002;
+                        Buy_Price = 3000;
                         break;
                     }
                 case 2:
                     {
-                        Buy_Price = 1003;
+                        Buy_Price = 3000;
                         //Index++;
                         break;
                     }
                 case 3:
                     {
-                        Buy_Price = 1004;
+                        Buy_Price = 3000;
                         //Index--;
                         break;
                     }
@@ -627,6 +631,8 @@ public class WaitRoom : MonoBehaviour {
             if (SelectIndex != Index)   //전에 선택한것과 다를경우
             {
                 WaitRoomChar[SelectIndex].SetActive(true);
+                SkinButton[SelectIndex].SetActive(false);
+
                 //스킨적용
                 string Path = "Client/InGamePrefab/Skin/0" + SelectIndex.ToString() + "/" + GameInfoManager.Skin_Char[SelectIndex].ToString();
                 Debug.Log("waitskin "+Path);
@@ -634,6 +640,7 @@ public class WaitRoom : MonoBehaviour {
                 WaitRoomChar[SelectIndex].GetComponent<WaitRoomSkin>().Skin.material = Mat;
                 
                 WaitRoomChar[Index].SetActive(false);
+                SkinButton[Index].SetActive(true);
 
                 SelectIndex = Index;    //선택한것으로 바꿈
                 Destroy(SelectChar);    //전에 있던 캐릭터는 파기
@@ -759,11 +766,19 @@ public class WaitRoom : MonoBehaviour {
         }
     }
 
-    public static void TicketUse()
+    public static bool TicketUse()
     {
-        GameInfoManager.PlayTicket--;
-        PlayerPrefs.SetInt("PlayTicket", GameInfoManager.PlayTicket);
-        Debug.Log(GameInfoManager.PlayTicket);
+        if(GameInfoManager.PlayTicket>0)
+        {
+            GameInfoManager.PlayTicket--;
+            PlayerPrefs.SetInt("PlayTicket", GameInfoManager.PlayTicket);
+            Debug.Log(GameInfoManager.PlayTicket);
+        }
+        else
+        {
+            return false;
+        }
+        
         //System.TimeSpan now = System.DateTime.Now - new System.DateTime(System.DateTime.Now.Year, 1, 1, 0, 0, 0);
         ////if (GameInfoManager.PlayTicket <10)
         ////{
@@ -771,6 +786,7 @@ public class WaitRoom : MonoBehaviour {
         //    PlayerPrefs.SetInt("StartTime", GameInfoManager.StartTime);
         //    //Debug.Log(now.Seconds);
         ////}
+        return true;
     }
 
     IEnumerator TicketTime()
@@ -851,56 +867,56 @@ public class WaitRoom : MonoBehaviour {
         GPGSManager.GetInstance.OpenLeaderboardUI();
     }
 
-//    public void OnButton_AD()
-//    {
-//        bool test = false;
-//#if UNITY_EDITOR    //유니티에디터에서 실행시킬경우 이쪽코드를 실행
-//        test = true;
-//#endif
+    public void OnButton_AD()
+    {
+        bool test = false;
+#if UNITY_EDITOR    //유니티에디터에서 실행시킬경우 이쪽코드를 실행
+        test = true;
+#endif
 
-//        if (GameInfoManager.PlayTicket < 1 || test)
-//        {
-//#if !UNITY_ADS // If the Ads service is not enabled...
-//            if (Advertisement.isSupported)
-//            { // If runtime platform is supported...
-//                Advertisement.Initialize(zoneId, true); // ...initialize.
-//            }
-//#endif
+        if (GameInfoManager.PlayTicket < 1 || test)
+        {
+#if !UNITY_ADS // If the Ads service is not enabled...
+            if (Advertisement.isSupported)
+            { // If runtime platform is supported...
+                Advertisement.Initialize(zoneId, true); // ...initialize.
+            }
+#endif
 
-//            // Wait until Unity Ads is initialized,
-//            //  and the default ad placement is ready.
-//            //while (!Advertisement.isInitialized || !Advertisement.IsReady())
-//            //{
-//            //   // yield return new WaitForSeconds(0.5f);
-//            //}
+            // Wait until Unity Ads is initialized,
+            //  and the default ad placement is ready.
+            //while (!Advertisement.isInitialized || !Advertisement.IsReady())
+            //{
+            //   // yield return new WaitForSeconds(0.5f);
+            //}
 
 
-//            if (string.IsNullOrEmpty(zoneId))
-//                zoneId = null;
+            if (string.IsNullOrEmpty(zoneId))
+                zoneId = null;
 
-//            ShowOptions options = new ShowOptions();
-//            options.resultCallback = HandleShowResult;
-//            Advertisement.Show(zoneId, options);
-//        }
+            ShowOptions options = new ShowOptions();
+            options.resultCallback = HandleShowResult;
+            Advertisement.Show(zoneId, options);
+        }
 
-//    }
+    }
 
-//    private void HandleShowResult(ShowResult result)
-//    {
-//        switch (result)
-//        {
-//            case ShowResult.Finished:
-//                Debug.Log("Video completed. User rewarded " + rewardQty + " credits.");
-//                UI_Reward.SetActive(true);
-//                break;
-//            case ShowResult.Skipped:
-//                Debug.LogWarning("Video was skipped.");
-//                break;
-//            case ShowResult.Failed:
-//                Debug.LogError("Video failed to show.");
-//                break;
-//        }
-//    }
+    private void HandleShowResult(ShowResult result)
+    {
+        switch (result)
+        {
+            case ShowResult.Finished:
+                Debug.Log("Video completed. User rewarded " + rewardQty + " credits.");
+                UI_Reward.SetActive(true);
+                break;
+            case ShowResult.Skipped:
+                Debug.LogWarning("Video was skipped.");
+                break;
+            case ShowResult.Failed:
+                Debug.LogError("Video failed to show.");
+                break;
+        }
+    }
 
     public void GetReward()
     {

@@ -36,7 +36,7 @@ public class ZombieMove_Vomit : Zombie
     public AudioClip HitSound;
     public AudioClip VomitSound;
     public AudioClip DeadSound;
-    public AudioClip IdleSound;
+    //public AudioClip IdleSound;
     public AudioClip BloodSound;
 
     AudioSource m_AudioSource;
@@ -86,7 +86,7 @@ public class ZombieMove_Vomit : Zombie
                 Z_State = ZombieState.WALK;
                 anim.SetTrigger("Walk");
                 NvAgent.Resume();
-                m_AudioSource.PlayOneShot(IdleSound);
+                //m_AudioSource.PlayOneShot(IdleSound);
             }
             else if (Distance <= 3.5f && AttackTime < Time.time)
             {
