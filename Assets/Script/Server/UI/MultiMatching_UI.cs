@@ -72,7 +72,7 @@ public class MultiMatching_UI : MonoBehaviour {
         }
 
 
-        Matching_Text.text = "Matching The Player...\nMode : " + MultiGameModeNumber.ToString();
+        Matching_Text.text = "MATCHING THE PLAYER...\nMODE : " + MultiGameModeNumber.ToString();
 
         Debug.Log("MultiGameModeNumber : " + MultiGameModeNumber);
 
@@ -198,7 +198,7 @@ public class MultiMatching_UI : MonoBehaviour {
             //TitleManager.SendPVPDeadEyeSeed();
         }
 
-        Matching_Text.text = "Matching The Player...\nMode : " + MultiGameModeNumber.ToString();
+        Matching_Text.text = "MATCHING THE PLAYER...\nMODE : " + MultiGameModeNumber.ToString();
 
         Debug.Log("MultiGameModeNumber : " + MultiGameModeNumber);
 
@@ -360,7 +360,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
                     if (GPGSManager.GetInstance.IsConnected() == true)
                     {
-                        Matching_Text.text = "PVP Room Connect...";//\nCharNum : " + TitleManager.GetOpponentCharNumber();
+                        Matching_Text.text = "PVP ROOM CONNECT...";//"PVP Room Connect...";//\nCharNum : " + TitleManager.GetOpponentCharNumber();
 
                         if (MultiLogChecker == false)
                         {
@@ -395,7 +395,7 @@ public class MultiMatching_UI : MonoBehaviour {
                             TitleManager.GetAllPlayerDeadEyeSeedConfirmChecker() &&
                             TitleManager.GetAllPlayerMapSeedConfirmChecker())
                         {
-                            Matching_Text.text = "Join the PVP Session.";//\nCharNum : " + TitleManager.GetOpponentCharNumber();
+                            Matching_Text.text = "JOIN THE PVP SESSION";//"Join the PVP Session.";//\nCharNum : " + TitleManager.GetOpponentCharNumber();
 
                             if(RoomSwitchingChecker >= 0.0f)
                             {
@@ -502,7 +502,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
                     if (GPGSManager.GetInstance.IsConnected() == true)
                     {
-                        Matching_Text.text = "Survival Room Connect...";
+                        Matching_Text.text = "SURVIVAL ROOM CONNECT..."; //"Survival Room Connect...";
                         
                         if(MultiLogChecker == false)
                         {
@@ -532,7 +532,7 @@ public class MultiMatching_UI : MonoBehaviour {
                         {
 
 
-                            Matching_Text.text = "Join the Survival Session.";
+                            Matching_Text.text = "JOIN THE SURVIVAL SESSION"; //"Join the Survival Session.";
 
                             if (RoomSwitchingChecker >= 0.0f)
                             {
