@@ -99,39 +99,42 @@ public class MultiTitleGameSurvivalButton : MonoBehaviour, IDragHandler, IPointe
     // 터치를 하고 있을 대 발생하는 함수
     public virtual void OnPointerDown(PointerEventData ped)
     {
-
-        if (GPGSManager.GetInstance.IsAuthenticated() == true)
+        if (WaitRoom.TicketUse() == true)
         {
-            //PVP_Matching_UI.SetActive(true);
-
-            //if (ButtonChecker == false)
-            //{
-            //    ButtonChecker = true;
-
-            //    GPGSManager.GetInstance.SignInAndStartMPGame();
-            //}
-
-            if (ButtonChecker == false)
+            if (GPGSManager.GetInstance.IsAuthenticated() == true)
             {
-                ButtonChecker = true;
+                //PVP_Matching_UI.SetActive(true);
+
+                //if (ButtonChecker == false)
+                //{
+                //    ButtonChecker = true;
+
+                //    GPGSManager.GetInstance.SignInAndStartMPGame();
+                //}
+
+                if (ButtonChecker == false)
+                {
+                    ButtonChecker = true;
 
 
-                Survival_Multi_Readey.SetActive(false);
-                Survival_Matching_UI.SetActive(true);
+                    Survival_Multi_Readey.SetActive(false);
+                    Survival_Matching_UI.SetActive(true);
 
-                // Survival 모드로 세팅해준다.
-                GPGSManager.GetInstance.SetMultiGameModeState(HY.MultiGameModeState.SURVIVAL);
+                    // Survival 모드로 세팅해준다.
+                    GPGSManager.GetInstance.SetMultiGameModeState(HY.MultiGameModeState.SURVIVAL);
 
-                Survival_Matching_UI.GetComponent<MultiMatching_UI>().StartMatchingRestart();
+                    Survival_Matching_UI.GetComponent<MultiMatching_UI>().StartMatchingRestart();
 
-                Debug.Log("You Selected Game Mode : " + GPGSManager.GetInstance.GetMultiGameModeState());
+                    Debug.Log("You Selected Game Mode : " + GPGSManager.GetInstance.GetMultiGameModeState());
 
+                }
+
+
+
+                //AutoFade.LoadLevel("TestMultiScene", 0.2f, 0.2f, Color.black);
             }
-
-
-
-            //AutoFade.LoadLevel("TestMultiScene", 0.2f, 0.2f, Color.black);
         }
+       
 
 
     }

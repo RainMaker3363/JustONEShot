@@ -230,7 +230,7 @@ public class MultiMatching_UI : MonoBehaviour {
     IEnumerator StartMultiGame()
     {
         //티켓사용
-        WaitRoom.TicketUse();
+        //WaitRoom.TicketUse();
 
         yield return new WaitForSeconds(0.2f);
 
@@ -324,6 +324,7 @@ public class MultiMatching_UI : MonoBehaviour {
 
 
         //MultiGameModeNumber = MultiTitleManager.NowMultiGameModeNumber;
+
         MultiGameModeNumber = GPGSManager.GetInstance.GetMultiGameModeState();
 
         if(MultiTimeLogChecker <= 0)

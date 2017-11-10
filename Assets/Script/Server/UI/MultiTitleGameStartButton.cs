@@ -100,40 +100,43 @@ public class MultiTitleGameStartButton : MonoBehaviour, IDragHandler, IPointerUp
     // 터치를 하고 있을 대 발생하는 함수
     public virtual void OnPointerDown(PointerEventData ped)
     {
-
-        if (GPGSManager.GetInstance.IsAuthenticated() == true)
+        if (WaitRoom.TicketUse() == true)
         {
-            //PVP_Matching_UI.SetActive(true);
-
-            //if (ButtonChecker == false)
-            //{
-            //    ButtonChecker = true;
-
-            //    GPGSManager.GetInstance.SignInAndStartMPGame();
-            //}
-
-            if (ButtonChecker == false)
+            if (GPGSManager.GetInstance.IsAuthenticated() == true)
             {
-                ButtonChecker = true;
+                //PVP_Matching_UI.SetActive(true);
 
-                PVP_Multi_Readey.SetActive(false);
-                PVP_Matching_UI.SetActive(true);
+                //if (ButtonChecker == false)
+                //{
+                //    ButtonChecker = true;
 
-                // PVP 모드로 세팅해준다.
-                //GPGSManager.GetInstance.SetMultiGameModeState(1);
-                GPGSManager.GetInstance.SetMultiGameModeState(HY.MultiGameModeState.PVP);
-                
-                PVP_Matching_UI.GetComponent<MultiMatching_UI>().StartMatchingRestart();
+                //    GPGSManager.GetInstance.SignInAndStartMPGame();
+                //}
 
-                Debug.Log("You Selected Game Mode : " + GPGSManager.GetInstance.GetMultiGameModeState());
+                if (ButtonChecker == false)
+                {
+                    ButtonChecker = true;
+
+                    PVP_Multi_Readey.SetActive(false);
+                    PVP_Matching_UI.SetActive(true);
+
+                    // PVP 모드로 세팅해준다.
+                    //GPGSManager.GetInstance.SetMultiGameModeState(1);
+                    GPGSManager.GetInstance.SetMultiGameModeState(HY.MultiGameModeState.PVP);
+
+                    PVP_Matching_UI.GetComponent<MultiMatching_UI>().StartMatchingRestart();
+
+                    Debug.Log("You Selected Game Mode : " + GPGSManager.GetInstance.GetMultiGameModeState());
 
 
+                }
+
+
+
+                //AutoFade.LoadLevel("TestMultiScene", 0.2f, 0.2f, Color.black);
             }
-
-
-
-            //AutoFade.LoadLevel("TestMultiScene", 0.2f, 0.2f, Color.black);
         }
+      
 
 
     }
