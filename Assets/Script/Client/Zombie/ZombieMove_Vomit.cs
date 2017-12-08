@@ -39,7 +39,7 @@ public class ZombieMove_Vomit : Zombie
     //public AudioClip IdleSound;
     public AudioClip BloodSound;
 
-    AudioSource m_AudioSource;
+    public AudioSource m_AudioSource;
 
     public GameObject VomitEffect;
 
@@ -61,7 +61,7 @@ public class ZombieMove_Vomit : Zombie
         AttackDealy = 5;
         
 
-        m_AudioSource = gameObject.GetComponentInParent<AudioSource>();
+        //m_AudioSource = gameObject.GetComponentInParent<AudioSource>();
     }
 
     // Update is called once per frame

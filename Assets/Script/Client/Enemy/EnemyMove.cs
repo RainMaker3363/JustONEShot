@@ -121,7 +121,7 @@ public class EnemyMove : MonoBehaviour {
 
     // 적의 정보를 보간시켜주기 위해 필요한 정보들..
     private float _lastUpdateTime;
-    private float _timePerUpdate =  0.13f;
+    private float _timePerUpdate =  0.06f;
     private float pctDone;
 
     // 메시지 순서를 알아낼 변수
@@ -213,7 +213,7 @@ public class EnemyMove : MonoBehaviour {
         _lastMessageNum = 0;
 
         // 0.16초마다 적의 위치를 갱신시켜 준다.
-        _timePerUpdate = 0.16f;
+        _timePerUpdate = 0.06f;
 
         // 초기 위치값 갱신
         _startPos = this.transform.position;

@@ -558,6 +558,7 @@ public class Gun : MonoBehaviour
     }
     void CharInvincibilityEnd()
     {
+        Debug.Log("InvincibilityEnd");
         CharMove.Invincibility = false;
     }
     void CharRollEffectOn()

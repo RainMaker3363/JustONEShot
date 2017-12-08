@@ -291,12 +291,13 @@ public class WaitRoom : MonoBehaviour {
 
     IEnumerator PlayTicketRecovery;
 
-
+    public static GameObject UI_GameStart_Fail;
     public GameObject UI_Custom;
     public GameObject UI_BuyChar;
     public GameObject UI_BuySkin;
-    public GameObject UI_Skin;
+   // public GameObject UI_Skin;
     public GameObject UI_BuyFail;
+    public GameObject UI_BuyFail_Char;
     public Image Buy_CharImage;
     public TMPro.TextMeshProUGUI Buy_Price_Text;
     public TMPro.TextMeshProUGUI SkinBuy_Price_Text;
@@ -435,6 +436,8 @@ public class WaitRoom : MonoBehaviour {
         //StartCoroutine(PlayTicketRecovery);
 
         CharSoundAudio = GetComponent<AudioSource>();
+
+        UI_GameStart_Fail = GameObject.Find("SubCanvas").transform.FindChild("GameStart_Fail").gameObject;
     }
 	
 	// Update is called once per frame
@@ -443,8 +446,10 @@ public class WaitRoom : MonoBehaviour {
 	}
     void OnZombieButton()
     {
-        TicketUse();
-        UnityEngine.SceneManagement.SceneManager.LoadScene("ZombieScene");
+        if (TicketUse())
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("ZombieScene");
+        }
     }
 
     IEnumerator SendCharacterRoutine()
@@ -497,22 +502,26 @@ public class WaitRoom : MonoBehaviour {
                 case 0:
                     {
                         Buy_Price = 1000;
+                        Buy_Price_Text.text = Buy_Price.ToString() + " BUY";
                         break;
                     }
                 case 1:
                     {
                         Buy_Price = 5000;
+                        Buy_Price_Text.text = Buy_Price.ToString() + " BUY\n OR\n ZOMBIE LIMITED HARD MODE";
                         break;
                     }
                 case 2:
                     {
                         Buy_Price = 2500;
+                        Buy_Price_Text.text = Buy_Price.ToString() + " BUY\n OR\n ZOMBIE LIMITED EASY MODE";
                         Index++;
                         break;
                     }
                 case 3:
                     {
                         Buy_Price = 1000;
+                        Buy_Price_Text.text = Buy_Price.ToString() + " BUY\n OR\n ZOMBIE LIMITED NOMAL MODE";
                         Index--;
                         break;
                     }
@@ -522,7 +531,7 @@ public class WaitRoom : MonoBehaviour {
             string Path = "Client/UI/WaitRoom/Color_Character_0" + (Index+1);
             Debug.Log(Path);
             Buy_CharImage.sprite = (Sprite)Resources.Load(Path, typeof(Sprite));
-            Buy_Price_Text.text = Buy_Price.ToString();
+            
         }
     }
     public void SkinLockCheck(int Index)
@@ -541,7 +550,7 @@ public class WaitRoom : MonoBehaviour {
         else //잠김 구매창 표시
         {
             Debug.Log("false");
-            UI_Skin.SetActive(false);
+            //UI_Skin.SetActive(false);
             UI_BuySkin.SetActive(true);
             UI_Custom.SetActive(false);
 
@@ -593,6 +602,10 @@ public class WaitRoom : MonoBehaviour {
             GameInfoManager.LockCode[Buy_CharIndex] += 1;   //00000001
             PlayerPrefs.SetString("LockCode" + Buy_CharIndex.ToString(), System.Convert.ToString(GameInfoManager.LockCode[Buy_CharIndex], 2));
 
+        }
+        else
+        {
+            UI_BuyFail_Char.SetActive(true);
         }
     }
 
@@ -776,6 +789,7 @@ public class WaitRoom : MonoBehaviour {
         }
         else
         {
+            UI_GameStart_Fail.SetActive(true);
             return false;
         }
         
@@ -920,7 +934,7 @@ public class WaitRoom : MonoBehaviour {
 
     public void GetReward()
     {
-        GameInfoManager.PlayTicket = 10;
+        GameInfoManager.PlayTicket = 3;
         TicketText.text = GameInfoManager.PlayTicket.ToString();
     }
 

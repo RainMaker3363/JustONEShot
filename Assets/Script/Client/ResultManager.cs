@@ -10,9 +10,11 @@ public class ResultManager : MonoBehaviour {
     TMPro.TextMeshProUGUI UI_Coin;
     TMPro.TextMeshProUGUI UI_Score;
 
-    int PlayTime;
+    int PlayTime = 0;
 
     LSD.GameMode m_GameMode;
+
+    public GameObject ZombieSound;
 
     // Use this for initialization
     void Start () {
@@ -30,12 +32,22 @@ public class ResultManager : MonoBehaviour {
                     m_GameMode = LSD.GameMode.PVP;
                     break;
                 }
+            case "GameScene2":
+                {
+                    m_GameMode = LSD.GameMode.PVP;
+                    break;
+                }
             case "SurvivalScene0":
                 {
                     m_GameMode = LSD.GameMode.Survivel;
                     break;
                 }
             case "SurvivalScene1":
+                {
+                    m_GameMode = LSD.GameMode.Survivel;
+                    break;
+                }
+            case "SurvivalScene2":
                 {
                     m_GameMode = LSD.GameMode.Survivel;
                     break;
@@ -60,6 +72,7 @@ public class ResultManager : MonoBehaviour {
         UI_Coin = GamePlayObj.transform.Find("UI_GameOver/Image/Coin Text/Coin Text pro").GetComponent<TMPro.TextMeshProUGUI>();
         UI_Score = GamePlayObj.transform.Find("UI_GameOver/Image/Prize Text/PrizeText pro").GetComponent<TMPro.TextMeshProUGUI>();
         StartCoroutine(PlayTimeCheck());
+        PlayTime = 0;
     }
 	
 	// Update is called once per frame
@@ -119,18 +132,21 @@ public class ResultManager : MonoBehaviour {
                     }
                 case LSD.GameMode.Zombie:
                     {
+                        if(ZombieSound != null)
+                            ZombieSound.SetActive(false);
+
                         if (CharMove.CharStat.HP > 0)   //클리어했을때
                         {
                             int Gold = 0;
-                            int Mask = 1; // 00000001
+                            //int Mask = 1; // 00000001
                             int CharIndex = 0;
-                            int select = 0;
+                            int select = 1; //보상 캐릭터가 열려있는지 체크
                             switch (GameInfoManager.GetInstance().ZombieLevel)
                             {
                                 case 0:
                                     {
                                         Gold = 250;
-                                        select = Mask << 2;
+                                        //select = Mask << 2;
                                         // GameInfoManager.CharLock += select;
                                         CharIndex = 2;
                                         break;
@@ -138,14 +154,14 @@ public class ResultManager : MonoBehaviour {
                                 case 1:
                                     {
                                         Gold = 500;
-                                        select = Mask << 3;
+                                        //select = Mask << 3;
                                         CharIndex = 3;
                                         break;
                                     }
                                 case 2:
                                     {
                                         Gold = 1000;
-                                        select = Mask << 1;
+                                        //select = Mask << 1;
                                         CharIndex = 1;
                                         break;
                                     }

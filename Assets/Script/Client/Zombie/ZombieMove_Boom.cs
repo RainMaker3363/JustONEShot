@@ -36,8 +36,8 @@ public class ZombieMove_Boom : Zombie
     public AudioClip DeadSound;
     //public AudioClip IdleSound;
     public AudioClip BloodSound;
-
-    AudioSource m_AudioSource;
+    
+    public AudioSource m_AudioSource;
 
     public GameObject MiniMapPoint;
 
@@ -57,7 +57,7 @@ public class ZombieMove_Boom : Zombie
 
        
 
-        m_AudioSource = gameObject.GetComponentInParent<AudioSource>();
+        //m_AudioSource = gameObject.GetComponentInParent<AudioSource>();
 
         CamAnim = GameObject.Find("CameraPos").GetComponent<Animator>();
     }
@@ -100,7 +100,7 @@ public class ZombieMove_Boom : Zombie
                 
                 //NvAgent.Stop();
                 //MotionPlay = true;
-                m_AudioSource.PlayOneShot(BoomSound);
+               // m_AudioSource.PlayOneShot(BoomSound);
             }
             else if (Distance <= 2.5f)
             {
@@ -233,6 +233,7 @@ public class ZombieMove_Boom : Zombie
     public void BoomEffectOn()
     {
         BoomEffect.SetActive(true);
+        m_AudioSource.PlayOneShot(BoomSound);
         CamAnim.SetTrigger("Effect");
         NvAgent.Stop();
     }

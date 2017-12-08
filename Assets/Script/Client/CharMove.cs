@@ -235,6 +235,9 @@ public class CharMove : MonoBehaviour
     bool DeadEyeTutorial = false;
 
     GameObject Button_Roll;
+
+    [SerializeField]
+    int testHP;
     //void OnEnable()
     //{
 
@@ -336,8 +339,9 @@ public class CharMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        testHP = CharStat.HP;
 #if UNITY_EDITOR
-        if(Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K))
         {
             Damaged(10000, Vector2.zero);
         }
@@ -856,14 +860,14 @@ public class CharMove : MonoBehaviour
 
     public void OnRollButton()
     {
-        if (m_PlayerState != LSD.PlayerState.SHOT_FIRE && m_PlayerState != LSD.PlayerState.ROLL && !m_Exhausted)
+        if (m_PlayerState != LSD.PlayerState.SHOT_FIRE && m_PlayerState != LSD.PlayerState.ROLL && !m_Exhausted && m_PlayerState != LSD.PlayerState.DAMAGE)
         {
             if (CharStat.Stamina > 400 || Skill_Hide)
             {
-                if (m_PlayerState == LSD.PlayerState.DAMAGE)
-                {
-                    anim.SetBool("Damaged", false);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌 중간에 캔슬된경우 여기서 바꿔줌
-                }
+                //if (m_PlayerState == LSD.PlayerState.DAMAGE)
+                //{
+                //    anim.SetBool("Damaged", false);  //gun 에 있는 함수가 매카님에서 false로 바꿔줌 중간에 캔슬된경우 여기서 바꿔줌
+                //}
 
                 if (!Skill_Hide)
                     CharStat.Stamina -= 400;
@@ -882,6 +886,7 @@ public class CharMove : MonoBehaviour
 
     public void Damaged(int Damage, Vector3 vec) //데미지 모션, 매개변수로 데미지와 방향벡터를 가져옴
     {
+        Debug.Log("Invincibility  " + Invincibility);
         if (!Invincibility)
         {
             Vector3 DamageVec = -vec; //forword를 가져오므로 반대방향을볼수있게 -를 붙임
@@ -1093,7 +1098,7 @@ public class CharMove : MonoBehaviour
 
     void DeathZoneCheck()
     {
-        if (NowSceneName == "GameScene0" || NowSceneName == "SurvivalScene0" || NowSceneName == "ZombieScene")
+        if (NowSceneName == "GameScene0" || NowSceneName == "SurvivalScene0" || NowSceneName == "ZombieScene"|| NowSceneName == "GameScene2" || NowSceneName == "SurvivalScene2")
         {
             if (DeathZone.position.y + 0.02 >= transform.position.y)
             {
@@ -1132,7 +1137,7 @@ public class CharMove : MonoBehaviour
         {
             CharStat.HP = CharStat.MaxHP;
         }
-        HP_bar.fillAmount = (float)CharStat.HP / 100;
+        HP_bar.fillAmount = (float)CharStat.HP / CharStat.MaxHP;
     }
 
     //public void DeadEyeUIOn()
@@ -1343,7 +1348,7 @@ public class CharMove : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(0.13f);
+            yield return new WaitForSeconds(0.06f);
             if (GPGSManager.GetInstance.IsAuthenticated() && Mul_Manager != null)
             {
                 if (Mul_Manager == true)
@@ -1351,11 +1356,11 @@ public class CharMove : MonoBehaviour
                     Mul_Manager.SendAniStateMessage((int)m_PlayerState);
                 }
 
-                while(Skill_Fastgun)
-                {
-                    Mul_Manager.SendAniStateMessage((int)m_PlayerState);
-                    yield return new WaitForSeconds(0.06f);
-                }
+                //while(Skill_Fastgun)
+                //{
+                //    Mul_Manager.SendAniStateMessage((int)m_PlayerState);
+                //    yield return new WaitForSeconds(0.06f);
+                //}
             }
         }
     }

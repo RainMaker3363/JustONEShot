@@ -63,6 +63,7 @@ public class ZombieCreateManager : MonoBehaviour
     public GameObject LevelUP_UI;
     public GameObject Main_UI;
     public GameObject Skill_UI;
+    public GameObject Roll_UI;
 
     GameObject Player;
 
@@ -163,7 +164,7 @@ public class ZombieCreateManager : MonoBehaviour
     {
         m_AudioSource.PlayOneShot(SelectSound);
         CharMove.m_UseGun.MaxBullet_Hand++;
-        if (CharMove.m_UseGun.MaxBullet_Hand >= 20f)    //max로 찍었으면 추후찍지못하게 합니다
+        if (CharMove.m_UseGun.MaxBullet_Hand >= 90f)    //max로 찍었으면 추후찍지못하게 합니다
         {
             LevelUP_UI.transform.Find("BulletMax_Button").Find("BackWhite").gameObject.SetActive(false);
             LevelUP_UI.transform.Find("BulletMax_Button").Find("state").gameObject.SetActive(false);
@@ -640,6 +641,7 @@ public class ZombieCreateManager : MonoBehaviour
                     StageInit = true;
                     if (Stage < 20 || Infinity)
                     {
+                        Roll_UI.SetActive(true);
                         Skill_UI.SetActive(true);
                         LevelUP_UI.SetActive(true);
                         Main_UI.SetActive(false);

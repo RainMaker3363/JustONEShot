@@ -35,12 +35,12 @@ public class ZombieMove_Big : Zombie
     public SkinnedMeshRenderer shader;
 
     public AudioClip HitSound;
-    public AudioClip BumpSound;
+   // public AudioClip BumpSound;
     public AudioClip DeadSound;
     //public AudioClip IdleSound;
     public AudioClip BloodSound;
 
-    AudioSource m_AudioSource;
+    public AudioSource m_AudioSource;
 
     public GameObject EarthEffect;
 
@@ -61,7 +61,7 @@ public class ZombieMove_Big : Zombie
         AttackDealy = 5;
         
 
-        m_AudioSource = gameObject.GetComponentInParent<AudioSource>();
+        //m_AudioSource = gameObject.GetComponentInParent<AudioSource>();
         CamAnim = GameObject.Find("CameraPos").GetComponent<Animator>();
         EarthEffect.transform.SetParent(null);  //이펙트를 빼냄
     }
@@ -98,7 +98,7 @@ public class ZombieMove_Big : Zombie
                 anim.SetTrigger("Attack");
                 NvAgent.Stop();
                 MotionPlay = true;
-                m_AudioSource.PlayOneShot(BumpSound);
+               // m_AudioSource.PlayOneShot(BumpSound);
             }
             else if (Distance <= 3.5f && AttackTime > Time.time)
             {
