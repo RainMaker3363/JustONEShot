@@ -126,7 +126,7 @@ public class GameInfoManager
             }
             else
             {
-                PlayTicket = 10; //시간 테스트를위해 일부로 2개 빼놓음
+                PlayTicket = 3;
                // Debug.Log(PlayTicket);
             }
 
