@@ -29,7 +29,7 @@ public class WaitRoomSkinLockImage : MonoBehaviour {
             LockIndex = GameInfoManager.LockCode[CharIndex];
             int Mask = 1; // 00000001
             int select = Mask << SkinIndex;
-            int LockCheck = (GameInfoManager.LockCode[CharIndex] & Mask);
+            int LockCheck = (GameInfoManager.LockCode[CharIndex] & select);
 
             if (LockCheck > 0)
             {
