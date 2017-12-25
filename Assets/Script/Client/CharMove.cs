@@ -1712,7 +1712,7 @@ public class CharMove : MonoBehaviour
         WomenGun.material = WomenCamo;
         while(true)
         {
-            if(m_PlayerState == LSD.PlayerState.DAMAGE || m_PlayerState == LSD.PlayerState.SHOT_READY)
+            if(m_PlayerState == LSD.PlayerState.DAMAGE || m_PlayerState == LSD.PlayerState.SHOT_READY || m_PlayerState == LSD.PlayerState.DEADEYE)
             {
                 Skill_Hide = false;
             }

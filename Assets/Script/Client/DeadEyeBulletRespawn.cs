@@ -155,9 +155,9 @@ public class DeadEyeBulletRespawn : MonoBehaviour {
     }
 
     public void BulletInit()
-    {
-        BulletIndex = -1; //인덱스 초기화
+    {        
         DB_RespawnManager.GetInstance().DeleteItemBullet(BulletIndex); // 총알 아이템 제거
+        BulletIndex = -1; //인덱스 초기화
         CreateAble = false;
     }
     IEnumerator BulletCreateDelay()

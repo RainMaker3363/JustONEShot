@@ -43,6 +43,7 @@ public class GameInfoManager
 
     int damage = 0;
 
+    public static int m_iVIPUser = 0;    //3434가 아니면 유료결제하지않음
     
 
     public static GameInfoManager GetInstance()
@@ -143,8 +144,10 @@ public class GameInfoManager
                 StartTime = (int)NowTime.TotalSeconds;
                 Debug.Log(StartTime);
             }
-           // TicketCheck();
+            // TicketCheck();
 
+
+            m_iVIPUser = PlayerPrefs.GetInt("VIPUser", 0); // 유료유저 여부 검사
         }
 
         return m_Manager;
@@ -211,6 +214,12 @@ public class GameInfoManager
     public void Accumulated_Reset() //데미지누적리셋
     {
         damage = 0;
+    }
+
+    public void SetVIP()
+    {
+        m_iVIPUser = 3434;
+        PlayerPrefs.SetInt("VIPUser", 3434);
     }
 
     public static void TicketCheck()    //티켓 회복용
@@ -781,16 +790,23 @@ public class WaitRoom : MonoBehaviour {
 
     public static bool TicketUse()
     {
-        if(GameInfoManager.PlayTicket>0)
+        if (GameInfoManager.m_iVIPUser != 3434) //유료유저가 아니라면
         {
-            GameInfoManager.PlayTicket--;
-            PlayerPrefs.SetInt("PlayTicket", GameInfoManager.PlayTicket);
-            Debug.Log(GameInfoManager.PlayTicket);
+            if (GameInfoManager.PlayTicket > 0)
+            {
+                GameInfoManager.PlayTicket--;
+                PlayerPrefs.SetInt("PlayTicket", GameInfoManager.PlayTicket);
+                Debug.Log(GameInfoManager.PlayTicket);
+            }
+            else
+            {
+                UI_GameStart_Fail.SetActive(true);
+                return false;
+            }
         }
         else
         {
-            UI_GameStart_Fail.SetActive(true);
-            return false;
+            Debug.Log("VIPUser!");
         }
         
         //System.TimeSpan now = System.DateTime.Now - new System.DateTime(System.DateTime.Now.Year, 1, 1, 0, 0, 0);
@@ -921,6 +937,7 @@ public class WaitRoom : MonoBehaviour {
         {
             case ShowResult.Finished:
                 Debug.Log("Video completed. User rewarded " + rewardQty + " credits.");
+                GetReward();
                 UI_Reward.SetActive(true);
                 break;
             case ShowResult.Skipped:
@@ -941,5 +958,26 @@ public class WaitRoom : MonoBehaviour {
     public void OnButtonTutorial()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene("TutorialScene");
+    }
+
+    public void VIPSetting()
+    {
+        if (GameInfoManager.m_iVIPUser != 3434)
+        {
+            GameInfoManager.GetInstance().SetVIP();
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (GameInfoManager.LockCode[i] < 1) //캐릭터가 개방되어있지 않으면
+                {
+                    //개방
+                    GameInfoManager.LockCode[i] += 1;   //00000001
+                    PlayerPrefs.SetString("LockCode" + i.ToString(), System.Convert.ToString(GameInfoManager.LockCode[i], 2));
+                }
+            }
+
+            GameInfoManager.GetInstance().GoldAdd(5000);//5000골드 추가
+            GoldText.text = GameInfoManager.GetInstance().ShowGold().ToString();
+        }
     }
 }
