@@ -181,7 +181,7 @@ public class ResultManager : MonoBehaviour {
                             else //보상 캐릭이 잠겨있다면 해제
                             {
                                 GameInfoManager.LockCode[CharIndex] += 1;   //00000001
-                                PlayerPrefs.SetString("LockCode" + CharIndex.ToString(), System.Convert.ToString(GameInfoManager.LockCode[CharIndex], 2));
+                                EncryptedPlayerPrefs.SetString("LockCode" + CharIndex.ToString(), System.Convert.ToString(GameInfoManager.LockCode[CharIndex], 2));
                             }
 
                         }

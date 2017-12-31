@@ -6,8 +6,8 @@ public class UI_VIPSetting : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
-        if(GameInfoManager.m_iVIPUser ==3434)
+
+        if (EncryptedPlayerPrefs.GetInt("VIPUser", 0) == 3434)
         {
             this.gameObject.SetActive(false);
         }
@@ -16,7 +16,7 @@ public class UI_VIPSetting : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (GameInfoManager.m_iVIPUser == 3434)
+        if (EncryptedPlayerPrefs.GetInt("VIPUser", 0) == 3434)
         {
             this.gameObject.SetActive(false);
         }

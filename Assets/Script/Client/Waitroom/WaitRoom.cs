@@ -52,17 +52,25 @@ public class GameInfoManager
         {
             m_Manager = new GameInfoManager();
 #if UNITY_EDITOR
-            // PlayerPrefs.DeleteAll();
+            // EncryptedPlayerPrefs.DeleteAll();
 
 #endif
+            EncryptedPlayerPrefs.keys = new string[5];
+            EncryptedPlayerPrefs.keys[0] = "23Wvczdre";
+            EncryptedPlayerPrefs.keys[1] = "SP9DokAa";
+            EncryptedPlayerPrefs.keys[2] = "bfA5rwe3";
+            EncryptedPlayerPrefs.keys[3] = "tHio2dzr";
+            EncryptedPlayerPrefs.keys[4] = "jwe4cMMs";
+
             LockCode = new int[4];
 
             for (int i = 0; i < 4; i++)
             {
                 string Key = "LockCode" + i.ToString();
-                if (PlayerPrefs.HasKey(Key))
+                if (EncryptedPlayerPrefs.HasKey(Key))
                 {
-                    LoadLock = PlayerPrefs.GetString(Key);
+                    //LoadLock = EncryptedPlayerPrefs.GetString(Key);
+                    LoadLock = EncryptedPlayerPrefs.GetString(Key);
                 }
                 else
                 {
@@ -84,36 +92,36 @@ public class GameInfoManager
             for (int i = 0; i < 4; i++)
             {
                 string Key = "Skin_Char" + i.ToString();
-                if (PlayerPrefs.HasKey(Key))
+                if (EncryptedPlayerPrefs.HasKey(Key))
                 {
-                    Skin_Char[i] = PlayerPrefs.GetInt(Key);
+                    Skin_Char[i] = EncryptedPlayerPrefs.GetInt(Key);
                 }
                 else
                 {
                     Skin_Char[i] = 0;
                 }
             }
-            if (PlayerPrefs.HasKey("BeforeCharSelect"))
+            if (EncryptedPlayerPrefs.HasKey("BeforeCharSelect"))
             {
-                BeforeCharSelect = PlayerPrefs.GetInt("BeforeCharSelect");
+                BeforeCharSelect = EncryptedPlayerPrefs.GetInt("BeforeCharSelect");
             }
-            if (PlayerPrefs.HasKey("SurvivalScore"))
+            if (EncryptedPlayerPrefs.HasKey("SurvivalScore"))
             {
-                SurvivalScore = PlayerPrefs.GetInt("SurvivalScore");
-            }
-
-            if (PlayerPrefs.HasKey("PVPScore"))
-            {
-                PVPScore = PlayerPrefs.GetInt("PVPScore");
+                SurvivalScore = EncryptedPlayerPrefs.GetInt("SurvivalScore");
             }
 
-            if (PlayerPrefs.HasKey("Gold"))
+            if (EncryptedPlayerPrefs.HasKey("PVPScore"))
             {
-                Gold = PlayerPrefs.GetInt("Gold");
+                PVPScore = EncryptedPlayerPrefs.GetInt("PVPScore");
+            }
+
+            if (EncryptedPlayerPrefs.HasKey("Gold"))
+            {
+                Gold = EncryptedPlayerPrefs.GetInt("Gold");
             }
             else
             {
-                Gold = 10000;
+                Gold = 0;
             }
 
 #if UNITY_EDITOR
@@ -121,9 +129,9 @@ public class GameInfoManager
 
 #endif
 
-            if (PlayerPrefs.HasKey("PlayTicket"))
+            if (EncryptedPlayerPrefs.HasKey("PlayTicket"))
             {
-                PlayTicket = PlayerPrefs.GetInt("PlayTicket");
+                PlayTicket = EncryptedPlayerPrefs.GetInt("PlayTicket");
             }
             else
             {
@@ -133,9 +141,9 @@ public class GameInfoManager
 
             NowTime = System.DateTime.Now - new System.DateTime(System.DateTime.Now.Year, 1, 1, 0, 0, 0);
 
-            if (PlayerPrefs.HasKey("StartTime"))    //전에 플레이 했던 기록이 있을경우
+            if (EncryptedPlayerPrefs.HasKey("StartTime"))    //전에 플레이 했던 기록이 있을경우
             {
-                StartTime = PlayerPrefs.GetInt("StartTime");
+                StartTime = EncryptedPlayerPrefs.GetInt("StartTime");
             }
             else //없을경우
             {
@@ -147,7 +155,7 @@ public class GameInfoManager
             // TicketCheck();
 
 
-            m_iVIPUser = PlayerPrefs.GetInt("VIPUser", 0); // 유료유저 여부 검사
+            m_iVIPUser = EncryptedPlayerPrefs.GetInt("VIPUser", 0); // 유료유저 여부 검사
         }
 
         return m_Manager;
@@ -156,7 +164,7 @@ public class GameInfoManager
     public void GoldAdd(int gold)
     {
         Gold += gold;
-        PlayerPrefs.SetInt("Gold", Gold);
+        EncryptedPlayerPrefs.SetInt("Gold", Gold);
     }
     public int SurvivalScoreAdd(int score)
     {
@@ -171,7 +179,7 @@ public class GameInfoManager
             SurvivalScore = 10000;
         }
 
-        PlayerPrefs.SetInt("SurvivalScore", SurvivalScore);
+        EncryptedPlayerPrefs.SetInt("SurvivalScore", SurvivalScore);
 
         int total = SurvivalScore;
 
@@ -191,7 +199,7 @@ public class GameInfoManager
             PVPScore = 10000;
         }
 
-        PlayerPrefs.SetInt("PVPScore", PVPScore);
+        EncryptedPlayerPrefs.SetInt("PVPScore", PVPScore);
 
         int total = PVPScore;
 
@@ -219,7 +227,7 @@ public class GameInfoManager
     public void SetVIP()
     {
         m_iVIPUser = 3434;
-        PlayerPrefs.SetInt("VIPUser", 3434);
+        EncryptedPlayerPrefs.SetInt("VIPUser", 3434);
     }
 
     public static void TicketCheck()    //티켓 회복용
@@ -609,7 +617,7 @@ public class WaitRoom : MonoBehaviour {
             //int select = Mask << Buy_CharIndex;
             // GameInfoManager.CharLock += select;
             GameInfoManager.LockCode[Buy_CharIndex] += 1;   //00000001
-            PlayerPrefs.SetString("LockCode" + Buy_CharIndex.ToString(), System.Convert.ToString(GameInfoManager.LockCode[Buy_CharIndex], 2));
+            EncryptedPlayerPrefs.SetString("LockCode" + Buy_CharIndex.ToString(), System.Convert.ToString(GameInfoManager.LockCode[Buy_CharIndex], 2));
 
         }
         else
@@ -629,7 +637,7 @@ public class WaitRoom : MonoBehaviour {
             int select = Mask << Buy_SkinIndex;
            // GameInfoManager.CharLock += select;
             GameInfoManager.LockCode[GameInfoManager.GetInstance().SelectIndex] += select;   
-           PlayerPrefs.SetString("LockCode" + GameInfoManager.GetInstance().SelectIndex, System.Convert.ToString(GameInfoManager.LockCode[GameInfoManager.GetInstance().SelectIndex], 2));
+           EncryptedPlayerPrefs.SetString("LockCode" + GameInfoManager.GetInstance().SelectIndex, System.Convert.ToString(GameInfoManager.LockCode[GameInfoManager.GetInstance().SelectIndex], 2));
         }
         else
         {
@@ -678,7 +686,7 @@ public class WaitRoom : MonoBehaviour {
                 // Debug.Log("SaveIndex"+SelectIndex);
                 //선택한 캐릭터 저장
                 GameInfoManager.BeforeCharSelect = SelectIndex;
-                PlayerPrefs.SetInt("BeforeCharSelect", SelectIndex);
+                EncryptedPlayerPrefs.SetInt("BeforeCharSelect", SelectIndex);
                 //GameInfoManager.GetInstance().SelectSkinIndex = 0; // 스킨인덱스 기본으로 변경
                 Vector3 Postion = Vector3.zero;
                 int SkinIndex = 0;
@@ -780,7 +788,7 @@ public class WaitRoom : MonoBehaviour {
         GameInfoManager.Skin_Char[NowCharIndex] = Index;
         string Key = "Skin_Char" + NowCharIndex.ToString();
 
-        PlayerPrefs.SetInt(Key, GameInfoManager.Skin_Char[NowCharIndex]);
+        EncryptedPlayerPrefs.SetInt(Key, GameInfoManager.Skin_Char[NowCharIndex]);
 
         if (GPGSManager.GetInstance.IsAuthenticated())
         {
@@ -795,7 +803,7 @@ public class WaitRoom : MonoBehaviour {
             if (GameInfoManager.PlayTicket > 0)
             {
                 GameInfoManager.PlayTicket--;
-                PlayerPrefs.SetInt("PlayTicket", GameInfoManager.PlayTicket);
+                EncryptedPlayerPrefs.SetInt("PlayTicket", GameInfoManager.PlayTicket);
                 Debug.Log(GameInfoManager.PlayTicket);
             }
             else
@@ -813,7 +821,7 @@ public class WaitRoom : MonoBehaviour {
         ////if (GameInfoManager.PlayTicket <10)
         ////{
         //GameInfoManager.StartTime = (int)now.TotalSeconds;
-        //    PlayerPrefs.SetInt("StartTime", GameInfoManager.StartTime);
+        //    EncryptedPlayerPrefs.SetInt("StartTime", GameInfoManager.StartTime);
         //    //Debug.Log(now.Seconds);
         ////}
         return true;
@@ -972,7 +980,7 @@ public class WaitRoom : MonoBehaviour {
                 {
                     //개방
                     GameInfoManager.LockCode[i] += 1;   //00000001
-                    PlayerPrefs.SetString("LockCode" + i.ToString(), System.Convert.ToString(GameInfoManager.LockCode[i], 2));
+                    EncryptedPlayerPrefs.SetString("LockCode" + i.ToString(), System.Convert.ToString(GameInfoManager.LockCode[i], 2));
                 }
             }
 
