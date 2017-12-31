@@ -12,7 +12,7 @@ public class GameInfoManager
     public int SelectIndex = 0;
     public int SelectSkinIndex = 0;
     public bool ZombieInfinityMode = false;
-    public int ZombieLevel = 0;
+    public int ZombieLevel = 0; //좀비모드 난이도
 
     public bool BackgroundSoundUse = true;
     public bool EffectSoundUse = true;
