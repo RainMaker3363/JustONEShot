@@ -119,6 +119,8 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
             _AllPlayerPVPDeadEyeBulletSeeds_ConfirmMap = new Dictionary<string, bool>(7);
         }
 
+        GPGSManager.GetInstance.UnlockAcheievement(ONESHOT_Cloud.achievement_hello_player);
+
         /* 
          * 
         * 유니티 엔진 사용 시 입력을 하지 않으면 모바일 장치의 화면이 어두워지다가 잠기게 되는데,

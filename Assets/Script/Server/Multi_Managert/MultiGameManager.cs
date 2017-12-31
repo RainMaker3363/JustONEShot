@@ -3070,6 +3070,11 @@ public class MultiGameManager : MonoBehaviour, MPUpdateListener
     // bool 값을 true면 발사를 성공 한 것입니다.
     public void SendShootMessage(bool ShootSuccess)
     {
+        if(ShootSuccess == true)
+        {
+            GPGSManager.GetInstance.UnlockAcheievement(ONESHOT_Cloud.achievement_its_highnoon);
+        }
+
         GPGSManager.GetInstance.SendShootMessage(ShootSuccess);
     }
 

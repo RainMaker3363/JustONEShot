@@ -2836,7 +2836,7 @@ public class GPGSManager : Singleton<GPGSManager>, RealTimeMultiplayerListener
     {
         if (Social.localUser.authenticated)
         {
-            if(Score < 0)
+            if(Score <= 0)
             {
                 Score = 0;
             }

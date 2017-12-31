@@ -107,7 +107,8 @@ public class ResultManager : MonoBehaviour {
                         }
 
                         UI_Score.text = Score.ToString();
-                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_pvp_1_vs_1", Score);
+                        GPGSManager.GetInstance.Send_LeaderBoard_Score(ONESHOT_Cloud.leaderboard_pvp_1_vs_1, Score);
+                        GPGSManager.GetInstance.UnlockAcheievement(ONESHOT_Cloud.achievement_dead_or_alive);
                         break;
                     }
                 case LSD.GameMode.Survivel:
@@ -127,7 +128,8 @@ public class ResultManager : MonoBehaviour {
                         }
 
                         UI_Score.text = Score.ToString();
-                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_pvp_survival_1_vs_m", Score);
+                        GPGSManager.GetInstance.Send_LeaderBoard_Score(ONESHOT_Cloud.leaderboard_pvp_survival_1_vs_m, Score);
+                        GPGSManager.GetInstance.UnlockAcheievement(ONESHOT_Cloud.achievement_and_then_there_were_none);
                         break;
                     }
                 case LSD.GameMode.Zombie:
@@ -169,6 +171,9 @@ public class ResultManager : MonoBehaviour {
                                 default:
                                     break;
                             }
+
+                            // 도전과제 언락을 해준다.
+                            GPGSManager.GetInstance.UnlockAcheievement(ONESHOT_Cloud.achievement_undying);
 
                             UI_Coin.text = Gold.ToString();
                             GameInfoManager.GetInstance().GoldAdd(Gold);
@@ -253,11 +258,11 @@ public class ResultManager : MonoBehaviour {
                                 {
                                    if(GameInfoManager.GetInstance().ZombieInfinityMode)
                                     {
-                                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_zombie_survival_easy", Score);
+                                        GPGSManager.GetInstance.Send_LeaderBoard_Score(ONESHOT_Cloud.leaderboard_zombie_survival_easy, Score);
                                     }
                                     else
                                     {
-                                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_zombie_survival_endless_easy", Score);
+                                        GPGSManager.GetInstance.Send_LeaderBoard_Score(ONESHOT_Cloud.leaderboard_zombie_survival_endless_easy, Score);
                                     }
                                     break;
                                 }
@@ -265,11 +270,11 @@ public class ResultManager : MonoBehaviour {
                                 {
                                     if (GameInfoManager.GetInstance().ZombieInfinityMode)
                                     {
-                                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_zombie_survival_normal", Score);
+                                        GPGSManager.GetInstance.Send_LeaderBoard_Score(ONESHOT_Cloud.leaderboard_zombie_survival_normal, Score);
                                     }
                                     else
                                     {
-                                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_zombie_survival_endless_normal", Score);
+                                        GPGSManager.GetInstance.Send_LeaderBoard_Score(ONESHOT_Cloud.leaderboard_zombie_survival_endless_normal, Score);
                                     }
                                     break;
                                 }
@@ -277,12 +282,14 @@ public class ResultManager : MonoBehaviour {
                                 {
                                     if (GameInfoManager.GetInstance().ZombieInfinityMode)
                                     {
-                                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_zombie_survival_hard", Score);
+                                        GPGSManager.GetInstance.Send_LeaderBoard_Score(ONESHOT_Cloud.leaderboard_zombie_survival_hard, Score);
                                     }
                                     else
                                     {
-                                        GPGSManager.GetInstance.Send_LeaderBoard_Score("leaderboard_zombie_survival_endless_hard", Score);
+                                        GPGSManager.GetInstance.Send_LeaderBoard_Score(ONESHOT_Cloud.leaderboard_zombie_survival_endless_hard, Score);
                                     }
+
+                                    
                                     break;
                                 }
 
