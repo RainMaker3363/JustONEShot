@@ -172,9 +172,7 @@ public class ResultManager : MonoBehaviour {
                                     break;
                             }
 
-                            // 도전과제 언락을 해준다.
-                            GPGSManager.GetInstance.UnlockAcheievement(ONESHOT_Cloud.achievement_undying);
-
+                           
                             UI_Coin.text = Gold.ToString();
                             GameInfoManager.GetInstance().GoldAdd(Gold);
                             int LockCheck = (GameInfoManager.LockCode[CharIndex] & select);
@@ -188,6 +186,10 @@ public class ResultManager : MonoBehaviour {
                                 GameInfoManager.LockCode[CharIndex] += 1;   //00000001
                                 EncryptedPlayerPrefs.SetString("LockCode" + CharIndex.ToString(), System.Convert.ToString(GameInfoManager.LockCode[CharIndex], 2));
                             }
+
+                            // 도전과제 언락을 해준다.
+                            //GPGSManager.GetInstance.UnlockAcheievement(ONESHOT_Cloud.achievement_undying);
+
 
                         }
                         else //패배했을때
