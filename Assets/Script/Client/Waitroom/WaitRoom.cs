@@ -465,6 +465,7 @@ public class WaitRoom : MonoBehaviour {
     {
         if (TicketUse())
         {
+            TicketUseUpdate();
             UnityEngine.SceneManagement.SceneManager.LoadScene("ZombieScene");
         }
     }
@@ -796,14 +797,12 @@ public class WaitRoom : MonoBehaviour {
         }
     }
 
-    public static bool TicketUse()
+    public static bool TicketUse()  //티켓이 충분한지 체크
     {
         if (GameInfoManager.m_iVIPUser != 3434) //유료유저가 아니라면
         {
             if (GameInfoManager.PlayTicket > 0)
-            {
-                GameInfoManager.PlayTicket--;
-                EncryptedPlayerPrefs.SetInt("PlayTicket", GameInfoManager.PlayTicket);
+            {               
                 Debug.Log(GameInfoManager.PlayTicket);
             }
             else
@@ -825,6 +824,15 @@ public class WaitRoom : MonoBehaviour {
         //    //Debug.Log(now.Seconds);
         ////}
         return true;
+    }
+
+    public static void TicketUseUpdate() //티켓 소모
+    {
+        if (GameInfoManager.m_iVIPUser != 3434) //유료유저가 아니라면
+        {
+            GameInfoManager.PlayTicket--;
+            EncryptedPlayerPrefs.SetInt("PlayTicket", GameInfoManager.PlayTicket);
+        }
     }
 
     IEnumerator TicketTime()
