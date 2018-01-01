@@ -121,6 +121,9 @@ public class MultiTitleManager : MonoBehaviour, LBUpdateListener
 
         GPGSManager.GetInstance.UnlockAcheievement(ONESHOT_Cloud.achievement_hello_player);
 
+        // 인포매니저 로딩용..
+        int TG = GameInfoManager.GetInstance().ShowGold();
+
         /* 
          * 
         * 유니티 엔진 사용 시 입력을 하지 않으면 모바일 장치의 화면이 어두워지다가 잠기게 되는데,
